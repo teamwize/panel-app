@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form"
-import { PageToolbar } from '../components'
+import { useNavigate } from 'react-router-dom'
 import doFetch from '../httpService.js'
+import { ArrowLeftIcon } from "@heroicons/react/24/outline"
 
 export default function ChangePassword() {
   const { register, handleSubmit, formState: { errors } } = useForm()
 
-  const [errorMessage, setErrorMessage] = useState("");
+  const [errorMessage, setErrorMessage] = useState("")
+
+  const navigate = useNavigate()
+  const goBack = () => navigate('/setting');
 
   const onSubmit = (data) => {
     if (data.newPassword !== data.reNewPassword) {
@@ -37,7 +41,12 @@ export default function ChangePassword() {
   return (
     <div className='md:w-3/4 flex-1 overflow-y-auto mb-2 md:fixed top-0 bottom-0 right-0'>
       <div className='pt-5 p-4'>
-        <PageToolbar title='Change Password'></PageToolbar>
+        <div className="flex items-center border-b border-gray-300 pb-4 mb-4">
+          <button onClick={goBack}>
+            <ArrowLeftIcon className='w-5 h-5 mr-4'></ArrowLeftIcon>
+          </button>
+          <h1 className="md:text-2xl font-semibold md:font-bold">Change Password</h1>
+        </div>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
