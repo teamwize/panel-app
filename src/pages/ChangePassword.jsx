@@ -2,7 +2,7 @@ import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import doFetch from '../httpService.js'
-import { ArrowLeftIcon } from "@heroicons/react/24/outline"
+import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
 export default function ChangePassword() {
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -43,7 +43,7 @@ export default function ChangePassword() {
       <div className='pt-5 p-4'>
         <div className="flex items-center border-b border-gray-300 pb-4 mb-4">
           <button onClick={goBack}>
-            <ArrowLeftIcon className='w-5 h-5 mr-4'></ArrowLeftIcon>
+            <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
           </button>
           <h1 className="md:text-2xl font-semibold md:font-bold">Change Password</h1>
         </div>
