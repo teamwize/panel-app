@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@headlessui/react'
 import { PageToolbar, ProfilePhoto } from '../components'
-import { UserIcon, LockClosedIcon, GlobeAltIcon, ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
+import { UserIcon, LockClosedIcon, GlobeAltIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/24/outline'
 
 export default function Setting() {
   const [logOut, setLogOut] = useState(false);
@@ -16,15 +16,15 @@ export default function Setting() {
     closeLogOut()
   }
 
-  const viewChangePassword = ()=> {
+  const viewChangePassword = () => {
     navigate('/setting/change-password')
   }
 
-  const viewOfficialHolidays = ()=> {
+  const viewOfficialHolidays = () => {
     navigate('/setting/official-holidays')
   }
 
-  const viewProfile = ()=> {
+  const viewProfile = () => {
     navigate('/setting/profile')
   }
 

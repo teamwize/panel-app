@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import {Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile} from "../pages";
+import {Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile, AddEmployee} from "../pages";
 
 export default function Root() {
     return (
@@ -17,7 +17,8 @@ export default function Root() {
             <Route path='/setting' element={<Setting />}></Route>
             <Route path='/setting/change-password' element={<ChangePassword />}></Route>
             <Route path='/setting/official-holidays' element={<OfficialHolidays />}></Route>
-            <Route path='/setting/Profile' element={<Profile />}></Route>
+            <Route path='/setting/profile' element={<Profile />}></Route>
+            <Route path='/employees/add' element={<AddEmployee />}></Route>
             </Routes>
         </>
     );

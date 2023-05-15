@@ -11,5 +11,6 @@ import Setting from './Setting'
 import ChangePassword from './ChangePassword'
 import OfficialHolidays from "./OfficialHolidays"
 import Profile from './Profile'
+import AddEmployee from "./AddEmployee"
 
-export {Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile}
+export {Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile, AddEmployee}
