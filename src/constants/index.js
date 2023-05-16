@@ -79,7 +79,6 @@ import { CalendarIcon, Cog6ToothIcon, ChartPieIcon, UsersIcon } from '@heroicons
 export const navigation = [
   { name: 'Calendar', icon: CalendarIcon, href: '#', current: true },
   { name: 'Balance', icon: ChartPieIcon, href: '#', current: false },
-  { name: 'Employees', icon: UsersIcon, href: '#', current: false },
   { name: 'Settings', icon: Cog6ToothIcon, href: '#', current: false }
 ]
 

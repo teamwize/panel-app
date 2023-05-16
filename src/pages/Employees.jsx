@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import doFetch from '../httpService.js'
-import { PageToolbar } from '../components'
 import { Dialog } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { XMarkIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 export default function Employees() {
   const [employeesList, setEmployeesList] = useState([])
@@ -22,6 +21,8 @@ export default function Employees() {
     });
   }, [])
 
+  const goBack = () => navigate('/setting');
+
   const navigate = useNavigate();
   const viewDetails = (id) => {
     navigate('/employee-details/' + id)
@@ -31,7 +32,7 @@ export default function Employees() {
 
   const handleRequest = (confirmed, id) => {
     if (confirmed) {
-      doFetch('http://localhost:8080/users', {
+      doFetch('http://localhost:8080/users/'+ id, {
         method: 'DELETE'
       }).then(data => {
         console.log('Success:', data);
@@ -52,9 +53,16 @@ export default function Employees() {
   return (
     <div className='md:w-3/4 flex-1 overflow-y-auto mb-2 md:fixed top-0 bottom-0 right-0'>
       <div className='pt-5 px-4'>
-        <PageToolbar title='Employees List'>
+        <div className='flex items-center justify-between border-b border-gray-300 mb-4 pb-4'>
+          <div className="flex items-center">
+            <button onClick={goBack}>
+              <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
+            </button>
+            <h1 className="md:text-2xl font-semibold md:font-bold">Employees List</h1>
+          </div>
+
           <button onClick={viewAddEmployee} className='rounded-lg px-5 py-1.5 shadow-md bg-indigo-600 text-white text-xs font-semibold'>Add</button>
-        </PageToolbar>
+        </div>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 

@@ -2,7 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Dialog } from '@headlessui/react'
 import { PageToolbar, ProfilePhoto } from '../components'
-import { UserIcon, LockClosedIcon, GlobeAltIcon, ArrowLeftOnRectangleIcon} from '@heroicons/react/24/outline'
+import { UserIcon, LockClosedIcon, GlobeAltIcon, ArrowLeftOnRectangleIcon, ChartPieIcon, UsersIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline'
 
 export default function Setting() {
   const [logOut, setLogOut] = useState(false);
@@ -28,11 +28,23 @@ export default function Setting() {
     navigate('/setting/profile')
   }
 
+  const viewCompanyInfo = () => {
+    navigate('/setting/company')
+  }
+
+  const viewSetBalance = () => {
+    navigate('/setting/set-balance')
+  }
+
+  const viewEmployees = () => {
+    navigate('/employees')
+  }
+
 
   return (
     <div className='md:w-3/4 flex-1 overflow-y-auto mb-2 md:fixed top-0 bottom-0 right-0'>
       <div className='pt-5 p-4'>
-        <PageToolbar title='Account Setting'></PageToolbar>
+        <PageToolbar title='Account'></PageToolbar>
 
         <main>
           <div className='flex items-center mb-6'>
@@ -80,8 +92,26 @@ export default function Setting() {
               </div>
             </div>
           </Dialog>
-
         </main>
+      </div>
+
+      <div className='flex flex-col p-4 pt-۲'>
+        <h1 className="md:text-2xl font-semibold md:font-bold border-b border-gray-300 pb-4 mb-4">Company</h1>
+
+        <button onClick={viewCompanyInfo} className='flex items-center mb-5'>
+          <BuildingOfficeIcon className='w-5 h-5 mr-2'></BuildingOfficeIcon>
+          Company Info
+        </button>
+
+        <button onClick={viewSetBalance} className='flex items-center mb-5'>
+          <ChartPieIcon className='w-5 h-5 mr-2'></ChartPieIcon>
+          Set Balance
+        </button>
+
+        <button onClick={viewEmployees} className='flex items-center mb-5'>
+          <UsersIcon className='w-5 h-5 mr-2'></UsersIcon>
+          Employees
+        </button>
       </div>
     </div>
   )
