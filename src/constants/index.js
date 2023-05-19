@@ -1,3 +1,8 @@
+export const logo = {
+  src: "https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600",
+  alt: "Work Hive"
+}
+
 export const countries = [
   { name: 'Afghanistan', code: 'AF' },
   { name: 'Argentina', code: 'AR' },
@@ -74,18 +79,18 @@ export const countries = [
   { name: 'Yemen', code: 'YE' },
 ]
 
-import { CalendarIcon, Cog6ToothIcon, ChartPieIcon, UsersIcon } from '@heroicons/react/24/outline'
+import { CalendarIcon, Cog6ToothIcon, ChartPieIcon } from '@heroicons/react/24/outline'
 
 export const navigation = [
-  { name: 'Calendar', icon: CalendarIcon, href: '#', current: true },
-  { name: 'Balance', icon: ChartPieIcon, href: '#', current: false },
-  { name: 'Settings', icon: Cog6ToothIcon, href: '#', current: false }
+  { name: 'Calendar', icon: CalendarIcon, href: '/calendar' },
+  { name: 'Balance', icon: ChartPieIcon, href: '/balance' },
+  { name: 'Settings', icon: Cog6ToothIcon, href: '/setting' }
 ]
 
-export const leaveType = [ 
-  {name: "Vacation", value: 'VACATION'},
-  {name: "Sick leave", value: "SICK_LEAVE"},
-  {name : 'Paid time', value:'PAID_TIME'}
+export const leaveType = [
+  { name: "Vacation", value: 'VACATION' },
+  { name: "Sick leave", value: "SICK_LEAVE" },
+  { name: 'Paid time', value: 'PAID_TIME' }
 ]
 
 export const css = `
@@ -106,11 +111,11 @@ export const css = `
 export const leaveTypeJson = {
   "VACATION": "Vacation",
   "SICK_LEAVE": "Sick leave",
-  "PAID_TIME" : 'Paid time'
+  "PAID_TIME": 'Paid time'
 }
 
 export const statusJson = {
   "PENDING": "Pending",
   "ACCEPTED": "Accepted",
-  "REJECTED" : 'Rejected'
+  "REJECTED": 'Rejected'
 }

@@ -10,11 +10,19 @@ import { UserIcon, CameraIcon } from '@heroicons/react/20/solid'
 
 export default function Profile() {
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const navigate = useNavigate()
 
   const [employeeInfo, setEmployeeInfo] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
+  const [picture, setPicture] = useState({
+    cropperOpen: false,
+    img: null,
+    zoom: 2,
+    croppedImg:
+      "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
+  })
+  var editor = ""
 
-  const navigate = useNavigate()
   const goBack = () => navigate('/setting');
 
   useEffect(() => {
@@ -45,15 +53,6 @@ export default function Profile() {
     });
     console.log(data)
   }
-
-  const [picture, setPicture] = useState({
-    cropperOpen: false,
-    img: null,
-    zoom: 2,
-    croppedImg:
-      "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
-  })
-  var editor = ""
 
   const handleFileChange = (e) => {
     let url = URL.createObjectURL(e.target.files[0]);
@@ -134,7 +133,7 @@ export default function Profile() {
             </div>
 
             <Dialog open={picture.cropperOpen} onClose={() => setPicture({ ...picture, cropperOpen: false })}>
-              <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111138] z-20'>
+              <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111138] z-50'>
                 <div className="flex min-h-full items-center justify-center p-4 text-center">
                   <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
                     <div className='flex items-center mb-6'>
@@ -164,8 +163,9 @@ export default function Profile() {
 
               <div className='w-full'>
                 <label className="block text-sm font-medium leading-6 text-gray-900 mb-2" htmlFor="fullName">FullName</label>
-
-                <input placeholder="employeeInfo.name" {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "The length of the fullname should be less than 20 characters" }, minLength: { value: 2, message: "The length of the fullname shouldn't be less than 2 characters" } })} aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text" className="block w-full rounded-md border-0 px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                <input placeholder="employeeInfo.name" {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
+                  aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
+                  className="block w-full rounded-md border-0 px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
                 {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
               </div>
 

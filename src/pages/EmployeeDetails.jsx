@@ -1,12 +1,16 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import doFetch from '../httpService.js'
-import { PageToolbar, Request, Graph } from '../components'
+import { Request, Graph } from '../components'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 export default function EmployeeDetails() {
   const [balanceValue, setBalanceValue] = useState([])
   const [requestsList, setRequestsList] = useState([])
   const [errorMessage, setErrorMessage] = useState(null);
+
+  const navigate = useNavigate();
 
   // const [errorMessage, setErrorMessage] = useState(null)
   // useEffect(() => {
@@ -42,11 +46,20 @@ export default function EmployeeDetails() {
     })
   }, [])
 
+  const goBack = () => navigate('/setting/employees')
+
 
   return (
     <div className='md:w-3/4 flex-1 overflow-y-auto mb-2 md:fixed top-0 bottom-0 right-0'>
       <div className='pt-5 px-4'>
-        <PageToolbar title='Employee Details'></PageToolbar>
+        <div className='flex items-center justify-between border-b border-gray-300 mb-4 pb-4'>
+          <div className="flex items-center">
+            <button onClick={goBack}>
+              <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
+            </button>
+            <h1 className="md:text-2xl font-semibold md:font-bold">Employee Details</h1>
+          </div>
+        </div>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 

@@ -6,10 +6,10 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
 export default function ChangePassword() {
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const navigate = useNavigate()
 
   const [errorMessage, setErrorMessage] = useState("")
 
-  const navigate = useNavigate()
   const goBack = () => navigate('/setting');
 
   const onSubmit = (data) => {
@@ -54,8 +54,9 @@ export default function ChangePassword() {
           <div>
             <label htmlFor="password" className="block text-sm font-medium leading-6 text-gray-900">Current Password</label>
             <div className="mt-2">
-              <input {...register("password", { required: "Password is required", minLength: { value: 8, message: "Current Password is incorrect, please try again" } })} aria-invalid={errors.password ? "true" : "false"}
-                name="password" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+              <input {...register("password", { required: "Password is required", minLength: { value: 8, message: "Current Password is incorrect, please try again" } })}
+                aria-invalid={errors.password ? "true" : "false"} name="password"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
               {errors.password && <Alert>{errors.password.message}</Alert>}
             </div>
           </div>
@@ -63,8 +64,9 @@ export default function ChangePassword() {
           <div>
             <label htmlFor="newPassword" className="block text-sm font-medium leading-6 text-gray-900">New Password</label>
             <div className="mt-2">
-              <input {...register("newPassword", { required: "New Password is required", minLength: { value: 8, message: "The length of the password shouldn't be less than 8 characters" } })} aria-invalid={errors.newPassword ? "true" : "false"}
-                name="newPassword" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+              <input {...register("newPassword", { required: "New Password is required", minLength: { value: 8, message: "Password must be over 8 characters" } })}
+                aria-invalid={errors.newPassword ? "true" : "false"} name="newPassword"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
               {errors.newPassword && <Alert>{errors.newPassword.message}</Alert>}
             </div>
           </div>
@@ -72,8 +74,9 @@ export default function ChangePassword() {
           <div>
             <label htmlFor="reNewPassword" className="block text-sm font-medium leading-6 text-gray-900">Re-type New Password</label>
             <div className="mt-2">
-              <input {...register("reNewPassword", { required: "Re-type New Password is required", minLength: { value: 8, message: "The length of the password shouldn't be less than 8 characters" } })} aria-invalid={errors.reNewPassword ? "true" : "false"}
-                name="reNewPassword" className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+              <input {...register("reNewPassword", { required: "Re-type New Password is required", minLength: { value: 8, message: "Password must be over 8 characters" } })}
+                aria-invalid={errors.reNewPassword ? "true" : "false"} name="reNewPassword"
+                className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
               {errors.reNewPassword && <Alert>{errors.reNewPassword.message}</Alert>}
             </div>
           </div>

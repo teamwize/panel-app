@@ -9,6 +9,8 @@ export default function Employees() {
   const [errorMessage, setErrorMessage] = useState(null)
   const [remove, setRemove] = useState(false)
 
+  const navigate = useNavigate();
+
   useEffect(() => {
     doFetch('http://localhost:8080/users', {
       method: 'GET'
@@ -17,36 +19,35 @@ export default function Employees() {
       setEmployeesList(data);
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      setErrorMessage(error.error)
     });
   }, [])
 
   const goBack = () => navigate('/setting');
 
-  const navigate = useNavigate();
   const viewDetails = (id) => {
-    navigate('/employee-details/' + id)
+    navigate('/setting/employees/employee-details/' + id)
   }
 
   const closeRemove = () => setRemove(false)
 
   const handleRequest = (confirmed, id) => {
     if (confirmed) {
-      doFetch('http://localhost:8080/users/'+ id, {
+      doFetch('http://localhost:8080/users/' + id, {
         method: 'DELETE'
       }).then(data => {
         console.log('Success:', data);
         setEmployeesList(prevState => prevState.filter(data => data.ID !== id))
       }).catch(error => {
         console.error('Error:', error);
-        setErrorMessage(error.error);
+        setErrorMessage(error.error)
       })
     };
     closeRemove()
   }
 
   const viewAddEmployee = () => {
-    navigate('/employees/add')
+    navigate('/setting/employees/add')
   }
 
 
@@ -68,8 +69,7 @@ export default function Employees() {
 
         {employeesList.map(e => <div key={e.ID} className='flex justify-between items-center mb-2 pb-2 border-b'>
           <div className='mx-2 flex items-center'>
-            <img className="inline-block h-12 w-12 rounded-full mr-2" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
-
+            <img className="inline-block h-12 w-12 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
             <div className="ml-3">
               <p className="font-semibold mb-1">e.name</p>
               <button onClick={() => viewDetails(e.ID)} className="font-medium text-blue-600">View Details</button>

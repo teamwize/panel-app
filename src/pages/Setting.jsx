@@ -1,19 +1,25 @@
-import { useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { useState, useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import doFetch from '../httpService.js'
 import { Dialog } from '@headlessui/react'
-import { PageToolbar, ProfilePhoto } from '../components'
-import { UserIcon, LockClosedIcon, GlobeAltIcon, ArrowLeftOnRectangleIcon, ChartPieIcon, UsersIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline'
+import { PageToolbar } from '../components'
+import { UserIcon, LockClosedIcon, GlobeAltIcon, ArrowLeftOnRectangleIcon, ChartPieIcon, UsersIcon, BuildingOfficeIcon, ClockIcon } from '@heroicons/react/24/outline'
 
 export default function Setting() {
   const [logOut, setLogOut] = useState(false);
-
-  const closeLogOut = () => setLogOut(false)
+  const [balance, setBalance] = useState([])
+  const [employeesList, setEmployeesList] = useState([])
+  const [errorMessage, setErrorMessage] = useState("")
 
   const navigate = useNavigate()
 
   const handleRequest = (accepted) => {
     if (accepted) navigate('/login');
     closeLogOut()
+  }
+
+  const viewProfile = () => {
+    navigate('/setting/profile')
   }
 
   const viewChangePassword = () => {
@@ -24,20 +30,46 @@ export default function Setting() {
     navigate('/setting/official-holidays')
   }
 
-  const viewProfile = () => {
-    navigate('/setting/profile')
-  }
+  const closeLogOut = () => setLogOut(false)
 
   const viewCompanyInfo = () => {
     navigate('/setting/company')
   }
 
+  useEffect(() => {
+    doFetch('http://localhost:8080/organization/default', {
+      method: 'GET'
+    }).then(data => {
+      console.log('Success:', data);
+      setBalance(data)
+    }).catch(error => {
+      console.error('Error:', error);
+      setErrorMessage(error.error)
+    })
+  }, [])
+
   const viewSetBalance = () => {
     navigate('/setting/set-balance')
   }
 
+  useEffect(() => {
+    doFetch('http://localhost:8080/users', {
+      method: 'GET'
+    }).then(data => {
+      console.log('Success:', data);
+      setEmployeesList(data);
+    }).catch(error => {
+      console.error('Error:', error);
+      setErrorMessage(error.error)
+    });
+  }, [])
+
   const viewEmployees = () => {
-    navigate('/employees')
+    navigate('/setting/employees')
+  }
+
+  const viewRequestQueue = () => {
+    navigate('/setting/request-queue')
   }
 
 
@@ -46,10 +78,11 @@ export default function Setting() {
       <div className='pt-5 p-4'>
         <PageToolbar title='Account'></PageToolbar>
 
+        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+
         <main>
-          <div className='flex items-center mb-6'>
-            {/* <ProfilePhoto photoUrl={e.photoUrl}></ProfilePhoto> */}
-            <img className="inline-block h-12 w-12 rounded-full mr-2" src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80" alt="" />
+          <div className='flex items-center mb-4'>
+            <img className="inline-block h-12 w-12 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
             <p className="font-semibold">e.name</p>
           </div>
 
@@ -95,7 +128,7 @@ export default function Setting() {
         </main>
       </div>
 
-      <div className='flex flex-col p-4 pt-۲'>
+      <div className='flex flex-col p-4 pt-2'>
         <h1 className="md:text-2xl font-semibold md:font-bold border-b border-gray-300 pb-4 mb-4">Company</h1>
 
         <button onClick={viewCompanyInfo} className='flex items-center mb-5'>
@@ -103,14 +136,25 @@ export default function Setting() {
           Company Info
         </button>
 
-        <button onClick={viewSetBalance} className='flex items-center mb-5'>
-          <ChartPieIcon className='w-5 h-5 mr-2'></ChartPieIcon>
-          Set Balance
-        </button>
+        <div className='flex items-center justify-between mb-5'>
+          <button onClick={viewSetBalance} className='flex items-center'>
+            <ChartPieIcon className='w-5 h-5 mr-2'></ChartPieIcon>
+            Set Balance
+          </button>
+          {balance.length == 0 && <button className='bg-red-600 text-white rounded-md px-2 py-0.5 text-xs'>REVIEW</button>}
+        </div>
 
-        <button onClick={viewEmployees} className='flex items-center mb-5'>
-          <UsersIcon className='w-5 h-5 mr-2'></UsersIcon>
-          Employees
+        <div className='flex items-center justify-between mb-5'>
+          <button onClick={viewEmployees} className='flex items-center'>
+            <UsersIcon className='w-5 h-5 mr-2'></UsersIcon>
+            Employees
+          </button>
+          {employeesList.length == 0 && <button className='bg-red-600 text-white rounded-md px-2 py-0.5 text-xs'>REVIEW</button>}
+        </div>
+
+        <button onClick={viewRequestQueue} className='flex items-center mb-5'>
+          <ClockIcon className='w-5 h-5 mr-2'></ClockIcon>
+          Requests Queue
         </button>
       </div>
     </div>

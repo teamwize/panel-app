@@ -6,7 +6,7 @@ import { CalendarDaysIcon } from "@heroicons/react/20/solid"
 import { css } from '../constants'
 
 export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handleDateSelected, selectedDate, beforeDays }) {
-  const handleDaySelected = (date) => handleDateSelected(date);
+  const handleDaySelected = (date) => handleDateSelected(date)
 
   return (
     <div>
@@ -24,7 +24,8 @@ export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handl
             <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-3 text-left align-middle transition-all">
               <div>
                 <style>{css}</style>
-                <DayPicker onDayClick={handleDaySelected} disabled={beforeDays} selected={selectedDate} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }} mode="single" className='bg-white rounded-xl flex justify-center py-1 mx-0 md:w-1/2 md:px-4 md:right-0 md:left-0 md:mx-auto'></DayPicker>
+                <DayPicker onDayClick={handleDaySelected} disabled={beforeDays} selected={selectedDate} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }} mode="single"
+                className='bg-white rounded-xl flex justify-center py-1 mx-0 md:w-1/2 md:px-4 md:right-0 md:left-0 md:mx-auto'></DayPicker>
               </div>
             </Dialog.Panel>
           </div>

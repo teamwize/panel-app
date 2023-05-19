@@ -7,11 +7,11 @@ import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 export default function Profile() {
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const navigate = useNavigate()
 
   const [employeeInfo, setEmployeeInfo] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
 
-  const navigate = useNavigate()
   const goBack = () => navigate('/setting');
 
   useEffect(() => {
@@ -19,11 +19,11 @@ export default function Profile() {
       method: 'GET'
     }).then(data => {
       console.log('Success:', data);
-      setEmployeeInfo(data);
+      setEmployeeInfo(data)
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error);
-    });
+      setErrorMessage(error.error)
+    })
   }, [])
 
   const onSubmit = (data) => {
@@ -36,11 +36,11 @@ export default function Profile() {
       body: JSON.stringify(payload)
     }).then(data => {
       console.log('Success:', data);
-      setEmployeeInfo(data);
+      setEmployeeInfo(data)
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error);
-    });
+      setErrorMessage(error.error)
+    })
     console.log(data)
   }
 
@@ -63,15 +63,16 @@ export default function Profile() {
 
             <div className='w-full mb-4'>
               <label className="block text-sm font-medium leading-6 text-gray-900 mb-2" htmlFor="companyName">Company Name</label>
-
-              <input placeholder="companyName" {...register("companyName", { required: "companyName is required", maxLength: { value: 20, message: "The length of the companyName should be less than 20 characters" }, minLength: { value: 2, message: "The length of the companyName shouldn't be less than 2 characters" } })} aria-invalid={errors.companyName ? "true" : "false"} name="companyName" type="text" className="block w-full rounded-md border-0 px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+              <input {...register("companyName", { required: "companyName is required", maxLength: { value: 20, message: "Company name must be under 20 characters" }, minLength: { value: 2, message: "Company name must be over 2 characters" } })}
+                aria-invalid={errors.companyName ? "true" : "false"} name="companyName" type="text" placeholder="companyName"
+                className="block w-full rounded-md border-0 px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
               {errors.companyName && <Alert>{errors.companyName.message}</Alert>}
             </div>
 
             <div className='w-full'>
               <label className="block text-sm font-medium leading-6 text-gray-900 mb-2" htmlFor="location">Location</label>
-
-              <select {...register("location", { required: "location is required" })} aria-invalid={errors.location ? "true" : "false"} name="location" className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              <select {...register("location", { required: "location is required" })} aria-invalid={errors.location ? "true" : "false"} name="location"
+                className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
                 <option value="">Choose your location</option>
                 {countries.map((location) => <option value={location.code} key={location.name}>{location.name}</option>)}
               </select>

@@ -6,10 +6,10 @@ import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
 export default function ChangePassword() {
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const navigate = useNavigate()
 
   const [errorMessage, setErrorMessage] = useState("")
 
-  const navigate = useNavigate()
   const goBack = () => navigate('/setting');
 
   const onSubmit = (data) => {
@@ -27,10 +27,10 @@ export default function ChangePassword() {
       method: 'POST',
       body: JSON.stringify(payload),
     }).then(data => {
-      console.log('Success:', data);
+      console.log('Success:', data)
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      setErrorMessage(error.error)
     })
   }
 
