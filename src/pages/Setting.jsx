@@ -1,11 +1,13 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import doFetch from '../httpService.js'
 import { Dialog } from '@headlessui/react'
 import { PageToolbar } from '../components'
 import { UserIcon, LockClosedIcon, GlobeAltIcon, ArrowLeftOnRectangleIcon, ChartPieIcon, UsersIcon, BuildingOfficeIcon, ClockIcon } from '@heroicons/react/24/outline'
+import { UserContext } from "../contexts/UserContext.jsx"
 
 export default function Setting() {
+  const { logout } = useContext(UserContext)
   const [logOut, setLogOut] = useState(false);
   const [balance, setBalance] = useState([])
   const [employeesList, setEmployeesList] = useState([])
@@ -14,7 +16,10 @@ export default function Setting() {
   const navigate = useNavigate()
 
   const handleRequest = (accepted) => {
-    if (accepted) navigate('/login');
+    if (accepted) {
+      logout();
+      navigate('/login')
+    }
     closeLogOut()
   }
 

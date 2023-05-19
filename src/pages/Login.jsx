@@ -1,18 +1,19 @@
 import { useForm } from "react-hook-form"
-import { useState } from "react"
+import { useState, useContext } from "react"
 import { useNavigate } from 'react-router-dom'
 import doFetch from '../httpService.js'
 import { logo } from '../constants'
+import { UserContext } from "../contexts/UserContext.jsx"
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm()
+  const {authenticate} = useContext(UserContext)
 
   const [errorMessage, setErrorMessage] = useState(null)
   const navigate = useNavigate()
 
   const onSubmit = (data) => {
     LoginInfo(data);
-    navigate('/calendar')
   }
 
   const LoginInfo = (data) => {
@@ -21,7 +22,8 @@ export default function Login() {
       body: JSON.stringify(data),
     }).then(data => {
       console.log('Success:', data);
-      localStorage.setItem("ACCESS_TOKEN", data.accessToken)
+      authenticate(data.accessToken, data);
+      navigate('/calendar')
     }).catch(error => {
       console.error('Error:', error);
       setErrorMessage(error.error)

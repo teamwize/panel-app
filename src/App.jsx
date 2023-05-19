@@ -1,15 +1,14 @@
 import Root from './routes/root'
+import { useContext } from "react"
 import { Sidebar } from './components'
+import { UserContext } from "./contexts/UserContext.jsx"
 
 export default function App() {
-  let showSidebar = true;
+  const { user, logout, isAuthenticated } = useContext(UserContext);
 
-  if (window.location.pathname == '/login' || window.location.pathname == '/register') {
-    showSidebar = false
-  }
   return (
     <div className='md:flex md:flex-wrap md:h-screen md:justify-center'>
-      {showSidebar ? <Sidebar /> : ''}
+      {isAuthenticated() && <Sidebar user={user} logout={logout} />}
       <Root />
     </div>
   )
