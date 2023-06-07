@@ -10,6 +10,7 @@ export default function ChangePassword() {
   const navigate = useNavigate()
 
   const [errorMessage, setErrorMessage] = useState("")
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const goBack = () => navigate('/setting');
 
@@ -22,14 +23,17 @@ export default function ChangePassword() {
       startDay: data.startDay,
       weekDays: data.weekDays,
     }
+    setIsProcessing(true);
 
     console.log(payload)
     doFetch('http://localhost:8080/organization/default', {
       method: 'POST',
       body: JSON.stringify(payload),
     }).then(data => {
+      setIsProcessing(false);
       console.log('Success:', data)
     }).catch(error => {
+      setIsProcessing(false);
       console.error('Error:', error);
       setErrorMessage(error.error)
     })
@@ -52,7 +56,7 @@ export default function ChangePassword() {
           <div className='w-full'>
             <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="startDay">Week starting day</label>
             <select {...register("startDay", { required: "Week starting day is required" })} aria-invalid={errors.startDay ? "true" : "false"} name="startDay"
-              className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
+              className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
               <option value="">Choose week starting day</option>
               {weekDays.map((day) => <option value={day.day} key={day.day}>{day.day}</option>)}
             </select>
@@ -69,7 +73,9 @@ export default function ChangePassword() {
             {errors.weekDays && <Alert>{errors.weekDays.message}</Alert>}
           </div>
 
-          <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Save</button>
+          <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            {isProcessing ? "Waiting ..." : "Save"}
+          </button>
         </form>
       </div>
     </div>

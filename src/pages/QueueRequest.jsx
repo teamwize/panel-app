@@ -12,6 +12,7 @@ export default function QueueRequest() {
   const [requestsList, setRequestsList] = useState([])
   const [requestDetails, setRequestDetails] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
     doFetch('http://localhost:8080/days-off', {
@@ -33,14 +34,18 @@ export default function QueueRequest() {
     let payload = {
       status: status
     }
+    setIsProcessing(true);
+
     doFetch('http://localhost:8080/days-off/' + id, {
       method: 'PATCH',
       body: JSON.stringify(payload),
     }).then(data => {
+      setIsProcessing(false);
       console.log('Success:', data);
       setRequestsList(prevState => prevState.filter(r => r.id !== id));
       handleModal();
     }).catch(error => {
+      setIsProcessing(false);
       console.error('Error:', error);
       setErrorMessage(error.error);
     });
@@ -66,7 +71,7 @@ export default function QueueRequest() {
         {requestsList.map((request) => <div key={request.id}>
           <Request request={request} setRequestDetails={setRequestDetails} />
 
-          <Modal request={request} requestDetails={requestDetails} handleModal={handleModal} handleRequest={handleRequest} viewBalance={viewBalance} />
+          <Modal request={request} requestDetails={requestDetails} handleModal={handleModal} handleRequest={handleRequest} viewBalance={viewBalance} isProcessing={isProcessing}/>
         </div>)}
       </div>
     </div>
@@ -96,7 +101,7 @@ function Request({ request, setRequestDetails }) {
   )
 }
 
-function Modal({ request, requestDetails, handleModal, handleRequest, viewBalance }) {
+function Modal({ request, requestDetails, handleModal, handleRequest, viewBalance, isProcessing }) {
   return (
     <Dialog open={requestDetails} onClose={handleModal}>
       <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111105] z-40'>
@@ -134,8 +139,12 @@ function Modal({ request, requestDetails, handleModal, handleRequest, viewBalanc
             </section>
 
             <section className='flex text-center justify-center'>
-              <button onClick={() => handleRequest('REJECTED', request.id)} className='rounded-lg p-2 text-white shadow-md bg-red-500 w-1/2'>Reject</button>
-              <button onClick={() => handleRequest('ACCEPTED', request.id)} className='rounded-lg p-2 text-white shadow-md ml-4 bg-green-500 w-1/2'>Accept</button>
+              <button onClick={() => handleRequest('REJECTED', request.id)} className='rounded-lg p-2 text-white shadow-md bg-red-500 w-1/2'>
+                {isProcessing ? "Waiting ..." : "Reject"}
+              </button>
+              <button onClick={() => handleRequest('ACCEPTED', request.id)} className='rounded-lg p-2 text-white shadow-md ml-4 bg-green-500 w-1/2'>
+                {isProcessing ? "Waiting ..." : "Accept"}
+              </button>
             </section>
           </Dialog.Panel>
         </div>

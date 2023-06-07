@@ -14,6 +14,7 @@ export default function Profile() {
 
   const [employeeInfo, setEmployeeInfo] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
+  const [isProcessing, setIsProcessing] = useState(false)
   const [picture, setPicture] = useState({
     cropperOpen: false,
     img: null,
@@ -41,13 +42,17 @@ export default function Profile() {
     let payload = {
       fullname: data.fullname
     }
+    setIsProcessing(true);
+
     doFetch('http://localhost:8080/users/me', {
       method: 'PUT',
       body: JSON.stringify(payload)
     }).then(data => {
+      setIsProcessing(false);
       console.log('Success:', data);
       setEmployeeInfo(data);
     }).catch(error => {
+      setIsProcessing(false);
       console.error('Error:', error);
       setErrorMessage(error.error);
     });
@@ -165,11 +170,13 @@ export default function Profile() {
                 <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="fullName">FullName</label>
                 <input placeholder="employeeInfo.name" {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
                   aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
-                  className="block w-full rounded-md border dark:border-gray-700 border-gray-200 px-4 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 " />
+                  className="block w-full rounded-md border dark:border-gray-700 border-gray-200 px-4 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 " />
                 {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
               </div>
 
-              <button type="submit" className='flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4'>Save</button>
+              <button type="submit" className='flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4'>
+                {isProcessing ? "Waiting ..." : "Save"}
+              </button>
             </form>
           </div>
         </main>

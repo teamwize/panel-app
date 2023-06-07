@@ -8,6 +8,7 @@ export default function Employees() {
   const [employeesList, setEmployeesList] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [remove, setRemove] = useState(false)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const navigate = useNavigate();
 
@@ -32,13 +33,16 @@ export default function Employees() {
   const closeRemove = () => setRemove(false)
 
   const handleRequest = (confirmed, id) => {
+    setIsProcessing(true);
     if (confirmed) {
       doFetch('http://localhost:8080/users/' + id, {
         method: 'DELETE'
       }).then(data => {
+        setIsProcessing(false);
         console.log('Success:', data);
         setEmployeesList(prevState => prevState.filter(data => data.ID !== id))
       }).catch(error => {
+        setIsProcessing(false);
         console.error('Error:', error);
         setErrorMessage(error.error)
       })
@@ -91,7 +95,9 @@ export default function Employees() {
 
                   <section className='flex text-center justify-center'>
                     <button onClick={() => handleRequest(false)} className='rounded-lg p-2 shadow-md bg-indigo-600 text-white w-1/2'>No</button>
-                    <button onClick={() => handleRequest(true, e.ID)} className='rounded-lg p-2 shadow-md ml-4 border border-indigo-600 w-1/2'>Yes</button>
+                    <button onClick={() => handleRequest(true, e.ID)} className='rounded-lg p-2 shadow-md ml-4 border border-indigo-600 w-1/2'>
+                      {isProcessing ? "Waiting ..." : "Yes"}
+                    </button>
                   </section>
                 </Dialog.Panel>
               </div>

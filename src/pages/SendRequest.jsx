@@ -13,6 +13,7 @@ export default function SendRequest() {
   const [endCalendarIsOn, setEndCalendarIsOn] = useState(false)
   const [reason, setReason] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
+  const [isProcessing, setIsProcessing] = useState(false)
 
   const navigate = useNavigate();
   const daysBeforeToday = { before: new Date() }
@@ -41,16 +42,19 @@ export default function SendRequest() {
       createdAt: format(new Date(), 'PP'),
       distance: distance
     }
+    setIsProcessing(true);
+
     doFetch('http://localhost:8080/days-off', {
       method: 'POST',
       body: JSON.stringify(requestData),
     }).then(data => {
+      setIsProcessing(false)
       console.log('Success:', data);
       navigate('/pending-request');
     }).catch(error => {
+      setIsProcessing(false)
       console.error('Error:', error);
       setErrorMessage(error.error);
-      console.log(error.error)
     });
   }
 
@@ -82,7 +86,9 @@ export default function SendRequest() {
             <textarea value={reason} onChange={e => setReason(e.target.value)} className='border rounded-md p-3 w-full dark:border-gray-700 border-gray-200 dark:bg-gray-800'></textarea>
           </div>
 
-          <button onClick={sendRequest} className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Submit Request</button>
+          <button onClick={sendRequest} className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+            {isProcessing ? "Waiting ..." : "Submit Request"}
+          </button>
         </div>
       </div>
     </div>
