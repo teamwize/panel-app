@@ -1,0 +1,29 @@
+.my-selected:not([disabled]) { 
+    font-weight: bold; 
+    border: 2px solid currentColor;
+}
+.my-selected:hover:not([disabled]) { 
+    border-color: #4f46e6;
+    color: #4f46e6;
+    
+}
+.my-today { 
+    font-weight: bold;
+    font-size: 110%; 
+}
+
+@media (min-width: 768px) {
+  .my-styles {
+    day {
+      padding: 20px;
+      margin: 7px 12px;
+      font-size: 8px
+    },
+    head {
+      font-size: 18px
+    },
+    caption {
+      margin: 7px
+    }
+  }
+}

@@ -1,15 +1,17 @@
 import Root from './routes/root'
 import { useContext } from "react"
 import { Sidebar } from './components'
-import { UserContext } from "./contexts/UserContext.jsx"
+import { UserContext, ThemeProvider } from './contexts';
 
 export default function App() {
   const { user, logout, isAuthenticated } = useContext(UserContext);
 
   return (
-    <div className='md:flex md:flex-wrap md:h-screen md:justify-center'>
-      {isAuthenticated() && <Sidebar user={user} logout={logout} />}
-      <Root />
-    </div>
+    <ThemeProvider>
+      <div className='md:flex md:flex-wrap md:h-screen h-full md:justify-center bg-gray-100 dark:bg-gray-900'>
+        {isAuthenticated() && <Sidebar user={user} logout={logout} />}
+        <Root />
+      </div>
+    </ThemeProvider>
   )
 }

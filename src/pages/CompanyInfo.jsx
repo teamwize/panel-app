@@ -46,33 +46,33 @@ export default function Profile() {
 
 
   return (
-    <div className='md:w-3/4 flex-1 overflow-y-auto mb-2 md:fixed top-0 bottom-0 right-0'>
-      <div className='pt-5 p-4'>
-        <div className="flex items-center border-b border-gray-300 pb-4 mb-4">
+    <div className='md:w-5/6 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+      <div className='pt-5 p-4 md:mx-auto md:w-full md:max-w-5xl'>
+        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
           <button onClick={goBack}>
             <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
           </button>
-          <h1 className="md:text-2xl font-semibold md:font-bold">Company Info</h1>
+          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Company Info</h1>
         </div>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
         <main>
           <form onSubmit={handleSubmit(onSubmit)}>
-            {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
+            {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
             <div className='w-full mb-4'>
-              <label className="block text-sm font-medium leading-6 text-gray-900 mb-2" htmlFor="companyName">Company Name</label>
-              <input {...register("companyName", { required: "companyName is required", maxLength: { value: 20, message: "Company name must be under 20 characters" }, minLength: { value: 2, message: "Company name must be over 2 characters" } })}
+              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="companyName">Company Name</label>
+              <input {...register("companyName", { required: "Company name is required", maxLength: { value: 20, message: "Company name must be under 20 characters" }, minLength: { value: 2, message: "Company name must be over 2 characters" } })}
                 aria-invalid={errors.companyName ? "true" : "false"} name="companyName" type="text" placeholder="companyName"
-                className="block w-full rounded-md border-0 px-4 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-600 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6" />
+                className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
               {errors.companyName && <Alert>{errors.companyName.message}</Alert>}
             </div>
 
             <div className='w-full'>
-              <label className="block text-sm font-medium leading-6 text-gray-900 mb-2" htmlFor="location">Location</label>
-              <select {...register("location", { required: "location is required" })} aria-invalid={errors.location ? "true" : "false"} name="location"
-                className="mt-2 block w-full rounded-md border-0 py-1.5 pl-3 pr-10 text-gray-900 ring-1 ring-inset ring-gray-300 focus:ring-2 focus:ring-indigo-600 sm:text-sm sm:leading-6">
+              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="location">Location</label>
+              <select {...register("location", { required: "Location is required" })} aria-invalid={errors.location ? "true" : "false"} name="location"
+                className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
                 <option value="">Choose your location</option>
                 {countries.map((location) => <option value={location.code} key={location.name}>{location.name}</option>)}
               </select>

@@ -11,8 +11,8 @@ export const UserContext = React.createContext({
 })
 
 export default function UserContextProvider({ children }) {
-  const [user, setUser] = useLocalStorage("RT_USER", null)
-  const [accessToken, setAccessToken] = useLocalStorage("RT_ACCESS_TOKEN", null)
+  const [user, setUser] = useLocalStorage("USER", null)
+  const [accessToken, setAccessToken] = useLocalStorage("ACCESS_TOKEN", null)
 
   const authenticate = (accessToken, user) => {
     setUser(user);
@@ -27,7 +27,7 @@ export default function UserContextProvider({ children }) {
   }
 
   const isAuthenticated = () => {
-    const accessToken = localStorage.getItem("RT_ACCESS_TOKEN");
+    const accessToken = localStorage.getItem("ACCESS_TOKEN");
     return accessToken != null && accessToken !== "" && !isTokenExpired(accessToken)
   }
 

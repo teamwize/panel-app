@@ -52,14 +52,14 @@ export default function Employees() {
 
 
   return (
-    <div className='md:w-3/4 flex-1 overflow-y-auto mb-2 md:fixed top-0 bottom-0 right-0'>
-      <div className='pt-5 px-4'>
-        <div className='flex items-center justify-between border-b border-gray-300 mb-4 pb-4'>
+    <div className='md:w-5/6 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+      <div className='pt-5 px-4 md:mx-auto md:w-full md:max-w-5xl'>
+        <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-700 mb-2 pb-4'>
           <div className="flex items-center">
             <button onClick={goBack}>
               <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
             </button>
-            <h1 className="md:text-2xl font-semibold md:font-bold">Employees List</h1>
+            <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Employees List</h1>
           </div>
 
           <button onClick={viewAddEmployee} className='rounded-lg px-5 py-1.5 shadow-md bg-indigo-600 text-white text-xs font-semibold'>Add</button>
@@ -67,8 +67,8 @@ export default function Employees() {
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 
-        {employeesList.map(e => <div key={e.ID} className='flex justify-between items-center mb-2 pb-2 border-b'>
-          <div className='mx-2 flex items-center'>
+        {employeesList.map(e => <div key={e.ID} className='flex justify-between items-center mb-2 pb-2 border-b dark:border-gray-700'>
+          <div className='flex items-center'>
             <img className="inline-block h-12 w-12 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
             <div className="ml-3">
               <p className="font-semibold mb-1">e.name</p>
@@ -76,12 +76,12 @@ export default function Employees() {
             </div>
           </div>
 
-          <button onClick={() => setRemove(true)} className='rounded-lg px-2 py-1.5 shadow-md mr-2 border border-indigo-600 text-xs font-semibold'>Remove</button>
+          <button onClick={() => setRemove(true)} className='rounded-lg px-2 py-1 shadow-md border border-indigo-600 text-xs font-semibold'>Remove</button>
 
           <Dialog open={remove} onClose={closeRemove}>
-            <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111110a]'>
+            <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111110a] z-40'>
               <div className="flex min-h-full items-center justify-center p-4 text-center">
-                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
+                <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-200 p-6 text-left align-middle transition-all">
                   <div className='flex items-center mb-6'>
                     <XMarkIcon className='w-6 h-6 mr-2'></XMarkIcon>
                     <h1 className='font-semibold'>Remove Employee</h1>

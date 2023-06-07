@@ -52,18 +52,18 @@ export default function QueueRequest() {
 
 
   return (
-    <div className='md:w-3/4 flex-1 overflow-y-auto mb-2 md:fixed top-0 bottom-0 right-0'>
-      <div className='pt-5 px-4'>
-        <div className="flex items-center border-b border-gray-300 pb-4 mb-4">
+    <div className='md:w-5/6 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+      <div className='pt-5 px-4 md:mx-auto md:w-full md:max-w-5xl'>
+        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-2">
           <button onClick={goBack}>
             <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
           </button>
-          <h1 className="md:text-2xl font-semibold md:font-bold">Request Queue</h1>
+          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Request Queue</h1>
         </div>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 
-        {requestsList.map((request) => <div key={request.id} className='mx-2 mb-2 border-b pb-4'>
+        {requestsList.map((request) => <div key={request.id}>
           <Request request={request} setRequestDetails={setRequestDetails} />
 
           <Modal request={request} requestDetails={requestDetails} handleModal={handleModal} handleRequest={handleRequest} viewBalance={viewBalance} />
@@ -75,27 +75,22 @@ export default function QueueRequest() {
 
 function Request({ request, setRequestDetails }) {
   return (
-    <section onClick={() => setRequestDetails(true)} className='flex flex-row items-center'>
-      <img className="inline-block h-12 w-12 rounded-full mr-4" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
+    <section onClick={() => setRequestDetails(true)} className='flex items-center bg-white dark:bg-gray-800 dark:text-gray-200 mb-2 px-4 py-2 rounded-lg'>
+      <img className="h-12 w-12 rounded-full mr-4" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
-      <div>
-        <p className="fullname font-semibold mb-1">request.name</p>
+      <div className='flex flex-col md:flex-row md:items-center md:w-full md:justify-between'>
+        <div>
+          <p className="fullname text-sm font-semibold md:text-base mb-1">request.name</p>
 
-        <div className='mb-1 flex'>
-          <p className='start text-xs text-gray-600 flex items-center mr-4'>
-            <CalendarIcon className='w-4 h-4 mr-1' />
-            {format(new Date(request.start), 'PP')}
-          </p>
-          <p className='end text-xs text-gray-600 flex items-center'>
-            <CalendarIcon className='w-4 h-4 mr-1' />
-            {format(new Date(request.end), 'PP')}
-          </p>
+          <div className='flex mb-1 md:mb-0'>
+            <p className='text-sm md:text-base flex items-center mr-1'>
+              {format(new Date(request.start), 'd MMM')} - {format(new Date(request.end), 'd MMM')}
+            </p>
+            <p className='distance text-sm md:text-base'>(2 {(request.distance) == 1 ? "Day" : "Days"})</p>
+          </div>
         </div>
 
-        <div className='flex'>
-          <p className='type text-xs text-gray-600 mr-1'>{leaveTypeJson[request.type]} :</p>
-          <p className='distance text-xs text-red-700 mb-1'>request.distance {(request.distance) == 1 ? "Day" : "Days"} off</p>
-        </div>
+        <p className='type w-fit text-sm md:text-base border p-1 rounded-md border-gray-200 dark:border-gray-700'>{leaveTypeJson[request.type]}</p>
       </div>
     </section>
   )
@@ -104,42 +99,37 @@ function Request({ request, setRequestDetails }) {
 function Modal({ request, requestDetails, handleModal, handleRequest, viewBalance }) {
   return (
     <Dialog open={requestDetails} onClose={handleModal}>
-      <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111105]'>
+      <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111105] z-40'>
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
-            <section className='flex flex-col items-start mb-4 cursor-pointer'>
+          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-200 p-6 text-left align-middle transition-all">
+            <section className='flex-col items-start mb-4 cursor-pointer'>
               <div className='flex items-center mb-2'>
-                <img className="inline-block h-12 w-12 rounded-full mr-4" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
+                <img className="inline-block h-12 w-12 rounded-full mr-3" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
                 <div>
-                  <p className="fullname font-semibold">request.name</p>
-                  <p onClick={() => viewBalance(request.name)} className="text-sm text-blue-600">View balance</p>
+                  <p className="fullname text-sm font-semibold md:text-base mb-1 text-gray-900 dark:text-gray-300">request.name</p>
+                  <p onClick={() => viewBalance(request.name)} className="text-sm md:text-base text-blue-600">View balance</p>
                 </div>
               </div>
 
               <div>
-                <div className='mb-1 flex'>
-                  <p className='start text-sm text-gray-600 flex items-center mr-4'>
-                    <label htmlFor='start' className="mr-1 text-xs">Start:</label>
-                    {format(new Date(request.start), 'PP')}
-                  </p>
+                <p className='date text-sm md:text-base mb-1'>
+                  <label htmlFor='start' className="mr-1 text-xs md:text-sm">Date:</label>
+                  {format(new Date(request.start), 'd MMM')} - {format(new Date(request.end), 'd MMM')} (2 {(request.distance) == 1 ? "Day" : "Days"})
+                </p>
 
-                  <p className='end text-sm text-gray-600 flex items-center'>
-                    <label htmlFor='end' className="mr-1 text-xs">End:</label>
-                    {format(new Date(request.end), 'PP')}
-                  </p>
-                </div>
+                <p className='type text-sm md:text-base mb-1'>
+                  <label htmlFor='type' className="mr-1 text-xs md:text-sm">Type:</label>
+                  {leaveTypeJson[request.type]}</p>
 
-                <div className='flex'>
-                  <p className='type text-sm text-gray-600 mr-1'>{leaveTypeJson[request.type]} :</p>
-                  <p className='distance text-sm text-gray-600 mb-1'>request.distance {(request.distance) == 1 ? "Day" : "Days"} off</p>
-                </div>
+                <p className='text-sm md:text-base flex items-center mb-1'>
+                  <label className="mr-1 text-xs md:text-sm">Created at:</label>
+                  {format(new Date(request.createdAt), 'd MMM')}
+                </p>
 
-                <p className='reason text-sm text-gray-600 mb-1'>
-                  <label htmlFor='explanation' className="mr-1 text-xs">Explanation:</label>
+                <p className='reason text-sm md:text-base'>
+                  <label htmlFor='explanation' className="mr-1 text-xs md:text-sm">Explanation:</label>
                   request.reason</p>
-
-                <p className='distance text-xs text-gray-400'>Created at: {format(new Date(request.createdAt), 'PP')}</p>
               </div>
             </section>
 

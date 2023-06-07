@@ -4,26 +4,20 @@ import { leaveTypeJson, statusJson } from '../constants'
 
 export default function Request({ request }) {
   return (
-    <section className='flex flex-row items-center justify-between bg-white mb-2 px-4 py-2 rounded-lg'>
-      <div className='flex items-center'>
-        <div className='flex flex-col'>
-          <div className='flex flex-row mb-1'>
-            <p className='start text-xs text-gray-600 flex items-center mr-3'>
-              <CalendarIcon className='w-4 h-4 mr-1' />
-              {format(new Date(request.start), 'PP')}
-            </p>
-            <p className='end text-xs text-gray-600 flex items-center'>
-              <CalendarIcon className='w-4 h-4 mr-1' />
-              {format(new Date(request.end), 'PP')}
-            </p>
-          </div>
+    <section className='bg-white dark:bg-gray-800 dark:text-gray-200 mb-2 px-4 py-2 rounded-lg'>
+      <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
+        <div className='flex flex-row mb-1 md:mb-0'>
+          <p className='text-sm md:text-base text-gray-600 dark:text-gray-300 flex items-center mr-1'>
+            {format(new Date(request.start), 'd MMM')} - {format(new Date(request.end), 'd MMM')}
+          </p>
+          <p className='distance text-sm md:text-base'>(request.distance {(request.distance) == 1 ? "Day" : "Days"})</p>
+        </div>
 
-          <p className='type text-xs text-gray-600 mb-1'>{leaveTypeJson[request.type]}</p>
-          <p className='distance text-xs text-red-700 mb-1'>request.distance {(request.distance) == 1 ? "Day" : "Days"} off</p>
+        <div className='flex flex-row'>
+          <p className='type text-sm md:text-base text-gray-600 dark:text-gray-300 border p-1 rounded-md border-gray-200 dark:border-gray-700 mr-1'>{leaveTypeJson[request.type]}</p>
+          <p className={`${request.status == "PENDING" ? 'text-yellow-500' : request.status == "ACCEPTED" ? 'text-green-500' : 'text-red-500'} status text-sm md:text-base border p-1 rounded-md border-gray-200 dark:border-gray-700`}>{statusJson[request.status]}</p>
         </div>
       </div>
-
-      <p className={`${request.status == "PENDING" ? 'text-yellow-500' : request.status == "ACCEPTED" ? 'text-green-500' : 'text-red-500'} status text-xs font-semibold mb-1`}>{statusJson[request.status]}</p>
     </section>
   )
 }

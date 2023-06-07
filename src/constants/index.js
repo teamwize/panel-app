@@ -93,20 +93,29 @@ export const leaveType = [
   { name: 'Paid time', value: 'PAID_TIME' }
 ]
 
-export const css = `
-.my-selected:not([disabled]) { 
-    font-weight: bold; 
-    border: 2px solid currentColor;
-}
-.my-selected:hover:not([disabled]) { 
-    border-color: #4f46e6;
-    color: #4f46e6;
-}
-.my-today { 
-    font-weight: bold;
-    font-size: 110%; 
-}
-`
+// export const css = `
+// .my-selected:not([disabled]) { 
+//     font-weight: bold; 
+//     border: 2px solid currentColor;
+// }
+// .my-selected:hover:not([disabled]) { 
+//     border-color: #4f46e6;
+//     color: #4f46e6;
+    
+// }
+// .my-today { 
+//     font-weight: bold;
+//     font-size: 110%; 
+// }
+
+// @media (min-width: 768px) {
+//   .styles {
+//     cell {
+//       padding: 10px 20px
+//     }
+//   }
+// }
+// `
 
 export const leaveTypeJson = {
   "VACATION": "Vacation",
@@ -119,3 +128,13 @@ export const statusJson = {
   "ACCEPTED": "Accepted",
   "REJECTED": 'Rejected'
 }
+
+export const weekDays = [
+  {day : "Monday"},
+  {day : "Tuesday"},
+  {day : "Wednesday"},
+  {day : "Thursday"},
+  {day : "Friday"},
+  {day : "Saturday"},
+  {day : "Sunday"}
+]

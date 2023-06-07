@@ -1,5 +1,5 @@
 import { Route, Routes } from "react-router-dom";
-import { Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile, AddEmployee, CompanyInfo, SetBalance } from "../pages";
+import { Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile, AddEmployee, CompanyInfo, SetBalance, SetWorkingDays } from "../pages";
 import { AuthenticatedRoute } from "../components"
 
 export default function Root() {
@@ -22,6 +22,7 @@ export default function Root() {
         <Route path='/setting/employees/add' element={<AuthenticatedRoute><AddEmployee /></AuthenticatedRoute>}></Route>
         <Route path='/setting/company' element={<AuthenticatedRoute><CompanyInfo /></AuthenticatedRoute>}></Route>
         <Route path='/setting/set-balance' element={<AuthenticatedRoute><SetBalance /></AuthenticatedRoute>}></Route>
+        <Route path='/setting/working-days' element={<AuthenticatedRoute><SetWorkingDays /></AuthenticatedRoute>}></Route>
       </Routes>
     </>
   )

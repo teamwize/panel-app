@@ -3,29 +3,28 @@ import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { Dialog } from '@headlessui/react'
 import { CalendarDaysIcon } from "@heroicons/react/20/solid"
-import { css } from '../constants'
+import '../constants/style.css'
 
 export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handleDateSelected, selectedDate, beforeDays }) {
   const handleDaySelected = (date) => handleDateSelected(date)
 
   return (
-    <div>
+    <div className="flex-1 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200">
       <div>
-        <label htmlFor={title} className="block text-sm font-medium leading-6 text-gray-900">{title}</label>
-        <button onClick={() => setCalendarIsOn(true)} className="border py-3 px-2 bg-white rounded-md flex justify-center text-sm">
+        <label htmlFor={title} className="block text-sm font-semibold md:text-base leading-6 mb-1">{title}</label>
+        <button onClick={() => setCalendarIsOn(true)} className="w-full border dark:border-gray-700 border-gray-200 py-3 px-2 bg-white dark:bg-gray-800 rounded-md flex justify-center text-sm md:text-base">
           {format(selectedDate, 'PP')}
-          <CalendarDaysIcon className="h-5 w-5 text-gray-400 ml-10" aria-hidden="true" />
+          <CalendarDaysIcon className="h-5 w-5 text-gray-500 ml-10" aria-hidden="true" />
         </button>
       </div>
 
       <Dialog open={calendarIsOn} onClose={() => setCalendarIsOn(false)}>
-        <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111138]'>
-          <div className="flex min-h-full items-center justify-center p-4 text-center">
-            <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-3 text-left align-middle transition-all">
+        <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-40'>
+          <div className="flex min-h-full items-center justify-center text-center">
+            <Dialog.Panel className="max-w-xs transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-left align-middle transition-all px-4">
               <div>
-                <style>{css}</style>
                 <DayPicker onDayClick={handleDaySelected} disabled={beforeDays} selected={selectedDate} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }} mode="single"
-                className='bg-white rounded-xl flex justify-center py-1 mx-0 md:w-1/2 md:px-4 md:right-0 md:left-0 md:mx-auto'></DayPicker>
+                className='rounded-xl flex justify-center md:right-0 md:left-0 mx-auto max-w-xs'></DayPicker>
               </div>
             </Dialog.Panel>
           </div>

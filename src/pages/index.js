@@ -14,5 +14,6 @@ import Profile from './Profile'
 import AddEmployee from "./AddEmployee"
 import CompanyInfo from "./CompanyInfo"
 import SetBalance from './SetBalance'
+import SetWorkingDays from './SetWorkingDays'
 
-export {Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile, AddEmployee, CompanyInfo, SetBalance}
+export {Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile, AddEmployee, CompanyInfo, SetBalance, SetWorkingDays}
