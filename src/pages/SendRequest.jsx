@@ -1,6 +1,7 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { differenceInCalendarDays, formatISO, format } from 'date-fns'
+import { differenceInCalendarDays, formatISO, format, parse } from 'date-fns'
+import dayjs from 'dayjs'
 import doFetch from '../httpService.js'
 import { Toolbar, DatePicker } from '../components'
 import { leaveType } from '../constants'
@@ -14,11 +15,12 @@ export default function SendRequest() {
   const [reason, setReason] = useState('')
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [calendarCurrentDate, setCalendarCurrentDate] = useState(dayjs(new Date()))
+  const [weekends, setWeekends] = useState([])
 
   const navigate = useNavigate();
-  const daysBeforeToday = { before: new Date() }
-  const daysBeforeStartDate = { before: startDate }
-  const distance = differenceInCalendarDays(endDate, startDate) + 1
+  const daysBeforeToday = new Date()
+  const daysBeforeStartDate = startDate
 
   const handleStartDateSelected = (date) => {
     setStartCalendarIsOn(false);
@@ -58,6 +60,69 @@ export default function SendRequest() {
     });
   }
 
+  // official holidays dates
+  const example = [
+    {
+      month: 'June 2023',
+      holidays: [
+        { date: 'June 4', weekday: 'Sunday', name: 'Death of khomeini' },
+        { date: 'June 5', weekday: 'Monday', name: 'Revolt of Khordad' },
+        { date: 'June 20', weekday: 'Monday', name: 'Revolt of Khordad' },
+      ]
+    },
+    {
+      month: 'September 2023',
+      holidays: [
+        { date: 'September 23', weekday: 'Saturday', name: 'September Equinox' }
+      ]
+    }
+  ]
+  const formattedOfficialHolidaysDate = example.flatMap(e => e.holidays.map(h => h.date));
+  const officialHolidaysDate = formattedOfficialHolidaysDate.map(f => {
+    const parsedOfficialHolidaysDate = parse(f, 'MMMM d', new Date());
+    return new Date(parsedOfficialHolidaysDate)
+  })
+
+  // weekends dates
+  const weekendsDays = ['Saturday', 'Sunday']
+
+  useEffect(() => {
+    const monthDays = calendarCurrentDate.endOf('month').format('D');
+    const result = [];
+    for (let i = 1; i <= monthDays; i++) {
+      const currentDate = dayjs(calendarCurrentDate).date(i).startOf('day');
+      const dayOfWeek = currentDate.day();
+      if (weekendsDays.includes(dayjs().day(dayOfWeek).format('dddd'))) {
+        result.push(new Date(currentDate));
+      }
+    }
+    setWeekends(result)
+  }, [calendarCurrentDate])
+
+  // holidays dates
+  const holidaysDate = officialHolidaysDate.concat(weekends)
+
+  const calculateDistance = (startDate, endDate, holidays) => {
+    const distance = differenceInCalendarDays(endDate, startDate) + 1;
+    const filteredHolidays = holidays.filter(h => dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]'));
+    return distance - filteredHolidays.length;
+  }
+
+  const distance = calculateDistance(startDate, endDate, holidaysDate);
+
+  useEffect(() => {
+    let updatedStartDate = dayjs(startDate);
+    for (let i = 0; i <= 20; i++) {
+      const isHoliday = holidaysDate.find(d => dayjs(d).isSame(updatedStartDate, 'day'));
+      if (!isHoliday) {
+        setStartDate(updatedStartDate.toDate());
+        setEndDate(updatedStartDate.toDate());
+        break;
+      }
+      updatedStartDate = updatedStartDate.add(1, 'day')
+    }
+  }, [])
+
 
   return (
     <div className='md:w-5/6 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
@@ -75,8 +140,8 @@ export default function SendRequest() {
           </div>
 
           <section className='flex justify-between'>
-            <DatePicker title='Start' calendarIsOn={startCalendarIsOn} setCalendarIsOn={setStartCalendarIsOn} handleDateSelected={handleStartDateSelected} selectedDate={startDate} beforeDays={daysBeforeToday} />
-            <DatePicker title='End' calendarIsOn={endCalendarIsOn} setCalendarIsOn={setEndCalendarIsOn} handleDateSelected={handleEndDateSelected} selectedDate={endDate} beforeDays={daysBeforeStartDate} />
+            <DatePicker title='Start' calendarIsOn={startCalendarIsOn} setCalendarIsOn={setStartCalendarIsOn} handleDateSelected={handleStartDateSelected} selectedDate={startDate} daysBefore={daysBeforeToday} setCalendarCurrentDate={setCalendarCurrentDate} holidaysDate={holidaysDate} />
+            <DatePicker title='End' calendarIsOn={endCalendarIsOn} setCalendarIsOn={setEndCalendarIsOn} handleDateSelected={handleEndDateSelected} selectedDate={endDate} daysBefore={daysBeforeStartDate} setCalendarCurrentDate={setCalendarCurrentDate} holidaysDate={holidaysDate} />
           </section>
 
           <p className='my-4 border dark:border-gray-700 border-gray-200 py-3 px-2 text-center text-sm font-semibold md:text-base rounded-md'>Day off request is for {distance} {distance == 1 ? "Day" : "Days"}</p>

@@ -1,20 +1,31 @@
 import { format } from "date-fns"
+import dayjs from 'dayjs'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
 import { Dialog } from '@headlessui/react'
 import { CalendarDaysIcon } from "@heroicons/react/20/solid"
 import '../constants/style.css'
 
-export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handleDateSelected, selectedDate, beforeDays }) {
+export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handleDateSelected, selectedDate, daysBefore, setCalendarCurrentDate, holidaysDate }) {
   const handleDaySelected = (date) => handleDateSelected(date)
+
+  const handleMonthChange = (newDate) => {
+    setCalendarCurrentDate(dayjs(newDate));
+  }
+
+  const isDateDisabled = (date) => {
+    const disableDays = dayjs(date).isBefore(daysBefore, 'day') || holidaysDate.some((h) => dayjs(date).isSame(h, 'day'));
+    return disableDays;
+  }
+
 
   return (
     <div className="flex-1 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200">
-      <div>
+      <div className='flex flex-col items-center'>
         <label htmlFor={title} className="block text-sm font-semibold md:text-base leading-6 mb-1">{title}</label>
-        <button onClick={() => setCalendarIsOn(true)} className="w-full border dark:border-gray-700 border-gray-200 py-3 px-2 bg-white dark:bg-gray-800 rounded-md flex justify-center text-sm md:text-base">
-          {format(selectedDate, 'PP')}
-          <CalendarDaysIcon className="h-5 w-5 text-gray-500 ml-10" aria-hidden="true" />
+        <button onClick={() => setCalendarIsOn(true)} className="w-[95%] border dark:border-gray-700 border-gray-200 py-3 bg-white dark:bg-gray-800 rounded-md flex justify-center text-sm md:text-base">
+          <CalendarDaysIcon className="h-5 w-5 text-gray-500 mr-1" aria-hidden="true" />
+          {format(selectedDate, 'd MMM')}
         </button>
       </div>
 
@@ -23,8 +34,9 @@ export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handl
           <div className="flex min-h-full items-center justify-center text-center">
             <Dialog.Panel className="max-w-xs transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-left align-middle transition-all px-4">
               <div>
-                <DayPicker onDayClick={handleDaySelected} disabled={beforeDays} selected={selectedDate} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }} mode="single"
-                className='rounded-xl flex justify-center md:right-0 md:left-0 mx-auto max-w-xs'></DayPicker>
+                <DayPicker modifiers={{ holiday: holidaysDate }} modifiersStyles={{ holiday: { color: '#ef4444', fontWeight: "bold", margin: '1px' } }} onMonthChange={handleMonthChange}
+                  onDayClick={handleDaySelected} disabled={isDateDisabled} selected={selectedDate} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }} mode="single"
+                  className='rounded-xl flex justify-center md:right-0 md:left-0 mx-auto max-w-xs'></DayPicker>
               </div>
             </Dialog.Panel>
           </div>
