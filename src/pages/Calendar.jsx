@@ -9,6 +9,7 @@ import doFetch from '../httpService.js'
 import { leaveTypeJson, statusJson } from '../constants'
 import '../constants/style.css'
 import { Toolbar } from '../components'
+import useCalendarData from '../utils/holidays.js';
 
 dayjs.extend(isBetween)
 
@@ -17,9 +18,8 @@ export default function Calendar() {
   const [requestsList, setRequestsList] = useState([])
   const [offDays, setOffDays] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
-  const [calendarCurrentDate, setCalendarCurrentDate] = useState(dayjs(new Date()))
-
   const selectedDateRequests = requestsList.filter(r => (dayjs(selectedDate).isBetween(dayjs(r.start), dayjs(r.end), 'days', '[]')))
+  const { calendarCurrentDate, setCalendarCurrentDate, holidaysDate } = useCalendarData();
 
   useEffect(() => {
     doFetch('http://localhost:8080/days-off', {
@@ -88,7 +88,8 @@ return (
 
       <main className='pb-4'>
         <div>
-          <DayPicker styles={myStyles} modifiers={{ highlighted: offDays }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold", margin: '1px' } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
+          <DayPicker
+           styles={myStyles} modifiers={{ highlighted: offDays, holiday: holidaysDate }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold" }, holiday: { color: '#ef4444', fontWeight: "bold" } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
             onMonthChange={handleMonthChange} selected={selectedDate} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-1 mx-auto max-w-lg'></DayPicker>
         </div>
 

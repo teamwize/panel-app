@@ -5,28 +5,29 @@ import dayjs from 'dayjs'
 import doFetch from '../httpService.js'
 import { Toolbar, DatePicker } from '../components'
 import { leaveType } from '../constants'
+import useCalendarData from '../utils/holidays.js';
 
 export default function SendRequest() {
   const [type, setType] = useState('VACATION')
   const [startDate, setStartDate] = useState(new Date())
-  const [startCalendarIsOn, setStartCalendarIsOn] = useState(false)
   const [endDate, setEndDate] = useState(new Date())
-  const [endCalendarIsOn, setEndCalendarIsOn] = useState(false)
   const [reason, setReason] = useState('')
+  const [startCalendarIsOn, setStartCalendarIsOn] = useState(false)
+  const [endCalendarIsOn, setEndCalendarIsOn] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
-  const [calendarCurrentDate, setCalendarCurrentDate] = useState(dayjs(new Date()))
-  const [weekends, setWeekends] = useState([])
-
-  const navigate = useNavigate();
   const daysBeforeToday = new Date()
   const daysBeforeStartDate = startDate
+  const navigate = useNavigate()
+  const { setCalendarCurrentDate, holidaysDate } = useCalendarData();
 
   const handleStartDateSelected = (date) => {
     setStartCalendarIsOn(false);
     if (!date) return;
     setStartDate(date);
-    if (differenceInCalendarDays(endDate, date) < 0) { setEndDate(date) }
+    if (differenceInCalendarDays(endDate, date) < 0) {
+      setEndDate(date)
+    }
   }
 
   const handleEndDateSelected = (date) => {
@@ -60,56 +61,6 @@ export default function SendRequest() {
     });
   }
 
-  // official holidays dates
-  const example = [
-    {
-      month: 'June 2023',
-      holidays: [
-        { date: 'June 4', weekday: 'Sunday', name: 'Death of khomeini' },
-        { date: 'June 5', weekday: 'Monday', name: 'Revolt of Khordad' },
-        { date: 'June 20', weekday: 'Monday', name: 'Revolt of Khordad' },
-      ]
-    },
-    {
-      month: 'September 2023',
-      holidays: [
-        { date: 'September 23', weekday: 'Saturday', name: 'September Equinox' }
-      ]
-    }
-  ]
-  const formattedOfficialHolidaysDate = example.flatMap(e => e.holidays.map(h => h.date));
-  const officialHolidaysDate = formattedOfficialHolidaysDate.map(f => {
-    const parsedOfficialHolidaysDate = parse(f, 'MMMM d', new Date());
-    return new Date(parsedOfficialHolidaysDate)
-  })
-
-  // weekends dates
-  const weekendsDays = ['Saturday', 'Sunday']
-
-  useEffect(() => {
-    const monthDays = calendarCurrentDate.endOf('month').format('D');
-    const result = [];
-    for (let i = 1; i <= monthDays; i++) {
-      const currentDate = dayjs(calendarCurrentDate).date(i).startOf('day');
-      const dayOfWeek = currentDate.day();
-      if (weekendsDays.includes(dayjs().day(dayOfWeek).format('dddd'))) {
-        result.push(new Date(currentDate));
-      }
-    }
-    setWeekends(result)
-  }, [calendarCurrentDate])
-
-  // holidays dates
-  const holidaysDate = officialHolidaysDate.concat(weekends)
-
-  const calculateDistance = (startDate, endDate, holidays) => {
-    const distance = differenceInCalendarDays(endDate, startDate) + 1;
-    const filteredHolidays = holidays.filter(h => dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]'));
-    return distance - filteredHolidays.length;
-  }
-
-  const distance = calculateDistance(startDate, endDate, holidaysDate);
-
   useEffect(() => {
     let updatedStartDate = dayjs(startDate);
     for (let i = 0; i <= 20; i++) {
@@ -122,6 +73,14 @@ export default function SendRequest() {
       updatedStartDate = updatedStartDate.add(1, 'day')
     }
   }, [])
+
+  const calculateDistance = (startDate, endDate, holidays) => {
+    const distance = differenceInCalendarDays(endDate, startDate) + 1;
+    const filteredHolidays = holidays.filter(h => dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]'));
+    return distance - filteredHolidays.length;
+  }
+
+  const distance = calculateDistance(startDate, endDate, holidaysDate)
 
 
   return (

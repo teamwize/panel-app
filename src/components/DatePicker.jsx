@@ -1,4 +1,3 @@
-import { format } from "date-fns"
 import dayjs from 'dayjs'
 import { DayPicker } from 'react-day-picker'
 import 'react-day-picker/dist/style.css'
@@ -10,7 +9,7 @@ export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handl
   const handleDaySelected = (date) => handleDateSelected(date)
 
   const handleMonthChange = (newDate) => {
-    setCalendarCurrentDate(dayjs(newDate));
+    setCalendarCurrentDate(dayjs(newDate).toDate());
   }
 
   const isDateDisabled = (date) => {
@@ -25,7 +24,7 @@ export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handl
         <label htmlFor={title} className="block text-sm font-semibold md:text-base leading-6 mb-1">{title}</label>
         <button onClick={() => setCalendarIsOn(true)} className="w-[95%] border dark:border-gray-700 border-gray-200 py-3 bg-white dark:bg-gray-800 rounded-md flex justify-center text-sm md:text-base">
           <CalendarDaysIcon className="h-5 w-5 text-gray-500 mr-1" aria-hidden="true" />
-          {format(selectedDate, 'd MMM')}
+          {dayjs(selectedDate).format('D MMM')}
         </button>
       </div>
 
