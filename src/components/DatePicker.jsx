@@ -9,7 +9,7 @@ export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handl
   const handleDaySelected = (date) => handleDateSelected(date)
 
   const handleMonthChange = (newDate) => {
-    setCalendarCurrentDate(dayjs(newDate).toDate());
+    setCalendarCurrentDate(dayjs(newDate));
   }
 
   const isDateDisabled = (date) => {

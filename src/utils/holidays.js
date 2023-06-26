@@ -1,6 +1,8 @@
 import { useState, useEffect } from "react";
-import { format, parse } from 'date-fns'
 import dayjs from 'dayjs'
+import customParseFormat from 'dayjs/plugin/customParseFormat';
+
+dayjs.extend(customParseFormat);
 
 function useCalendarData() {
   const [calendarCurrentDate, setCalendarCurrentDate] = useState(dayjs(new Date()))
@@ -23,11 +25,10 @@ function useCalendarData() {
       ]
     }
   ]
-  const formattedOfficialHolidaysDate = example.flatMap(e => e.holidays.map(h => h.date));
-  const officialHolidaysDate = formattedOfficialHolidaysDate.map(f => {
-    const parsedOfficialHolidaysDate = parse(f, 'MMMM d', new Date());
-    return new Date(parsedOfficialHolidaysDate)
-  })
+  const officialHolidaysDate = example.flatMap(e => e.holidays.map(h => {
+    const parsedOfficialHolidaysDate = dayjs(h.date, 'MMMM D').toDate();
+    return parsedOfficialHolidaysDate
+  }));
 
   // weekends dates
   const weekendsDays = ['Saturday', 'Sunday']

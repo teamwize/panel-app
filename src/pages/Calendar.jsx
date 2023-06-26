@@ -1,7 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { format } from 'date-fns'
-import { DayPicker } from 'react-day-picker'
+import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween.js'
@@ -11,7 +10,7 @@ import '../constants/style.css'
 import { Toolbar } from '../components'
 import useCalendarData from '../utils/holidays.js';
 
-dayjs.extend(isBetween)
+dayjs.extend(isBetween);
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -42,7 +41,7 @@ export default function Calendar() {
       const currentDate = dayjs(calendarCurrentDate).date(i);
       const off = requestsList.filter(r => currentDate.isBetween(dayjs(r.start), dayjs(r.end), 'days', '[]'));
       if (off.length > 0) {
-        result.push(new Date(currentDate.format('YYYY-MM-DD')))
+        result.push(currentDate.toDate())
       }
     }
     setOffDays(result)
@@ -90,11 +89,11 @@ return (
         <div>
           <DayPicker
            styles={myStyles} modifiers={{ highlighted: offDays, holiday: holidaysDate }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold" }, holiday: { color: '#ef4444', fontWeight: "bold" } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
-            onMonthChange={handleMonthChange} selected={selectedDate} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-1 mx-auto max-w-lg'></DayPicker>
+            onMonthChange={handleMonthChange} selected={dayjs(selectedDate).toDate()} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-1 mx-auto max-w-lg'></DayPicker>
         </div>
 
         <div>
-          <p className='font-semibold md:text-lg mt-4 mb-2'>{format(selectedDate, 'yyyy-MM-dd')}</p>
+          <p className='font-semibold md:text-lg mt-4 mb-2'>{dayjs(selectedDate).format('YYYY-MM-DD')}</p>
 
           {selectedDateRequests.map((request) => <Request request={request} key={request.id} />)}
         </div>
@@ -118,7 +117,7 @@ function Request({ request }) {
           <p className="fullname text-sm font-semibold md:text-base mb-1">request.name</p>
           <div className='flex mb-1 md:mb-0'>
             <p className='text-sm md:text-base flex items-center mr-1'>
-              {format(new Date(request.start), 'd MMM')} - {format(new Date(request.end), 'd MMM')}
+              {dayjs(request.start).format('D MMM')} - {dayjs(request.end).format('D MMM')}
             </p>
             <p className='distance text-sm md:text-base'>(2 {(request.distance) == 1 ? "Day" : "Days"})</p>
           </div>

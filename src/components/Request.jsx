@@ -1,5 +1,4 @@
-import { format } from 'date-fns'
-import { CalendarIcon } from '@heroicons/react/24/outline'
+import dayjs from 'dayjs';
 import { leaveTypeJson, statusJson } from '../constants'
 
 export default function Request({ request }) {
@@ -8,7 +7,7 @@ export default function Request({ request }) {
       <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
         <div className='flex flex-row mb-1 md:mb-0'>
           <p className='text-sm md:text-base text-gray-600 dark:text-gray-300 flex items-center mr-1'>
-            {format(new Date(request.start), 'd MMM')} - {format(new Date(request.end), 'd MMM')}
+            {dayjs(request.start).format('D MMM')} - {dayjs(request.end).format('D MMM')}
           </p>
           <p className='distance text-sm md:text-base'>(request.distance {(request.distance) == 1 ? "Day" : "Days"})</p>
         </div>
