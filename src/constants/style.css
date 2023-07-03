@@ -11,18 +11,16 @@
     font-size: 110%; 
 }
 @media (min-width: 768px) {
-  .my-styles {
-    day {
-      padding: 20px;
-      margin: 7px 12px;
-      font-size: 8px
-    },
-    head {
-      font-size: 18px
-    },
-    caption {
-      margin: 7px
-    }
+  .my-styles .day {
+    padding: 20px;
+    margin: 7px 12px;
+    font-size: 8px
+  },
+  .my-styles .head {
+    font-size: 18px
+  },
+  .my-styles .caption {
+    margin: 7px
   }
 }
 .holidaysDate {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { format } from 'date-fns'
+import dayjs from 'dayjs';
 import { Dialog } from '@headlessui/react'
 import { CalendarIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import doFetch from '../httpService.js'
@@ -80,7 +80,7 @@ export default function QueueRequest() {
 
 function Request({ request, setRequestDetails }) {
   return (
-    <section onClick={() => setRequestDetails(true)} className='flex items-center bg-white dark:bg-gray-800 dark:text-gray-200 mb-2 px-4 py-2 rounded-lg'>
+    <section onClick={() => setRequestDetails(true)} className='flex items-center bg-white dark:bg-gray-800 dark:text-gray-200 mb-2 px-4 py-2 rounded-lg cursor-pointer'>
       <img className="h-12 w-12 rounded-full mr-4" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
       <div className='flex flex-col md:flex-row md:items-center md:w-full md:justify-between'>
@@ -89,9 +89,9 @@ function Request({ request, setRequestDetails }) {
 
           <div className='flex mb-1 md:mb-0'>
             <p className='text-sm md:text-base flex items-center mr-1'>
-              {format(new Date(request.start), 'd MMM')} - {format(new Date(request.end), 'd MMM')}
+              {dayjs(request.start).format('D MMM')} - {dayjs(request.end).format('D MMM')}
             </p>
-            <p className='distance text-sm md:text-base'>(2 {(request.distance) == 1 ? "Day" : "Days"})</p>
+            <p className='distance text-sm md:text-base'>({(request.distance) == 1 ? "Day" : "Days"})</p>
           </div>
         </div>
 
@@ -120,7 +120,7 @@ function Modal({ request, requestDetails, handleModal, handleRequest, viewBalanc
               <div>
                 <p className='date text-sm md:text-base mb-1'>
                   <label htmlFor='start' className="mr-1 text-xs md:text-sm">Date:</label>
-                  {format(new Date(request.start), 'd MMM')} - {format(new Date(request.end), 'd MMM')} (2 {(request.distance) == 1 ? "Day" : "Days"})
+                  {dayjs(request.start).format('D MMM')} - {dayjs(request.start).format('D MMM')} ({(request.distance) == 1 ? "Day" : "Days"})
                 </p>
 
                 <p className='type text-sm md:text-base mb-1'>
@@ -129,7 +129,7 @@ function Modal({ request, requestDetails, handleModal, handleRequest, viewBalanc
 
                 <p className='text-sm md:text-base flex items-center mb-1'>
                   <label className="mr-1 text-xs md:text-sm">Created at:</label>
-                  {format(new Date(request.createdAt), 'd MMM')}
+                  {dayjs(request.createdAt).format('D MMM')}
                 </p>
 
                 <p className='reason text-sm md:text-base'>

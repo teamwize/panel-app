@@ -1,11 +1,22 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
-import { differenceInCalendarDays, formatISO, format, parse } from 'date-fns'
 import dayjs from 'dayjs'
+import advancedFormat from 'dayjs/plugin/advancedFormat';
+import isoWeek from 'dayjs/plugin/isoWeek';
+import isBetween from 'dayjs/plugin/isBetween';
+import utc from 'dayjs/plugin/utc';
+import timezone from 'dayjs/plugin/timezone';
 import doFetch from '../httpService.js'
 import { Toolbar, DatePicker } from '../components'
 import { leaveType } from '../constants'
 import useCalendarData from '../utils/holidays.js';
+
+dayjs.extend(advancedFormat);
+dayjs.extend(isoWeek);
+dayjs.extend(isBetween);
+dayjs.extend(utc);
+dayjs.extend(timezone);
+
 
 export default function SendRequest() {
   const [type, setType] = useState('VACATION')
@@ -25,7 +36,7 @@ export default function SendRequest() {
     setStartCalendarIsOn(false);
     if (!date) return;
     setStartDate(date);
-    if (differenceInCalendarDays(endDate, date) < 0) {
+    if (dayjs(endDate).diff(date, 'day') < 0) {
       setEndDate(date)
     }
   }
@@ -39,10 +50,10 @@ export default function SendRequest() {
   const sendRequest = () => {
     let requestData = {
       type: type,
-      start: formatISO(startDate),
-      end: formatISO(endDate),
+      start: dayjs(startDate).toISOString(),
+      end: dayjs(endDate).toISOString(),
       reason: reason,
-      createdAt: format(new Date(), 'PP'),
+      createdAt: dayjs().format('PP'),
       distance: distance
     }
     setIsProcessing(true);
@@ -75,7 +86,7 @@ export default function SendRequest() {
   }, [])
 
   const calculateDistance = (startDate, endDate, holidays) => {
-    const distance = differenceInCalendarDays(endDate, startDate) + 1;
+    const distance = dayjs(endDate).diff(startDate, 'day') + 1;
     const filteredHolidays = holidays.filter(h => dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]'));
     return distance - filteredHolidays.length;
   }

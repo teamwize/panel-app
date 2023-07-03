@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css'
+import styles from 'react-day-picker/dist/style.module.css';
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween.js'
 import doFetch from '../httpService.js'
@@ -17,8 +18,9 @@ export default function Calendar() {
   const [requestsList, setRequestsList] = useState([])
   const [offDays, setOffDays] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
-  const selectedDateRequests = requestsList.filter(r => (dayjs(selectedDate).isBetween(dayjs(r.start), dayjs(r.end), 'days', '[]')))
   const { calendarCurrentDate, setCalendarCurrentDate, holidaysDate } = useCalendarData();
+  const selectedDateRequests = requestsList.filter(r => (dayjs(selectedDate).isBetween(dayjs(r.start), dayjs(r.end), 'days', '[]')))
+  const isWorkingDay = holidaysDate.every(d => !dayjs(d).isSame(selectedDate, 'day'))
 
   useEffect(() => {
     doFetch('http://localhost:8080/days-off', {
@@ -39,6 +41,8 @@ export default function Calendar() {
     const monthDays = calendarCurrentDate.endOf('month').format('D');
     for (let i = 1; i <= monthDays; i++) {
       const currentDate = dayjs(calendarCurrentDate).date(i);
+      const isHoliday = holidaysDate.some(date => dayjs(date).isSame(currentDate, 'day'));
+      if (isHoliday) continue;
       const off = requestsList.filter(r => currentDate.isBetween(dayjs(r.start), dayjs(r.end), 'days', '[]'));
       if (off.length > 0) {
         result.push(currentDate.toDate())
@@ -62,49 +66,50 @@ export default function Calendar() {
 
   const myStyles = {
     dayPicker: {
-      minWidth: '768px'
+      '@media (min-width: 768px)': {
+        minWidth: '768px'
+      }
     },
     day: {
       padding: '20px',
       margin: "7px 12px",
       fontSize: '18px'
     },
-    head : {
+    head: {
       fontSize: '18px'
     },
     caption: {
       margin: "7px"
     }
-}
+  }
 
 
-return (
-  <div className='md:w-5/6 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200'>
-    <div className='pt-4 px-4 md:mx-auto md:w-full md:max-w-5xl'>
-      <Toolbar title='Calendar'></Toolbar>
+  return (
+    <div className='md:w-5/6 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200'>
+      <div className='pt-4 px-4 md:mx-auto md:w-full md:max-w-5xl'>
+        <Toolbar title='Calendar'></Toolbar>
 
-      {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
-      <main className='pb-4'>
-        <div>
-          <DayPicker
-           styles={myStyles} modifiers={{ highlighted: offDays, holiday: holidaysDate }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold" }, holiday: { color: '#ef4444', fontWeight: "bold" } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
-            onMonthChange={handleMonthChange} selected={dayjs(selectedDate).toDate()} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-1 mx-auto max-w-lg'></DayPicker>
-        </div>
+        <main className='pb-4'>
+          <div className=''>
+            <DayPicker modifiers={{ highlighted: offDays, holiday: holidaysDate }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold" }, holiday: { color: '#ef4444', fontWeight: "bold" } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
+              onMonthChange={handleMonthChange} selected={dayjs(selectedDate).toDate()} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-1 mx-auto max-w-lg'></DayPicker>
+          </div>
 
-        <div>
-          <p className='font-semibold md:text-lg mt-4 mb-2'>{dayjs(selectedDate).format('YYYY-MM-DD')}</p>
+          <div>
+            <p className='font-semibold md:text-lg mt-4 mb-2'>{dayjs(selectedDate).format('YYYY-MM-DD')}</p>
 
-          {selectedDateRequests.map((request) => <Request request={request} key={request.id} />)}
-        </div>
+            {isWorkingDay ? selectedDateRequests.map((request) => <Request request={request} key={request.id} />): ''}
+          </div>
 
-        <div className='border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-center'>
-          <button onClick={() => sendRequest()} className="w-full rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Request Day Off</button>
-        </div>
-      </main>
+          <div className='border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-center'>
+            <button onClick={() => sendRequest()} className="w-full rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Request Day Off</button>
+          </div>
+        </main>
+      </div>
     </div>
-  </div>
-)
+  )
 }
 
 function Request({ request }) {
