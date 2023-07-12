@@ -51,11 +51,11 @@ export default function EmployeeDetails() {
 
   return (
     <div className='md:w-5/6 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 px-4 md:mx-auto md:w-full md:max-w-5xl'>
+      <div className='pt-5 md:mx-auto md:w-full md:max-w-5xl'>
         <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-700 mb-4 pb-4'>
           <div className="flex items-center">
             <button onClick={goBack}>
-              <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
+              <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
             </button>
             <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Employee Details</h1>
           </div>
@@ -63,10 +63,10 @@ export default function EmployeeDetails() {
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 
-        <main className='pb-4'>
+        <main className='px-4'>
           <p className='text-sm font-semibold leading-6 mb-2 md:text-lg text-gray-900 dark:text-gray-300'>Balance</p>
-          <div className='flex text-center justify-center mb-4'>
-            {balance.map(i => <div key={i.label} className='w-1/3 border dark:border-gray-700 rounded-md mx-1 shadow p-2 lg:w-1/4 lg:mx-2 bg-white dark:bg-gray-800'>
+          <div className='flex text-center justify-center mb-4 mx-2'>
+            {balance.map(i => <div key={i.label} className='md:w-1/4 w-1/3 border dark:border-gray-700 rounded-md mx-1 shadow p-2 lg:w-1/4 md:p-4 md:mx-2 bg-white dark:bg-gray-800'>
               <Graph title={i.label} balance={i.balance} total={i.total} color={i.color}></Graph>
               <p className='mt-2 text-sm md:text-base' style={{ color: i.color }}>{i.label}</p>
               <p className='text-sm md:text-base text-gray-600 dark:text-gray-300'>{i.balance} / {i.total}</p>
@@ -74,7 +74,7 @@ export default function EmployeeDetails() {
           </div>
 
           <div className='mb-4'>
-            <p className='text-sm font-semibold leading-6 mb-2 md:text-lg text-gray-900 dark:text-gray-300'>Request lists</p>
+            <p className='text-sm font-semibold leading-6 mb-4 md:text-lg text-gray-900 dark:text-gray-300'>Requests ({requestsList ? requestsList.length : 0})</p>
             {requestsList ? requestsList.sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).map((request) => <Request request={request} key={request.id} />) : <p>There is no pending request</p>}
           </div>
         </main>

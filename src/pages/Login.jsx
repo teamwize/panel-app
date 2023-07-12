@@ -52,7 +52,7 @@ export default function Login() {
 
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold md:text-base leading-6">Email address</label>
+                <label htmlFor="email" className="block text-sm font-semibold md:text-base leading-6">Email</label>
                 <div className="mt-2">
                   <input {...register("email", { required: "Email is required", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Please enter a valid email address" } })}
                     aria-invalid={errors.email ? "true" : "false"} name="email" autoComplete="email"
@@ -92,6 +92,6 @@ export default function Login() {
 
 function Alert({ children }) {
   return (
-    <p className="text-sm font-medium leading-6 text-red-900 mt-2" role="alert">{children}</p>
+    <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
   )
 }

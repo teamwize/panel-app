@@ -1,18 +1,21 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useContext } from 'react'
 import { useForm } from "react-hook-form"
 import AvatarEditor from "react-avatar-editor"
 import { Slider } from "@material-ui/core"
 import { useNavigate } from 'react-router-dom'
 import doFetch from '../httpService.js'
 import { Dialog } from '@headlessui/react'
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { UserIcon, CameraIcon } from '@heroicons/react/20/solid'
+import { Toolbar } from '../components'
+import { UserContext } from '../contexts'
 
 export default function Profile() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
-
+  const { logout } = useContext(UserContext)
   const [employeeInfo, setEmployeeInfo] = useState({})
+  const [logOut, setLogOut] = useState(false);
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [picture, setPicture] = useState({
@@ -24,7 +27,15 @@ export default function Profile() {
   })
   var editor = ""
 
-  const goBack = () => navigate('/setting');
+  const closeLogOut = () => setLogOut(false)
+
+  const handleRequest = (accepted) => {
+    if (accepted) {
+      logout();
+      navigate('/login')
+    }
+    closeLogOut()
+  }
 
   useEffect(() => {
     doFetch('http://localhost:8080/users/me', {
@@ -115,17 +126,37 @@ export default function Profile() {
 
   return (
     <div className='md:w-5/6 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 mb-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 p-4 md:mx-auto md:w-full md:max-w-5xl'>
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
-          <button onClick={goBack}>
-            <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
+        <Toolbar title='Profile'>
+          <button onClick={() => setLogOut(true)} className='flex items-center w-full rounded-md bg-red-700 text-white p-2 text-sm font-semibold shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800'>
+            <ArrowLeftOnRectangleIcon className='w-5 h-5 text-gray-400 mr-2'></ArrowLeftOnRectangleIcon>
+            Log Out
           </button>
-          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Profile Photo</h1>
-        </div>
+        </Toolbar>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 
-        <main>
+        <Dialog open={logOut} onClose={closeLogOut}>
+          <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-40'>
+            <div className="flex min-h-full items-center justify-center p-4 text-center">
+              <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-200 p-6 text-left align-middle transition-all">
+                <div className='flex items-center mb-6'>
+                  <ArrowLeftOnRectangleIcon className='w-6 h-6 mr-2'></ArrowLeftOnRectangleIcon>
+                  <h1 className='font-semibold'>Log Out</h1>
+                </div>
+
+                <p className="fullname font-semibold text-sm text-center mb-12">Are you sure you want to log out?</p>
+
+                <section className='flex text-center justify-center'>
+                  <button onClick={() => handleRequest(false)} className='rounded-lg p-2 shadow-md border border-red-700 w-1/2'>No</button>
+                  <button onClick={() => handleRequest(true)} className='rounded-lg p-2 shadow-md ml-4 bg-red-700 text-white w-1/2'>Yes</button>
+                </section>
+              </Dialog.Panel>
+            </div>
+          </div>
+        </Dialog>
+
+        <main className='px-4'>
           <div>
             <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
               <img src={picture.croppedImg} className="h-40 w-40 rounded-full" />
@@ -133,20 +164,20 @@ export default function Profile() {
                 <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">
                   <CameraIcon className='w-7 h-7 text-white'></CameraIcon>
                 </label>
-                <input key={picture.img} id='upload-photo' type="file" className='hidden' onChange={handleFileChange} />
+                <input key={picture.img} id='upload-photo' type="file" accept="image/jpeg, image/png" className='hidden' onChange={handleFileChange} />
               </div>
             </div>
 
             <Dialog open={picture.cropperOpen} onClose={() => setPicture({ ...picture, cropperOpen: false })}>
-              <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111138] z-50'>
+              <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-50'>
                 <div className="flex min-h-full items-center justify-center p-4 text-center">
-                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white p-6 text-left align-middle transition-all">
+                  <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-100 p-6 text-left align-middle transition-all">
                     <div className='flex items-center mb-6'>
                       <UserIcon className='w-6 h-6 mr-2'></UserIcon>
                       <h1 className='font-semibold'>Set Profile Photo</h1>
                     </div>
 
-                    <AvatarEditor ref={setEditorRef} image={picture.img} width={200} height={200} border={50} color={[255, 255, 255, 0.6]} rotate={0} scale={picture.zoom} />
+                    <AvatarEditor ref={setEditorRef} image={picture.img} width={200} height={200} border={20} color={[255, 255, 255, 0.6]} className='right-0 left-0 mx-auto' rotate={0} scale={picture.zoom} />
 
                     <Slider aria-label="raceSlider" value={picture.zoom} min={1} max={10} step={0.1} onChange={handleSlider}></Slider>
 
@@ -161,7 +192,7 @@ export default function Profile() {
           </div>
 
           <div className='flex flex-col'>
-            <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">Profile Info</h1>
+            <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">Information</h1>
 
             <form onSubmit={handleSubmit(onSubmit)}>
               {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
@@ -174,9 +205,11 @@ export default function Profile() {
                 {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
               </div>
 
-              <button type="submit" className='flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 mt-4'>
-                {isProcessing ? "Waiting ..." : "Save"}
-              </button>
+              <div dir='rtl'>
+                <button type="submit" className="flex justify-center w-full md:w-1/4 mt-4 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+                  {isProcessing ? "Waiting ..." : "Save"}
+                </button>
+              </div>
             </form>
           </div>
         </main>
@@ -187,6 +220,6 @@ export default function Profile() {
 
 function Alert({ children }) {
   return (
-    <p className="text-sm font-medium leading-6 text-red-900 mt-2" role="alert">{children}</p>
+    <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
   )
 }

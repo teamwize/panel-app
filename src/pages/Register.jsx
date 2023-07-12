@@ -63,7 +63,7 @@ export default function Register() {
 
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <label htmlFor="company-name" className="block text-sm font-semibold md:text-base leading-6">Company Name</label>
+                <label htmlFor="company-name" className="block text-sm font-semibold md:text-base leading-6">Organization Name</label>
                 <div className="mt-2">
                   <input {...register("company", { required: "Company name is required", maxLength: { value: 20, message: "Company name must be under 20 characters" }, minLength: { value: 2, message: "Company name must be over 2 characters" } })}
                     aria-invalid={errors.company ? "true" : "false"} name="company" type="text"
@@ -73,7 +73,7 @@ export default function Register() {
               </div>
 
               <div>
-                <label htmlFor="fullname" className="block text-sm font-semibold md:text-base leading-6">FullName</label>
+                <label htmlFor="fullname" className="block text-sm font-semibold md:text-base leading-6">Full Name</label>
                 <div className="mt-2">
                   <input {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
                     aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
@@ -83,7 +83,7 @@ export default function Register() {
               </div>
 
               <div>
-                <label htmlFor="email" className="block text-sm font-semibold md:text-base leading-6">Email address</label>
+                <label htmlFor="email" className="block text-sm font-semibold md:text-base leading-6">Email</label>
                 <div className="mt-2">
                   <input {...register("email", { required: "Email is required", pattern: { value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i, message: "Email format is not correct" } })}
                     aria-invalid={errors.email ? "true" : "false"} name="email"
@@ -101,14 +101,14 @@ export default function Register() {
                   <button type="button" onClick={() => setShowPassword(!showPassword)} className="ml-2 outline-none focus:outline-none">
                     {showPassword ? (<EyeSlashIcon className="h-5 w-5 text-gray-500" />) : (<EyeIcon className="h-5 w-5 text-gray-500" />)}
                   </button>
-                  {errors.password && <Alert>{errors.password.message}</Alert>}
                 </div>
+                {errors.password && <Alert>{errors.password.message}</Alert>}
               </div>
 
               <div>
-                <label htmlFor="country" className="block text-sm font-semibold md:text-base leading-6">Country</label>
+                <label htmlFor="country" className="block text-sm font-semibold md:text-base leading-6 mb-2">Location</label>
                 <select {...register("country", { required: "Country is required" })} aria-invalid={errors.country ? "true" : "false"} name="country"
-                  className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
+                  className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-[9.5px] shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4">
                   <option value="">Choose your country</option>
                   {countries.map((country) => <option value={country.code} key={country.name}>{country.name}</option>)}
                 </select>
@@ -130,6 +130,6 @@ export default function Register() {
 
 function Alert({ children }) {
   return (
-    <p className="text-sm font-medium leading-6 text-red-900 mt-2" role="alert">{children}</p>
+    <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
   )
 }

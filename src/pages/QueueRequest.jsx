@@ -35,6 +35,7 @@ export default function QueueRequest() {
       status: status
     }
     setIsProcessing(true);
+    handleModal();
 
     doFetch('http://localhost:8080/days-off/' + id, {
       method: 'PATCH',
@@ -43,7 +44,6 @@ export default function QueueRequest() {
       setIsProcessing(false);
       console.log('Success:', data);
       setRequestsList(prevState => prevState.filter(r => r.id !== id));
-      handleModal();
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
@@ -58,10 +58,10 @@ export default function QueueRequest() {
 
   return (
     <div className='md:w-5/6 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 px-4 md:mx-auto md:w-full md:max-w-5xl'>
+      <div className='pt-5 md:mx-auto md:w-full md:max-w-5xl'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-2">
           <button onClick={goBack}>
-            <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
+            <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
           </button>
           <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Request Queue</h1>
         </div>
@@ -71,7 +71,7 @@ export default function QueueRequest() {
         {requestsList.map((request) => <div key={request.id}>
           <Request request={request} setRequestDetails={setRequestDetails} />
 
-          <Modal request={request} requestDetails={requestDetails} handleModal={handleModal} handleRequest={handleRequest} viewBalance={viewBalance} isProcessing={isProcessing}/>
+          <Modal request={request} requestDetails={requestDetails} handleModal={handleModal} handleRequest={handleRequest} viewBalance={viewBalance} isProcessing={isProcessing} />
         </div>)}
       </div>
     </div>
@@ -80,22 +80,18 @@ export default function QueueRequest() {
 
 function Request({ request, setRequestDetails }) {
   return (
-    <section onClick={() => setRequestDetails(true)} className='flex items-center bg-white dark:bg-gray-800 dark:text-gray-200 mb-2 px-4 py-2 rounded-lg cursor-pointer'>
-      <img className="h-12 w-12 rounded-full mr-4" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
+    <section onClick={() => setRequestDetails(true)} className='flex items-center dark:text-gray-200 mb-2 mx-4 pb-2 border-b border-gray-300 dark:border-gray-700 cursor-pointer'>
+      <img className="h-10 w-10 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
-      <div className='flex flex-col md:flex-row md:items-center md:w-full md:justify-between'>
-        <div>
-          <p className="fullname text-sm font-semibold md:text-base mb-1">request.name</p>
+      <div className='flex flex-row items-end w-full justify-between md:items-center'>
+        <p className="fullname text-sm font-semibold md:text-base">request.name</p>
 
-          <div className='flex mb-1 md:mb-0'>
-            <p className='text-sm md:text-base flex items-center mr-1'>
-              {dayjs(request.start).format('D MMM')} - {dayjs(request.end).format('D MMM')}
-            </p>
-            <p className='distance text-sm md:text-base'>({(request.distance) == 1 ? "Day" : "Days"})</p>
-          </div>
+        <div className='flex items-center'>
+          <p className='text-sm flex mr-2'>{request.distance == 1 ? dayjs(request.start).format('D MMM') : `${dayjs(request.start).format('D MMM')} - ${dayjs(request.end).format('D MMM')}`}</p>
+          <p className='distance text-sm text-gray-500 dark:text-gray-400'>(2 {(request.distance) == 1 ? "Day" : "Days"})</p>
         </div>
 
-        <p className='type w-fit text-sm md:text-base border p-1 rounded-md border-gray-200 dark:border-gray-700'>{leaveTypeJson[request.type]}</p>
+        <p className={`${leaveTypeJson[request.type] == 'Vacation' ? 'text-[#22c55e] bg-green-100 dark:bg-green-900 dark:text-green-300' : leaveTypeJson[request.type] == 'Sick leave' ? 'text-[#f87171] bg-red-100 dark:bg-red-900 dark:text-red-300' : 'text-[#60a5fa] bg-blue-100 dark:bg-blue-900 dark:text-blue-300'} type text-xs py-0.5 px-2 rounded-2xl w-fit`}>{leaveTypeJson[request.type]}</p>
       </div>
     </section>
   )
@@ -104,36 +100,36 @@ function Request({ request, setRequestDetails }) {
 function Modal({ request, requestDetails, handleModal, handleRequest, viewBalance, isProcessing }) {
   return (
     <Dialog open={requestDetails} onClose={handleModal}>
-      <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111105] z-40'>
+      <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#11111105] z-50'>
         <div className="flex min-h-full items-center justify-center p-4 text-center">
           <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-200 p-6 text-left align-middle transition-all">
-            <section className='flex-col items-start mb-4 cursor-pointer'>
+            <section className='flex-col items-start mb-4'>
               <div className='flex items-center mb-2'>
-                <img className="inline-block h-12 w-12 rounded-full mr-3" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
+                <img className="inline-block h-10 w-10 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
                 <div>
                   <p className="fullname text-sm font-semibold md:text-base mb-1 text-gray-900 dark:text-gray-300">request.name</p>
-                  <p onClick={() => viewBalance(request.name)} className="text-sm md:text-base text-blue-600">View balance</p>
+                  <p onClick={() => viewBalance(request.name)} className="rounded-lg px-2 py-0.5 shadow-md bg-indigo-600 text-xs w-fit cursor-pointer text-white">View balance</p>
                 </div>
               </div>
 
               <div>
-                <p className='date text-sm md:text-base mb-1'>
-                  <label htmlFor='start' className="mr-1 text-xs md:text-sm">Date:</label>
-                  {dayjs(request.start).format('D MMM')} - {dayjs(request.start).format('D MMM')} ({(request.distance) == 1 ? "Day" : "Days"})
+                <p className='date text-sm mb-2 flex flex-col'>
+                  <label htmlFor='start' className="mr-1 text-xs text-gray-500 dark:text-gray-400">Date</label>
+                  {request.distance == 1 ? dayjs(request.start).format('D MMM') : `${dayjs(request.start).format('D MMM')} - ${dayjs(request.end).format('D MMM')}`} ({(request.distance) == 1 ? "Day" : "Days"})
                 </p>
 
-                <p className='type text-sm md:text-base mb-1'>
-                  <label htmlFor='type' className="mr-1 text-xs md:text-sm">Type:</label>
+                <p className='type text-sm mb-2 flex flex-col'>
+                  <label htmlFor='type' className="mr-1 text-xs text-gray-500 dark:text-gray-400">Type</label>
                   {leaveTypeJson[request.type]}</p>
 
-                <p className='text-sm md:text-base flex items-center mb-1'>
-                  <label className="mr-1 text-xs md:text-sm">Created at:</label>
+                <p className='text-sm flex flex-col mb-2'>
+                  <label className="mr-1 text-xs text-gray-500 dark:text-gray-400">Created at</label>
                   {dayjs(request.createdAt).format('D MMM')}
                 </p>
 
-                <p className='reason text-sm md:text-base'>
-                  <label htmlFor='explanation' className="mr-1 text-xs md:text-sm">Explanation:</label>
+                <p className='reason text-sm flex flex-col'>
+                  <label htmlFor='explanation' className="mr-1 text-xs text-gray-500 dark:text-gray-400">Explanation</label>
                   request.reason</p>
               </div>
             </section>

@@ -96,15 +96,15 @@ export default function SendRequest() {
 
   return (
     <div className='md:w-5/6 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 p-4 md:mx-auto md:w-full md:max-w-5xl'>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
         <Toolbar title='Send Leave Request'></Toolbar>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
-        <div>
+        <div className='px-4'>
           <div className='mb-4'>
-            <label htmlFor="type" className="block text-sm font-semibold md:text-base leading-6 mb-1">Leave type</label>
-            <select value={type} onChange={e => setType(e.target.value)} name="type" className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 text-gray-900 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
+            <label htmlFor="type" className="block text-sm font-semibold md:text-base leading-6 mb-1">Leave Type</label>
+            <select value={type} onChange={e => setType(e.target.value)} name="type" className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-3 text-gray-900 shadow-sm placeholder:text-gray-600 dark:text-gray-200 text-sm md:text-base sm:leading-6 dark:bg-gray-800 px-2">
               {leaveType.map((type) => <option className='py-2' value={type.value} key={type.name}>{type.name}</option>)}
             </select>
           </div>
@@ -121,9 +121,11 @@ export default function SendRequest() {
             <textarea value={reason} onChange={e => setReason(e.target.value)} className='border rounded-md p-3 w-full dark:border-gray-700 border-gray-200 dark:bg-gray-800'></textarea>
           </div>
 
-          <button onClick={sendRequest} className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            {isProcessing ? "Waiting ..." : "Submit Request"}
-          </button>
+          <div dir='rtl'>
+            <button onClick={sendRequest} className="flex justify-center w-full md:w-1/4 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              {isProcessing ? "Waiting ..." : "Submit Request"}
+            </button>
+          </div>
         </div>
       </div>
     </div>

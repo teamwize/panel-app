@@ -10,6 +10,7 @@ import { leaveTypeJson, statusJson } from '../constants'
 import '../constants/style.css'
 import { Toolbar } from '../components'
 import useCalendarData from '../utils/holidays.js';
+import { PlusIcon } from '@heroicons/react/20/solid';
 
 dayjs.extend(isBetween);
 
@@ -86,25 +87,28 @@ export default function Calendar() {
 
   return (
     <div className='md:w-5/6 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200'>
-      <div className='pt-4 px-4 md:mx-auto md:w-full md:max-w-5xl'>
-        <Toolbar title='Calendar'></Toolbar>
+      <div className='pt-5 md:mx-auto md:w-full md:max-w-5xl'>
+        <Toolbar title='Calendar'>
+          <div className='flex justify-center'>
+            <button onClick={() => sendRequest()} className="flex items-center w-full rounded-md bg-indigo-600 p-2 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              <PlusIcon className='h-5 w-5 mr-2 text-gray-400'></PlusIcon>
+              Request Day Off
+            </button>
+          </div>
+        </Toolbar>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm px-4">{errorMessage}</p>}
 
-        <main className='pb-4'>
-          <div className=''>
+        <main className='px-4'>
+          <div>
             <DayPicker modifiers={{ highlighted: offDays, holiday: holidaysDate }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold" }, holiday: { color: '#ef4444', fontWeight: "bold" } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
-              onMonthChange={handleMonthChange} selected={dayjs(selectedDate).toDate()} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-1 mx-auto max-w-lg'></DayPicker>
+              onMonthChange={handleMonthChange} selected={dayjs(selectedDate).toDate()} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-2 mx-auto max-w-lg'></DayPicker>
           </div>
 
           <div>
-            <p className='font-semibold md:text-lg mt-4 mb-2'>{dayjs(selectedDate).format('YYYY-MM-DD')}</p>
+            <p className='font-semibold md:text-lg my-4'>Requests ({selectedDateRequests ? selectedDateRequests.length : 0})</p>
 
-            {isWorkingDay ? selectedDateRequests.map((request) => <Request request={request} key={request.id} />): ''}
-          </div>
-
-          <div className='border-t border-gray-200 dark:border-gray-700 pt-4 flex justify-center'>
-            <button onClick={() => sendRequest()} className="w-full rounded-md bg-indigo-600 py-2 px-4 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">Request Day Off</button>
+            {isWorkingDay ? selectedDateRequests.map((request) => <Request request={request} key={request.id} />) : ''}
           </div>
         </main>
       </div>
@@ -114,23 +118,22 @@ export default function Calendar() {
 
 function Request({ request }) {
   return (
-    <section className='flex items-center bg-white dark:bg-gray-800 dark:text-gray-200 mb-2 px-4 py-2 rounded-lg'>
-      <img className="h-12 w-12 rounded-full mr-4" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
+    <section className='flex items-center dark:text-gray-200 mb-2 pb-2 border-b border-gray-300 dark:border-gray-700'>
+      <img className="h-10 w-10 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
-      <div className='flex flex-col md:flex-row md:items-center md:w-full md:justify-between'>
-        <div>
-          <p className="fullname text-sm font-semibold md:text-base mb-1">request.name</p>
-          <div className='flex mb-1 md:mb-0'>
-            <p className='text-sm md:text-base flex items-center mr-1'>
-              {dayjs(request.start).format('D MMM')} - {dayjs(request.end).format('D MMM')}
-            </p>
-            <p className='distance text-sm md:text-base'>(2 {(request.distance) == 1 ? "Day" : "Days"})</p>
+      <div className='flex flex-row items-end w-full justify-between md:items-center'>
+        <div className='md:flex md:w-1/2 md:justify-between'>
+          <p className="fullname text-sm font-semibold md:text-base">request.name</p>
+
+          <div className='flex items-center'>
+            <p className='text-sm flex mr-2'>{request.distance == 1 ? dayjs(request.start).format('D MMM') : `${dayjs(request.start).format('D MMM')} - ${dayjs(request.end).format('D MMM')}`}</p>
+            <p className='distance text-sm text-gray-500 dark:text-gray-400'>(1 {(request.distance) == 1 ? "Day" : "Days"})</p>
           </div>
         </div>
 
         <div className='flex'>
-          <p className='type w-fit text-sm md:text-base border p-1 rounded-md border-gray-200 dark:border-gray-700'>{leaveTypeJson[request.type]}</p>
-          <p className={`${request.status == "PENDING" ? 'text-yellow-500' : request.status == "ACCEPTED" ? 'text-green-500' : 'text-red-500'} status text-sm md:text-base border p-1 rounded-md border-gray-200 dark:border-gray-700`}>{statusJson[request.status]}</p>
+          <p className={`${leaveTypeJson[request.type] == 'Vacation' ? 'text-[#22c55e] bg-green-100 dark:bg-green-900 dark:text-green-300' : leaveTypeJson[request.type] == 'Sick leave' ? 'text-[#f87171] bg-red-100 dark:bg-red-900 dark:text-red-300' : 'text-[#60a5fa] bg-blue-100 dark:bg-blue-900 dark:text-blue-300'} type text-xs mr-4 py-0.5 px-2 rounded-2xl w-fit`}>{leaveTypeJson[request.type]}</p>
+          <p className={`${request.status == "PENDING" ? 'text-yellow-500 bg-yellow-100 dark:bg-yellow-600 dark:text-yellow-200' : request.status == "ACCEPTED" ? 'text-green-500 bg-green-200 dark:bg-green-900 dark:text-green-300' : 'text-red-500 bg-red-200  dark:bg-red-900 dark:text-red-300'} status text-xs py-0.5 px-2 rounded-2xl w-fit`}>{statusJson[request.status]}</p>
         </div>
       </div>
     </section>

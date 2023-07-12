@@ -44,17 +44,17 @@ export default function ChangePassword() {
 
   return (
     <div className='md:w-5/6 overflow-y-auto w-full fixed mb-2 top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 p-4 md:mx-auto md:w-full md:max-w-5xl'>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
           <button onClick={goBack}>
-            <ChevronLeftIcon className='w-5 h-5 mr-4'></ChevronLeftIcon>
+            <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
           </button>
           <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Change Password</h1>
         </div>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
-        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
+        <form className="space-y-4 px-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
             <label htmlFor="password" className="block text-sm font-semibold md:text-base leading-6">Current Password</label>
             <div className="mt-2">
@@ -89,9 +89,11 @@ export default function ChangePassword() {
             <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
           </div>
 
-          <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-            {isProcessing ? "Waiting ..." : "Change Password"}
-          </button>
+          <div dir='rtl'>
+            <button type="submit" className="flex justify-center w-full md:w-1/4 mt-4 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
+              {isProcessing ? "Waiting ..." : "Change Password"}
+            </button>
+          </div>
         </form>
       </div>
     </div>
@@ -100,6 +102,6 @@ export default function ChangePassword() {
 
 function Alert({ children }) {
   return (
-    <p className="text-sm font-medium leading-6 text-red-900 mt-2" role="alert">{children}</p>
+    <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
   )
 }

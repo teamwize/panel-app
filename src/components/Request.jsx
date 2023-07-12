@@ -3,18 +3,16 @@ import { leaveTypeJson, statusJson } from '../constants'
 
 export default function Request({ request }) {
   return (
-    <section className='bg-white dark:bg-gray-800 dark:text-gray-200 mb-2 px-4 py-2 rounded-lg'>
-      <div className='flex flex-col md:flex-row md:justify-between md:items-center'>
-        <div className='flex flex-row mb-1 md:mb-0'>
-          <p className='text-sm md:text-base text-gray-600 dark:text-gray-300 flex items-center mr-1'>
-            {dayjs(request.start).format('D MMM')} - {dayjs(request.end).format('D MMM')}
-          </p>
-          <p className='distance text-sm md:text-base'>(request.distance {(request.distance) == 1 ? "Day" : "Days"})</p>
+    <section className='mb-4 pb-4 border-b border-gray-300 dark:border-gray-700'>
+      <div className='flex justify-between'>
+        <div className='flex items-center'>
+          <p className='text-sm flex mr-2'>{request.distance == 1 ? dayjs(request.start).format('D MMM') : `${dayjs(request.start).format('D MMM')} - ${dayjs(request.end).format('D MMM')}`}</p>
+          <p className='distance text-sm text-gray-500 dark:text-gray-400'>(1 {(request.distance) == 1 ? "Day" : "Days"})</p>
         </div>
 
-        <div className='flex flex-row'>
-          <p className='type text-sm md:text-base text-gray-600 dark:text-gray-300 border p-1 rounded-md border-gray-200 dark:border-gray-700 mr-1'>{leaveTypeJson[request.type]}</p>
-          <p className={`${request.status == "PENDING" ? 'text-yellow-500' : request.status == "ACCEPTED" ? 'text-green-500' : 'text-red-500'} status text-sm md:text-base border p-1 rounded-md border-gray-200 dark:border-gray-700`}>{statusJson[request.status]}</p>
+        <div className='flex'>
+          <p className={`${leaveTypeJson[request.type] == 'Vacation' ? 'text-[#22c55e] bg-green-100 dark:bg-green-900 dark:text-green-300' : leaveTypeJson[request.type] == 'Sick leave' ? 'text-[#f87171] bg-red-100 dark:bg-red-900 dark:text-red-300' : 'text-[#60a5fa] bg-blue-100 dark:bg-blue-900 dark:text-blue-300'} type text-xs mr-4 py-0.5 px-2 rounded-2xl w-fit`}>{leaveTypeJson[request.type]}</p>
+          <p className={`${request.status == "PENDING" ? 'text-yellow-500 bg-yellow-100 dark:bg-yellow-600 dark:text-yellow-200' : request.status == "ACCEPTED" ? 'text-green-500 bg-green-200 dark:bg-green-900 dark:text-green-300' : 'text-red-500 bg-red-200  dark:bg-red-900 dark:text-red-300'} status text-xs py-0.5 px-2 rounded-2xl w-fit`}>{statusJson[request.status]}</p>
         </div>
       </div>
     </section>

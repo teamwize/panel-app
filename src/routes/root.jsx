@@ -14,11 +14,11 @@ export default function Root() {
         <Route path='/setting/request-queue' element={<AuthenticatedRoute><QueueRequest /></AuthenticatedRoute>}></Route>
         <Route path='/balance' element={<AuthenticatedRoute><Balance /></AuthenticatedRoute>}></Route>
         <Route path='/setting/employees' element={<AuthenticatedRoute><Employees /></AuthenticatedRoute>}></Route>
-        <Route path='/setting/employees/employee-details/:id' element={<AuthenticatedRoute><EmployeeDetails /></AuthenticatedRoute>}></Route>
+        <Route path='/setting/employees/:id' element={<AuthenticatedRoute><EmployeeDetails /></AuthenticatedRoute>}></Route>
         <Route path='/setting' element={<AuthenticatedRoute><Setting /></AuthenticatedRoute>}></Route>
         <Route path='/setting/change-password' element={<AuthenticatedRoute><ChangePassword /></AuthenticatedRoute>}></Route>
         <Route path='/setting/official-holidays' element={<AuthenticatedRoute><OfficialHolidays /></AuthenticatedRoute>}></Route>
-        <Route path='/setting/profile' element={<AuthenticatedRoute><Profile /></AuthenticatedRoute>}></Route>
+        <Route path='/profile' element={<AuthenticatedRoute><Profile /></AuthenticatedRoute>}></Route>
         <Route path='/setting/employees/add' element={<AuthenticatedRoute><AddEmployee /></AuthenticatedRoute>}></Route>
         <Route path='/setting/company' element={<AuthenticatedRoute><CompanyInfo /></AuthenticatedRoute>}></Route>
         <Route path='/setting/set-balance' element={<AuthenticatedRoute><SetBalance /></AuthenticatedRoute>}></Route>
