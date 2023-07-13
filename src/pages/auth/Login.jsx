@@ -1,9 +1,9 @@
 import { useForm } from "react-hook-form"
 import { useState, useContext } from "react"
 import { useNavigate } from 'react-router-dom'
-import doFetch from '../httpService.js'
-import { logo } from '../constants'
-import { UserContext } from "../contexts/UserContext.jsx"
+import { login } from "../../services/WorkiveApiClient.js"
+import { logo } from '../../constants/index.js'
+import { UserContext } from "../../contexts/UserContext.jsx"
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 
 export default function Login() {
@@ -22,10 +22,7 @@ export default function Login() {
   const LoginInfo = (data) => {
     setIsProcessing(true);
 
-    doFetch('http://localhost:8080/login', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }).then(data => {
+    login(data).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       authenticate(data.accessToken, data);

@@ -3,12 +3,12 @@ import { useForm } from "react-hook-form"
 import AvatarEditor from "react-avatar-editor"
 import { Slider } from "@material-ui/core"
 import { useNavigate } from 'react-router-dom'
-import doFetch from '../httpService.js'
+import { employeeInformation, changeEmployeeInfo, createEmployeeInfo } from "../../services/WorkiveApiClient.js"
 import { Dialog } from '@headlessui/react'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { UserIcon, CameraIcon } from '@heroicons/react/20/solid'
-import { Toolbar } from '../components'
-import { UserContext } from '../contexts'
+import { Toolbar } from '../../components/index.js'
+import { UserContext } from '../../contexts/index.js'
 
 export default function Profile() {
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -38,9 +38,7 @@ export default function Profile() {
   }
 
   useEffect(() => {
-    doFetch('http://localhost:8080/users/me', {
-      method: 'GET'
-    }).then(data => {
+    employeeInformation().then(data => {
       console.log('Success:', data);
       setEmployeeInfo(data);
     }).catch(error => {
@@ -55,10 +53,7 @@ export default function Profile() {
     }
     setIsProcessing(true);
 
-    doFetch('http://localhost:8080/users/me', {
-      method: 'PUT',
-      body: JSON.stringify(payload)
-    }).then(data => {
+    changeEmployeeInfo(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       setEmployeeInfo(data);
@@ -111,10 +106,7 @@ export default function Profile() {
       let payload = {
         picture: croppedImg
       }
-      doFetch('http://localhost:8080/users/me', {
-        method: 'POST',
-        body: JSON.stringify(payload),
-      }).then(data => {
+      createEmployeeInfo(payload).then(data => {
         console.log('Success:', data);
       }).catch(error => {
         console.error('Error:', error);
@@ -125,7 +117,7 @@ export default function Profile() {
 
 
   return (
-    <div className='md:w-5/6 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 mb-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 mb-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
         <Toolbar title='Profile'>
           <button onClick={() => setLogOut(true)} className='flex items-center w-full rounded-md bg-red-700 text-white p-2 text-sm font-semibold shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800'>
@@ -198,7 +190,7 @@ export default function Profile() {
               {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 
               <div className='w-full'>
-                <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="fullName">FullName</label>
+                <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="fullName">Full Name</label>
                 <input placeholder="employeeInfo.name" {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
                   aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
                   className="block w-full rounded-md border dark:border-gray-700 border-gray-200 px-4 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 " />

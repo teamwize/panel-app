@@ -6,10 +6,10 @@ import isoWeek from 'dayjs/plugin/isoWeek';
 import isBetween from 'dayjs/plugin/isBetween';
 import utc from 'dayjs/plugin/utc';
 import timezone from 'dayjs/plugin/timezone';
-import doFetch from '../httpService.js'
-import { Toolbar, DatePicker } from '../components'
-import { leaveType } from '../constants'
-import useCalendarData from '../utils/holidays.js';
+import { createDayoff } from "../../services/WorkiveApiClient.js"
+import { Toolbar, DatePicker } from '../../components/index.js'
+import { leaveType } from '../../constants/index.js'
+import useCalendarData from '../../utils/holidays.js';
 
 dayjs.extend(advancedFormat);
 dayjs.extend(isoWeek);
@@ -48,7 +48,7 @@ export default function SendRequest() {
   }
 
   const sendRequest = () => {
-    let requestData = {
+    let payload = {
       type: type,
       start: dayjs(startDate).toISOString(),
       end: dayjs(endDate).toISOString(),
@@ -58,13 +58,10 @@ export default function SendRequest() {
     }
     setIsProcessing(true);
 
-    doFetch('http://localhost:8080/days-off', {
-      method: 'POST',
-      body: JSON.stringify(requestData),
-    }).then(data => {
+    createDayoff(payload).then(data => {
       setIsProcessing(false)
       console.log('Success:', data);
-      navigate('/pending-request');
+      navigate('/dayoff/pending');
     }).catch(error => {
       setIsProcessing(false)
       console.error('Error:', error);
@@ -95,7 +92,7 @@ export default function SendRequest() {
 
 
   return (
-    <div className='md:w-5/6 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
         <Toolbar title='Send Leave Request'></Toolbar>
 

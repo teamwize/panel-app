@@ -10,7 +10,7 @@ function classNames(...classes) {
 
 export default function Sidebar() {
   return (
-    <div className="min-h-0 flex-col md:w-1/6 md:fixed md:top-0 md:bottom-0 md:left-0 border-b md:border-r border-gray-200 dark:border-gray-700 dark:bg-gray-900 bg-gray-100">
+    <div className="min-h-0 flex-col md:w-1/5 md:fixed md:top-0 md:bottom-0 md:left-0 border-b md:border-r border-gray-200 dark:border-gray-700 dark:bg-gray-900 bg-gray-100">
       <section className='md-size hidden md:block'>
         <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
           <div className="flex flex-shrink-0 items-center px-4">

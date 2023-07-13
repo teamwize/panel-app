@@ -1,9 +1,9 @@
 import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { logo, countries } from '../constants'
-import doFetch from '../httpService.js'
-import { UserContext } from "../contexts/UserContext.jsx"
+import { httpClient } from "../../services/WorkiveApiClient.js"
+import { UserContext } from "../../contexts/UserContext.jsx"
+import { logo, countries } from '../../constants/index.js'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 
 export default function Register() {
@@ -31,14 +31,11 @@ export default function Register() {
 
     setIsProcessing(true);
 
-    doFetch('http://localhost:8080/register', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    }).then(data => {
+    httpClient(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       authenticate(data.token, data);
-      navigate('/setting')
+      navigate('/organization')
     }).catch(error => {
       setIsProcessing(false)
       console.error('Error:', error);
@@ -52,7 +49,7 @@ export default function Register() {
       <div className="flex flex-col justify-center p-4 lg:px-8 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 w-full">
         <div className="md:mx-auto md:w-full md:max-w-5xl">
           <img className="mx-auto h-10 w-auto" src={logo.src} alt={logo.alt} />
-          <p className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight text-indigo-600">Welcome to Work Hive</p>
+          <p className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight text-indigo-600">Welcome to Workive</p>
         </div>
 
         <h2 className="text-center text-lg md:text-xl font-semibold tracking-tight">Create your account</h2>
@@ -63,10 +60,10 @@ export default function Register() {
 
             <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
               <div>
-                <label htmlFor="company-name" className="block text-sm font-semibold md:text-base leading-6">Organization Name</label>
+                <label htmlFor="organization-name" className="block text-sm font-semibold md:text-base leading-6">Organization Name</label>
                 <div className="mt-2">
-                  <input {...register("company", { required: "Company name is required", maxLength: { value: 20, message: "Company name must be under 20 characters" }, minLength: { value: 2, message: "Company name must be over 2 characters" } })}
-                    aria-invalid={errors.company ? "true" : "false"} name="company" type="text"
+                  <input {...register("organization", { required: "Organization name is required", maxLength: { value: 20, message: "Organization name must be under 20 characters" }, minLength: { value: 2, message: "Organization name must be over 2 characters" } })}
+                    aria-invalid={errors.company ? "true" : "false"} name="organization" type="text"
                     className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
                   {errors.company && <Alert>{errors.company.message}</Alert>}
                 </div>
@@ -75,7 +72,7 @@ export default function Register() {
               <div>
                 <label htmlFor="fullname" className="block text-sm font-semibold md:text-base leading-6">Full Name</label>
                 <div className="mt-2">
-                  <input {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
+                  <input {...register("fullname", { required: "Full Name is required", maxLength: { value: 20, message: "Full Name must be under 20 characters" }, minLength: { value: 2, message: "Full Name must be over 2 characters" } })}
                     aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
                     className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
                   {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
@@ -106,10 +103,10 @@ export default function Register() {
               </div>
 
               <div>
-                <label htmlFor="country" className="block text-sm font-semibold md:text-base leading-6 mb-2">Location</label>
-                <select {...register("country", { required: "Country is required" })} aria-invalid={errors.country ? "true" : "false"} name="country"
+                <label htmlFor="location" className="block text-sm font-semibold md:text-base leading-6 mb-2">Location</label>
+                <select {...register("location", { required: "Location is required" })} aria-invalid={errors.country ? "true" : "false"} name="location"
                   className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-[9.5px] shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4">
-                  <option value="">Choose your country</option>
+                  <option value="">Choose your location</option>
                   {countries.map((country) => <option value={country.code} key={country.name}>{country.name}</option>)}
                 </select>
                 {errors.country && <Alert>{errors.country.message}</Alert>}

@@ -24,10 +24,10 @@ function classNames(...classes) {
 
 export default function OfficialHolidays() {
   const navigate = useNavigate()
-  const goBack = () => navigate('/setting');
+  const goBack = () => navigate('/settings');
 
   return (
-    <div className='md:w-5/6 overflow-y-auto w-full fixed mb-2 top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full fixed mb-2 top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
         <div className="flex items-center pb-4 border-b border-gray-200 dark:border-gray-700">
           <button onClick={goBack}>

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import doFetch from '../httpService.js'
+import { employeeList, deleteEmployee } from "../../services/WorkiveApiClient.js"
 import { Dialog } from '@headlessui/react'
 import { XMarkIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid';
@@ -14,9 +14,7 @@ export default function Employees() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    doFetch('http://localhost:8080/users', {
-      method: 'GET'
-    }).then(data => {
+    employeeList().then(data => {
       console.log('Success:', data);
       setEmployeesList(data);
     }).catch(error => {
@@ -25,10 +23,10 @@ export default function Employees() {
     });
   }, [])
 
-  const goBack = () => navigate('/setting');
+  const goBack = () => navigate('/organization');
 
   const viewDetails = (id) => {
-    navigate('/setting/employees/' + id)
+    navigate('/organization/employee/' + id)
   }
 
   const closeRemove = () => setRemove(false)
@@ -36,9 +34,7 @@ export default function Employees() {
   const handleRequest = (confirmed, id) => {
     setIsProcessing(true);
     if (confirmed) {
-      doFetch('http://localhost:8080/users/' + id, {
-        method: 'DELETE'
-      }).then(data => {
+      deleteEmployee(id).then(data => {
         setIsProcessing(false);
         console.log('Success:', data);
         setEmployeesList(prevState => prevState.filter(data => data.ID !== id))
@@ -52,12 +48,12 @@ export default function Employees() {
   }
 
   const viewAddEmployee = () => {
-    navigate('/setting/employees/add')
+    navigate('/organization/employee/create')
   }
 
 
   return (
-    <div className='md:w-5/6 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-5xl'>
         <div className='flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-700 pb-4'>
           <div className="flex items-center">

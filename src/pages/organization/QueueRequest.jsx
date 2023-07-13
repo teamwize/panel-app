@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Dialog } from '@headlessui/react'
 import { CalendarIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
-import doFetch from '../httpService.js'
-import { leaveTypeJson } from '../constants/index.js'
+import { dayoffList, setDayoffStatus } from "../../services/WorkiveApiClient.js"
+import { leaveTypeJson } from '../../constants/index.js'
 
 export default function QueueRequest() {
   const navigate = useNavigate()
@@ -15,9 +15,7 @@ export default function QueueRequest() {
   const [isProcessing, setIsProcessing] = useState(false)
 
   useEffect(() => {
-    doFetch('http://localhost:8080/days-off', {
-      method: 'GET'
-    }).then(data => {
+    dayoffList().then(data => {
       console.log('Success:', data);
       setRequestsList(data);
     }).catch(error => {
@@ -26,7 +24,7 @@ export default function QueueRequest() {
     });
   }, [])
 
-  const goBack = () => navigate('/setting')
+  const goBack = () => navigate('/organization')
 
   const handleModal = () => setRequestDetails(false);
 
@@ -37,10 +35,7 @@ export default function QueueRequest() {
     setIsProcessing(true);
     handleModal();
 
-    doFetch('http://localhost:8080/days-off/' + id, {
-      method: 'PATCH',
-      body: JSON.stringify(payload),
-    }).then(data => {
+    setDayoffStatus(payload, id).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       setRequestsList(prevState => prevState.filter(r => r.id !== id));
@@ -57,7 +52,7 @@ export default function QueueRequest() {
 
 
   return (
-    <div className='md:w-5/6 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-5xl'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-2">
           <button onClick={goBack}>

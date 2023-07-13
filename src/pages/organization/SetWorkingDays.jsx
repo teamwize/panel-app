@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import doFetch from '../httpService.js'
+import { createOrganizationInfo } from "../../services/WorkiveApiClient.js"
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
-import { weekDays } from "../constants/index.js";
+import { weekDays } from "../../constants/index.js";
 
 export default function ChangePassword() {
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -12,7 +12,7 @@ export default function ChangePassword() {
   const [errorMessage, setErrorMessage] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const goBack = () => navigate('/setting');
+  const goBack = () => navigate('/organization');
 
   const onSubmit = (data) => {
     setWorkingDays(data);
@@ -26,10 +26,7 @@ export default function ChangePassword() {
     setIsProcessing(true);
 
     console.log(payload)
-    doFetch('http://localhost:8080/organization/default', {
-      method: 'POST',
-      body: JSON.stringify(payload),
-    }).then(data => {
+    createOrganizationInfo(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data)
     }).catch(error => {
@@ -41,7 +38,7 @@ export default function ChangePassword() {
 
 
   return (
-    <div className='md:w-5/6 overflow-y-auto mb-2 w-full fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto mb-2 w-full fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
           <button onClick={goBack}>

@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import doFetch from '../httpService.js'
-import { countries } from '../constants'
+import { changeEmployeeInfo, employeeInformation } from "../../services/WorkiveApiClient.js"
+import { countries } from '../../constants/index.js'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 export default function Profile() {
@@ -13,12 +13,10 @@ export default function Profile() {
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
-  const goBack = () => navigate('/setting');
+  const goBack = () => navigate('/organization');
 
   useEffect(() => {
-    doFetch('http://localhost:8080/users/me', {
-      method: 'GET'
-    }).then(data => {
+    employeeInformation().then(data => {
       console.log('Success:', data);
       setEmployeeInfo(data)
     }).catch(error => {
@@ -34,10 +32,7 @@ export default function Profile() {
     }
     setIsProcessing(true);
 
-    doFetch('http://localhost:8080/users/me', {
-      method: 'PUT',
-      body: JSON.stringify(payload)
-    }).then(data => {
+    changeEmployeeInfo(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       setEmployeeInfo(data)
@@ -51,7 +46,7 @@ export default function Profile() {
 
 
   return (
-    <div className='md:w-5/6 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
           <button onClick={goBack}>

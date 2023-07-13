@@ -1,6 +1,6 @@
 export const logo = {
   src: "https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600",
-  alt: "Work Hive"
+  alt: "Workive"
 }
 
 export const countries = [
@@ -258,12 +258,13 @@ export const countries = [
     {name: "Zimbabwe",code: "ZW"}
 ];
 
-import { CalendarIcon, Cog6ToothIcon, ChartPieIcon } from '@heroicons/react/24/outline'
+import { CalendarIcon, Cog6ToothIcon, ChartPieIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline'
 
 export const navigation = [
   { name: 'Calendar', icon: CalendarIcon, href: '/calendar' },
   { name: 'Balance', icon: ChartPieIcon, href: '/balance' },
-  { name: 'Settings', icon: Cog6ToothIcon, href: '/setting' }
+  { name: 'Settings', icon: Cog6ToothIcon, href: '/settings' },
+  { name: 'Organization', icon: BuildingOfficeIcon, href: '/organization' }
 ]
 
 export const leaveType = [

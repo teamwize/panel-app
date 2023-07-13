@@ -5,11 +5,11 @@ import 'react-day-picker/dist/style.css'
 import styles from 'react-day-picker/dist/style.module.css';
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween.js'
-import doFetch from '../httpService.js'
-import { leaveTypeJson, statusJson } from '../constants'
-import '../constants/style.css'
-import { Toolbar } from '../components'
-import useCalendarData from '../utils/holidays.js';
+import { dayoffList } from "../../services/WorkiveApiClient.js"
+import { leaveTypeJson, statusJson } from '../../constants/index.js'
+import '../../constants/style.css'
+import { Toolbar } from '../../components/index.js'
+import useCalendarData from '../../utils/holidays.js';
 import { PlusIcon } from '@heroicons/react/20/solid';
 
 dayjs.extend(isBetween);
@@ -24,9 +24,7 @@ export default function Calendar() {
   const isWorkingDay = holidaysDate.every(d => !dayjs(d).isSame(selectedDate, 'day'))
 
   useEffect(() => {
-    doFetch('http://localhost:8080/days-off', {
-      method: 'GET'
-    }).then(data => {
+    dayoffList().then(data => {
       console.log('Success:', data);
       setRequestsList(data)
     }).catch(error => {
@@ -62,7 +60,7 @@ export default function Calendar() {
 
   const navigate = useNavigate();
   const sendRequest = () => {
-    navigate('/send-request');
+    navigate('/dayoff/create');
   }
 
   const myStyles = {
@@ -86,7 +84,7 @@ export default function Calendar() {
 
 
   return (
-    <div className='md:w-5/6 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200'>
+    <div className='md:w-4/5 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-5xl'>
         <Toolbar title='Calendar'>
           <div className='flex justify-center'>
