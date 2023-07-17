@@ -2,15 +2,15 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { dayoffList } from "../../services/WorkiveApiClient.js"
-import { Request, Graph } from '../../components/index.js'
+import { DayOffRequest, BalanceGraph } from '../../components/index.js'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
-export default function EmployeeDetails() {
+export default function EmployeeInformation() {
   const [balanceValue, setBalanceValue] = useState([])
   const [requestsList, setRequestsList] = useState([])
   const [errorMessage, setErrorMessage] = useState(null);
-
   const navigate = useNavigate();
+  const { id } = useParams();
 
   // const [errorMessage, setErrorMessage] = useState(null)
   // useEffect(() => {
@@ -32,7 +32,7 @@ export default function EmployeeDetails() {
     { label: "Paid time off", total: 5, balance: 1, color: "#60a5fa" }
   ]
 
-  const { id } = useParams();
+  //get employee's dayoff list
   useEffect(() => {
     // doFetch('http://localhost:8080/days-off/' + id, {
     dayoffList().then(data => {
@@ -55,7 +55,7 @@ export default function EmployeeDetails() {
             <button onClick={goBack}>
               <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
             </button>
-            <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Employee Details</h1>
+            <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Employee Information</h1>
           </div>
         </div>
 
@@ -65,7 +65,7 @@ export default function EmployeeDetails() {
           <p className='text-sm font-semibold leading-6 mb-2 md:text-lg text-gray-900 dark:text-gray-300'>Balance</p>
           <div className='flex text-center justify-center mb-4 mx-2'>
             {balance.map(i => <div key={i.label} className='md:w-1/4 w-1/3 border dark:border-gray-700 rounded-md mx-1 shadow p-2 lg:w-1/4 md:p-4 md:mx-2 bg-white dark:bg-gray-800'>
-              <Graph title={i.label} balance={i.balance} total={i.total} color={i.color}></Graph>
+              <BalanceGraph title={i.label} balance={i.balance} total={i.total} color={i.color}></BalanceGraph>
               <p className='mt-2 text-sm md:text-base' style={{ color: i.color }}>{i.label}</p>
               <p className='text-sm md:text-base text-gray-600 dark:text-gray-300'>{i.balance} / {i.total}</p>
             </div>)}
@@ -73,7 +73,7 @@ export default function EmployeeDetails() {
 
           <div className='mb-4'>
             <p className='text-sm font-semibold leading-6 mb-4 md:text-lg text-gray-900 dark:text-gray-300'>Requests ({requestsList ? requestsList.length : 0})</p>
-            {requestsList ? requestsList.sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).map((request) => <Request request={request} key={request.id} />) : <p>There is no pending request</p>}
+            {requestsList ? requestsList.sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
           </div>
         </main>
       </div>

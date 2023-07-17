@@ -1,19 +1,18 @@
-import { useForm } from "react-hook-form"
 import { useState, useContext } from "react"
+import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { login } from "../../services/WorkiveApiClient.js"
-import { logo } from '../../constants/index.js'
 import { UserContext } from "../../contexts/UserContext.jsx"
+import { logo } from '../../constants/index.js'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const { authenticate } = useContext(UserContext)
-
+  const navigate = useNavigate()
   const [showPassword, setShowPassword] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
-  const navigate = useNavigate()
 
   const onSubmit = (data) => {
     LoginInfo(data);

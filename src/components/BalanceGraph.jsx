@@ -11,7 +11,8 @@ export default function Graph({ balance, total, color }) {
       backgroundColor: [color, "#d1d5db"],
       borderWidth: 2,
     }]
-  };
+  }
+  
   const options = {
     cutout: "60%",
     borderRadius: 4,

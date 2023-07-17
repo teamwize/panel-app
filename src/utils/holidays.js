@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import dayjs from 'dayjs'
 import customParseFormat from 'dayjs/plugin/customParseFormat';
-
 dayjs.extend(customParseFormat);
 
 function useCalendarData() {
@@ -15,7 +14,6 @@ function useCalendarData() {
       holidays: [
         { date: 'June 4', weekday: 'Sunday', name: 'Death of khomeini' },
         { date: 'June 5', weekday: 'Monday', name: 'Revolt of Khordad' },
-        { date: 'June 20', weekday: 'Monday', name: 'Revolt of Khordad' },
       ]
     },
     {

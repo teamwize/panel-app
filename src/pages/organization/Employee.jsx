@@ -10,9 +10,9 @@ export default function Employees() {
   const [errorMessage, setErrorMessage] = useState(null)
   const [remove, setRemove] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
-
   const navigate = useNavigate();
 
+  //get list of employees
   useEffect(() => {
     employeeList().then(data => {
       console.log('Success:', data);
@@ -31,6 +31,7 @@ export default function Employees() {
 
   const closeRemove = () => setRemove(false)
 
+  //remove employee
   const handleRequest = (confirmed, id) => {
     setIsProcessing(true);
     if (confirmed) {

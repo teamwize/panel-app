@@ -4,10 +4,6 @@ import { navigation, logo } from '../constants'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
 export default function Sidebar() {
   return (
     <div className="min-h-0 flex-col md:w-1/5 md:fixed md:top-0 md:bottom-0 md:left-0 border-b md:border-r border-gray-200 dark:border-gray-700 dark:bg-gray-900 bg-gray-100">
@@ -38,7 +34,7 @@ export default function Sidebar() {
             <Disclosure.Panel className="w-full shadow z-10" style={{ height: 'calc(100vh - 64px)' }}>
               {({ close }) => (
                 <div className='flex flex-col justify-between'>
-                  <Navbar close={close}/>
+                  <Navbar close={close} />
                   <Profile close={close} />
                 </div>
               )}
@@ -52,8 +48,8 @@ export default function Sidebar() {
 
 function Navbar({ close }) {
   const location = useLocation()
-  const [selectedOption, setSelectedOption] = useState("")
   const navigate = useNavigate();
+  const [selectedOption, setSelectedOption] = useState("")
 
   const handleOptionClick = (href) => {
     setSelectedOption(href)

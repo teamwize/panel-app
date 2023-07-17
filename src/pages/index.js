@@ -1,20 +1,20 @@
 import Register from "./auth/Register";
 import Calendar from "./calendar/Calendar";
 import Login from "./auth/Login";
-import SendRequest from "./createDayoff/SendRequest";
-import PendingRequest from "./createDayoff/PendingRequest";
-import QueueRequest from "./organization/QueueRequest";
+import CreateDayOff from "./createDayoff/CreateDayOff";
+import PendingDayOff from "./createDayoff/PendingDayOff";
+import DayOffQueue from "./organization/DayOffQueue";
 import Balance from "./balance/Balance"
-import Employees from "./organization/Employees";
-import EmployeeDetails from './organization/EmployeeDetails'
-import Setting from './settings/Setting'
+import Employee from "./organization/Employee";
+import EmployeeInformation from './organization/EmployeeInformation'
+import Settings from './settings/Settings'
 import ChangePassword from './settings/ChangePassword'
 import OfficialHolidays from "./settings/OfficialHolidays"
 import Profile from './profile/Profile'
-import AddEmployee from "./organization/AddEmployee"
-import CompanyInfo from "./organization/CompanyInfo"
-import SetBalance from './organization/SetBalance'
-import SetWorkingDays from './organization/SetWorkingDays'
+import CreateEmployee from "./organization/CreateEmployee"
+import OrganizationInformation from "./organization/OrganizationInformation"
+import OrganizationBalance from './organization/OrganizationBalance'
+import OrganizationWorkingDays from './organization/OrganizationWorkingDays'
 import Organization from './organization/Organization'
 
-export { Register, Calendar, Login, SendRequest, PendingRequest, QueueRequest, Balance, Employees, EmployeeDetails, Setting, ChangePassword, OfficialHolidays, Profile, AddEmployee, CompanyInfo, SetBalance, SetWorkingDays, Organization }
+export { Register, Calendar, Login, CreateDayOff, PendingDayOff, DayOffQueue, Balance, Employee, EmployeeInformation, Settings, ChangePassword, OfficialHolidays, Profile, CreateEmployee, OrganizationInformation, OrganizationBalance, OrganizationWorkingDays, Organization }

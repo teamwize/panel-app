@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { changePassword } from "../../services/WorkiveApiClient.js"
+import { Button } from '../../components/index.js'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
 export default function ChangePassword() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
-
   const [errorMessage, setErrorMessage] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -15,7 +15,7 @@ export default function ChangePassword() {
 
   const onSubmit = (data) => {
     if (data.newPassword !== data.reNewPassword) {
-      setErrorMessage("The passwords don't match. Try again");
+      setErrorMessage("Passwords don't match. Try again");
       return
     };
     changePasswordInfo(data);
@@ -26,6 +26,7 @@ export default function ChangePassword() {
       currPass: data.password,
       newPass: data.newPassword
     }
+
     setIsProcessing(true);
 
     changePassword(payload).then(data => {
@@ -86,11 +87,7 @@ export default function ChangePassword() {
             <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
           </div>
 
-          <div dir='rtl'>
-            <button type="submit" className="flex justify-center w-full md:w-1/4 mt-4 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              {isProcessing ? "Waiting ..." : "Change Password"}
-            </button>
-          </div>
+          <Button type='submit' isProcessing={isProcessing} text='Change Password' className=' flex justify-center w-full md:w-1/4'></Button>
         </form>
       </div>
     </div>

@@ -1,17 +1,15 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { employeeList } from "../../services/WorkiveApiClient.js"
-import { Switch } from '@headlessui/react'
 import { Toolbar } from '../../components/index.js'
-import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { ThemeContext } from '../../contexts/index.js'
-
+import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline'
+import { Switch } from '@headlessui/react'
 
 export default function Setting() {
   const [employeesList, setEmployeesList] = useState([])
   const [errorMessage, setErrorMessage] = useState("")
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
-
   const navigate = useNavigate()
 
   const viewChangePassword = () => {
@@ -22,6 +20,7 @@ export default function Setting() {
     navigate('/settings/official-holiday')
   }
 
+  //get employee information
   useEffect(() => {
     employeeList().then(data => {
       console.log('Success:', data);

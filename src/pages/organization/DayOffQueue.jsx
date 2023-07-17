@@ -2,18 +2,19 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Dialog } from '@headlessui/react'
-import { CalendarIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { dayoffList, setDayoffStatus } from "../../services/WorkiveApiClient.js"
-import { leaveTypeJson } from '../../constants/index.js'
+import { leaveTypeJson, leaveTypeColor } from '../../constants/index.js'
+import { Label } from '../../components/index.js'
 
-export default function QueueRequest() {
+export default function DayOffQueue() {
   const navigate = useNavigate()
-
   const [requestsList, setRequestsList] = useState([])
   const [requestDetails, setRequestDetails] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
+  //get dayoff list
   useEffect(() => {
     dayoffList().then(data => {
       console.log('Success:', data);
@@ -28,6 +29,7 @@ export default function QueueRequest() {
 
   const handleModal = () => setRequestDetails(false);
 
+  //accept or reject request
   const handleRequest = (status, id) => {
     let payload = {
       status: status
@@ -58,7 +60,7 @@ export default function QueueRequest() {
           <button onClick={goBack}>
             <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
           </button>
-          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Request Queue</h1>
+          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Day Off Queue</h1>
         </div>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
@@ -86,7 +88,7 @@ function Request({ request, setRequestDetails }) {
           <p className='distance text-sm text-gray-500 dark:text-gray-400'>(2 {(request.distance) == 1 ? "Day" : "Days"})</p>
         </div>
 
-        <p className={`${leaveTypeJson[request.type] == 'Vacation' ? 'text-[#22c55e] bg-green-100 dark:bg-green-900 dark:text-green-300' : leaveTypeJson[request.type] == 'Sick leave' ? 'text-[#f87171] bg-red-100 dark:bg-red-900 dark:text-red-300' : 'text-[#60a5fa] bg-blue-100 dark:bg-blue-900 dark:text-blue-300'} type text-xs py-0.5 px-2 rounded-2xl w-fit`}>{leaveTypeJson[request.type]}</p>
+        <Label type={leaveTypeColor[request.type]} text={leaveTypeJson[request.type]}></Label>
       </div>
     </section>
   )

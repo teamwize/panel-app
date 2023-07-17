@@ -6,7 +6,9 @@ import { CalendarDaysIcon } from "@heroicons/react/20/solid"
 import '../constants/style.css'
 
 export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handleDateSelected, selectedDate, daysBefore, setCalendarCurrentDate, holidaysDate }) {
-  const handleDaySelected = (date) => handleDateSelected(date)
+  const handleDaySelected = (date) => {
+    handleDateSelected(date)
+  }
 
   const handleMonthChange = (newDate) => {
     setCalendarCurrentDate(dayjs(newDate));
@@ -32,11 +34,9 @@ export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handl
         <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-40'>
           <div className="flex min-h-full items-center justify-center text-center">
             <Dialog.Panel className="max-w-xs transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200 text-left align-middle transition-all mx-4 w-full">
-              <div>
-                <DayPicker modifiers={{ holiday: holidaysDate }} modifiersStyles={{ holiday: { color: '#ef4444', fontWeight: "bold", margin: '1px' } }} onMonthChange={handleMonthChange}
-                  onDayClick={handleDaySelected} disabled={isDateDisabled} selected={selectedDate} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }} mode="single"
-                  className='rounded-xl flex justify-center md:right-0 md:left-0 mx-auto max-w-xs'></DayPicker>
-              </div>
+              <DayPicker modifiers={{ holiday: holidaysDate }} modifiersStyles={{ holiday: { color: '#ef4444', fontWeight: "bold", margin: '1px' } }} onMonthChange={handleMonthChange}
+                onDayClick={handleDaySelected} disabled={isDateDisabled} selected={selectedDate} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }} mode="single"
+                className='rounded-xl flex justify-center md:right-0 md:left-0 mx-auto max-w-xs'></DayPicker>
             </Dialog.Panel>
           </div>
         </div>

@@ -3,18 +3,19 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { changeEmployeeInfo, employeeInformation } from "../../services/WorkiveApiClient.js"
 import { countries } from '../../constants/index.js'
+import { Button } from '../../components/index.js'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
-export default function Profile() {
+export default function OrganizationInformation() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
-
   const [employeeInfo, setEmployeeInfo] = useState({})
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
   const goBack = () => navigate('/organization');
 
+  //get organization information
   useEffect(() => {
     employeeInformation().then(data => {
       console.log('Success:', data);
@@ -52,19 +53,17 @@ export default function Profile() {
           <button onClick={goBack}>
             <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
           </button>
-          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Company Info</h1>
+          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Organization Info</h1>
         </div>
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
         <main className='px-4'>
           <form onSubmit={handleSubmit(onSubmit)}>
-            {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
-
             <div className='w-full mb-4'>
-              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="companyName">Company Name</label>
-              <input {...register("companyName", { required: "Company name is required", maxLength: { value: 20, message: "Company name must be under 20 characters" }, minLength: { value: 2, message: "Company name must be over 2 characters" } })}
-                aria-invalid={errors.companyName ? "true" : "false"} name="companyName" type="text" placeholder="companyName"
+              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="orgName">Organization Name</label>
+              <input {...register("orgName", { required: "Organization name is required", maxLength: { value: 20, message: "Organization name must be under 20 characters" }, minLength: { value: 2, message: "Organization name must be over 2 characters" } })}
+                aria-invalid={errors.companyName ? "true" : "false"} name="orgName" type="text" placeholder="orgName"
                 className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
               {errors.companyName && <Alert>{errors.companyName.message}</Alert>}
             </div>
@@ -79,11 +78,7 @@ export default function Profile() {
               {errors.location && <Alert>{errors.location.message}</Alert>}
             </div>
 
-            <div dir='rtl'>
-              <button type="submit" className="flex justify-center w-full md:w-1/4 mt-4 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-                {isProcessing ? "Waiting ..." : "Save"}
-              </button>
-            </div>
+            <Button type='submit' isProcessing={isProcessing} text='Save' className=' flex justify-center w-full md:w-1/4 mt-4'></Button>
           </form>
         </main>
       </div>

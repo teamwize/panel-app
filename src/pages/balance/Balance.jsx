@@ -1,13 +1,13 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { dayoffList } from "../../services/WorkiveApiClient.js"
-import { Toolbar, Request, Graph } from '../../components/index.js'
+import { Toolbar, DayOffRequest, BalanceGraph } from '../../components/index.js'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
 export default function Balance() {
   const [balanceValue, setBalanceValue] = useState([])
   const [requestsList, setRequestsList] = useState([])
-
+  const navigate = useNavigate();
 
   // const [errorMessage, setErrorMessage] = useState(null)
   // useEffect(() => {
@@ -29,6 +29,7 @@ export default function Balance() {
     { label: "Paid time off", total: 5, balance: 1, color: "#60a5fa" }
   ]
 
+  //get list of requests
   useEffect(() => {
     dayoffList().then(data => {
       console.log('Success:', data);
@@ -39,7 +40,6 @@ export default function Balance() {
     })
   }, [])
 
-  const navigate = useNavigate();
   const sendRequest = () => {
     navigate('/dayoff/create');
   }
@@ -62,7 +62,7 @@ export default function Balance() {
         <main className='px-4'>
           <div className='flex text-center justify-center mb-4 mx-2'>
             {balance.map(i => <div key={i.label} className='w-1/3 border dark:border-gray-700 rounded-md mx-1 shadow p-2 md:w-1/4 md:p-4 md:mx-2 bg-white dark:bg-gray-800'>
-              <Graph title={i.label} balance={i.balance} total={i.total} color={i.color}></Graph>
+              <BalanceGraph title={i.label} balance={i.balance} total={i.total} color={i.color}></BalanceGraph>
               <p className='mt-2 text-sm md:text-base' style={{ color: i.color }}>{i.label}</p>
               <p className='text-sm md:text-base text-gray-600 dark:text-gray-300'>{i.balance} / {i.total}</p>
             </div>)}
@@ -70,7 +70,7 @@ export default function Balance() {
 
           <div>
             <p className='font-semibold leading-6 mb-4 md:text-lg text-gray-900 dark:text-gray-300'>Requests ({requestsList ? requestsList.length : 0})</p>
-            {requestsList ? requestsList.sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).map((request) => <Request request={request} key={request.id} />) : <p>There is no pending request</p>}
+            {requestsList ? requestsList.sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
           </div>
         </main>
       </div>

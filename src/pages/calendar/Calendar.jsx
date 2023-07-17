@@ -2,16 +2,14 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css'
-import styles from 'react-day-picker/dist/style.module.css';
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween.js'
 import { dayoffList } from "../../services/WorkiveApiClient.js"
-import { leaveTypeJson, statusJson } from '../../constants/index.js'
+import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../constants/index.js'
 import '../../constants/style.css'
-import { Toolbar } from '../../components/index.js'
+import { Toolbar, Label } from '../../components/index.js'
 import useCalendarData from '../../utils/holidays.js';
 import { PlusIcon } from '@heroicons/react/20/solid';
-
 dayjs.extend(isBetween);
 
 export default function Calendar() {
@@ -20,9 +18,11 @@ export default function Calendar() {
   const [offDays, setOffDays] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const { calendarCurrentDate, setCalendarCurrentDate, holidaysDate } = useCalendarData();
+  const navigate = useNavigate();
   const selectedDateRequests = requestsList.filter(r => (dayjs(selectedDate).isBetween(dayjs(r.start), dayjs(r.end), 'days', '[]')))
   const isWorkingDay = holidaysDate.every(d => !dayjs(d).isSame(selectedDate, 'day'))
 
+  //Get list of requests
   useEffect(() => {
     dayoffList().then(data => {
       console.log('Success:', data);
@@ -33,6 +33,7 @@ export default function Calendar() {
     })
   }, [])
 
+  // show dayoff lists of working days
   const result = [];
   useEffect(() => {
     if (requestsList.length == 0) return;
@@ -54,11 +55,10 @@ export default function Calendar() {
     setCalendarCurrentDate(dayjs(newDate));
   }
 
-  const showDaysOff = (date) => {
+  const showDayOff = (date) => {
     if (date) setSelectedDate(date)
   }
 
-  const navigate = useNavigate();
   const sendRequest = () => {
     navigate('/dayoff/create');
   }
@@ -98,10 +98,9 @@ export default function Calendar() {
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm px-4">{errorMessage}</p>}
 
         <main className='px-4'>
-          <div>
-            <DayPicker modifiers={{ highlighted: offDays, holiday: holidaysDate }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold" }, holiday: { color: '#ef4444', fontWeight: "bold" } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
-              onMonthChange={handleMonthChange} selected={dayjs(selectedDate).toDate()} onSelect={showDaysOff} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-2 mx-auto max-w-lg'></DayPicker>
-          </div>
+          <DayPicker modifiers={{ highlighted: offDays, holiday: holidaysDate }} modifiersStyles={{ highlighted: { color: '#4338ca', fontWeight: "bold" }, holiday: { color: '#ef4444', fontWeight: "bold" } }} modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
+            onMonthChange={handleMonthChange} selected={dayjs(selectedDate).toDate()} onSelect={showDayOff}
+            styles={myStyles} mode="single" className='my-styles bg-white dark:bg-gray-800 dark:text-gray-200 rounded-xl flex justify-center py-2 mx-auto max-w-lg'></DayPicker>
 
           <div>
             <p className='font-semibold md:text-lg my-4'>Requests ({selectedDateRequests ? selectedDateRequests.length : 0})</p>
@@ -130,8 +129,8 @@ function Request({ request }) {
         </div>
 
         <div className='flex'>
-          <p className={`${leaveTypeJson[request.type] == 'Vacation' ? 'text-[#22c55e] bg-green-100 dark:bg-green-900 dark:text-green-300' : leaveTypeJson[request.type] == 'Sick leave' ? 'text-[#f87171] bg-red-100 dark:bg-red-900 dark:text-red-300' : 'text-[#60a5fa] bg-blue-100 dark:bg-blue-900 dark:text-blue-300'} type text-xs mr-4 py-0.5 px-2 rounded-2xl w-fit`}>{leaveTypeJson[request.type]}</p>
-          <p className={`${request.status == "PENDING" ? 'text-yellow-500 bg-yellow-100 dark:bg-yellow-600 dark:text-yellow-200' : request.status == "ACCEPTED" ? 'text-green-500 bg-green-200 dark:bg-green-900 dark:text-green-300' : 'text-red-500 bg-red-200  dark:bg-red-900 dark:text-red-300'} status text-xs py-0.5 px-2 rounded-2xl w-fit`}>{statusJson[request.status]}</p>
+          <Label className="mr-4" type={leaveTypeColor[request.type]} text={leaveTypeJson[request.type]}></Label>
+          <Label type={dayoffStatusColor[request.status]} text={statusJson[request.status]}></Label>
         </div>
       </div>
     </section>

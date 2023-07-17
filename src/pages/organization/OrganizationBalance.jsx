@@ -2,12 +2,12 @@ import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { createOrganizationInfo } from "../../services/WorkiveApiClient.js"
+import { Button } from '../../components/index.js'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
-export default function ChangePassword() {
+export default function OrganizationBalance() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
-
   const [errorMessage, setErrorMessage] = useState("")
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -76,11 +76,7 @@ export default function ChangePassword() {
             </div>
           </div>
 
-          <div dir='rtl'>
-            <button type="submit" className="flex justify-center w-full md:w-1/4 mt-4 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              {isProcessing ? "Waiting ..." : "Save"}
-            </button>
-          </div>
+          <Button type='submit' isProcessing={isProcessing} text='Save' className=' flex justify-center w-full md:w-1/4 mt-4'></Button>
         </form>
       </div>
     </div>

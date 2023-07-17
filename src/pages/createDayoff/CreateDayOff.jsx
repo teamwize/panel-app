@@ -1,24 +1,14 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs'
-import advancedFormat from 'dayjs/plugin/advancedFormat';
-import isoWeek from 'dayjs/plugin/isoWeek';
 import isBetween from 'dayjs/plugin/isBetween';
-import utc from 'dayjs/plugin/utc';
-import timezone from 'dayjs/plugin/timezone';
 import { createDayoff } from "../../services/WorkiveApiClient.js"
-import { Toolbar, DatePicker } from '../../components/index.js'
+import { Toolbar, DatePicker, Button } from '../../components/index.js'
 import { leaveType } from '../../constants/index.js'
 import useCalendarData from '../../utils/holidays.js';
-
-dayjs.extend(advancedFormat);
-dayjs.extend(isoWeek);
 dayjs.extend(isBetween);
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
-
-export default function SendRequest() {
+export default function CreateDayOff() {
   const [type, setType] = useState('VACATION')
   const [startDate, setStartDate] = useState(new Date())
   const [endDate, setEndDate] = useState(new Date())
@@ -32,6 +22,7 @@ export default function SendRequest() {
   const navigate = useNavigate()
   const { setCalendarCurrentDate, holidaysDate } = useCalendarData();
 
+  //coose start date
   const handleStartDateSelected = (date) => {
     setStartCalendarIsOn(false);
     if (!date) return;
@@ -41,6 +32,7 @@ export default function SendRequest() {
     }
   }
 
+  //choose end date
   const handleEndDateSelected = (date) => {
     setEndCalendarIsOn(false);
     if (!date) return;
@@ -69,6 +61,7 @@ export default function SendRequest() {
     });
   }
 
+  //seperate working days from holidays to choose dayoff
   useEffect(() => {
     let updatedStartDate = dayjs(startDate);
     for (let i = 0; i <= 20; i++) {
@@ -118,11 +111,7 @@ export default function SendRequest() {
             <textarea value={reason} onChange={e => setReason(e.target.value)} className='border rounded-md p-3 w-full dark:border-gray-700 border-gray-200 dark:bg-gray-800'></textarea>
           </div>
 
-          <div dir='rtl'>
-            <button onClick={sendRequest} className="flex justify-center w-full md:w-1/4 rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600">
-              {isProcessing ? "Waiting ..." : "Submit Request"}
-            </button>
-          </div>
+          <Button onClick={sendRequest} isProcessing={isProcessing} text='Submit Request' className=' flex justify-center w-full md:w-1/4'></Button>
         </div>
       </div>
     </div>
