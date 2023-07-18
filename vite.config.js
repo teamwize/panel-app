@@ -14,4 +14,10 @@ export default defineConfig({
       injectRegister: 'auto'
     })
   ],
+  resolve: {
+    alias: {
+      '~': "/src",
+      "~/*": ["./src/*", ""],
+    },
+  },
 })

@@ -1,6 +1,6 @@
-import Root from './routes/root'
+import Root from './modules/routes'
 import { useContext } from "react"
-import { Sidebar } from './components'
+import { Sidebar } from './core/components'
 import { UserContext, ThemeProvider } from './contexts';
 
 export default function App() {
