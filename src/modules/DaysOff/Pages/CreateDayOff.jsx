@@ -96,7 +96,7 @@ export default function CreateDayOff() {
           <div className='mb-4'>
             <label htmlFor="type" className="block text-sm font-semibold md:text-base leading-6 mb-1">Leave Type</label>
             <select value={type} onChange={e => setType(e.target.value)} name="type" className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-3 text-gray-900 shadow-sm placeholder:text-gray-600 dark:text-gray-200 text-sm md:text-base sm:leading-6 dark:bg-gray-800 px-2">
-              {leaveType.map((type) => <option className='py-2' value={type.value} key={type.name}>{type.name}</option>)}
+              {leaveType.map((type) => <LeaveTypeItem type={type} key={type.name} />)}
             </select>
           </div>
 
@@ -117,4 +117,8 @@ export default function CreateDayOff() {
       </div>
     </div>
   )
+}
+
+function LeaveTypeItem({ type }) {
+  return <option className='py-2' value={type.value}>{type.name}</option>
 }

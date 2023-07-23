@@ -73,7 +73,7 @@ export default function OrganizationInformation() {
               <select {...register("location", { required: "Location is required" })} aria-invalid={errors.location ? "true" : "false"} name="location"
                 className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-3 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
                 <option value="">Choose your location</option>
-                {countries.map((location) => <option value={location.code} key={location.name}>{location.name}</option>)}
+                {countries.map((location) => <Location location={location} key={location.code} />)}
               </select>
               {errors.location && <Alert>{errors.location.message}</Alert>}
             </div>
@@ -90,4 +90,8 @@ function Alert({ children }) {
   return (
     <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
   )
+}
+
+function Location({ location }) {
+  return <option value={location.code}>{location.name}</option>
 }

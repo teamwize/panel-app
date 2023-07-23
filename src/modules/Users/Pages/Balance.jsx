@@ -60,13 +60,7 @@ export default function Balance() {
         {/* {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>} */}
 
         <main className='px-4'>
-          <div className='flex text-center justify-center mb-4 mx-2'>
-            {balance.map(i => <div key={i.label} className='w-1/3 border dark:border-gray-700 rounded-md mx-1 shadow p-2 md:w-1/4 md:p-4 md:mx-2 bg-white dark:bg-gray-800'>
-              <BalanceGraph title={i.label} balance={i.balance} total={i.total} color={i.color}></BalanceGraph>
-              <p className='mt-2 text-sm md:text-base' style={{ color: i.color }}>{i.label}</p>
-              <p className='text-sm md:text-base text-gray-600 dark:text-gray-300'>{i.balance} / {i.total}</p>
-            </div>)}
-          </div>
+          <div className='flex text-center justify-center mb-4 mx-2'>{balance.map(i => <BalanceItem i={i} key={i.label} />)}</div>
 
           <div>
             <p className='font-semibold leading-6 mb-4 md:text-lg text-gray-900 dark:text-gray-300'>Requests ({requestsList ? requestsList.length : 0})</p>
@@ -74,6 +68,16 @@ export default function Balance() {
           </div>
         </main>
       </div>
+    </div>
+  )
+}
+
+function BalanceItem({ i }) {
+  return (
+    <div className='w-1/3 border dark:border-gray-700 rounded-md mx-1 shadow p-2 md:w-1/4 md:p-4 md:mx-2 bg-white dark:bg-gray-800'>
+      <BalanceGraph title={i.label} balance={i.balance} total={i.total} color={i.color}></BalanceGraph>
+      <p className='mt-2 text-sm md:text-base' style={{ color: i.color }}>{i.label}</p>
+      <p className='text-sm md:text-base text-gray-600 dark:text-gray-300'>{i.balance} / {i.total}</p>
     </div>
   )
 }

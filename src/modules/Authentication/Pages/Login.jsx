@@ -1,6 +1,6 @@
 import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, useSearchParams } from 'react-router-dom'
 import { login } from "../../../services/WorkiveApiClient.js"
 import { UserContext } from "../../../contexts/UserContext.jsx"
 import { logo } from '../../../constants/index.js'
@@ -10,6 +10,8 @@ export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const { authenticate } = useContext(UserContext)
   const navigate = useNavigate()
+  const [searchParams] = useSearchParams();
+  const currentURL = searchParams.get('redirect')
   const [showPassword, setShowPassword] = useState(false)
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
@@ -25,7 +27,11 @@ export default function Login() {
       setIsProcessing(false);
       console.log('Success:', data);
       authenticate(data.accessToken, data);
-      navigate('/calendar')
+      if (currentURL) {
+        navigate(`${currentURL}`)
+      } else {
+        navigate('/calendar')
+      }
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);

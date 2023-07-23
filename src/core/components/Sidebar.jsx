@@ -61,14 +61,18 @@ function Navbar({ close }) {
 
   return (
     <nav className="md:mt-5 flex-1 px-4 border-t border-gray-200 dark:border-gray-700 md:border-0 md:mx-0" aria-label="Sidebar">
-      {navigation.map((item) => (
-        <button onClick={() => handleOptionClick(item.href)} key={item.name} className={`group flex w-full text-left items-center rounded-md p-2 mt-2 text-xs md:text-sm font-semibold text-gray-500 dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-white hover:bg-opacity-75
-        ${location.pathname === item.href || selectedOption === item.href ? 'bg-indigo-200 dark:bg-indigo-600 bg-opacity-75' : ''}`}>
-          <item.icon className="mr-2 h-7 w-7 flex-shrink-0 text-gray-400" aria-hidden="true" />
-          <span className="flex-1 text-gray-600 dark:text-gray-300">{item.name}</span>
-        </button>
-      ))}
+      {navigation.map((item) => <NavigationItem item={item} key={item.name} handleOptionClick={handleOptionClick} location={location} selectedOption={selectedOption} />)}
     </nav>
+  )
+}
+
+function NavigationItem({ item, handleOptionClick, location, selectedOption }) {
+  return (
+    <button onClick={() => handleOptionClick(item.href)} className={`group flex w-full text-left items-center rounded-md p-2 mt-2 text-xs md:text-sm font-semibold text-gray-500 dark:text-gray-200 dark:hover:bg-gray-800 hover:bg-white hover:bg-opacity-75
+      ${location.pathname === item.href || selectedOption === item.href ? 'bg-indigo-200 dark:bg-indigo-600 bg-opacity-75' : ''}`}>
+      <item.icon className="mr-2 h-7 w-7 flex-shrink-0 text-gray-400" aria-hidden="true" />
+      <span className="flex-1 text-gray-600 dark:text-gray-300">{item.name}</span>
+    </button>
   )
 }
 

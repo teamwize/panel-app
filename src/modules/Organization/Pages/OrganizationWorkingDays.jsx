@@ -55,7 +55,7 @@ export default function OrganizationWorkingDays() {
             <select {...register("startDay", { required: "Week starting day is required" })} aria-invalid={errors.startDay ? "true" : "false"} name="startDay"
               className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-3 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
               <option value="">Choose week starting day</option>
-              {weekDays.map((day) => <option value={day.day} key={day.day}>{day.day}</option>)}
+              {weekDays.map((day) => <WeekDaysItem day={day} key={day.day} />)}
             </select>
             {errors.startDay && <Alert>{errors.startDay.message}</Alert>}
           </div>
@@ -63,11 +63,7 @@ export default function OrganizationWorkingDays() {
           <div>
             <label htmlFor="weekDays" className="block text-sm font-semibold leading-6 md:text-base mb-2">Working Days</label>
             <div className="grid grid-cols-2">
-              {weekDays.map((day) => <div key={day.day} className="flex items-center mb-1">
-                <input {...register("weekDays", { required: "Working days is required" })} aria-invalid={errors.weekDays ? "true" : "false"}
-                  value={day.day} id={day.day} type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-2" />
-                <label for={day.day} className="text-sm md:text-base">{day.day}</label>
-              </div>)}
+              {weekDays.map((day) => <WorkDaysItem day={day} key={day.day} register={register} errors={errors} />)}
             </div>
             {errors.weekDays && <Alert>{errors.weekDays.message}</Alert>}
           </div>
@@ -82,5 +78,19 @@ export default function OrganizationWorkingDays() {
 function Alert({ children }) {
   return (
     <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
+  )
+}
+
+function WeekDaysItem({ day }) {
+  return <option value={day.day}>{day.day}</option>
+}
+
+function WorkDaysItem({ day, register, errors }) {
+  return (
+    <div className="flex items-center mb-1">
+      <input {...register("weekDays", { required: "Working days is required" })} aria-invalid={errors.weekDays ? "true" : "false"}
+        value={day.day} id={day.day} type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-2" />
+      <label htmlFor={day.day} className="text-sm md:text-base">{day.day}</label>
+    </div>
   )
 }

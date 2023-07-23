@@ -1,6 +1,8 @@
 import { useNavigate } from 'react-router-dom'
 import { Fragment } from 'react'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
+import { hexToRgb } from '@material-ui/core'
+import he from 'date-fns/esm/locale/he/index.js'
 
 const example = [
   {
@@ -39,26 +41,32 @@ export default function OfficialHolidays() {
         <div className="-my-[9px] sm:-mx-6 lg:-mx-8 px-4">
           <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
             <table className="min-w-full">
-              <tbody className="bg-gray-50 dark:bg-gray-800">
-                {example.map((e) => (
-                  <Fragment key={e.month}>
-                    <tr className="border-t border-gray-200 dark:border-gray-700">
-                      <th colSpan={5} scope="colgroup" className="bg-gray-100 dark:bg-gray-900 py-2 pl-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">{e.month}</th>
-                    </tr>
-                    {e.holidays.map((h, hIdx) => (
-                      <tr key={h.date} className={classNames(hIdx === 0 ? 'border-gray-300 dark:border-gray-600' : 'border-gray-200 dark:border-gray-700', 'border-t')}>
-                        <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{h.date}</td>
-                        <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{h.weekday}</td>
-                        <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{h.name}</td>
-                      </tr>
-                    ))}
-                  </Fragment>
-                ))}
-              </tbody>
+              <tbody className="bg-gray-50 dark:bg-gray-800">{example.map((e) => <HolidayTable e={e} key={e.month} />)}</tbody>
             </table>
           </div>
         </div>
       </div>
     </div>
+  )
+}
+
+function HolidayTable({ e }) {
+  return (
+    <Fragment>
+      <tr className="border-t border-gray-200 dark:border-gray-700">
+        <th colSpan={5} scope="colgroup" className="bg-gray-100 dark:bg-gray-900 py-2 pl-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-200">{e.month}</th>
+      </tr>
+      {e.holidays.map((h, hIdx) => <HolidaysItem h={h} hIdx={hIdx} key={h.date} />)}
+    </Fragment>
+  )
+}
+
+function HolidaysItem({ h, hIdx }) {
+  return (
+    <tr className={classNames(hIdx === 0 ? 'border-gray-300 dark:border-gray-600' : 'border-gray-200 dark:border-gray-700', 'border-t')}>
+      <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{h.date}</td>
+      <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{h.weekday}</td>
+      <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{h.name}</td>
+    </tr>
   )
 }
