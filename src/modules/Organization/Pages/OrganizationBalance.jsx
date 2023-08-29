@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { createOrganizationInfo } from "../../../services/WorkiveApiClient.js"
+import { updateOrganization } from "../../../services/WorkiveApiClient.js"
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
@@ -25,7 +25,7 @@ export default function OrganizationBalance() {
     }
     setIsProcessing(true);
 
-    createOrganizationInfo(payload).then(data => {
+    updateOrganization(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data)
     }).catch(error => {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { dayoffList } from "../../../services/WorkiveApiClient.js"
+import { daysoff } from "../../../services/WorkiveApiClient.js"
 import { Toolbar, DayOffRequest, BalanceGraph } from '~/core/components'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
@@ -31,9 +31,9 @@ export default function Balance() {
 
   //get list of requests
   useEffect(() => {
-    dayoffList().then(data => {
-      console.log('Success:', data);
-      setRequestsList(data)
+    daysoff().then(data => {
+      console.log('Success:', data.contents);
+      setRequestsList(data.contents)
     }).catch(error => {
       console.error('Error:', error);
       setErrorMessage(error.error)

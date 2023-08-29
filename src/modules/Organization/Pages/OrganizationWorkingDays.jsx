@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { createOrganizationInfo } from "../../../services/WorkiveApiClient.js"
+import { updateOrganization } from "../../../services/WorkiveApiClient.js"
 import { weekDays } from "../../../constants/index.js";
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
@@ -26,7 +26,7 @@ export default function OrganizationWorkingDays() {
     setIsProcessing(true);
 
     console.log(payload)
-    createOrganizationInfo(payload).then(data => {
+    updateOrganization(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data)
     }).catch(error => {
@@ -89,7 +89,7 @@ function WorkDaysItem({ day, register, errors }) {
   return (
     <div className="flex items-center mb-1">
       <input {...register("weekDays", { required: "Working days is required" })} aria-invalid={errors.weekDays ? "true" : "false"}
-        value={day.day} id={day.day} type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-2" />
+        value={day.day} id={day.day} type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-2 accent-indigo-600" />
       <label htmlFor={day.day} className="text-sm md:text-base">{day.day}</label>
     </div>
   )

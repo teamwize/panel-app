@@ -4,13 +4,32 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween.js'
-import { dayoffList } from "../../../services/WorkiveApiClient.js"
+import { daysoff } from "../../../services/WorkiveApiClient.js"
 import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../../constants/index.js'
 import '../../../constants/style.css'
 import { Toolbar, Label } from '~/core/components'
 import useCalendarData from '../../../utils/holidays.js';
 import { PlusIcon } from '@heroicons/react/20/solid';
 dayjs.extend(isBetween);
+
+const myStyles = {
+  dayPicker: {
+    '@media (min-width: 768px)': {
+      minWidth: '768px'
+    }
+  },
+  day: {
+    padding: '20px',
+    margin: "7px 12px",
+    fontSize: '18px'
+  },
+  head: {
+    fontSize: '18px'
+  },
+  caption: {
+    margin: "7px"
+  }
+}
 
 export default function Calendar() {
   const [selectedDate, setSelectedDate] = useState(new Date())
@@ -24,9 +43,9 @@ export default function Calendar() {
 
   //Get list of requests
   useEffect(() => {
-    dayoffList().then(data => {
-      console.log('Success:', data);
-      setRequestsList(data)
+    daysoff().then(data => {
+      console.log('Success:', data.contents);
+      setRequestsList(data.contents)
     }).catch(error => {
       console.error('Error:', error);
       setErrorMessage(error.error)
@@ -63,25 +82,6 @@ export default function Calendar() {
     navigate('/dayoff/create');
   }
 
-  const myStyles = {
-    dayPicker: {
-      '@media (min-width: 768px)': {
-        minWidth: '768px'
-      }
-    },
-    day: {
-      padding: '20px',
-      margin: "7px 12px",
-      fontSize: '18px'
-    },
-    head: {
-      fontSize: '18px'
-    },
-    caption: {
-      margin: "7px"
-    }
-  }
-
 
   return (
     <div className='md:w-4/5 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200'>
@@ -104,8 +104,7 @@ export default function Calendar() {
 
           <div>
             <p className='font-semibold md:text-lg my-4'>Requests ({selectedDateRequests ? selectedDateRequests.length : 0})</p>
-
-            {isWorkingDay ? selectedDateRequests.map((request) => <Request request={request} key={request.id} />) : ''}
+            {isWorkingDay ? selectedDateRequests.map((request) => <RequesItem request={request} key={request.id} />) : ''}
           </div>
         </main>
       </div>
@@ -113,18 +112,18 @@ export default function Calendar() {
   )
 }
 
-function Request({ request }) {
+function RequesItem({ request }) {
   return (
     <section className='flex items-center dark:text-gray-200 mb-2 pb-2 border-b border-gray-300 dark:border-gray-700'>
       <img className="h-10 w-10 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
       <div className='flex flex-row items-end w-full justify-between md:items-center'>
         <div className='md:flex md:w-1/2 md:justify-between'>
-          <p className="fullname text-sm font-semibold md:text-base">request.name</p>
+          <p className="fullname text-sm font-semibold md:text-base">Mohsen Karimi</p>
 
           <div className='flex items-center'>
-            <p className='text-sm flex mr-2'>{request.distance == 1 ? dayjs(request.start).format('D MMM') : `${dayjs(request.start).format('D MMM')} - ${dayjs(request.end).format('D MMM')}`}</p>
-            <p className='distance text-sm text-gray-500 dark:text-gray-400'>(1 {(request.distance) == 1 ? "Day" : "Days"})</p>
+            <p className='text-sm flex mr-2'>{request.distance == 1 ? dayjs(request.startAt).format('D MMM') : `${dayjs(request.startAt).format('D MMM')} - ${dayjs(request.endAt).format('D MMM')}`}</p>
+            <p className='distance text-sm text-gray-500 dark:text-gray-400'>({(request.distance) == 1 ? "Day" : "Days"})</p>
           </div>
         </div>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { organizationInformation, employeeList } from "../../../services/WorkiveApiClient.js"
+import { organization, employees } from "../../../services/WorkiveApiClient.js"
 import { Toolbar } from '~/core/components'
 import { ChartPieIcon, UsersIcon, BuildingOffice2Icon, ClockIcon, CalendarIcon } from '@heroicons/react/24/outline'
 
@@ -16,7 +16,7 @@ export default function Organization() {
 
   //get balance
   useEffect(() => {
-    organizationInformation().then(data => {
+    organization().then(data => {
       console.log('Success:', data);
       setBalance(data)
     }).catch(error => {
@@ -31,7 +31,7 @@ export default function Organization() {
 
   //get list of employees
   useEffect(() => {
-    employeeList().then(data => {
+    employees().then(data => {
       console.log('Success:', data);
       setEmployeesList(data);
     }).catch(error => {

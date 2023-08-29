@@ -1,7 +1,7 @@
 import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { httpClient } from "../../../services/WorkiveApiClient.js"
+import { registration } from "../../../services/WorkiveApiClient.js"
 import { UserContext } from "../../../contexts/UserContext.jsx"
 import { logo, countries } from '../../../constants/index.js'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
@@ -20,18 +20,18 @@ export default function Register() {
 
   const RegisterInfo = (data) => {
     let payload = {
-      type: 'ADMIN',
       email: data.email,
       password: data.password,
-      country: data.country,
+      countryCode: data.location,
       timezone: 'Asia/Tehran',
-      fullname: data.fullname,
-      company: data.company
+      firstName: data.firstName,
+      lastName: data.lastName,
+      organizationName: data.organization,
+      phone : data.phone
     }
-
+    console.log(payload)
     setIsProcessing(true);
-
-    httpClient(payload).then(data => {
+    registration(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       authenticate(data.token, data);
@@ -49,7 +49,7 @@ export default function Register() {
       <div className="flex flex-col justify-center p-4 lg:px-8 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 w-full">
         <div className="md:mx-auto md:w-full md:max-w-5xl">
           <img className="mx-auto h-10 w-auto" src={logo.src} alt={logo.alt} />
-          <p className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight text-indigo-600">Welcome to Workive</p>
+          <p className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight text-indigo-600">Welcome to Teamwize</p>
         </div>
 
         <h2 className="text-center text-lg md:text-xl font-semibold tracking-tight">Create your account</h2>
@@ -69,13 +69,25 @@ export default function Register() {
                 </div>
               </div>
 
-              <div>
-                <label htmlFor="fullname" className="block text-sm font-semibold md:text-base leading-6">Full Name</label>
-                <div className="mt-2">
-                  <input {...register("fullname", { required: "Full Name is required", maxLength: { value: 20, message: "Full Name must be under 20 characters" }, minLength: { value: 2, message: "Full Name must be over 2 characters" } })}
-                    aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
-                    className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
-                  {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
+              <div className="flex justify-between">
+                <div>
+                  <label htmlFor="firstName" className="block text-sm font-semibold md:text-base leading-6">First Name</label>
+                  <div className="mt-2">
+                    <input {...register("firstName", { required: "First Name is required", maxLength: { value: 20, message: "First Name must be under 20 characters" }, minLength: { value: 2, message: "First Name must be over 2 characters" } })}
+                      aria-invalid={errors.firstName ? "true" : "false"} name="firstName" type="text"
+                      className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
+                    {errors.firstName && <Alert>{errors.firstName.message}</Alert>}
+                  </div>
+                </div>
+
+                <div>
+                  <label htmlFor="lastName" className="block text-sm font-semibold md:text-base leading-6">Last Name</label>
+                  <div className="mt-2">
+                    <input {...register("lastName", { required: "Last Name is required", maxLength: { value: 20, message: "Last Name must be under 20 characters" }, minLength: { value: 2, message: "Last Name must be over 2 characters" } })}
+                      aria-invalid={errors.lastName ? "true" : "false"} name="lastName" type="text"
+                      className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
+                    {errors.lastName && <Alert>{errors.lastName.message}</Alert>}
+                  </div>
                 </div>
               </div>
 
@@ -86,6 +98,16 @@ export default function Register() {
                     aria-invalid={errors.email ? "true" : "false"} name="email"
                     className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
                   {errors.email && <Alert>{errors.email.message}</Alert>}
+                </div>
+              </div>
+
+              <div>
+                <label htmlFor="phone" className="block text-sm font-semibold md:text-base leading-6">Phone</label>
+                <div className="mt-2">
+                  <input {...register("phone", { required: "Phone is required" })}
+                    aria-invalid={errors.phone ? "true" : "false"} name="phone"
+                    className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
+                  {errors.phone && <Alert>{errors.phone.message}</Alert>}
                 </div>
               </div>
 

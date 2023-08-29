@@ -1,6 +1,8 @@
+import logoImg from '../assets/logo.svg'
+
 export const logo = {
-  src: "https://tailwindui.com/img/logos/mark.svg?color=indigo&shade=600",
-  alt: "Workive"
+  src: logoImg,
+  alt: "Teamwize"
 }
 
 export const countries = [
@@ -162,7 +164,6 @@ export const countries = [
   { name: "Nauru", code: "NR" },
   { name: "Nepal", code: "NP" },
   { name: "Netherlands", code: "NL" },
-  { name: "Curaçao", code: "AN" },
   { name: "New Caledonia", code: "NC" },
   { name: "New Zealand", code: "NZ" },
   { name: "Nicaragua", code: "NI" },
@@ -203,7 +204,6 @@ export const countries = [
   { name: "Saudi Arabia", code: "SA" },
   { name: "Senegal", code: "SN" },
   { name: "Serbia", code: "RS" },
-  { name: "Serbia", code: "CS" },
   { name: "Seychelles", code: "SC" },
   { name: "Sierra Leone", code: "SL" },
   { name: "Singapore", code: "SG" },

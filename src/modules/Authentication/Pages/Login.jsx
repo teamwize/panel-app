@@ -22,7 +22,6 @@ export default function Login() {
 
   const LoginInfo = (data) => {
     setIsProcessing(true);
-
     login(data).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);

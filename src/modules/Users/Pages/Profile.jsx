@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { employeeInformation, changeEmployeeInfo, createEmployeeInfo } from "../../../services/WorkiveApiClient.js"
+import { employee, updateEmployee, updateEmployeePicture } from "../../../services/WorkiveApiClient.js"
 import { Toolbar, Button } from '~/core/components'
 import { UserContext } from '../../../contexts/index.js'
 import AvatarEditor from "react-avatar-editor"
@@ -26,7 +26,7 @@ export default function Profile() {
 
   //employee information
   useEffect(() => {
-    employeeInformation().then(data => {
+    employee().then(data => {
       console.log('Success:', data);
       setEmployeeInfo(data);
     }).catch(error => {
@@ -52,7 +52,7 @@ export default function Profile() {
     }
     setIsProcessing(true);
 
-    changeEmployeeInfo(payload).then(data => {
+    updateEmployee(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       setEmployeeInfo(data);
@@ -61,7 +61,6 @@ export default function Profile() {
       console.error('Error:', error);
       setErrorMessage(error.error);
     });
-    console.log(data)
   }
 
 
@@ -102,7 +101,7 @@ export default function Profile() {
 
               <div className='w-full'>
                 <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="fullName">Full Name</label>
-                <input placeholder="employeeInfo.name" {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
+                <input placeholder={employeeInfo.firstName + ' ' + employeeInfo.lastName} {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
                   aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
                   className="block w-full rounded-md border dark:border-gray-700 border-gray-200 px-4 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 " />
                 {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
@@ -196,7 +195,7 @@ function ChangePicture({ picture, setPicture }) {
       let payload = {
         picture: croppedImg
       }
-      createEmployeeInfo(payload).then(data => {
+      updateEmployeePicture(payload).then(data => {
         console.log('Success:', data);
       }).catch(error => {
         console.error('Error:', error);

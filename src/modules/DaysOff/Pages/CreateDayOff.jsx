@@ -46,14 +46,14 @@ export default function CreateDayOff() {
       start: dayjs(startDate).toISOString(),
       end: dayjs(endDate).toISOString(),
       reason: reason,
-      createdAt: dayjs().format('PP'),
+      createdAt: dayjs().toISOString(),
       distance: distance
     }
     setIsProcessing(true);
 
     createDayoff(payload).then(data => {
       setIsProcessing(false)
-      console.log('Success:', data);
+      console.log('Success:', payload);
       navigate('/dayoff/pending');
     }).catch(error => {
       setIsProcessing(false)

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { employeeList, deleteEmployee } from "../../../services/WorkiveApiClient.js"
+import { employees, deleteEmployee } from "../../../services/WorkiveApiClient.js"
 import { Dialog } from '@headlessui/react'
 import { XMarkIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid';
@@ -14,8 +14,9 @@ export default function Employees() {
 
   //get list of employees
   useEffect(() => {
-    employeeList().then(data => {
+    employees().then(data => {
       console.log('Success:', data);
+      console.log(data)
       setEmployeesList(data);
     }).catch(error => {
       console.error('Error:', error);

@@ -8,16 +8,16 @@ function getBaseURL() {
   if (customBaseURL) return customBaseURL;
   switch (env) {
     case "local": {
-      return "http://localhost:8080";
+      return "https://api.teamwize.app";
     }
     case "development": {
-      return "http://localhost:8080";
+      return "https://api.teamwize.app";
     }
     case "staging": {
-      return "https://api.routetitan.io";
+      return "https://api.teamwize.app";
     }
     case "production": {
-      return "https://api-dhl.routetitan.io";
+      return "https://api.teamwize.app";
     }
   }
 }

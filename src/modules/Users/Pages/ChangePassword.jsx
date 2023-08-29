@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { changePassword } from "../../../services/WorkiveApiClient.js"
+import { updatePassword } from "../../../services/WorkiveApiClient.js"
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
@@ -18,6 +18,9 @@ export default function ChangePassword() {
       setErrorMessage("Passwords don't match. Try again");
       return
     };
+    if (errorMessage) {
+      setErrorMessage('')
+    }
     changePasswordInfo(data);
   }
 
@@ -28,8 +31,8 @@ export default function ChangePassword() {
     }
 
     setIsProcessing(true);
-
-    changePassword(payload).then(data => {
+    console.log(payload)
+    updatePassword(payload).then(data => {
       setIsProcessing(false)
       console.log('Success:', data);
     }).catch(error => {

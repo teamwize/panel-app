@@ -1,10 +1,25 @@
-import { useState } from 'react'
+import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
+import { employee } from '../../services/WorkiveApiClient'
 import { navigation, logo } from '../../constants'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 
 export default function Sidebar() {
+  const [employeeInfo, setEmployeeInfo] = useState([])
+
+    //get employee information
+    useEffect(() => {
+      employee().then(data => {
+        console.log('Success:', data);
+        setEmployeeInfo(data);
+      }).catch(error => {
+        console.error('Error:', error);
+        setErrorMessage(error.error)
+      });
+    }, [])
+
+
   return (
     <div className="min-h-0 flex-col md:w-1/5 md:fixed md:top-0 md:bottom-0 md:left-0 border-b md:border-r border-gray-200 dark:border-gray-700 dark:bg-gray-900 bg-gray-100">
       <section className='md-size hidden md:block'>
@@ -14,7 +29,7 @@ export default function Sidebar() {
           </div>
           <Navbar />
         </div>
-        <Profile />
+        <Profile employeeInfo={employeeInfo}/>
       </section>
 
       <section className='sm-size md:hidden fixed z-20 bg-gray-100 dark:bg-gray-900 w-full'>
@@ -35,7 +50,7 @@ export default function Sidebar() {
               {({ close }) => (
                 <div className='flex flex-col justify-between'>
                   <Navbar close={close} />
-                  <Profile close={close} />
+                  <Profile close={close} employeeInfo={employeeInfo}/>
                 </div>
               )}
             </Disclosure.Panel>
@@ -76,7 +91,7 @@ function NavigationItem({ item, handleOptionClick, location, selectedOption }) {
   )
 }
 
-function Profile({ close }) {
+function Profile({ close, employeeInfo }) {
   const navigate = useNavigate()
 
   const viewProfile = () => {
@@ -90,7 +105,7 @@ function Profile({ close }) {
     <div onClick={viewProfile} className="flex p-4 absolute bottom-0 w-full right-0 left-0 cursor-pointer">
       <div className="flex items-center hover:bg-indigo-100 dark:hover:bg-gray-800 hover:bg-opacity-75 rounded-md w-full p-2">
         <img className="inline-block h-7 w-7 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
-        <p className="text-xs md:text-sm font-semibold text-gray-600 dark:text-gray-300">Tom Cook</p>
+        <p className="text-xs md:text-sm font-semibold text-gray-600 dark:text-gray-300">{employeeInfo.firstName} {employeeInfo.lastName}</p>
       </div>
     </div>
   )

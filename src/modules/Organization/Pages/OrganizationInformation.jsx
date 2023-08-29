@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { changeEmployeeInfo, employeeInformation } from "../../../services/WorkiveApiClient.js"
+import { updateEmployee, employee } from "../../../services/WorkiveApiClient.js"
 import { countries } from '../../../constants/index.js'
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
@@ -9,7 +9,7 @@ import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 export default function OrganizationInformation() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
-  const [employeeInfo, setEmployeeInfo] = useState({})
+  const [employeeInfo, setEmployeeInfo] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
 
@@ -17,14 +17,16 @@ export default function OrganizationInformation() {
 
   //get organization information
   useEffect(() => {
-    employeeInformation().then(data => {
-      console.log('Success:', data);
-      setEmployeeInfo(data)
-    }).catch(error => {
-      console.error('Error:', error);
-      setErrorMessage(error.error)
-    })
-  }, [])
+    if (!employeeInfo) {
+      employee().then(data => {
+        console.log('Success:', data);
+        setEmployeeInfo(data)
+      }).catch(error => {
+        console.error('Error:', error);
+        setErrorMessage(error.error)
+      })
+    }
+  }, [employeeInfo])
 
   const onSubmit = (data) => {
     let payload = {
@@ -33,7 +35,7 @@ export default function OrganizationInformation() {
     }
     setIsProcessing(true);
 
-    changeEmployeeInfo(payload).then(data => {
+    updateEmployee(payload).then(data => {
       setIsProcessing(false);
       console.log('Success:', data);
       setEmployeeInfo(data)
@@ -61,11 +63,11 @@ export default function OrganizationInformation() {
         <main className='px-4'>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className='w-full mb-4'>
-              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="orgName">Organization Name</label>
-              <input {...register("orgName", { required: "Organization name is required", maxLength: { value: 20, message: "Organization name must be under 20 characters" }, minLength: { value: 2, message: "Organization name must be over 2 characters" } })}
-                aria-invalid={errors.companyName ? "true" : "false"} name="orgName" type="text" placeholder="orgName"
+              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="company">Organization Name</label>
+              <input {...register("company", { required: "Organization name is required", maxLength: { value: 20, message: "Organization name must be under 20 characters" }, minLength: { value: 2, message: "Organization name must be over 2 characters" } })}
+                aria-invalid={errors.company ? "true" : "false"} name="company" type="text" placeholder={employeeInfo === null ? "Loading..." : (employeeInfo.organization?.name || "")}
                 className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
-              {errors.companyName && <Alert>{errors.companyName.message}</Alert>}
+              {errors.company && <Alert>{errors.company.message}</Alert>}
             </div>
 
             <div className='w-full'>

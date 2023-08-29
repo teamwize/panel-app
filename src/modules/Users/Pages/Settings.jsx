@@ -1,13 +1,13 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { employeeList } from "../../../services/WorkiveApiClient.js"
+import { employee } from "../../../services/WorkiveApiClient.js"
 import { Toolbar } from '~/core/components'
 import { ThemeContext } from '../../../contexts/index.js'
 import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { Switch } from '@headlessui/react'
 
 export default function Setting() {
-  const [employeesList, setEmployeesList] = useState([])
+  const [employeeInfo, setEmployeeInfo] = useState([])
   const [errorMessage, setErrorMessage] = useState("")
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const navigate = useNavigate()
@@ -22,14 +22,16 @@ export default function Setting() {
 
   //get employee information
   useEffect(() => {
-    employeeList().then(data => {
+    employee().then(data => {
       console.log('Success:', data);
-      setEmployeesList(data);
+      setEmployeeInfo(data);
     }).catch(error => {
       console.error('Error:', error);
       setErrorMessage(error.error)
     });
   }, [])
+
+  console.log(employeeInfo)
 
   function classNames(...classes) {
     return classes.filter(Boolean).join(' ')
@@ -46,7 +48,7 @@ export default function Setting() {
         <main className='px-4'>
           <div className='flex items-center mb-4'>
             <img className="inline-block h-11 w-11 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
-            <p className="text-sm font-semibold md:text-base">e.name</p>
+            <p className="text-sm font-semibold md:text-base">{employeeInfo.firstName} {employeeInfo.lastName}</p>
           </div>
 
           <button onClick={viewChangePassword} className='flex items-center mb-5 text-sm font-semibold md:text-base'>
