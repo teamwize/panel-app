@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { Login, Register } from './Authentication'
 import { CreateDayOff, PendingDayOff, DayOffQueue } from './DaysOff'
-import { Organization, OrganizationBalance, OrganizationInformation, OrganizationWorkingDays, OfficialHolidays } from './Organization'
+import { Organization, OrganizationBalance, OrganizationInformation, OrganizationWorkingDays, OfficialHolidays, OrganizationTeam, CreateTeam } from './Organization'
 import { Balance, Calendar, ChangePassword, CreateEmployee, Employee, EmployeeInformation, Profile, Settings } from './Users'
 import { AuthenticatedRoute } from "../core/components"
 
@@ -27,6 +27,8 @@ export default function Root() {
         <Route path='/organization/balance' element={<AuthenticatedRoute><OrganizationBalance /></AuthenticatedRoute>}></Route>
         <Route path='/organization/working-days' element={<AuthenticatedRoute><OrganizationWorkingDays /></AuthenticatedRoute>}></Route>
         <Route path='/organization' element={<AuthenticatedRoute><Organization /></AuthenticatedRoute>}></Route>
+        <Route path='/organization/team' element={<AuthenticatedRoute><OrganizationTeam /></AuthenticatedRoute>}></Route>
+        <Route path='/organization/team/create' element={<AuthenticatedRoute><CreateTeam /></AuthenticatedRoute>}></Route>
       </Routes>
     </>
   )
