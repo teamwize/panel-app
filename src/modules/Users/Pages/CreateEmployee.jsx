@@ -5,6 +5,13 @@ import { createEmployee } from "../../../services/WorkiveApiClient.js"
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
+const example = [
+  { name: 'Financial', count: '2' },
+  { name: 'Support', count: '5' },
+  { name: 'Sales', count: '3' },
+  { name: 'Technical', count: '4' }
+]
+
 export default function CreateEmployee() {
   const { register, handleSubmit, formState: { errors } } = useForm()
   const navigate = useNavigate()
@@ -58,6 +65,16 @@ export default function CreateEmployee() {
                 className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
               {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
             </div>
+          </div>
+
+          <div>
+            <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="team">Team Collection</label>
+            <select {...register("team", { required: "Choosing a team is required" })} aria-invalid={errors.startDay ? "true" : "false"} name="team"
+              className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-2.5 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
+              <option value="">Choose a team</option>
+              {example.map((e) => <option value={e.name} key={e.name}>{e.name}</option>)}
+            </select>
+            {errors.team && <Alert>{errors.team.message}</Alert>}
           </div>
 
           <div>

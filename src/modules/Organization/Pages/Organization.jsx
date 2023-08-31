@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { organization, employees } from "../../../services/WorkiveApiClient.js"
 import { Toolbar } from '~/core/components'
-import { ChartPieIcon, UsersIcon, BuildingOffice2Icon, ClockIcon, CalendarIcon } from '@heroicons/react/24/outline'
+import { ChartPieIcon, UserCircleIcon, BuildingOffice2Icon, ClockIcon, CalendarIcon, UserGroupIcon } from '@heroicons/react/24/outline'
 
 export default function Organization() {
   const [balance, setBalance] = useState([])
@@ -44,6 +44,10 @@ export default function Organization() {
     navigate('/organization/employee')
   }
 
+  const viewTeams = () => {
+    navigate('/organization/team')
+  }
+
   const viewRequestQueue = () => {
     navigate('/organization/dayoff/queue')
   }
@@ -76,8 +80,16 @@ export default function Organization() {
 
           <div className='flex items-center justify-between mb-5 text-sm font-semibold md:text-base'>
             <button onClick={viewEmployees} className='flex items-center'>
-              <UsersIcon className='w-5 h-5 mr-2'></UsersIcon>
+              <UserCircleIcon className='w-5 h-5 mr-2'></UserCircleIcon>
               Employees
+            </button>
+            {employeesList.length == 0 && <button className='bg-red-700 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
+          </div>
+
+          <div className='flex items-center justify-between mb-5 text-sm font-semibold md:text-base'>
+            <button onClick={viewTeams} className='flex items-center'>
+              <UserGroupIcon className='w-5 h-5 mr-2'></UserGroupIcon>
+              Teams
             </button>
             {employeesList.length == 0 && <button className='bg-red-700 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
           </div>
