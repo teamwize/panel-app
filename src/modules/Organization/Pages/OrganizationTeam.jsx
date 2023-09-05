@@ -1,27 +1,47 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { Dialog } from '@headlessui/react'
+import { ChevronLeftIcon, PencilSquareIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
-function classNames(...classes) {
-  return classes.filter(Boolean).join(' ')
-}
-
 const example = [
-  {name: 'Financial', count: '2'},
-  {name: 'Support', count: '5'},
-  {name: 'Sales', count: '3'},
-  {name: 'Technical', count: '4'}
+  { name: 'Financial', count: '2' },
+  { name: 'Support', count: '5' },
+  { name: 'Sales', count: '3' },
+  { name: 'Technical', count: '4' }
 ]
 
 export default function OrganizationTeam() {
+  const [selectedTeam, setSelectedTeam] = useState(null)
   const [errorMessage, setErrorMessage] = useState(null)
+  const [isProcessing, setIsProcessing] = useState(false)
   const navigate = useNavigate()
 
   const goBack = () => navigate('/organization');
 
   const viewCreateTeam = () => {
     navigate('/organization/team/create')
+  }
+
+  const updateTeam = (team) => {
+    navigate('/organization/team/update/'+ team)
+  }
+
+  const handleClick = (e) => {
+    setSelectedTeam(e);
+  }
+
+  const handleAccept = (name) => {
+    setIsProcessing(true);
+    handleAccept(name).then(data => {
+      setIsProcessing(false);
+      console.log('Success:', data);
+      example(prevState => prevState.filter(data => data.name !== name))
+    }).catch(error => {
+      setIsProcessing(false);
+      console.error('Error:', error);
+      setErrorMessage(error.error)
+    })
   }
 
   return (
@@ -43,29 +63,69 @@ export default function OrganizationTeam() {
 
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 
-        <div className="-my-[9px] sm:-mx-6 lg:-mx-8 px-4">
-          <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-            <table className="w-full divide-y divide-gray-300">
-              <thead>
-                <tr className="border-t border-gray-200 dark:border-gray-700">
-                  <th scope="col" className="bg-gray-100 dark:bg-gray-900 py-2 pl-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-200 w-1/2">Team</th>
-                  <th scope="col" className="bg-gray-100 dark:bg-gray-900 py-2 pl-2 text-left text-sm font-semibold text-gray-900 dark:text-gray-200 w-1/2">Members</th>
-                </tr>
-              </thead>
-              <tbody className="bg-gray-50 dark:bg-gray-800 w-full">{example.map((e, hIdx) => <TeamTable e={e} key={e.name} hIdx={hIdx} />)}</tbody>
-            </table>
+        <div className="p-4">
+          <div className="inline-block min-w-full align-middle">
+            <ul role="list" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+              {example.map((e) => (<TeamItem key={e.name} e={e} onClick={handleClick} isProcessing={isProcessing} updateTeam={updateTeam}/>))}
+            </ul>
           </div>
         </div>
+
+        {selectedTeam && <DeleteModal team={selectedTeam} handleReject={() => { setSelectedTeam(null) }} handleAccept={handleAccept} />}
       </div>
     </div>
   )
 }
 
-function TeamTable({ e, hIdx }) {
+function TeamItem({ e, isProcessing, onClick, updateTeam }) {
   return (
-    <tr className={classNames(hIdx === 0 ? 'border-gray-300 dark:border-gray-600' : 'border-gray-200 dark:border-gray-700', 'border-t')}>
-      <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{e.name}</td>
-      <td className="whitespace-nowrap px-2 py-3 text-sm text-gray-700 dark:text-gray-200">{e.count} members</td>
-    </tr>
+    <div>
+      <li key={e.name} className="col-span-1 divide-y divide-gray-200 rounded-lg bg-white dark:bg-gray-800 dark:text-gray-200 shadow">
+        <div className="flex flex-col w-full items-center justify-between p-6">
+          <h3 className="flex items-center text-sm font-medium">{e.name}</h3>
+          <p className="mt-1 text-sm text-gray-400">{e.count} members</p>
+        </div>
+        <div>
+          <div className="-mt-px flex divide-x divide-gray- dark:divide-gray-700">
+            <div className="flex w-0 flex-1">
+              <button onClick={() => updateTeam(e.name)} className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-bl-lg border border-gray-200 dark:border-gray-700 py-4 text-sm font-semibold">
+                <PencilSquareIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                {isProcessing ? "Waiting ..." : "Edit"}
+              </button>
+            </div>
+            <div className="-ml-px flex w-0 flex-1">
+              <button onClick={() => onClick(e)} className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-3 rounded-br-lg border border-gray-200 dark:border-gray-700 py-4 text-sm font-semibold">
+                <TrashIcon className="h-5 w-5 text-gray-400" aria-hidden="true" />
+                {isProcessing ? "Waiting ..." : "Delete"}
+              </button>
+            </div>
+          </div>
+        </div>
+      </li>
+    </div>
+  )
+}
+
+function DeleteModal({ handleAccept, handleReject, team }) {
+  return (
+    <Dialog open={true} onClose={handleReject}>
+      <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-40'>
+        <div className="flex min-h-full items-center justify-center p-4 text-center">
+          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-200 p-6 text-left align-middle transition-all">
+            <div className='flex items-center mb-6'>
+              <XMarkIcon onClick={handleReject} className='w-6 h-6 mr-2 cursor-pointer'></XMarkIcon>
+              <h1 className='font-semibold'>Remove Team</h1>
+            </div>
+
+            <p className="fullname font-semibold text-sm text-center mb-12">Are you sure you want to remove the {team.name} team?</p>
+
+            <section className='flex text-center justify-center'>
+              <button onClick={handleReject} className='rounded-lg p-2 shadow-md border border-red-700 w-1/2'>No</button>
+              <button onClick={() => handleAccept(team)} className='rounded-lg p-2 shadow-md ml-4 bg-red-700 w-1/2 text-white'>Yes</button>
+            </section>
+          </Dialog.Panel>
+        </div>
+      </div>
+    </Dialog>
   )
 }

@@ -27,7 +27,8 @@ export default function CreateEmployee() {
   const addEmployeeInfo = (data) => {
     let payload = {
       type: 'USER',
-      fullname: data.fullname,
+      firstName: data.firstName,
+      lastName: data.lastName,
       email: data.email,
       password: data.password
     }
@@ -57,13 +58,25 @@ export default function CreateEmployee() {
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
 
         <form className="space-y-4 px-4" onSubmit={handleSubmit(onSubmit)}>
-          <div>
-            <label htmlFor="fullname" className="block text-sm font-semibold leading-6 md:text-base">Full Name</label>
-            <div className="mt-2">
-              <input {...register("fullname", { required: "Full Name is required", maxLength: { value: 20, message: "Full Name must be under 20 characters" }, minLength: { value: 2, message: "Full Name must be over 2 characters" } })}
-                aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
-                className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
-              {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
+          <div className="flex justify-between gap-4">
+            <div className="w-full">
+              <label htmlFor="firstName" className="block text-sm font-semibold leading-6 md:text-base">First Name</label>
+              <div className="mt-2">
+                <input {...register("firstName", { required: "First Name is required", maxLength: { value: 20, message: "First Name must be under 20 characters" }, minLength: { value: 2, message: "First Name must be over 2 characters" } })}
+                  aria-invalid={errors.firstName ? "true" : "false"} name="firstName" type="text"
+                  className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
+                {errors.firstName && <Alert>{errors.firstName.message}</Alert>}
+              </div>
+            </div>
+
+            <div className="w-full">
+              <label htmlFor="lastName" className="block text-sm font-semibold leading-6 md:text-base">Last Name</label>
+              <div className="mt-2">
+                <input {...register("lastName", { required: "Last Name is required", maxLength: { value: 20, message: "Last Name must be under 20 characters" }, minLength: { value: 2, message: "Last Name must be over 2 characters" } })}
+                  aria-invalid={errors.lastName ? "true" : "false"} name="lastName" type="text"
+                  className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
+                {errors.lastName && <Alert>{errors.lastName.message}</Alert>}
+              </div>
             </div>
           </div>
 
