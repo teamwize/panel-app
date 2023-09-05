@@ -62,7 +62,7 @@ export default function Calendar() {
       const currentDate = dayjs(calendarCurrentDate).date(i);
       const isHoliday = holidaysDate.some(date => dayjs(date).isSame(currentDate, 'day'));
       if (isHoliday) continue;
-      const off = requestsList.filter(r => currentDate.isBetween(dayjs(r.start), dayjs(r.end), 'days', '[]'));
+      const off = requestsList.filter(r => currentDate.isBetween(dayjs(r.startAt), dayjs(r.endAt), 'days', '[]'));
       if (off.length > 0) {
         result.push(currentDate.toDate())
       }

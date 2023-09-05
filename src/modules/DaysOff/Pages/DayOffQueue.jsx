@@ -12,12 +12,13 @@ export default function DayOffQueue() {
   const [requestsList, setRequestsList] = useState([])
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
+  const [selectedRequest, setSelectedRequest] = useState(null)
 
   //get dayoff list
   useEffect(() => {
     daysoff().then(data => {
       console.log('Success:', data.contents);
-      setRequestsList(data.contents);
+      setRequestsList(data.contents.filter((item) => item.status === 'PENDING'));
     }).catch(error => {
       console.error('Error:', error);
       setErrorMessage(error.error);
@@ -26,13 +27,16 @@ export default function DayOffQueue() {
 
   const goBack = () => navigate('/organization')
 
+  const handleRowClick = (request) => {
+    setSelectedRequest(request);
+  }
+
   //accept or reject request
   const handleRequest = (status, id) => {
     let payload = {
       status: status
     }
     setIsProcessing(true);
-    setRequestDetails(false);
 
     dayoffStatus(payload, id).then(data => {
       setIsProcessing(false);
@@ -59,23 +63,25 @@ export default function DayOffQueue() {
         {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
 
         {requestsList.map((request) => <div key={request.id}>
-          <Request request={request} />
+          <Request request={request} onClick={handleRowClick} />
         </div>)}
+        {selectedRequest &&
+          <DayOffModal
+            selectedRequest={selectedRequest}
+            handleModal={() => {setSelectedRequest(null)}}
+            handleRequest={handleRequest}
+            isProcessing={isProcessing}
+          />
+        }
       </div>
     </div>
   )
 }
 
-function Request({ request, isProcessing, handleRequest }) {
-  const [requestDetails, setRequestDetails] = useState(false)
-
-  const viewBalance = (requestName) => {
-    navigate('/balance?query=' + requestName)
-  }
-
+function Request({ request, onClick }) {
   return (
     <div>
-      <section onClick={() => setRequestDetails(true)} className='flex items-center dark:text-gray-200 mb-2 mx-4 pb-2 border-b border-gray-300 dark:border-gray-700 cursor-pointer'>
+      <section onClick={() => onClick(request)} className='flex items-center dark:text-gray-200 mb-2 mx-4 pb-2 border-b border-gray-300 dark:border-gray-700 cursor-pointer'>
         <img className="h-10 w-10 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
         <div className='flex flex-row items-end w-full justify-between md:items-center'>
@@ -89,8 +95,6 @@ function Request({ request, isProcessing, handleRequest }) {
           <Label type={leaveTypeColor[request.type]} text={leaveTypeJson[request.type]}></Label>
         </div>
       </section>
-
-      <DayOffModal request={request} requestDetails={requestDetails} handleModal={() => setRequestDetails(false)} handleRequest={handleRequest} viewBalance={viewBalance} isProcessing={isProcessing} />
     </div>
   )
 }
