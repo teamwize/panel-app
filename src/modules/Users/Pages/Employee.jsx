@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { employees, deleteEmployee } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Dialog } from '@headlessui/react'
 import { XMarkIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid';
@@ -20,7 +22,8 @@ export default function Employees() {
       setEmployeesList(data);
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error)
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     });
   }, [])
 
@@ -43,7 +46,8 @@ export default function Employees() {
       }).catch(error => {
         setIsProcessing(false);
         console.error('Error:', error);
-        setErrorMessage(error.error)
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
       })
     };
     closeRemove()

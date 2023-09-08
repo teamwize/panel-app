@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form"
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { login } from "../../../services/WorkiveApiClient.js"
 import { UserContext } from "../../../contexts/UserContext.jsx"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { logo } from '../../../constants/index.js'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 
@@ -22,20 +24,22 @@ export default function Login() {
 
   const LoginInfo = (data) => {
     setIsProcessing(true);
-    login(data).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data);
-      authenticate(data.accessToken, data);
-      if (currentURL) {
-        navigate(`${currentURL}`)
-      } else {
-        navigate('/calendar')
-      }
-    }).catch(error => {
-      setIsProcessing(false);
-      console.error('Error:', error);
-      setErrorMessage(error.error)
-    })
+    login(data)
+      .then(data => {
+        setIsProcessing(false);
+        console.log('Success:', data);
+        authenticate(data.accessToken, data);
+        if (currentURL) {
+          navigate(`${currentURL}`)
+        } else {
+          navigate('/calendar')
+        }
+      }).catch(error => {
+        setIsProcessing(false);
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      })
   }
 
 

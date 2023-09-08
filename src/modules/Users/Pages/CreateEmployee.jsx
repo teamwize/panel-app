@@ -2,6 +2,8 @@ import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { createEmployee } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
@@ -40,7 +42,8 @@ export default function CreateEmployee() {
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }
 

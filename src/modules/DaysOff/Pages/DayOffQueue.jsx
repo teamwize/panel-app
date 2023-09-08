@@ -4,6 +4,8 @@ import dayjs from 'dayjs';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { DayOffModal } from '../Components'
 import { daysoff, dayoffStatus } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { leaveTypeJson, leaveTypeColor } from '../../../constants/index.js'
 import { Label } from '~/core/components'
 
@@ -45,7 +47,8 @@ export default function DayOffQueue() {
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     });
   }
 
@@ -68,7 +71,7 @@ export default function DayOffQueue() {
         {selectedRequest &&
           <DayOffModal
             selectedRequest={selectedRequest}
-            handleModal={() => {setSelectedRequest(null)}}
+            handleModal={() => { setSelectedRequest(null) }}
             handleRequest={handleRequest}
             isProcessing={isProcessing}
           />

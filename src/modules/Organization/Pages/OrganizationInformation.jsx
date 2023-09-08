@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { updateEmployee, employee } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { countries } from '../../../constants/index.js'
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
@@ -23,7 +25,8 @@ export default function OrganizationInformation() {
         setEmployeeInfo(data)
       }).catch(error => {
         console.error('Error:', error);
-        setErrorMessage(error.error)
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
       })
     }
   }, [employeeInfo])
@@ -42,7 +45,8 @@ export default function OrganizationInformation() {
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
-      setErrorMessage(error.error)
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
     console.log(data)
   }

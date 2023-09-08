@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { registration } from "../../../services/WorkiveApiClient.js"
 import { UserContext } from "../../../contexts/UserContext.jsx"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { logo, countries } from '../../../constants/index.js'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 
@@ -27,7 +29,7 @@ export default function Register() {
       firstName: data.firstName,
       lastName: data.lastName,
       organizationName: data.organization,
-      phone : data.phone
+      phone: data.phone
     }
     console.log(payload)
     setIsProcessing(true);
@@ -39,7 +41,8 @@ export default function Register() {
     }).catch(error => {
       setIsProcessing(false)
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }
 

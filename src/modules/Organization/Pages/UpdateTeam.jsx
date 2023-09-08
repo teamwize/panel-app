@@ -3,6 +3,8 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { useParams } from 'react-router-dom'
 import { createEmployee } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
@@ -46,7 +48,8 @@ export default function UpdateTeam() {
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }
 
