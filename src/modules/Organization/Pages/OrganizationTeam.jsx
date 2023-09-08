@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Dialog } from '@headlessui/react'
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { ChevronLeftIcon, PencilSquareIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
@@ -24,7 +26,7 @@ export default function OrganizationTeam() {
   }
 
   const updateTeam = (team) => {
-    navigate('/organization/team/update/'+ team)
+    navigate('/organization/team/update/' + team)
   }
 
   const handleClick = (e) => {
@@ -40,7 +42,8 @@ export default function OrganizationTeam() {
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
-      setErrorMessage(error.error)
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }
 
@@ -66,7 +69,7 @@ export default function OrganizationTeam() {
         <div className="p-4">
           <div className="inline-block min-w-full align-middle">
             <ul role="list" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {example.map((e) => (<TeamItem key={e.name} e={e} onClick={handleClick} isProcessing={isProcessing} updateTeam={updateTeam}/>))}
+              {example.map((e) => (<TeamItem key={e.name} e={e} onClick={handleClick} isProcessing={isProcessing} updateTeam={updateTeam} />))}
             </ul>
           </div>
         </div>

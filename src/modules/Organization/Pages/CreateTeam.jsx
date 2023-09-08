@@ -2,14 +2,16 @@ import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { createEmployee } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
 const example = [
-  {name: 'Financial', count: '2'},
-  {name: 'Support', count: '5'},
-  {name: 'Sales', count: '3'},
-  {name: 'Technical', count: '4'}
+  { name: 'Financial', count: '2' },
+  { name: 'Support', count: '5' },
+  { name: 'Sales', count: '3' },
+  { name: 'Technical', count: '4' }
 ]
 
 export default function CreateTeam() {
@@ -42,7 +44,8 @@ export default function CreateTeam() {
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }
 

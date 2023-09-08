@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { daysoff } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar, DayOffRequest, BalanceGraph } from '~/core/components'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
@@ -11,15 +13,16 @@ export default function Balance() {
 
   // const [errorMessage, setErrorMessage] = useState(null)
   // useEffect(() => {
-  //     doFetch('http://localhost:8080', {
-  //         method: 'GET'
-  //     }).then(data => {
-  //         console.log('Success:', data);
-  //         setBalanceValue(data)
-  //     }).catch(error => {
-  //         console.error('Error:', error);
-  //         setErrorMessage(error.error)
-  //     })
+  //   doFetch('http://localhost:8080', {
+  //     method: 'GET'
+  //   }).then(data => {
+  //     console.log('Success:', data);
+  //     setBalanceValue(data)
+  //   }).catch(error => {
+  //     console.error('Error:', error);
+  //     const errorMessage = getErrorMessage(error);
+  //     toast.error(errorMessage)
+  //   })
   // }, [])
 
   //example
@@ -36,7 +39,8 @@ export default function Balance() {
       setRequestsList(data.contents)
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error)
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }, [])
 

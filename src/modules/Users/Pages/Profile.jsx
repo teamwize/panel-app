@@ -2,6 +2,8 @@ import { useEffect, useState, useContext } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { employee, updateEmployee, updateEmployeePicture } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar, Button } from '~/core/components'
 import { UserContext } from '../../../contexts/index.js'
 import AvatarEditor from "react-avatar-editor"
@@ -31,7 +33,8 @@ export default function Profile() {
       setEmployeeInfo(data);
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     });
   }, [])
 
@@ -59,7 +62,8 @@ export default function Profile() {
     }).catch(error => {
       setIsProcessing(false);
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     });
   }
 
@@ -199,7 +203,8 @@ function ChangePicture({ picture, setPicture }) {
         console.log('Success:', data);
       }).catch(error => {
         console.error('Error:', error);
-        setErrorMessage(error.error)
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
       })
     }
   }

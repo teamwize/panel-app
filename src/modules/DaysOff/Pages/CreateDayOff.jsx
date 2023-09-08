@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween';
 import { createDayoff } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar, Button } from '~/core/components'
 import DatePicker from '../Components/DatePicker.jsx'
 import { leaveType } from '../../../constants/index.js'
@@ -58,7 +60,8 @@ export default function CreateDayOff() {
     }).catch(error => {
       setIsProcessing(false)
       console.error('Error:', error);
-      setErrorMessage(error.error);
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     });
   }
 

@@ -1,6 +1,8 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { employee } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar } from '~/core/components'
 import { ThemeContext } from '../../../contexts/index.js'
 import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline'
@@ -27,7 +29,8 @@ export default function Setting() {
       setEmployeeInfo(data);
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error)
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     });
   }, [])
 

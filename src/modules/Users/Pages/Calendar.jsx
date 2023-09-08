@@ -5,6 +5,8 @@ import 'react-day-picker/dist/style.css'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween.js'
 import { daysoff } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../../constants/index.js'
 import '../../../constants/style.css'
 import { Toolbar, Label } from '~/core/components'
@@ -48,7 +50,8 @@ export default function Calendar() {
       setRequestsList(data.contents)
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error)
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }, [])
 

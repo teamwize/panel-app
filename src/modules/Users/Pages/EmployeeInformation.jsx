@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { daysoff } from "../../../services/WorkiveApiClient.js"
+import { toast } from "react-toastify";
+import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { DayOffRequest, BalanceGraph } from '~/core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
@@ -14,15 +16,16 @@ export default function EmployeeInformation() {
 
   // const [errorMessage, setErrorMessage] = useState(null)
   // useEffect(() => {
-  //     doFetch('http://localhost:8080', {
-  //         method: 'GET'
-  //     }).then(data => {
-  //         console.log('Success:', data);
-  //         setBalanceValue(data)
-  //     }).catch(error => {
-  //         console.error('Error:', error);
-  //         setErrorMessage(error.error)
-  //     })
+  //   doFetch('http://localhost:8080', {
+  //     method: 'GET'
+  //   }).then(data => {
+  //     console.log('Success:', data);
+  //     setBalanceValue(data)
+  //   }).catch(error => {
+  //     console.error('Error:', error);
+  //     const errorMessage = getErrorMessage(error);
+  //     toast.error(errorMessage)
+  //   })
   // }, [])
 
   //example
@@ -35,12 +38,13 @@ export default function EmployeeInformation() {
   //get employee's dayoff list
   useEffect(() => {
     // doFetch('http://localhost:8080/days-off/' + id, {
-      daysoff().then(data => {
+    daysoff().then(data => {
       console.log('Success:', data);
       setRequestsList(data)
     }).catch(error => {
       console.error('Error:', error);
-      setErrorMessage(error.error)
+      const errorMessage = getErrorMessage(error);
+      toast.error(errorMessage)
     })
   }, [])
 
