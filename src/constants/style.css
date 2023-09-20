@@ -1,14 +1,12 @@
 .my-selected:not([disabled]) { 
-    font-weight: bold; 
-    border: 2px solid currentColor;
+  font-weight: bold; 
+  border: 2px solid currentColor;
 }
 .my-selected:hover:not([disabled]) { 
-    border-color: #4f46e6;
-    color: #4f46e6;  
+  background-color: #c7d2fe;
 }
 .my-today { 
-    font-weight: bold;
-    font-size: 110%; 
+  font-weight: bold;
 }
 @media (min-width: 768px) {
   .my-styles .day {
@@ -24,5 +22,5 @@
   }
 }
 .holidaysDate {
-  background-color: #e11d48
+  background-color: #ef4444
 }

@@ -89,16 +89,16 @@ export default function CreateDayOff() {
 
 
   return (
-    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
+    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200'>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <Toolbar title='Send Leave Request'></Toolbar>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         <div className='px-4'>
           <div className='mb-4'>
-            <label htmlFor="type" className="block text-sm font-semibold md:text-base leading-6 mb-1">Leave Type</label>
-            <select value={type} onChange={e => setType(e.target.value)} name="type" className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-3 text-gray-900 shadow-sm placeholder:text-gray-600 dark:text-gray-200 text-sm md:text-base sm:leading-6 dark:bg-gray-800 px-2">
+            <label htmlFor="type" className="block text-sm leading-6 mb-1">Leave Type</label>
+            <select value={type} onChange={e => setType(e.target.value)} name="type" className="block w-full rounded-md border py-3 bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 placeholder:text-indigo-800 placeholder:dark:text-indigo-100 text-sm md:text-base sm:leading-6 px-2">
               {leaveType.map((type) => <LeaveTypeItem type={type} key={type.name} />)}
             </select>
           </div>
@@ -108,11 +108,11 @@ export default function CreateDayOff() {
             <DatePicker title='End' calendarIsOn={endCalendarIsOn} setCalendarIsOn={setEndCalendarIsOn} handleDateSelected={handleEndDateSelected} selectedDate={endDate} daysBefore={daysBeforeStartDate} setCalendarCurrentDate={setCalendarCurrentDate} holidaysDate={holidaysDate} />
           </section>
 
-          <p className='my-4 border dark:border-gray-700 border-gray-200 py-3 px-2 text-center text-sm font-semibold md:text-base rounded-md'>Day off request is for {distance} {distance == 1 ? "Day" : "Days"}</p>
+          <p className='my-4 border border-indigo-100 dark:border-slate-700 py-3 px-2 text-center text-xs font-semibold md:text-sm rounded-md'>Day off request is for {distance} {distance == 1 ? "Day" : "Days"}</p>
 
           <div className='mb-4'>
-            <label htmlFor="reason" className="block text-sm font-medium md:text-base leading-6 mb-1">Reason</label>
-            <textarea value={reason} onChange={e => setReason(e.target.value)} className='border rounded-md p-3 w-full dark:border-gray-700 border-gray-200 dark:bg-gray-800'></textarea>
+            <label htmlFor="reason" className="block text-sm leading-6 mb-1">Reason</label>
+            <textarea value={reason} onChange={e => setReason(e.target.value)} className='border rounded-md p-3 w-full bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700'></textarea>
           </div>
 
           <Button onClick={sendRequest} isProcessing={isProcessing} text='Submit Request' className=' flex justify-center w-full md:w-1/4'></Button>

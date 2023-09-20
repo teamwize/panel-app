@@ -69,8 +69,8 @@ export default function Profile() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 mb-2 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
+    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 mb-2 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <Toolbar title='Profile'>
           <button onClick={() => setLogOut(true)} className='flex items-center w-full rounded-md bg-red-700 text-white p-2 text-sm font-semibold shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800'>
             <ArrowLeftOnRectangleIcon className='w-5 h-5 text-gray-400 mr-2'></ArrowLeftOnRectangleIcon>
@@ -78,7 +78,7 @@ export default function Profile() {
           </button>
         </Toolbar>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         <Logout logOut={logOut} setLogOut={setLogOut}></Logout>
 
@@ -86,7 +86,7 @@ export default function Profile() {
           <div>
             <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
               <img src={picture.croppedImg} className="h-40 w-40 rounded-full" />
-              <div className='bg-indigo-600 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
+              <div className='bg-indigo-500 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
                 <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">
                   <CameraIcon className='w-7 h-7 text-white'></CameraIcon>
                 </label>
@@ -98,16 +98,16 @@ export default function Profile() {
           </div>
 
           <div className='flex flex-col'>
-            <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300 border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">Information</h1>
+            <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200 border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">Information</h1>
 
             <form onSubmit={handleSubmit(onSubmit)}>
-              {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
+              {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
               <div className='w-full'>
-                <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="fullName">Full Name</label>
+                <label className="block text-sm leading-6 mb-2" htmlFor="fullName">Full Name</label>
                 <input placeholder={employeeInfo.firstName + ' ' + employeeInfo.lastName} {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
                   aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
-                  className="block w-full rounded-md border dark:border-gray-700 border-gray-200 px-4 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 " />
+                  className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 px-4 py-1.5 shadow-sm placeholder:text-gray-600 text-sm md:text-base sm:leading-6 " />
                 {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
               </div>
 
@@ -145,17 +145,17 @@ function Logout({ setLogOut, logOut }) {
     <Dialog open={logOut} onClose={closeLogOut}>
       <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-40'>
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-200 p-6 text-left align-middle transition-all">
+          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800 p-6 text-left align-middle transition-all">
             <div className='flex items-center mb-6'>
-              <ArrowLeftOnRectangleIcon className='w-6 h-6 mr-2'></ArrowLeftOnRectangleIcon>
-              <h1 className='font-semibold'>Log Out</h1>
+              <ArrowLeftOnRectangleIcon className='w-5 h-5 mr-2 cursor-pointer text-red-600'></ArrowLeftOnRectangleIcon>
+              <h1 className='font-semibold md:text-lg'>Log Out</h1>
             </div>
 
-            <p className="fullname font-semibold text-sm text-center mb-12">Are you sure you want to log out?</p>
+            <p className="fullname text-sm text-center mb-12">Are you sure you want to log out?</p>
 
             <section className='flex text-center justify-center'>
-              <button onClick={() => handleRequest(false)} className='rounded-lg p-2 shadow-md border border-red-700 w-1/2'>No</button>
-              <button onClick={() => handleRequest(true)} className='rounded-lg p-2 shadow-md ml-4 bg-red-700 text-white w-1/2'>Yes</button>
+              <button onClick={() => handleRequest(false)} className='rounded-lg p-2 shadow-md border border-red-600 w-1/2'>No</button>
+              <button onClick={() => handleRequest(true)} className='rounded-lg p-2 shadow-md ml-4 bg-red-600 text-indigo-100 w-1/2'>Yes</button>
             </section>
           </Dialog.Panel>
         </div>
@@ -213,10 +213,10 @@ function ChangePicture({ picture, setPicture }) {
     <Dialog open={picture.cropperOpen} onClose={() => setPicture({ ...picture, cropperOpen: false })}>
       <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-50'>
         <div className="flex min-h-full items-center justify-center p-4 text-center">
-          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl bg-white dark:bg-gray-800 dark:text-gray-100 p-6 text-left align-middle transition-all">
+          <Dialog.Panel className="w-full max-w-md transform overflow-hidden rounded-2xl border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800 p-6 text-left align-middle transition-all">
             <div className='flex items-center mb-6'>
-              <UserIcon className='w-6 h-6 mr-2'></UserIcon>
-              <h1 className='font-semibold'>Set Profile Photo</h1>
+              <UserIcon className='w-5 h-5 text-indigo-500 mr-2'></UserIcon>
+              <h1 className='font-semibold md:text-lg'>Set Profile Photo</h1>
             </div>
 
             <AvatarEditor ref={setEditorRef} image={picture.img} width={200} height={200} border={20} color={[255, 255, 255, 0.6]} className='right-0 left-0 mx-auto' rotate={0} scale={picture.zoom} />
@@ -225,7 +225,7 @@ function ChangePicture({ picture, setPicture }) {
 
             <section className='flex text-center justify-center'>
               <button onClick={handleCancel} className='rounded-lg p-2 shadow-md border border-indigo-600 w-1/2'>Cancel</button>
-              <button onClick={handleSave} className='rounded-lg p-2 shadow-md ml-4 bg-indigo-600 text-white w-1/2'>Save</button>
+              <button onClick={handleSave} className='rounded-lg p-2 shadow-md ml-4 bg-indigo-600 w-1/2'>Save</button>
             </section>
           </Dialog.Panel>
         </div>
