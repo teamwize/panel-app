@@ -39,8 +39,8 @@ export default function EmployeeInformation() {
   useEffect(() => {
     // doFetch('http://localhost:8080/days-off/' + id, {
     daysoff().then(data => {
-      console.log('Success:', data);
-      setRequestsList(data)
+      console.log('Success:', data.contents);
+      setRequestsList(data.contents)
     }).catch(error => {
       console.error('Error:', error);
       const errorMessage = getErrorMessage(error);
@@ -52,18 +52,18 @@ export default function EmployeeInformation() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 md:mx-auto md:w-full md:max-w-5xl'>
-        <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-700 mb-4 pb-4'>
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+      <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
+        <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-800 mb-4 pb-4'>
           <div className="flex items-center">
             <button onClick={goBack}>
-              <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
+              <ChevronLeftIcon className='w-5 h-5 mx-4 text-indigo-600'></ChevronLeftIcon>
             </button>
-            <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Employee Information</h1>
+            <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Employee Information</h1>
           </div>
         </div>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         <main className='px-4'>
           <p className='text-sm font-semibold leading-6 mb-2 md:text-lg text-gray-900 dark:text-gray-300'>Balance</p>
@@ -72,7 +72,7 @@ export default function EmployeeInformation() {
           </div>
 
           <div className='mb-4'>
-            <p className='text-sm font-semibold leading-6 mb-4 md:text-lg text-gray-900 dark:text-gray-300'>Requests ({requestsList ? requestsList.length : 0})</p>
+            <p className='text-sm font-semibold leading-6 mb-4 md:text-lg text-indigo-900 dark:text-indigo-200'>Requests ({requestsList ? requestsList.length : 0})</p>
             {requestsList ? requestsList.sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
           </div>
         </main>
@@ -83,10 +83,10 @@ export default function EmployeeInformation() {
 
 function BalanceItem({ i }) {
   return (
-    <div className='md:w-1/4 w-1/3 border dark:border-gray-700 rounded-md mx-1 shadow p-2 lg:w-1/4 md:p-4 md:mx-2 bg-white dark:bg-gray-800'>
+    <div className='md:w-1/4 w-1/3 border rounded-md mx-1 p-2 lg:w-1/4 md:p-4 md:mx-2 border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800'>
       <BalanceGraph title={i.label} balance={i.balance} total={i.total} color={i.color}></BalanceGraph>
       <p className='mt-2 text-sm md:text-base' style={{ color: i.color }}>{i.label}</p>
-      <p className='text-sm md:text-base text-gray-600 dark:text-gray-300'>{i.balance} / {i.total}</p>
+      <p className='text-sm md:text-base'>{i.balance} / {i.total}</p>
     </div>
   )
 }

@@ -8,8 +8,8 @@ export default function Graph({ balance, total, color }) {
     datasets: [{
       label: "quantity",
       data: [balance, total],
-      backgroundColor: [color, "#d1d5db"],
-      borderWidth: 2,
+      backgroundColor: [color, "#c7d2fe"],
+      borderWidth: 2
     }]
   }
   

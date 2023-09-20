@@ -14,7 +14,7 @@ export default function App() {
         {isAuthenticated() && <Sidebar user={user} logout={logout} />}
         <Root />
       </div>
-      <ToastContainer toastClassName={"relative flex p-1 min-h-10 rounded-md justify-between overflow-hidden cursor-pointer bg-white dark:bg-gray-800 text-gray-700 dark:text-gray-200"}  position="top-right" hideProgressBar autoClose={5000} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
+      <ToastContainer toastClassName={"relative flex p-1 min-h-10 shadow-sm text-sm md:text-base rounded-md justify-between overflow-hidden cursor-pointer border border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800"}  position="top-right" hideProgressBar autoClose={5000} newestOnTop={false} closeOnClick rtl={false} pauseOnFocusLoss draggable pauseOnHover />
     </ThemeProvider>
   )
 }

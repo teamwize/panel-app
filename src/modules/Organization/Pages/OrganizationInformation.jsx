@@ -53,31 +53,31 @@ export default function OrganizationInformation() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
+        <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
           <button onClick={goBack}>
-            <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
+            <ChevronLeftIcon className='w-5 h-5 mx-4 text-indigo-600'></ChevronLeftIcon>
           </button>
-          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Organization Info</h1>
+          <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Organization Info</h1>
         </div>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         <main className='px-4'>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className='w-full mb-4'>
-              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="company">Organization Name</label>
+              <label className="block text-sm leading-6 mb-2" htmlFor="company">Organization Name</label>
               <input {...register("company", { required: "Organization name is required", maxLength: { value: 20, message: "Organization name must be under 20 characters" }, minLength: { value: 2, message: "Organization name must be over 2 characters" } })}
                 aria-invalid={errors.company ? "true" : "false"} name="company" type="text" placeholder={employeeInfo === null ? "Loading..." : (employeeInfo.organization?.name || "")}
-                className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
+                className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-2 placeholder:text-gray-500 text-sm md:text-base sm:leading-6 px-4" />
               {errors.company && <Alert>{errors.company.message}</Alert>}
             </div>
 
             <div className='w-full'>
-              <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="location">Location</label>
+              <label className="block text-sm leading-6 mb-2" htmlFor="location">Location</label>
               <select {...register("location", { required: "Location is required" })} aria-invalid={errors.location ? "true" : "false"} name="location"
-                className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-3 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
+                className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-3 text-sm md:text-base sm:leading-6 px-2">
                 <option value="">Choose your location</option>
                 {countries.map((location) => <Location location={location} key={location.code} />)}
               </select>
@@ -94,7 +94,7 @@ export default function OrganizationInformation() {
 
 function Alert({ children }) {
   return (
-    <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
+    <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )
 }
 

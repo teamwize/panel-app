@@ -4,7 +4,7 @@ import { organization, employees } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar } from '~/core/components'
-import { ChartPieIcon, UserCircleIcon, BuildingOffice2Icon, ClockIcon, CalendarIcon, UserGroupIcon } from '@heroicons/react/24/outline'
+import { ChartPieIcon, UserIcon, BuildingOffice2Icon, ClockIcon, CalendarIcon, UserGroupIcon } from '@heroicons/react/24/outline'
 
 export default function Organization() {
   const [balance, setBalance] = useState([])
@@ -62,53 +62,53 @@ export default function Organization() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200'>
-      <div className='pt-4 md:mx-auto md:w-full md:max-w-5xl'>
+    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200'>
+      <div className='pt-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <Toolbar title='Organization'></Toolbar>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+        {errorMessage && <p className="b-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         <main className='px-4'>
           <button onClick={viewCompanyInfo} className='flex items-center mb-5 text-sm font-semibold md:text-base'>
-            <BuildingOffice2Icon className='w-5 h-5 mr-2'></BuildingOffice2Icon>
+            <BuildingOffice2Icon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></BuildingOffice2Icon>
             Information
           </button>
 
           <div className='flex items-center justify-between mb-5 text-sm font-semibold md:text-base'>
             <button onClick={viewSetBalance} className='flex items-center'>
-              <ChartPieIcon className='w-5 h-5 mr-2'></ChartPieIcon>
+              <ChartPieIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></ChartPieIcon>
               Set Balance
             </button>
-            {balance.length == 0 && <button className='bg-red-700 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
+            {balance.length == 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
           </div>
 
           <div className='flex items-center justify-between mb-5 text-sm font-semibold md:text-base'>
             <button onClick={viewEmployees} className='flex items-center'>
-              <UserCircleIcon className='w-5 h-5 mr-2'></UserCircleIcon>
+              <UserIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></UserIcon>
               Employees
             </button>
-            {employeesList.length == 0 && <button className='bg-red-700 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
+            {employeesList.length == 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
           </div>
 
           <div className='flex items-center justify-between mb-5 text-sm font-semibold md:text-base'>
             <button onClick={viewTeams} className='flex items-center'>
-              <UserGroupIcon className='w-5 h-5 mr-2'></UserGroupIcon>
+              <UserGroupIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></UserGroupIcon>
               Teams
             </button>
-            {employeesList.length == 0 && <button className='bg-red-700 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
+            {employeesList.length == 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
           </div>
 
           <button onClick={viewRequestQueue} className='flex items-center mb-5 text-sm font-semibold md:text-base'>
-            <ClockIcon className='w-5 h-5 mr-2'></ClockIcon>
+            <ClockIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></ClockIcon>
             Requests Queue
           </button>
 
           <div className='flex items-center justify-between mb-5 text-sm font-semibold md:text-base'>
             <button onClick={viewSetWorkingDays} className='flex items-center'>
-              <CalendarIcon className='w-5 h-5 mr-2'></CalendarIcon>
+              <CalendarIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></CalendarIcon>
               Set Working Days
             </button>
-            {balance.length == 0 && <button className='bg-red-700 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
+            {balance.length == 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
           </div>
         </main>
       </div>

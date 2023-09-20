@@ -55,24 +55,24 @@ export default function UpdateTeam() {
 
 
   return (
-    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
+        <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
           <button onClick={goBack}>
-            <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
+            <ChevronLeftIcon className='w-5 h-5 mx-4 text-indigo-600'></ChevronLeftIcon>
           </button>
-          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Update Team</h1>
+          <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Update Team</h1>
         </div>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         <form className="space-y-4 px-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
-            <label htmlFor="team" className="block text-sm font-semibold leading-6 md:text-base">Team Name</label>
+            <label htmlFor="team" className="block text-sm leading-6">Team Name</label>
             <div className="mt-2">
               <input defaultValue={teamName} {...register("team", { required: "Team Name is required", maxLength: { value: 20, message: "Team Name must be under 20 characters" }, minLength: { value: 2, message: "Team Name must be over 2 characters" } })}
                 aria-invalid={errors.team ? "true" : "false"} name="team" type="text"
-                className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-1.5 shadow-sm placeholder:text-gray-600 sm:text-sm sm:leading-6 dark:bg-gray-800 px-4" />
+                className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 placeholder:text-gray-500 py-1.5 text-sm md:text-base sm:leading-6 px-4" />
               {errors.team && <Alert>{errors.team.message}</Alert>}
             </div>
           </div>
@@ -86,6 +86,6 @@ export default function UpdateTeam() {
 
 function Alert({ children }) {
   return (
-    <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
+    <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )
 }

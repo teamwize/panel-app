@@ -41,22 +41,22 @@ export default function OrganizationWorkingDays() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto mb-2 w-full fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-gray-700 dark:text-gray-200 h-screen'>
-      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-5xl'>
-        <div className="flex items-center border-b border-gray-200 dark:border-gray-700 pb-4 mb-4">
+    <div className='md:w-4/5 overflow-y-auto mb-2 w-full fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+      <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
+        <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
           <button onClick={goBack}>
-            <ChevronLeftIcon className='w-5 h-5 mx-4'></ChevronLeftIcon>
+            <ChevronLeftIcon className='w-5 h-5 mx-4 text-indigo-600'></ChevronLeftIcon>
           </button>
-          <h1 className="md:text-lg font-semibold text-gray-900 dark:text-gray-300">Set Organization Working Days</h1>
+          <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Set Organization Working Days</h1>
         </div>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 py-2 font-semibold text-sm">{errorMessage}</p>}
+        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         <form className="space-y-4 px-4" onSubmit={handleSubmit(onSubmit)}>
           <div className='w-full'>
-            <label className="block text-sm font-semibold md:text-base leading-6 mb-2" htmlFor="startDay">Week starting day</label>
+            <label className="block text-sm leading-6 mb-2" htmlFor="startDay">Week starting day</label>
             <select {...register("startDay", { required: "Week starting day is required" })} aria-invalid={errors.startDay ? "true" : "false"} name="startDay"
-              className="block w-full rounded-md border dark:border-gray-700 border-gray-200 py-3 shadow-sm placeholder:text-gray-600 dark:text-gray-200 sm:text-sm sm:leading-6 dark:bg-gray-800 px-2">
+              className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-3 placeholder:text-gray-600 text-sm md:text-base sm:leading-6 px-2">
               <option value="">Choose week starting day</option>
               {weekDays.map((day) => <WeekDaysItem day={day} key={day.day} />)}
             </select>
@@ -64,7 +64,7 @@ export default function OrganizationWorkingDays() {
           </div>
 
           <div>
-            <label htmlFor="weekDays" className="block text-sm font-semibold leading-6 md:text-base mb-2">Working Days</label>
+            <label htmlFor="weekDays" className="block text-sm leading-6 mb-2">Working Days</label>
             <div className="grid grid-cols-2">
               {weekDays.map((day) => <WorkDaysItem day={day} key={day.day} register={register} errors={errors} />)}
             </div>
@@ -80,7 +80,7 @@ export default function OrganizationWorkingDays() {
 
 function Alert({ children }) {
   return (
-    <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
+    <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )
 }
 
@@ -92,7 +92,7 @@ function WorkDaysItem({ day, register, errors }) {
   return (
     <div className="flex items-center mb-1">
       <input {...register("weekDays", { required: "Working days is required" })} aria-invalid={errors.weekDays ? "true" : "false"}
-        value={day.day} id={day.day} type="checkbox" className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-600 mr-2 accent-indigo-600" />
+        value={day.day} id={day.day} type="checkbox" className="h-4 w-4 rounded border-indigo-100 dark:border-slate-700 focus:ring-indigo-500 mr-2 accent-indigo-500" />
       <label htmlFor={day.day} className="text-sm md:text-base">{day.day}</label>
     </div>
   )
