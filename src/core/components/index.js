@@ -5,5 +5,6 @@ import BalanceGraph from './BalanceGraph.jsx'
 import AuthenticatedRoute from './AuthenticatedRoute.jsx'
 import Label from './Label.jsx'
 import Button from './Button.jsx'
+import Pagination from './Pagination.jsx'
 
-export { Sidebar, Toolbar, DayOffRequest, BalanceGraph, AuthenticatedRoute, Label, Button }
+export { Sidebar, Toolbar, DayOffRequest, BalanceGraph, AuthenticatedRoute, Label, Button, Pagination }

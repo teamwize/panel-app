@@ -3,14 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import { employees, deleteEmployee } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
+import {Pagination} from '../../../core/components'
 import { Dialog } from '@headlessui/react'
 import { XMarkIcon, ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
 const example = [
-  {name: "Mohsen Karimi"},
-  {name: "Hasan Karimi"},
-  {name: "Roya Hasani"}
+  { name: "Mohsen Karimi" },
+  { name: "Hasan Karimi" },
+  { name: "Roya Hasani" }
 ]
 
 export default function Employees() {
@@ -19,6 +20,8 @@ export default function Employees() {
   const [remove, setRemove] = useState(false)
   const [isProcessing, setIsProcessing] = useState(false)
   const navigate = useNavigate();
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 5;
 
   //get list of employees
   useEffect(() => {
@@ -65,7 +68,7 @@ export default function Employees() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
         <div className='flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800 pb-4'>
           <div className="flex items-center">
@@ -75,7 +78,7 @@ export default function Employees() {
             <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Employees ({example.length})</h1>
           </div>
 
-          <button onClick={viewAddEmployee} className='flex items-center rounded-xl px-2 py-1 shadow-sm bg-indigo-600 text-indigo-100 text-sm font-semibold hover:bg-indigo-700 '>
+          <button onClick={viewAddEmployee} className='flex items-center rounded-md px-2 py-1 shadow-sm bg-indigo-600 text-indigo-100 text-sm font-semibold hover:bg-indigo-700 '>
             <PlusIcon className='h-5 w-5 mr-2 text-indigo-300'></PlusIcon>
             Create
           </button>
@@ -84,7 +87,10 @@ export default function Employees() {
         {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
         {/* {employeesList.map(e => <EmployeeItem e={e} key={e.ID} viewDetails={viewDetails} setRemove={setRemove} remove={remove} closeRemove={closeRemove} handleRequest={handleRequest} isProcessing={isProcessing} />)} */}
-        {example.map(e => <EmployeeItem e={e} key={e.ID} viewDetails={viewDetails} setRemove={setRemove} remove={remove} closeRemove={closeRemove} handleRequest={handleRequest} isProcessing={isProcessing} />)}
+        {example
+          .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+          .map(e => <EmployeeItem e={e} key={e.ID} viewDetails={viewDetails} setRemove={setRemove} remove={remove} closeRemove={closeRemove} handleRequest={handleRequest} isProcessing={isProcessing} />)}
+        {example.length > recordsPerPage ? <Pagination recordsPerPage={recordsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} data={example} /> : ' '}
       </div>
     </div>
   )

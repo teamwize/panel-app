@@ -9,7 +9,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../../constants/index.js'
 import '../../../constants/style.css'
-import { Toolbar, Label } from '~/core/components'
+import { Toolbar, Label, Pagination } from '~/core/components'
 import useCalendarData from '../../../utils/holidays.js';
 import { PlusIcon } from '@heroicons/react/20/solid';
 dayjs.extend(isBetween);
@@ -44,6 +44,8 @@ export default function Calendar() {
   const isWorkingDay = holidaysDate.every(d => !dayjs(d).isSame(selectedDate, 'day'))
   const formattedSelectedDate = dayjs(selectedDate).format('YYYY-MM-DD');
   const formattedHolidaysDate = holidaysDate.map(date => dayjs(date).format('YYYY-MM-DD'));
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 5;
 
   //Get list of requests
   useEffect(() => {
@@ -89,11 +91,11 @@ export default function Calendar() {
 
 
   return (
-    <div className='md:w-4/5 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200'>
+    <div className='md:w-4/5 w-full fixed top-16 md:top-0 bottom-0 right-0 overflow-y-auto'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
         <Toolbar title='Calendar'>
           <div className='flex justify-center'>
-            <button onClick={() => sendRequest()} className="flex items-center w-full rounded-xl bg-indigo-600 p-2 text-sm font-semibold text-indigo-100 shadow-sm hover:bg-indigo-700">
+            <button onClick={() => sendRequest()} className="flex items-center w-full rounded-md bg-indigo-600 p-2 text-sm font-semibold text-indigo-100 shadow-sm hover:bg-indigo-700">
               <PlusIcon className='h-5 w-5 mr-2 text-indigo-300'></PlusIcon>
               Request Day Off
             </button>
@@ -111,8 +113,11 @@ export default function Calendar() {
             <p className='font-semibold md:text-lg my-4 text-indigo-900 dark:text-indigo-200'>
               Requests ({formattedHolidaysDate.includes(formattedSelectedDate) ? 0 : selectedDateRequests.length})
             </p>
-            {isWorkingDay ? selectedDateRequests.map((request) => <RequesItem request={request} key={request.id} />) : ''}
+            {isWorkingDay ? selectedDateRequests
+            .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+            .map((request) => <RequesItem request={request} key={request.id} />) : ''}
           </div>
+          {selectedDateRequests.length > recordsPerPage ? <Pagination recordsPerPage={recordsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} data={selectedDateRequests} /> : ' '}
         </main>
       </div>
     </div>
@@ -124,20 +129,19 @@ function RequesItem({ request }) {
     <section className='flex items-center text-indigo-900 dark:text-indigo-200 mb-2 pb-2 border-b border-gray-200 dark:border-gray-800'>
       <img className="h-10 w-10 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
-      <div className='flex flex-col md:flex-row justify-between w-full'>
-        <p className="fullname text-sm font-semibold mb-1 md:mb-0 md:w-1/4">Mohsen Karimi</p>
+      <div className='flex flex-col lg:flex-row justify-between w-full'>
+        <p className="fullname text-sm font-semibold mb-1 lg:mb-0 lg:w-1/4">Mohsen Karimi</p>
 
-        <div className='flex flex-col md:flex-row md:w-3/4 md:justify-between'>
-          <div className='flex text-xs md:text-sm mb-2 md:mb-0 md:w-full md:justify-center'>
+        <div className='flex flex-col lg:flex-row lg:w-3/4 lg:justify-between'>
+          <div className='flex text-xs lg:text-sm mb-2 lg:mb-0 lg:w-full lg:justify-center'>
             <p className='mr-2'>{request.distance == 1 ? dayjs(request.startAt).format('D MMM') : `${dayjs(request.startAt).format('D MMM')} - ${dayjs(request.endAt).format('D MMM')}`}</p>
             <p className='distance text-indigo-800 dark:text-indigo-300'>({(request.distance) == 1 ? "Day" : "Days"})</p>
           </div>
 
-          <div className='flex gap-2 md:w-full md:justify-end md:gap-4'>
+          <div className='flex gap-2 lg:w-full lg:justify-end lg:gap-4'>
             <Label type={leaveTypeColor[request.type]} text={leaveTypeJson[request.type]}></Label>
             <Label type={dayoffStatusColor[request.status]} text={statusJson[request.status]}></Label>
           </div>
-
         </div>
       </div>
     </section>

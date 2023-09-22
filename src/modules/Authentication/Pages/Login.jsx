@@ -45,7 +45,7 @@ export default function Login() {
 
   return (
     <>
-      <div className="flex flex-col w-full justify-center p-4 lg:px-8 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen">
+      <div className="flex flex-col w-full justify-center p-4 lg:px-8 h-screen">
         <div className="md:mx-auto md:w-full md:max-w-5xl">
           <img className="mx-auto h-10 w-auto" src={logo.src} alt={logo.alt} />
           <h2 className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight">Sign in to your account</h2>
@@ -83,7 +83,7 @@ export default function Login() {
                 <a href="#" className="text-indigo-600 hover:text-indigo-500 ml-4 block font-medium leading-6">Forgot your password?</a>
               </div>
 
-              <button type="submit" className="flex w-full justify-center rounded-xl bg-indigo-600 py-2 px-3 text-sm font-semibold text-indigo-100 shadow-sm hover:bg-indigo-700">
+              <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-indigo-100 shadow-sm hover:bg-indigo-700">
                 {isProcessing ? "Waiting ..." : "Sign in"}
               </button>
             </form>

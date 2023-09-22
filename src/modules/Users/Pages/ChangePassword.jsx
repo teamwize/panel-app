@@ -47,7 +47,7 @@ export default function ChangePassword() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full fixed mb-2 top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full fixed mb-2 top-16 md:top-0 bottom-0 right-0 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
           <button onClick={goBack}>

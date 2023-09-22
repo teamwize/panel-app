@@ -69,7 +69,7 @@ export default function Profile() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 mb-2 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 mb-2 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <Toolbar title='Profile'>
           <button onClick={() => setLogOut(true)} className='flex items-center w-full rounded-md bg-red-700 text-white p-2 text-sm font-semibold shadow-sm hover:bg-red-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-800'>
@@ -105,7 +105,7 @@ export default function Profile() {
 
               <div className='w-full'>
                 <label className="block text-sm leading-6 mb-2" htmlFor="fullName">Full Name</label>
-                <input placeholder={employeeInfo.firstName + ' ' + employeeInfo.lastName} {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
+                <input {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
                   aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
                   className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 px-4 py-1.5 shadow-sm placeholder:text-gray-600 text-sm md:text-base sm:leading-6 " />
                 {errors.fullname && <Alert>{errors.fullname.message}</Alert>}

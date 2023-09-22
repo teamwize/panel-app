@@ -55,7 +55,7 @@ export default function UpdateTeam() {
 
 
   return (
-    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
           <button onClick={goBack}>
@@ -70,7 +70,7 @@ export default function UpdateTeam() {
           <div>
             <label htmlFor="team" className="block text-sm leading-6">Team Name</label>
             <div className="mt-2">
-              <input defaultValue={teamName} {...register("team", { required: "Team Name is required", maxLength: { value: 20, message: "Team Name must be under 20 characters" }, minLength: { value: 2, message: "Team Name must be over 2 characters" } })}
+              <input {...register("team", { required: "Team Name is required", maxLength: { value: 20, message: "Team Name must be under 20 characters" }, minLength: { value: 2, message: "Team Name must be over 2 characters" } })}
                 aria-invalid={errors.team ? "true" : "false"} name="team" type="text"
                 className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 placeholder:text-gray-500 py-1.5 text-sm md:text-base sm:leading-6 px-4" />
               {errors.team && <Alert>{errors.team.message}</Alert>}

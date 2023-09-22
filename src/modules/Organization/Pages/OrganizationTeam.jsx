@@ -48,7 +48,7 @@ export default function OrganizationTeam() {
   }
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
         <div className='flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800 pb-4'>
           <div className="flex items-center">
@@ -58,7 +58,7 @@ export default function OrganizationTeam() {
             <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Teams</h1>
           </div>
 
-          <button onClick={viewCreateTeam} className='flex items-center rounded-xl px-2 py-1 shadow-sm bg-indigo-600 text-indigo-100 text-sm font-semibold hover:bg-indigo-600'>
+          <button onClick={viewCreateTeam} className='flex items-center rounded-md px-2 py-1 shadow-sm bg-indigo-600 text-indigo-100 text-sm font-semibold hover:bg-indigo-600'>
             <PlusIcon className='h-5 w-5 mr-2 text-indigo-300'></PlusIcon>
             Add Team
           </button>
