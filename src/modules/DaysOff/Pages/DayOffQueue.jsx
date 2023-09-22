@@ -7,7 +7,7 @@ import { daysoff, dayoffStatus } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { leaveTypeJson, leaveTypeColor } from '../../../constants/index.js'
-import { Label } from '~/core/components'
+import { Label, Pagination } from '~/core/components'
 
 export default function DayOffQueue() {
   const navigate = useNavigate()
@@ -15,6 +15,8 @@ export default function DayOffQueue() {
   const [errorMessage, setErrorMessage] = useState(null)
   const [isProcessing, setIsProcessing] = useState(false)
   const [selectedRequest, setSelectedRequest] = useState(null)
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 5;
 
   //get dayoff list
   useEffect(() => {
@@ -54,7 +56,7 @@ export default function DayOffQueue() {
 
 
   return (
-    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-2">
           <button onClick={goBack}>
@@ -65,9 +67,12 @@ export default function DayOffQueue() {
 
         {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
 
-        {requestsList.map((request) => <div key={request.id}>
-          <Request request={request} onClick={handleRowClick} />
-        </div>)}
+        {requestsList
+          .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+          .map((request) => <Request key={request.id} request={request} onClick={handleRowClick} />)}
+
+        {requestsList.length > recordsPerPage ? <Pagination recordsPerPage={recordsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} data={requestsList} /> : ' '}
+
         {selectedRequest &&
           <DayOffModal
             selectedRequest={selectedRequest}
@@ -84,7 +89,7 @@ export default function DayOffQueue() {
 function Request({ request, onClick }) {
   return (
     <div>
-      <section onClick={() => onClick(request)} className='flex items-center text-indigo-900 dark:text-indigo-200 mb-2 mx-4 pb-2 border-b border-gray-200 dark:border-gray-800 cursor-pointer'>
+      <section onClick={() => onClick(request)} className='flex items-center text-indigo-900 dark:text-indigo-200 mb-2 pb-2 border-b border-gray-200 dark:border-gray-800 cursor-pointer'>
         <img className="h-10 w-10 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
 
         <div className='flex flex-col md:flex-row w-full md:justify-between'>

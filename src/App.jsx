@@ -10,7 +10,7 @@ export default function App() {
 
   return (
     <ThemeProvider>
-      <div className='md:flex md:flex-wrap md:h-screen h-full md:justify-center bg-gray-100 dark:bg-gray-900'>
+      <div className='md:flex md:flex-wrap md:h-screen h-full md:justify-center bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200'>
         {isAuthenticated() && <Sidebar user={user} logout={logout} />}
         <Root />
       </div>

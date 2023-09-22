@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { daysoff } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { DayOffRequest, BalanceGraph } from '~/core/components'
+import { DayOffRequest, BalanceGraph, Pagination } from '~/core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 
 export default function EmployeeInformation() {
@@ -13,6 +13,8 @@ export default function EmployeeInformation() {
   const [errorMessage, setErrorMessage] = useState(null);
   const navigate = useNavigate();
   const { id } = useParams();
+  const [currentPage, setCurrentPage] = useState(1);
+  const recordsPerPage = 5;
 
   // const [errorMessage, setErrorMessage] = useState(null)
   // useEffect(() => {
@@ -52,7 +54,7 @@ export default function EmployeeInformation() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
       <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
         <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-800 mb-4 pb-4'>
           <div className="flex items-center">
@@ -73,8 +75,13 @@ export default function EmployeeInformation() {
 
           <div className='mb-4'>
             <p className='text-sm font-semibold leading-6 mb-4 md:text-lg text-indigo-900 dark:text-indigo-200'>Requests ({requestsList ? requestsList.length : 0})</p>
-            {requestsList ? requestsList.sort((a, b) => Date.parse(b.start) - Date.parse(a.start)).map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
+            {requestsList ? requestsList
+              .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+              .sort((a, b) => Date.parse(b.start) - Date.parse(a.start))
+              .map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
           </div>
+
+          {requestsList.length > recordsPerPage ? <Pagination recordsPerPage={recordsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} data={requestsList} /> : ' '}
         </main>
       </div>
     </div>

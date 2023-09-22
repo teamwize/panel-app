@@ -49,7 +49,7 @@ export default function Register() {
 
   return (
     <>
-      <div className="flex flex-col justify-center p-4 lg:px-8 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 w-full">
+      <div className="flex flex-col justify-center p-4 lg:px-8 w-full">
         <div className="md:mx-auto md:w-full md:max-w-5xl">
           <img className="mx-auto h-10 w-auto" src={logo.src} alt={logo.alt} />
           <p className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight text-indigo-600">Welcome to Teamwize</p>
@@ -138,7 +138,7 @@ export default function Register() {
               </div>
 
               <div>
-                <button type="submit" className="flex w-full justify-center rounded-xl bg-indigo-600 py-2 px-3 text-sm font-semibold text-indigo-100 shadow-sm hover:bg-indigo-700">
+                <button type="submit" className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-indigo-100 shadow-sm hover:bg-indigo-700">
                   {isProcessing ? "Waiting ..." : "Sign up"}
                 </button>
               </div>

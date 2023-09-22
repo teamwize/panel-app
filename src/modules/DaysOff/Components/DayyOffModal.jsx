@@ -130,10 +130,10 @@ export default function DayOffModal({ selectedRequest, handleModal, handleReques
               </div>)}
 
             <section className='flex text-center justify-center'>
-              <button onClick={() => handleRequest('REJECTED', request.id)} className='rounded-lg p-2 text-white shadow-md bg-red-600 w-1/2'>
+              <button onClick={() => handleRequest('REJECTED', request.id)} className='rounded-md p-2 text-white shadow-md bg-red-600 w-1/2'>
                 {isProcessing ? "Waiting ..." : "Reject"}
               </button>
-              <button onClick={() => handleRequest('ACCEPTED', request.id)} className='rounded-lg p-2 text-white shadow-md ml-4 bg-green-500 w-1/2'>
+              <button onClick={() => handleRequest('ACCEPTED', request.id)} className='rounded-md p-2 text-white shadow-md ml-4 bg-green-500 w-1/2'>
                 {isProcessing ? "Waiting ..." : "Accept"}
               </button>
             </section>

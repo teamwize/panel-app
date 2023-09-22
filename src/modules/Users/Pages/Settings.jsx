@@ -42,7 +42,7 @@ export default function Setting() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200'>
+    <div className='md:w-4/5 overflow-y-auto w-full fixed top-16 md:top-0 bottom-0 right-0'>
       <div className='pt-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <Toolbar title='Settings'></Toolbar>
 

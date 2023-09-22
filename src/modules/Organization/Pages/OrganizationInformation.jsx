@@ -53,7 +53,7 @@ export default function OrganizationInformation() {
 
 
   return (
-    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200 h-screen'>
+    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0  h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
         <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
           <button onClick={goBack}>
@@ -69,7 +69,7 @@ export default function OrganizationInformation() {
             <div className='w-full mb-4'>
               <label className="block text-sm leading-6 mb-2" htmlFor="company">Organization Name</label>
               <input {...register("company", { required: "Organization name is required", maxLength: { value: 20, message: "Organization name must be under 20 characters" }, minLength: { value: 2, message: "Organization name must be over 2 characters" } })}
-                aria-invalid={errors.company ? "true" : "false"} name="company" type="text" placeholder={employeeInfo === null ? "Loading..." : (employeeInfo.organization?.name || "")}
+                aria-invalid={errors.company ? "true" : "false"} name="company" type="text" placeholder={employeeInfo === null ? "Loading..." : "Organization Name"}
                 className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-2 placeholder:text-gray-500 text-sm md:text-base sm:leading-6 px-4" />
               {errors.company && <Alert>{errors.company.message}</Alert>}
             </div>
