@@ -7,7 +7,7 @@ import isBetween from 'dayjs/plugin/isBetween.js'
 import { daysoff } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../../constants/index.js'
+import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../../constants/index'
 import '../../../constants/style.css'
 import { Toolbar, Label, Pagination } from '~/core/components'
 import useCalendarData from '../../../utils/holidays.js';
@@ -75,7 +75,7 @@ export default function Calendar() {
       }
     }
     setOffDays(result)
-  }, [requestsList, calendarCurrentDate, offDays])
+  }, [requestsList, calendarCurrentDate])
 
   const handleMonthChange = (newDate) => {
     setCalendarCurrentDate(dayjs(newDate));

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { Dialog } from '@headlessui/react'
-import { leaveTypeJson } from '../../../constants/index.js'
+import { leaveTypeJson } from '../../../constants/index'
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
 
 const example = [

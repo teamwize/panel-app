@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { updateEmployee, employee } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { countries } from '../../../constants/index.js'
+import { countries } from '../../../constants/index'
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 

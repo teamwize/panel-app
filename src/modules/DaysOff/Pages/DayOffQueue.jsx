@@ -6,7 +6,7 @@ import { DayOffModal } from '../Components'
 import { daysoff, dayoffStatus } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { leaveTypeJson, leaveTypeColor } from '../../../constants/index.js'
+import { leaveTypeJson, leaveTypeColor } from '../../../constants/index'
 import { Label, Pagination } from '~/core/components'
 
 export default function DayOffQueue() {

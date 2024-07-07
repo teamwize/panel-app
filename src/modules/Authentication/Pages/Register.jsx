@@ -5,8 +5,9 @@ import { registration } from "../../../services/WorkiveApiClient.js"
 import { UserContext } from "../../../contexts/UserContext.jsx"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { logo, countries } from '../../../constants/index.js'
+import { countries } from '../../../constants/index'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
+import { Logo } from "../../../core/components/Logo.jsx"
 
 export default function Register() {
   const { register, handleSubmit, formState: { errors } } = useForm()
@@ -51,7 +52,7 @@ export default function Register() {
     <>
       <div className="flex flex-col justify-center p-4 lg:px-8 w-full">
         <div className="md:mx-auto md:w-full md:max-w-5xl">
-          <img className="mx-auto h-10 w-auto" src={logo.src} alt={logo.alt} />
+          <Logo className="mx-auto h-10 w-auto" />
           <p className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight text-indigo-600">Welcome to Teamwize</p>
         </div>
 
