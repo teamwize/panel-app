@@ -1,6 +1,6 @@
 import dayjs from 'dayjs';
 import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../constants/index'
-import { Label } from './index.js'
+import { Label } from './index'
 
 export default function Request({ request }) {
   return (

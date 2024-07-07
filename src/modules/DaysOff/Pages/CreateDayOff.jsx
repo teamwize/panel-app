@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar, Button } from '~/core/components'
 import DatePicker from '../Components/DatePicker.jsx'
-import { leaveType } from '../../../constants/index.js'
+import { leaveType } from '../../../constants/index'
 import useCalendarData from '../../../utils/holidays.js';
 dayjs.extend(isBetween);
 

@@ -1,11 +1,6 @@
-import logoImg from '../assets/logo.svg'
+import { Country, Navigation, LeaveType, WeekDays } from './types';
 
-export const logo = {
-  src: logoImg,
-  alt: "Teamwize"
-}
-
-export const countries = [
+export const countries: Country[] = [
   { name: "Afghanistan", code: "AF" },
   { name: "Åland Islands", code: "AX" },
   { name: "Albania", code: "AL" },
@@ -260,44 +255,44 @@ export const countries = [
 
 import { CalendarIcon, Cog6ToothIcon, ChartPieIcon, BuildingOfficeIcon } from '@heroicons/react/24/outline'
 
-export const navigation = [
+export const navigation: Navigation[] = [
   { name: 'Calendar', icon: CalendarIcon, href: '/calendar' },
   { name: 'Balance', icon: ChartPieIcon, href: '/balance' },
   { name: 'Settings', icon: Cog6ToothIcon, href: '/settings' },
   { name: 'Organization', icon: BuildingOfficeIcon, href: '/organization' }
 ]
 
-export const leaveType = [
+export const leaveType: LeaveType[] = [
   { name: "Vacation", value: 'VACATION' },
   { name: "Sick leave", value: "SICK_LEAVE" },
   { name: 'Paid time', value: 'PAID_TIME' }
 ]
 
-export const leaveTypeJson = {
-  "VACATION": "Vacation",
-  "SICK_LEAVE": "Sick leave",
-  "PAID_TIME": 'Paid time'
+export enum leaveTypeJson {
+  VACATION = "Vacation",
+  SICK_LEAVE = "Sick leave",
+  PAID_TIME = "Paid time"
 }
 
-export const statusJson = {
-  "PENDING": "Pending",
-  "ACCEPTED": "Accepted",
-  "REJECTED": 'Rejected'
+export enum statusJson {
+  PENDING = "Pending",
+  ACCEPTED = "Accepted",
+  REJECTED = "Rejected"
 }
 
-export const leaveTypeColor = {
-  "VACATION": "GREEN",
-  "SICK_LEAVE": "RED",
-  "PAID_TIME": 'BLUE'
+export enum leaveTypeColor {
+  VACATION = "GREEN",
+  SICK_LEAVE = "RED",
+  PAID_TIME = "BLUE"
 }
 
-export const dayoffStatusColor = {
-  "PENDING": "YELLOW",
-  "ACCEPTED": "GREEN",
-  "REJECTED": 'RED'
+export enum dayoffStatusColor {
+  PENDING = "YELLOW",
+  ACCEPTED = "GREEN",
+  REJECTED = "RED"
 }
 
-export const weekDays = [
+export const weekDays: WeekDays[] = [
   { day: "Monday" },
   { day: "Tuesday" },
   { day: "Wednesday" },

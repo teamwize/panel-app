@@ -1,23 +1,24 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
 import { employee } from '../../services/WorkiveApiClient'
-import { navigation, logo } from '../../constants'
+import { navigation } from '../../constants'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
+import { Logo } from './Logo';
 
 export default function Sidebar() {
   const [employeeInfo, setEmployeeInfo] = useState([])
 
-    //get employee information
-    useEffect(() => {
-      employee().then(data => {
-        console.log('Success:', data);
-        setEmployeeInfo(data);
-      }).catch(error => {
-        console.error('Error:', error);
-        setErrorMessage(error.error)
-      });
-    }, [])
+  //get employee information
+  useEffect(() => {
+    employee().then(data => {
+      console.log('Success:', data);
+      setEmployeeInfo(data);
+    }).catch(error => {
+      console.error('Error:', error);
+      setErrorMessage(error.error)
+    });
+  }, [])
 
 
   return (
@@ -25,11 +26,11 @@ export default function Sidebar() {
       <section className='md-size hidden md:block'>
         <div className="flex flex-1 flex-col overflow-y-auto pt-5 pb-4">
           <div className="flex flex-shrink-0 items-center px-6">
-            <img className="h-8 w-auto" src={logo.src} alt={logo.alt} />
+            <Logo className="h-8 w-auto" />
           </div>
           <Navbar />
         </div>
-        <Profile employeeInfo={employeeInfo}/>
+        <Profile employeeInfo={employeeInfo} />
       </section>
 
       <section className='sm-size md:hidden fixed z-20 bg-gray-100 dark:bg-gray-900 w-full'>
@@ -40,7 +41,7 @@ export default function Sidebar() {
                 <Disclosure.Button className="inline-flex items-center justify-center rounded-md p-2 text-indigo-500">
                   <div className='flex items-center justify-between absolute right-0 left-0 mx-6'>
                     <Bars3Icon className="h-7 w-7" aria-hidden="true" />
-                    <img className="h-8 w-auto" src={logo.src} alt={logo.alt} />
+                    <Logo className="h-8 w-auto" />
                   </div>
                 </Disclosure.Button>
               </div>
@@ -50,7 +51,7 @@ export default function Sidebar() {
               {({ close }) => (
                 <div className='flex flex-col justify-between'>
                   <Navbar close={close} />
-                  <Profile close={close} employeeInfo={employeeInfo}/>
+                  <Profile close={close} employeeInfo={employeeInfo} />
                 </div>
               )}
             </Disclosure.Panel>

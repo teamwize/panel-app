@@ -5,7 +5,7 @@ import { employee, updateEmployee, updateEmployeePicture } from "../../../servic
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar, Button } from '~/core/components'
-import { UserContext } from '../../../contexts/index.js'
+import { UserContext } from '../../../contexts/index'
 import AvatarEditor from "react-avatar-editor"
 import { Slider } from "@material-ui/core"
 import { Dialog } from '@headlessui/react'

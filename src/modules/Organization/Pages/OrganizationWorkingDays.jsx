@@ -4,7 +4,7 @@ import { useNavigate } from 'react-router-dom'
 import { updateOrganization } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { weekDays } from "../../../constants/index.js";
+import { weekDays } from "../../../constants/index";
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 

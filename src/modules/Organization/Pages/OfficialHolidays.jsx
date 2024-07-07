@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom'
 import { Fragment } from 'react'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 import { hexToRgb } from '@material-ui/core'
-import he from 'date-fns/esm/locale/he/index.js'
+import he from 'date-fns/esm/locale/he/index'
 
 const example = [
   {
