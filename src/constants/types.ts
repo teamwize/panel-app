@@ -22,3 +22,32 @@ export type LeaveType = {
 export type WeekDays = {
   day: string
 }
+
+export type Organization = {
+  id: number;
+  name: string;
+}
+
+export enum UserStatus {
+  ENABLED = "ENABLED",
+  DISABLED = "DISABLED",
+  ARCHIVED = "ARCHIVED"
+}
+
+export enum UserRole {
+  ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN",
+  SITE_ADMIN = "SITE_ADMIN",
+  EMPLOYEE = "EMPLOYEE",
+  API = "API"
+}
+
+export type User = {
+  id: number;
+  status: UserStatus;
+  role: UserRole;
+  email: string;
+  firstName: string;
+  lastName: string | null;
+  phone: string | null;
+  organization: Organization;
+}

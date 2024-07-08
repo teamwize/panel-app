@@ -2,7 +2,7 @@ import { useState, useContext } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { registration } from "../../../services/WorkiveApiClient.js"
-import { UserContext } from "../../../contexts/UserContext.jsx"
+import { UserContext } from "../../../contexts/UserContext"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { countries } from '../../../constants/index'
