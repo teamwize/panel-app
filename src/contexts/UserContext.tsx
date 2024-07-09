@@ -24,8 +24,8 @@ type UserContextProviderType = {
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderType) => {
-  const [user, setUser] = useLocalStorage<User | null>("USER", null)
-  const [accessToken, setAccessToken] = useLocalStorage<string | null>("ACCESS_TOKEN", null)
+  const [user, setUser] = useLocalStorage<User>({key: "USER", initialValue: null})
+  const [accessToken, setAccessToken] = useLocalStorage<string>({key: "ACCESS_TOKEN", initialValue: null})
 
   const authenticate = (accessToken: string | null, user: User | null) => {
     setUser(user);
@@ -44,9 +44,9 @@ export const UserContextProvider = ({ children }: UserContextProviderType) => {
     return accessToken != null && accessToken !== "" && !isTokenExpired(accessToken)
   }
 
-  const contextValue = {
-    user,
-    accessToken,
+  const contextValue: UserContextType = {
+    user: user as User,
+    accessToken: accessToken as string,
     isAuthenticated: useCallback(() => isAuthenticated(), [accessToken]),
     authenticate: useCallback((accessToken: string | null, user: User | null) => authenticate(accessToken, user), []),
     logout: useCallback(() => logout(), [])
