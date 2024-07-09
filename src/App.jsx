@@ -3,7 +3,9 @@ import { useContext } from "react"
 import { ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import { Sidebar } from './core/components'
-import { UserContext, ThemeContextProvider } from './contexts';
+import { UserContext } from './contexts/UserContext';
+import {ThemeContextProvider} from './contexts/ThemeContext'
+
 
 export default function App() {
   const { user, logout, isAuthenticated } = useContext(UserContext);

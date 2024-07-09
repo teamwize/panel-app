@@ -32,9 +32,9 @@ export default function EmployeeInformation() {
 
   //example
   const balance = [
-    { label: "Vacation", total: 18, balance: 3, color: "#22c55e" },
-    { label: "Sick leave", total: 5, balance: 2, color: "#f87171" },
-    { label: "Paid time off", total: 5, balance: 1, color: "#60a5fa" }
+    { label: "Vacation", dayoffTypeQuantity: 18, dayoffTypeUsed: 3, dayoffTypecolor: "#22c55e" },
+    { label: "Sick leave", dayoffTypeQuantity: 5, dayoffTypeUsed: 2, dayoffTypecolor: "#f87171" },
+    { label: "Paid time off", dayoffTypeQuantity: 5, dayoffTypeUsed: 1, dayoffTypecolor: "#60a5fa" }
   ]
 
   //get employee's dayoff list
@@ -91,9 +91,9 @@ export default function EmployeeInformation() {
 function BalanceItem({ i }) {
   return (
     <div className='md:w-1/4 w-1/3 border rounded-md mx-1 p-2 lg:w-1/4 md:p-4 md:mx-2 border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800'>
-      <BalanceGraph title={i.label} balance={i.balance} total={i.total} color={i.color}></BalanceGraph>
-      <p className='mt-2 text-sm md:text-base' style={{ color: i.color }}>{i.label}</p>
-      <p className='text-sm md:text-base'>{i.balance} / {i.total}</p>
+      <BalanceGraph title={i.label} dayoffTypeUsed={i.dayoffTypeUsed} dayoffTypeQuantity={i.dayoffTypeQuantity} dayoffTypecolor={i.dayoffTypecolor}></BalanceGraph>
+      <p className='mt-2 text-sm md:text-base' style={{ dayoffTypecolor: i.dayoffTypecolor }}>{i.label}</p>
+      <p className='text-sm md:text-base'>{i.dayoffTypeUsed} / {i.dayoffTypeQuantity}</p>
     </div>
   )
 }

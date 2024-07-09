@@ -6,7 +6,7 @@ import { UserContext } from "../../../contexts/UserContext"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
-import { Logo } from "../../../core/components/Logo.jsx"
+import {Logo} from '../../../core/components'
 
 export default function Login() {
   const { register, handleSubmit, formState: { errors } } = useForm()
