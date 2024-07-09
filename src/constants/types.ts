@@ -15,7 +15,7 @@ export type Navigation = {
 }
 
 export type LeaveType = {
-  name :string;
+  name: string;
   value: string
 }
 
@@ -50,4 +50,38 @@ export type User = {
   lastName: string | null;
   phone: string | null;
   organization: Organization;
+}
+
+export enum DayOffRequestStatus {
+  ACCEPTED = 'ACCEPTED',
+  REJECTED = 'REJECTED',
+  PENDING = 'PENDING'
+}
+
+export enum DayOffType {
+  PAID_TIME = 'PAID_TIME',
+  VACATION = 'VACATION',
+  SICK_LEAVE = 'SICK_LEAVE'
+}
+
+export type DayOffResponse = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  startAt: string;
+  endAt: string;
+  status: DayOffRequestStatus;
+  type: DayOffType;
+}
+
+export type PagedResponseDayOffResponse = {
+  contents: DayOffType[];
+  pageNumber: number;
+  pageSize: number;
+  totalPages: number;
+  totalContents: number
+}
+
+export type Location = {
+  pathname: string
 }

@@ -1,4 +1,10 @@
-export default function Label({ type, text, className }) {
+type LabelProps = {
+  type: 'GREEN' | 'RED' | 'BLUE' | 'YELLOW';
+  text?: string;
+  className?: string;
+}
+
+export default function Label({ type, text, className }: LabelProps) {
   var labelClassNames = className + " text-xs py-0.5 px-2 rounded-2xl w-fit ";
 
   switch (type.toUpperCase()) {

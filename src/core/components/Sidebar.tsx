@@ -4,19 +4,19 @@ import { employee } from '../../services/WorkiveApiClient'
 import { navigation } from '../../constants'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
-import { Logo } from './Logo';
+import { Logo } from '.'
+import { Location, Navigation, User } from '~/constants/types'
 
 export default function Sidebar() {
-  const [employeeInfo, setEmployeeInfo] = useState([])
+  const [employeeInfo, setEmployeeInfo] = useState<User | null>(null);
 
   //get employee information
   useEffect(() => {
-    employee().then(data => {
+    employee().then((data: User | null) => {
       console.log('Success:', data);
       setEmployeeInfo(data);
-    }).catch(error => {
+    }).catch((error: string | null) => {
       console.error('Error:', error);
-      setErrorMessage(error.error)
     });
   }, [])
 
@@ -28,9 +28,9 @@ export default function Sidebar() {
           <div className="flex flex-shrink-0 items-center px-6">
             <Logo className="h-8 w-auto" />
           </div>
-          <Navbar />
+          <Navbar close={close} />
         </div>
-        <Profile employeeInfo={employeeInfo} />
+        <Profile employeeInfo={employeeInfo} close={close} />
       </section>
 
       <section className='sm-size md:hidden fixed z-20 bg-gray-100 dark:bg-gray-900 w-full'>
@@ -62,12 +62,16 @@ export default function Sidebar() {
   )
 }
 
-function Navbar({ close }) {
-  const location = useLocation()
-  const navigate = useNavigate();
-  const [selectedOption, setSelectedOption] = useState("")
+type NavbarProps = {
+  close: () => void;
+}
 
-  const handleOptionClick = (href) => {
+function Navbar({ close }: NavbarProps) {
+  const location = useLocation();
+  const navigate = useNavigate();
+  const [selectedOption, setSelectedOption] = useState<string>("")
+
+  const handleOptionClick = (href: string) => {
     setSelectedOption(href)
     navigate(href);
     if (close) {
@@ -76,15 +80,26 @@ function Navbar({ close }) {
   }
 
   return (
-    <nav className="md:mt-5 flex-1 px-4 border-t border-gray-200 dark:border-gray-800 md:border-0 md:mx-0" aria-label="Sidebar">
-      {navigation.map((item) => <NavigationItem item={item} key={item.name} handleOptionClick={handleOptionClick} location={location} selectedOption={selectedOption} />)}
+    <nav className="md:mt-5 flex-1 px-4 border-t border-gray-200 dark:border-gray-800 md:border-0 md:mx-0"
+      aria-label="Sidebar">
+      {navigation.map((item) =>
+        <NavigationItem item={item} key={item.name} handleOptionClick={handleOptionClick}
+          location={location} selectedOption={selectedOption} />)}
     </nav>
   )
 }
 
-function NavigationItem({ item, handleOptionClick, location, selectedOption }) {
+type NavigationItemProps = {
+  item: Navigation;
+  handleOptionClick: (href: string) => void;
+  location: Location;
+  selectedOption: string;
+}
+
+function NavigationItem({ item, handleOptionClick, location, selectedOption }: NavigationItemProps) {
   return (
-    <button onClick={() => handleOptionClick(item.href)} className={`group flex w-full text-left items-center rounded-md p-2 mt-2 text-xs md:text-sm font-semibold dark:text-indigo-200 dark:hover:bg-indigo-700 hover:bg-indigo-200 hover:bg-opacity-75
+    <button onClick={() => handleOptionClick(item.href)}
+      className={`group flex w-full text-left items-center rounded-md p-2 mt-2 text-xs md:text-sm font-semibold dark:text-indigo-200 dark:hover:bg-indigo-700 hover:bg-indigo-200 hover:bg-opacity-75
       ${location.pathname === item.href || selectedOption === item.href ? 'bg-indigo-100 dark:bg-indigo-800 bg-opacity-75' : ''}`}>
       <item.icon className="mr-2 h-7 w-7 flex-shrink-0 text-indigo-500" aria-hidden="true" />
       <span className="flex-1 text-indigo-900 dark:text-indigo-200">{item.name}</span>
@@ -92,7 +107,12 @@ function NavigationItem({ item, handleOptionClick, location, selectedOption }) {
   )
 }
 
-function Profile({ close, employeeInfo }) {
+type ProfileProps = {
+  close: () => void;
+  employeeInfo: User;
+}
+
+function Profile({ close, employeeInfo }: ProfileProps) {
   const navigate = useNavigate()
 
   const viewProfile = () => {
@@ -105,8 +125,11 @@ function Profile({ close, employeeInfo }) {
   return (
     <div onClick={viewProfile} className="flex p-4 absolute bottom-0 w-full right-0 left-0 cursor-pointer">
       <div className="flex items-center hover:bg-indigo-200 dark:hover:bg-indigo-700 hover:bg-opacity-75 rounded-md w-full p-2">
-        <img className="inline-block h-7 w-7 rounded-full mr-2" src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
-        <p className="text-xs md:text-sm font-semibold text-indigo-900 dark:text-indigo-200">{employeeInfo.firstName} {employeeInfo.lastName}</p>
+        <img className="inline-block h-7 w-7 rounded-full mr-2"
+          src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
+        <p className="text-xs md:text-sm font-semibold text-indigo-900 dark:text-indigo-200">
+          {employeeInfo.firstName} {employeeInfo.lastName}
+        </p>
       </div>
     </div>
   )

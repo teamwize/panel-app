@@ -4,7 +4,7 @@ import { employee } from "../../../services/WorkiveApiClient.js"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar } from '~/core/components'
-import { ThemeContext } from '../../../contexts/index'
+import { ThemeContext } from '../../../contexts/ThemeContext';
 import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { Switch } from '@headlessui/react'
 
