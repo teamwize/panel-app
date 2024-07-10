@@ -128,7 +128,7 @@ function Profile({ close, employeeInfo }: ProfileProps) {
         <img className="inline-block h-7 w-7 rounded-full mr-2"
           src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
         <p className="text-xs md:text-sm font-semibold text-indigo-900 dark:text-indigo-200">
-          {employeeInfo.firstName} {employeeInfo.lastName}
+          {employeeInfo?.firstName} {employeeInfo?.lastName}
         </p>
       </div>
     </div>

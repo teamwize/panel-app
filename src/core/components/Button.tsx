@@ -1,7 +1,7 @@
 type ButtonProps = {
   onClick: () => void;
-  type: 'button' | 'submit' | 'reset';
-  isProcessing: boolean;
+  type?: 'button' | 'submit' | 'reset';
+  isProcessing?: boolean;
   text?: string;
   className?: string;
 }
