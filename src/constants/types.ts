@@ -85,3 +85,9 @@ export type PagedResponseDayOffResponse = {
 export type Location = {
   pathname: string
 }
+
+export type Authentication = {
+  accessToken: string;
+  refreshToken: string;
+  user: User
+}
