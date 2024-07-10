@@ -2,7 +2,7 @@ import { ReactNode } from "react"
 
 type ToolbarProps = {
   title: string;
-  children: ReactNode
+  children?: ReactNode
 }
 
 export default function Toolbar({ title, children }: ToolbarProps) {

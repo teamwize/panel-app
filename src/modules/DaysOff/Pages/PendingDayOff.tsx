@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { Toolbar, Button } from '~/core/components'
+import { Toolbar, Button } from '../../../core/components'
 import { ClockIcon } from '@heroicons/react/24/outline'
 
 export default function PendingDayOff() {
@@ -9,7 +9,7 @@ export default function PendingDayOff() {
     navigate('/calendar')
   }
 
-  
+
   return (
     <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
       <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>

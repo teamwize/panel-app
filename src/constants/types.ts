@@ -75,7 +75,7 @@ export type DayOffResponse = {
 }
 
 export type PagedResponseDayOffResponse = {
-  contents: DayOffType[];
+  contents: DayOffResponse[];
   pageNumber: number;
   pageSize: number;
   totalPages: number;
@@ -90,4 +90,16 @@ export type Authentication = {
   accessToken: string;
   refreshToken: string;
   user: User
+}
+
+export type Example = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  startAt: string;
+  endAt: string;
+  status: string;
+  type: string;
+  team: string;
+  name: string
 }
