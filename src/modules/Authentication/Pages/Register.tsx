@@ -1,27 +1,38 @@
-import { useState, useContext } from "react"
+import { useState, useContext, ReactNode } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { registration } from "../../../services/WorkiveApiClient.js"
+import { registration } from "../../../services/WorkiveApiClient"
 import { UserContext } from "../../../contexts/UserContext"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
+import { getErrorMessage } from "../../../utils/errorHandler"
 import { countries } from '../../../constants/index'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 import { Logo } from "../../../core/components"
+import { Authentication } from "~/constants/types"
+
+type RegisterFormInputs = {
+  email: string;
+  password: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  organization: string;
+  location: string
+}
 
 export default function Register() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm<RegisterFormInputs>()
   const { authenticate } = useContext(UserContext)
   const navigate = useNavigate()
-  const [showPassword, setShowPassword] = useState(false)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [showPassword, setShowPassword] = useState<boolean>(false)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: RegisterFormInputs) => {
     RegisterInfo(data);
   }
 
-  const RegisterInfo = (data) => {
+  const RegisterInfo = (data: RegisterFormInputs) => {
     let payload = {
       email: data.email,
       password: data.password,
@@ -34,19 +45,20 @@ export default function Register() {
     }
     console.log(payload)
     setIsProcessing(true);
-    registration(payload).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data);
-      authenticate(data.token, data);
-      navigate('/organization')
-    }).catch(error => {
-      setIsProcessing(false)
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    })
+    registration(payload)
+      .then((response: Authentication) => {
+        setIsProcessing(false);
+        console.log('Success:', response);
+        authenticate(response.accessToken, response.user);
+        navigate('/organization')
+      })
+      .catch((error: string | null) => {
+        setIsProcessing(false)
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      })
   }
-
 
   return (
     <>
@@ -67,9 +79,9 @@ export default function Register() {
                 <label htmlFor="organization-name" className="block text-sm leading-6">Organization Name</label>
                 <div className="mt-2">
                   <input {...register("organization", { required: "Organization name is required", maxLength: { value: 20, message: "Organization name must be under 20 characters" }, minLength: { value: 2, message: "Organization name must be over 2 characters" } })}
-                    aria-invalid={errors.company ? "true" : "false"} name="organization" type="text"
+                    aria-invalid={errors.organization ? "true" : "false"} name="organization" type="text"
                     className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-600 text-sm md:text-base sm:leading-6 px-4" />
-                  {errors.company && <Alert>{errors.company.message}</Alert>}
+                  {errors.organization && <Alert>{errors.organization.message}</Alert>}
                 </div>
               </div>
 
@@ -130,12 +142,12 @@ export default function Register() {
 
               <div>
                 <label htmlFor="location" className="block text-sm leading-6 mb-2">Location</label>
-                <select {...register("location", { required: "Location is required" })} aria-invalid={errors.country ? "true" : "false"} name="location"
+                <select {...register("location", { required: "Location is required" })} aria-invalid={errors.location ? "true" : "false"} name="location"
                   className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-[9.5px] placeholder:text-gray-600text-sm md:text-base sm:leading-6 px-4">
                   <option value="">Choose your location</option>
                   {countries.map((country) => <option value={country.code} key={country.name}>{country.name}</option>)}
                 </select>
-                {errors.country && <Alert>{errors.country.message}</Alert>}
+                {errors.location && <Alert>{errors.location.message}</Alert>}
               </div>
 
               <div>
@@ -151,7 +163,11 @@ export default function Register() {
   )
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode
+}
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )
