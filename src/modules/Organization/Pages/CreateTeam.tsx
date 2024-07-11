@@ -1,54 +1,66 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form"
-import { useNavigate } from 'react-router-dom'
-import { createEmployee } from "../../../services/WorkiveApiClient.js"
+import { ReactNode, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
+import { createEmployee } from "../../../services/WorkiveApiClient";
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { Button } from '~/core/components'
-import { ChevronLeftIcon } from "@heroicons/react/24/outline"
+import { getErrorMessage } from "../../../utils/errorHandler";
+import { Button } from '../../../core/components';
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { User } from "~/constants/types";
 
-const example = [
+type Example = {
+  name: string;
+  count: string;
+};
+
+const example: Example[] = [
   { name: 'Financial', count: '2' },
   { name: 'Support', count: '5' },
   { name: 'Sales', count: '3' },
   { name: 'Technical', count: '4' }
-]
+];
+
+type CreateTeamInputs = {
+  team: string;
+};
 
 export default function CreateTeam() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
-  const navigate = useNavigate()
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false)
+  const { register, handleSubmit, formState: { errors } } = useForm<CreateTeamInputs>();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const goBack = () => navigate('/organization/team');
 
-  const onSubmit = (data) => {
-    createTeam(data)
-  }
+  const onSubmit = (data: CreateTeamInputs) => {
+    createTeam(data);
+  };
 
-  const createTeam = (data) => {
-    const exists = example.some(e => e.name === data.team);
+  const createTeam = (data: CreateTeamInputs) => {
+    const exists: boolean = example.some(e => e.name === data.team);
     if (exists) {
       setErrorMessage('A team already exists with this name.');
-      return
+      return;
     }
 
     let payload = {
       teamName: data.team,
-    }
+    };
     setIsProcessing(true);
 
-    createEmployee(payload).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data);
-    }).catch(error => {
-      setIsProcessing(false);
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    })
-  }
-
+    createEmployee(payload)
+      .then((response: User) => {
+        setIsProcessing(false);
+        console.log('Success:', response);
+        navigate('/organization/team'); // Navigate to the team page after successful creation
+      })
+      .catch((error: any) => {
+        setIsProcessing(false);
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error?.message);
+        toast.error(errorMessage);
+      });
+  };
 
   return (
     <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
@@ -73,15 +85,19 @@ export default function CreateTeam() {
             </div>
           </div>
 
-          <Button type='submit' isProcessing={isProcessing} text='Create' className=' flex justify-center w-full md:w-1/4'></Button>
+          <Button type='submit' isProcessing={isProcessing} text='Create' className='flex justify-center w-full md:w-1/4'></Button>
         </form>
       </div>
     </div>
-  )
+  );
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode;
+};
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
-  )
+  );
 }

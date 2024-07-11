@@ -1,26 +1,32 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form"
+import { ReactNode, useState } from "react";
+import { UseFormRegister, useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { updateOrganization } from "../../../services/WorkiveApiClient.js"
+import { updateOrganization } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
+import { getErrorMessage } from "../../../utils/errorHandler"
 import { weekDays } from "../../../constants/index";
-import { Button } from '~/core/components'
+import { Button } from '../../../core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
+import { WeekDays } from "~/constants/types";
+
+type OrganizationWorkingDaysInputs = {
+  startDay: string;
+  weekDays: WeekDays[];
+}
 
 export default function OrganizationWorkingDays() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm<OrganizationWorkingDaysInputs>()
   const navigate = useNavigate()
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>("")
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
   const goBack = () => navigate('/organization');
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: OrganizationWorkingDaysInputs) => {
     setWorkingDays(data);
   }
 
-  const setWorkingDays = (data) => {
+  const setWorkingDays = (data: OrganizationWorkingDaysInputs) => {
     let payload = {
       startDay: data.startDay,
       weekDays: data.weekDays,
@@ -28,15 +34,17 @@ export default function OrganizationWorkingDays() {
     setIsProcessing(true);
 
     console.log(payload)
-    updateOrganization(payload).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data)
-    }).catch(error => {
-      setIsProcessing(false);
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    })
+    updateOrganization(payload)
+      .then((response: OrganizationWorkingDaysInputs) => {
+        setIsProcessing(false);
+        console.log('Success:', response)
+      })
+      .catch((error: string) => {
+        setIsProcessing(false);
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      })
   }
 
 
@@ -78,17 +86,31 @@ export default function OrganizationWorkingDays() {
   )
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode
+}
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )
 }
 
-function WeekDaysItem({ day }) {
+type WeekDaysItemProps = {
+  day: WeekDays
+}
+
+function WeekDaysItem({ day }: WeekDaysItemProps) {
   return <option value={day.day}>{day.day}</option>
 }
 
-function WorkDaysItem({ day, register, errors }) {
+type WorkDaysItemProps = {
+  day: WeekDays;
+  register: UseFormRegister<OrganizationWorkingDaysInputs>;
+  errors: any
+}
+
+function WorkDaysItem({ day, register, errors }: WorkDaysItemProps) {
   return (
     <div className="flex items-center mb-1">
       <input {...register("weekDays", { required: "Working days is required" })} aria-invalid={errors.weekDays ? "true" : "false"}

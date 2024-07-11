@@ -2,11 +2,16 @@ import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { Dialog } from '@headlessui/react'
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
+import { getErrorMessage } from "../../../utils/errorHandler"
 import { ChevronLeftIcon, PencilSquareIcon, TrashIcon, XMarkIcon } from '@heroicons/react/24/outline'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
-const example = [
+type Example = {
+  name: string;
+  count: string;
+}
+
+const initialExamples: Example[] = [
   { name: 'Financial', count: '2' },
   { name: 'Support', count: '5' },
   { name: 'Sales', count: '3' },
@@ -14,9 +19,10 @@ const example = [
 ]
 
 export default function OrganizationTeam() {
-  const [selectedTeam, setSelectedTeam] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [examples, setExamples] = useState<Example[]>(initialExamples)
+  const [selectedTeam, setSelectedTeam] = useState<Example | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
   const navigate = useNavigate()
 
   const goBack = () => navigate('/organization');
@@ -25,26 +31,26 @@ export default function OrganizationTeam() {
     navigate('/organization/team/create')
   }
 
-  const updateTeam = (team) => {
-    navigate('/organization/team/update/' + team)
+  const updateTeam = (teamName: string) => {
+    navigate('/organization/team/update/' + teamName)
   }
 
-  const handleClick = (e) => {
-    setSelectedTeam(e);
+  const handleClick = (team: Example) => {
+    setSelectedTeam(team);
   }
 
-  const handleAccept = (name) => {
+  const handleAccept = async (team: Example) => {
     setIsProcessing(true);
-    handleAccept(name).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data);
-      example(prevState => prevState.filter(data => data.name !== name))
-    }).catch(error => {
-      setIsProcessing(false);
-      console.error('Error:', error);
+    try {
+      setExamples((prevExamples) => prevExamples.filter((e) => e.name !== team.name));
+      toast.success('Team removed successfully');
+    } catch (error) {
       const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    })
+      toast.error(errorMessage);
+    } finally {
+      setIsProcessing(false);
+      setSelectedTeam(null);
+    }
   }
 
   return (
@@ -69,47 +75,60 @@ export default function OrganizationTeam() {
         <div className="p-4">
           <div className="inline-block min-w-full align-middle">
             <ul role="list" className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
-              {example.map((e) => (<TeamItem key={e.name} e={e} onClick={handleClick} isProcessing={isProcessing} updateTeam={updateTeam} />))}
+              {examples.map((e) => (
+                <TeamItem key={e.name} e={e} onClick={handleClick} isProcessing={isProcessing} updateTeam={updateTeam} />
+              ))}
             </ul>
           </div>
         </div>
 
-        {selectedTeam && <DeleteModal team={selectedTeam} handleReject={() => { setSelectedTeam(null) }} handleAccept={handleAccept} />}
+        {selectedTeam && <DeleteModal team={selectedTeam} handleReject={() => setSelectedTeam(null)} handleAccept={handleAccept} />}
       </div>
     </div>
   )
 }
 
-function TeamItem({ e, isProcessing, onClick, updateTeam }) {
+type TeamItemProps = {
+  e: Example;
+  isProcessing: boolean;
+  onClick: (e: Example) => void;
+  updateTeam: (name: string) => void;
+}
+
+function TeamItem({ e, isProcessing, onClick, updateTeam }: TeamItemProps) {
   return (
-    <div>
-      <li key={e.name} className="col-span-1 border-indigo-100 dark:border-slate-700 rounded-lg bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800 shadow-sm">
-        <div className="flex flex-col w-full items-center justify-between p-6">
-          <h3 className="flex items-center text-sm font-semibold">{e.name}</h3>
-          <p className="mt-1 text-sm text-indigo-800 dark:text-indigo-300">{e.count} members</p>
-        </div>
-        <div>
-          <div className="-mt-px flex">
-            <div className="flex w-0 flex-1">
-              <button onClick={() => updateTeam(e.name)} className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-1 rounded-bl-lg border border-gray-200 dark:border-gray-700 py-4 text-sm font-semibold">
-                <PencilSquareIcon className="h-5 w-5 text-indigo-500" aria-hidden="true" />
-                {isProcessing ? "Waiting ..." : "Edit"}
-              </button>
-            </div>
-            <div className="-ml-px flex w-0 flex-1">
-              <button onClick={() => onClick(e)} className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-1 rounded-br-lg border border-gray-200 dark:border-gray-700 py-4 text-sm font-semibold">
-                <TrashIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
-                {isProcessing ? "Waiting ..." : "Delete"}
-              </button>
-            </div>
+    <li className="col-span-1 border-indigo-100 dark:border-slate-700 rounded-lg bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800 shadow-sm">
+      <div className="flex flex-col w-full items-center justify-between p-6">
+        <h3 className="flex items-center text-sm font-semibold">{e.name}</h3>
+        <p className="mt-1 text-sm text-indigo-800 dark:text-indigo-300">{e.count} members</p>
+      </div>
+      <div>
+        <div className="-mt-px flex">
+          <div className="flex w-0 flex-1">
+            <button onClick={() => updateTeam(e.name)} className="relative -mr-px inline-flex w-0 flex-1 items-center justify-center gap-x-1 rounded-bl-lg border border-gray-200 dark:border-gray-700 py-4 text-sm font-semibold">
+              <PencilSquareIcon className="h-5 w-5 text-indigo-500" aria-hidden="true" />
+              {isProcessing ? "Waiting ..." : "Edit"}
+            </button>
+          </div>
+          <div className="-ml-px flex w-0 flex-1">
+            <button onClick={() => onClick(e)} className="relative inline-flex w-0 flex-1 items-center justify-center gap-x-1 rounded-br-lg border border-gray-200 dark:border-gray-700 py-4 text-sm font-semibold">
+              <TrashIcon className="h-5 w-5 text-red-500" aria-hidden="true" />
+              {isProcessing ? "Waiting ..." : "Delete"}
+            </button>
           </div>
         </div>
-      </li>
-    </div>
+      </div>
+    </li>
   )
 }
 
-function DeleteModal({ handleAccept, handleReject, team }) {
+type DeleteModalProps = {
+  handleAccept: (team: Example) => void;
+  handleReject: () => void;
+  team: Example;
+}
+
+function DeleteModal({ handleAccept, handleReject, team }: DeleteModalProps) {
   return (
     <Dialog open={true} onClose={handleReject}>
       <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-40'>

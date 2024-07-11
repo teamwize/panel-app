@@ -1,29 +1,35 @@
-import { useEffect, useState } from 'react'
+import { ReactNode, useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { updateEmployee, employee } from "../../../services/WorkiveApiClient.js"
+import { updateEmployee, employee } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
+import { getErrorMessage } from "../../../utils/errorHandler"
 import { countries } from '../../../constants/index'
-import { Button } from '~/core/components'
+import { Button } from '../../../core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { Country, User } from '~/constants/types';
+
+type OrganizationInformationInputs = {
+  company: string;
+  location: string;
+}
 
 export default function OrganizationInformation() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm<OrganizationInformationInputs>()
   const navigate = useNavigate()
-  const [employeeInfo, setEmployeeInfo] = useState(null)
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [employeeInfo, setEmployeeInfo] = useState<User | null>(null)
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
   const goBack = () => navigate('/organization');
 
   //get organization information
   useEffect(() => {
     if (!employeeInfo) {
-      employee().then(data => {
-        console.log('Success:', data);
-        setEmployeeInfo(data)
-      }).catch(error => {
+      employee().then((response: User) => {
+        console.log('Success:', response);
+        setEmployeeInfo(response)
+      }).catch((error: string) => {
         console.error('Error:', error);
         const errorMessage = getErrorMessage(error);
         toast.error(errorMessage)
@@ -31,18 +37,18 @@ export default function OrganizationInformation() {
     }
   }, [employeeInfo])
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: OrganizationInformationInputs) => {
     let payload = {
       company: data.company,
-      country: data.country
+      location: data.location
     }
     setIsProcessing(true);
 
-    updateEmployee(payload).then(data => {
+    updateEmployee(payload).then((response: User) => {
       setIsProcessing(false);
-      console.log('Success:', data);
-      setEmployeeInfo(data)
-    }).catch(error => {
+      console.log('Success:', response);
+      setEmployeeInfo(response)
+    }).catch((error: string) => {
       setIsProcessing(false);
       console.error('Error:', error);
       const errorMessage = getErrorMessage(error);
@@ -92,12 +98,20 @@ export default function OrganizationInformation() {
   )
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode
+}
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )
 }
 
-function Location({ location }) {
+type LocationProps = {
+  location: Country
+}
+
+function Location({ location }: LocationProps) {
   return <option value={location.code}>{location.name}</option>
 }

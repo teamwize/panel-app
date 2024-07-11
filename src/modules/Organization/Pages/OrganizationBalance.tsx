@@ -1,25 +1,32 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form"
-import { useNavigate } from 'react-router-dom'
-import { updateOrganization } from "../../../services/WorkiveApiClient.js"
+import { ReactNode, useState } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate } from 'react-router-dom';
+import { updateOrganization } from "../../../services/WorkiveApiClient";
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { Button } from '~/core/components'
-import { ChevronLeftIcon } from "@heroicons/react/24/outline"
+import { getErrorMessage } from "../../../utils/errorHandler";
+import { Button } from '../../../core/components';
+import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import { Organization } from "~/constants/types";
+
+type FormData = {
+  vacation: string;
+  sick: string;
+  paidTime: string;
+}
 
 export default function OrganizationBalance() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
-  const navigate = useNavigate()
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false)
+  const { register, handleSubmit, formState: { errors } } = useForm<FormData>();
+  const navigate = useNavigate();
+  const [errorMessage, setErrorMessage] = useState<string>("");
+  const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
   const goBack = () => navigate('/organization');
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: FormData) => {
     setBalance(data);
   }
 
-  const setBalance = (data) => {
+  const setBalance = (data: FormData) => {
     let payload = {
       VACATION: data.vacation,
       SICK_LEAVE: data.sick,
@@ -27,17 +34,20 @@ export default function OrganizationBalance() {
     }
     setIsProcessing(true);
 
-    updateOrganization(payload).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data)
-    }).catch(error => {
-      setIsProcessing(false);
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    })
+    updateOrganization(payload)
+      .then((response: Organization) => {
+        setIsProcessing(false);
+        console.log('Success:', response);
+        toast.success('Balance updated successfully');
+      })
+      .catch((error: string) => {
+        setIsProcessing(false);
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        setErrorMessage(errorMessage);
+        toast.error(errorMessage);
+      });
   }
-
 
   return (
     <div className='md:w-4/5 overflow-y-auto mb-2 w-full fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
@@ -49,7 +59,11 @@ export default function OrganizationBalance() {
           <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Set Balance</h1>
         </div>
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
+        {errorMessage && (
+          <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">
+            {errorMessage}
+          </p>
+        )}
 
         <form className="space-y-4 px-4" onSubmit={handleSubmit(onSubmit)}>
           <div>
@@ -79,14 +93,18 @@ export default function OrganizationBalance() {
             </div>
           </div>
 
-          <Button type='submit' isProcessing={isProcessing} text='Save' className=' flex justify-center w-full md:w-1/4 mt-4'></Button>
+          <Button type='submit' isProcessing={isProcessing} text='Save' className='flex justify-center w-full md:w-1/4 mt-4'></Button>
         </form>
       </div>
     </div>
   )
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode;
+}
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )

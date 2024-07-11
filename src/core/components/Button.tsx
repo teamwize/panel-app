@@ -1,5 +1,5 @@
 type ButtonProps = {
-  onClick: () => void;
+  onClick?: () => void;
   type?: 'button' | 'submit' | 'reset';
   isProcessing?: boolean;
   text?: string;
