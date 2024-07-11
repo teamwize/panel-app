@@ -103,3 +103,8 @@ export type Example = {
   team: string;
   name: string
 }
+
+export type ChangePassword = {
+  currPass: string;
+  newPass: string
+}
