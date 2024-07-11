@@ -1,10 +1,10 @@
-const BASE_URL = getBaseURL();
+const BASE_URL: string = getBaseURL();
 console.log("BASE_URL", BASE_URL);
 
 function getBaseURL() {
-  let env = import.meta.env.MODE;
-  console.log("env :", env)
-  let customBaseURL = localStorage.getItem("BASE_URL");
+  let env: string = import.meta.env.MODE;
+  console.log("env :", env);
+  let customBaseURL: string | null = localStorage.getItem("BASE_URL");
   if (customBaseURL) return customBaseURL;
   switch (env) {
     case "local": {
@@ -19,17 +19,20 @@ function getBaseURL() {
     case "production": {
       return "https://api.teamwize.app";
     }
+    default: {
+      return "https://api.teamwize.app"; // Fallback URL
+    }
   }
 }
 
-function doFetch(url, options) {
+function doFetch(url: string, options?: RequestInit) {
   if (!options) options = {};
   if (!options.headers) options.headers = {};
   const abortController = new AbortController();
   options.signal = abortController.signal;
   const accessToken = getAccessToken();
   if (accessToken) {
-    options.headers["Authorization"] = "Bearer " + accessToken;
+    (options.headers as Record<string, string>)["Authorization"] = "Bearer " + accessToken;
   }
   const promise = fetch(url, options).then(async response => {
     const isJson = response.headers.get('content-type')?.includes('application/json');
@@ -40,7 +43,7 @@ function doFetch(url, options) {
     }
     return data;
   });
-  promise.abort = () => {
+  (promise as Promise<any> & { abort: () => void }).abort = () => {
     abortController.abort("locally");
   };
 
@@ -48,7 +51,7 @@ function doFetch(url, options) {
 }
 
 function getAccessToken() {
-  return localStorage.getItem("ACCESS_TOKEN")
+  return localStorage.getItem("ACCESS_TOKEN");
 }
 
 export {
