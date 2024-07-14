@@ -1,4 +1,4 @@
-import { Country, Navigation, LeaveType, WeekDays } from './types';
+import { Country, Navigation, DayOffleaveType, WeekDays } from './types';
 
 export const countries: Country[] = [
   { name: "Afghanistan", code: "AF" },
@@ -262,31 +262,31 @@ export const navigation: Navigation[] = [
   { name: 'Organization', icon: BuildingOfficeIcon, href: '/organization' }
 ]
 
-export const leaveType: LeaveType[] = [
+export const dayOffleaveType: DayOffleaveType[] = [
   { name: "Vacation", value: 'VACATION' },
   { name: "Sick leave", value: "SICK_LEAVE" },
   { name: 'Paid time', value: 'PAID_TIME' }
 ]
 
-export enum leaveTypeJson {
+export enum DayOffLeaveTypeJson {
   VACATION = "Vacation",
   SICK_LEAVE = "Sick leave",
   PAID_TIME = "Paid time"
 }
 
-export enum statusJson {
+export enum DayOffStatusJson {
   PENDING = "Pending",
   ACCEPTED = "Accepted",
   REJECTED = "Rejected"
 }
 
-export enum leaveTypeColor {
+export enum DayOffLeaveTypeColor {
   VACATION = "GREEN",
   SICK_LEAVE = "RED",
   PAID_TIME = "BLUE"
 }
 
-export enum dayoffStatusColor {
+export enum DayOffStatusColor {
   PENDING = "YELLOW",
   ACCEPTED = "GREEN",
   REJECTED = "RED"

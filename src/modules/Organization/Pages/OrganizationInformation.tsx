@@ -1,13 +1,13 @@
 import { ReactNode, useEffect, useState } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { updateEmployee, employee } from "../../../services/WorkiveApiClient"
+import { updateEmployee, getCurrentEmployee } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler"
 import { countries } from '../../../constants/index'
 import { Button } from '../../../core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
-import { Country, User } from '~/constants/types';
+import { Country, UserResponse } from '~/constants/types';
 
 type OrganizationInformationInputs = {
   company: string;
@@ -17,7 +17,7 @@ type OrganizationInformationInputs = {
 export default function OrganizationInformation() {
   const { register, handleSubmit, formState: { errors } } = useForm<OrganizationInformationInputs>()
   const navigate = useNavigate()
-  const [employeeInfo, setEmployeeInfo] = useState<User | null>(null)
+  const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null)
   const [errorMessage, setErrorMessage] = useState<string | null>(null)
   const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
@@ -26,10 +26,12 @@ export default function OrganizationInformation() {
   //get organization information
   useEffect(() => {
     if (!employeeInfo) {
-      employee().then((response: User) => {
+      getCurrentEmployee()
+      .then((response: UserResponse) => {
         console.log('Success:', response);
         setEmployeeInfo(response)
-      }).catch((error: string) => {
+      })
+      .catch((error: string) => {
         console.error('Error:', error);
         const errorMessage = getErrorMessage(error);
         toast.error(errorMessage)
@@ -44,11 +46,13 @@ export default function OrganizationInformation() {
     }
     setIsProcessing(true);
 
-    updateEmployee(payload).then((response: User) => {
+    updateEmployee(null)
+    .then((response: UserResponse) => {
       setIsProcessing(false);
       console.log('Success:', response);
       setEmployeeInfo(response)
-    }).catch((error: string) => {
+    })
+    .catch((error: string) => {
       setIsProcessing(false);
       console.error('Error:', error);
       const errorMessage = getErrorMessage(error);

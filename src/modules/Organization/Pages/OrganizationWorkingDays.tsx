@@ -34,12 +34,12 @@ export default function OrganizationWorkingDays() {
     setIsProcessing(true);
 
     console.log(payload)
-    updateOrganization(payload)
-      .then((response: OrganizationWorkingDaysInputs) => {
+    updateOrganization(null)
+      .then(response => {
         setIsProcessing(false);
         console.log('Success:', response)
       })
-      .catch((error: string) => {
+      .catch(error => {
         setIsProcessing(false);
         console.error('Error:', error);
         const errorMessage = getErrorMessage(error);

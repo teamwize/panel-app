@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { organization, employees } from "../../../services/WorkiveApiClient";
+import { getOrganization, getEmployee } from "../../../services/WorkiveApiClient";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler";
 import { Toolbar } from '../../../core/components';
 import { ChartPieIcon, UserIcon, BuildingOffice2Icon, ClockIcon, CalendarIcon, UserGroupIcon } from '@heroicons/react/24/outline';
-import { Organization as OrganizationBalance, User } from '~/constants/types';
+import { DayOffType, OrganizationResponse, UserResponse } from '~/constants/types';
 
 export default function Organization() {
-  const [balance, setBalance] = useState<OrganizationBalance[]>([]);
-  const [employeesList, setEmployeesList] = useState<User[]>([]);
+  const [balance, setBalance] = useState<OrganizationResponse>();
+  const [employeesList, setEmployeesList] = useState<UserResponse[]>([]);
   const [errorMessage, setErrorMessage] = useState<string>('');
   const navigate = useNavigate();
 
@@ -20,7 +20,7 @@ export default function Organization() {
 
   const fetchOrganization = async () => {
     try {
-      const response = await organization();
+      const response: OrganizationResponse = await getOrganization();
       console.log('Success:', response);
       setBalance(response);
     } catch (error) {
@@ -30,7 +30,7 @@ export default function Organization() {
 
   const fetchEmployees = async () => {
     try {
-      const response = await employees();
+      const response = await getEmployee();
       console.log('Success:', response);
       setEmployeesList(response);
     } catch (error) {
@@ -69,7 +69,7 @@ export default function Organization() {
               <ChartPieIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></ChartPieIcon>
               Set Balance
             </button>
-            {balance.length === 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
+            {/* {balance.length === 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>} */}
           </div>
 
           <div className='flex items-center justify-between mb-5 text-sm font-semibold md:text-base'>
@@ -98,7 +98,7 @@ export default function Organization() {
               <CalendarIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'></CalendarIcon>
               Set Working Days
             </button>
-            {balance.length === 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>}
+            {/* {balance.length === 0 && <button className='bg-red-600 text-white rounded-2xl px-2 py-0.5 text-xs'>REVIEW</button>} */}
           </div>
         </main>
       </div>

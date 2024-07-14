@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { daysoff } from "../../../services/WorkiveApiClient.js"
+import { getDaysoff } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { DayOffRequest, BalanceGraph, Pagination } from '~/core/components'
@@ -40,7 +40,7 @@ export default function EmployeeInformation() {
   //get employee's dayoff list
   useEffect(() => {
     // doFetch('http://localhost:8080/days-off/' + id, {
-    daysoff().then(data => {
+      getDaysoff().then(data => {
       console.log('Success:', data.contents);
       setRequestsList(data.contents)
     }).catch(error => {

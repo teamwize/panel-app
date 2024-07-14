@@ -1,8 +1,8 @@
 import { useState, useEffect, useContext } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { employee } from "../../../services/WorkiveApiClient.js"
+import { getEmployee } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
+import { getErrorMessage } from "../../../utils/errorHandler"
 import { Toolbar } from '~/core/components'
 import { ThemeContext } from '../../../contexts/ThemeContext';
 import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline'
@@ -24,7 +24,7 @@ export default function Setting() {
 
   //get employee information
   useEffect(() => {
-    employee().then(data => {
+    getEmployee().then(data => {
       console.log('Success:', data);
       setEmployeeInfo(data);
     }).catch(error => {

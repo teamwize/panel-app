@@ -4,10 +4,10 @@ import { DayPicker } from 'react-day-picker';
 import 'react-day-picker/dist/style.css'
 import dayjs from 'dayjs'
 import isBetween from 'dayjs/plugin/isBetween.js'
-import { daysoff } from "../../../services/WorkiveApiClient.js"
+import { getDaysoff } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../../constants/index'
+import { getErrorMessage } from "../../../utils/errorHandler"
+import { DayOffLeaveTypeJson, DayOffStatusJson, DayOffLeaveTypeColor, DayOffStatusColor } from '../../../constants/index'
 import '../../../constants/style.css'
 import { Toolbar, Label, Pagination } from '~/core/components'
 import useCalendarData from '../../../utils/holidays.js';
@@ -49,7 +49,7 @@ export default function Calendar() {
 
   //Get list of requests
   useEffect(() => {
-    daysoff().then(data => {
+    getDaysoff().then(data => {
       console.log('Success:', data.contents);
       setRequestsList(data.contents)
     }).catch(error => {
@@ -139,8 +139,8 @@ function RequesItem({ request }) {
           </div>
 
           <div className='flex gap-2 lg:w-full lg:justify-end lg:gap-4'>
-            <Label type={leaveTypeColor[request.type]} text={leaveTypeJson[request.type]}></Label>
-            <Label type={dayoffStatusColor[request.status]} text={statusJson[request.status]}></Label>
+            <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]}></Label>
+            <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]}></Label>
           </div>
         </div>
       </div>

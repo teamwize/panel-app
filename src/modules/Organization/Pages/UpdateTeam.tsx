@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler"
 import { Button } from '../../../core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
-import { User } from "~/constants/types";
+import { UserResponse } from "~/constants/types";
 
 type Example = {
   name: string;
@@ -50,8 +50,8 @@ export default function UpdateTeam() {
     }
     setIsProcessing(true);
 
-    createEmployee(payload)
-      .then((response: User) => {
+    createEmployee(null)
+      .then((response: UserResponse) => {
         setIsProcessing(false);
         console.log('Success:', response);
       })

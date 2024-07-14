@@ -5,11 +5,11 @@ import isBetween from 'dayjs/plugin/isBetween';
 import { createDayoff } from "../../../services/WorkiveApiClient";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler";
-import { Toolbar, Button } from '~/core/components';
+import { Toolbar, Button } from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
-import { leaveType } from '../../../constants/index';
+import { dayOffleaveType } from '../../../constants/index';
 import useCalendarData from '../../../utils/holidays';
-import { DayOffResponse, DayOffType, LeaveType } from '~/constants/types';
+import { DayOffResponse, DayOffType, DayOffleaveType } from '~/constants/types';
 
 dayjs.extend(isBetween);
 
@@ -82,13 +82,13 @@ export default function CreateDayOff() {
     }
   }, []);
 
-  const calculateDistance = (startDate: Date, endDate: Date, holidays: Date[]) => {
+  const calculateDistance = (startDate: Date, endDate: Date, holidays: Date[]): number => {
     const distance = dayjs(endDate).diff(startDate, 'day') + 1;
     const filteredHolidays = holidays.filter((h: Date) => dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]'));
     return distance - filteredHolidays.length;
   };
 
-  const distance = calculateDistance(startDate, endDate, holidaysDate);
+  const distance: number = calculateDistance(startDate, endDate, holidaysDate);
 
   return (
     <div className='md:w-4/5 w-full overflow-y-auto mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
@@ -112,7 +112,7 @@ export default function CreateDayOff() {
               className="block w-full rounded-md border py-3 bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700
               placeholder:text-indigo-800 placeholder:dark:text-indigo-100 text-sm md:text-base sm:leading-6 px-2"
             >
-              {leaveType.map((type) => <LeaveTypeItem type={type} key={type.name} />)}
+              {dayOffleaveType.map((type) => <LeaveTypeItem type={type} key={type.name} />)}
             </select>
           </div>
 
@@ -165,7 +165,7 @@ export default function CreateDayOff() {
 }
 
 type LeaveTypeItemProps = {
-  type: LeaveType;
+  type: DayOffleaveType;
 };
 
 function LeaveTypeItem({ type }: LeaveTypeItemProps) {

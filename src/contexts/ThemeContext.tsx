@@ -14,10 +14,7 @@ type ThemeContextProviderProps = {
 
 export const ThemeContextProvider = ({ children }: ThemeContextProviderProps) => {
   const prefersDarkMode: boolean = window.matchMedia('(prefers-color-scheme: dark)').matches;
-  const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>({
-    key: "DARK_MODE",
-    initialValue: prefersDarkMode,
-  });
+  const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>("DARK_MODE", prefersDarkMode)
 
   useEffect(() => {
     if (isDarkMode) {
@@ -28,16 +25,11 @@ export const ThemeContextProvider = ({ children }: ThemeContextProviderProps) =>
   }, [isDarkMode]);
 
   const toggleDarkMode = () => {
-    setIsDarkMode((prevIsDarkMode: boolean) => !prevIsDarkMode);
-  };
-
-  const contextValue: ThemeContextType = {
-    isDarkMode: isDarkMode as boolean,
-    toggleDarkMode,
+    setIsDarkMode(prevMode => !prevMode);
   };
 
   return (
-    <ThemeContext.Provider value={contextValue}>
+    <ThemeContext.Provider value={{ isDarkMode, toggleDarkMode }}>
       {children}
     </ThemeContext.Provider>
   );

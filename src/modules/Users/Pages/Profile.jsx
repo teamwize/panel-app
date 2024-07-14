@@ -1,7 +1,7 @@
 import { useEffect, useState, useContext } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { employee, updateEmployee, updateEmployeePicture } from "../../../services/WorkiveApiClient.js"
+import { getEmployee, updateEmployee, updateEmployeePicture } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Toolbar, Button } from '~/core/components'
@@ -28,7 +28,7 @@ export default function Profile() {
 
   //employee information
   useEffect(() => {
-    employee().then(data => {
+    getEmployee().then(data => {
       console.log('Success:', data);
       setEmployeeInfo(data);
     }).catch(error => {

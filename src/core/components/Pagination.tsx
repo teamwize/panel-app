@@ -8,9 +8,9 @@ type PaginationProps = {
 }
 
 export default function Pagination({ data, currentPage, setCurrentPage, recordsPerPage }: PaginationProps) {
-  const lastIndex = currentPage * recordsPerPage;
-  const firstIndex = lastIndex - recordsPerPage;
-  const totalPages = Math.ceil(data.length / recordsPerPage);
+  const lastIndex: number = currentPage * recordsPerPage;
+  const firstIndex: number = lastIndex - recordsPerPage;
+  const totalPages: number = Math.ceil(data.length / recordsPerPage);
 
   const prevPage = () => {
     if (currentPage > 1) {

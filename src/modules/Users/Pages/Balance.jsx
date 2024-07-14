@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { daysoff } from "../../../services/WorkiveApiClient.js"
+import { getDaysoff } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
+import { getErrorMessage } from "../../../utils/errorHandler"
 import { Toolbar, DayOffRequest, BalanceGraph, Pagination } from '~/core/components'
 import { PlusIcon } from '@heroicons/react/20/solid';
 
@@ -36,7 +36,7 @@ export default function Balance() {
 
   //get list of requests
   useEffect(() => {
-    daysoff().then(data => {
+    getDaysoff().then(data => {
       console.log('Success:', data.contents);
       setRequestsList(data.contents)
     }).catch(error => {

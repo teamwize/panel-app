@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { employee } from '../../services/WorkiveApiClient'
+import { getEmployee } from '../../services/WorkiveApiClient'
 import { navigation } from '../../constants'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import { Logo } from '.'
-import { Location, Navigation, User } from '~/constants/types'
+import { Location, Navigation, UserResponse } from '~/constants/types'
 
 export default function Sidebar() {
-  const [employeeInfo, setEmployeeInfo] = useState<User | null>(null);
+  const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null);
 
   //get employee information
   useEffect(() => {
-    employee().then((data: User | null) => {
+    getEmployee().then((data: UserResponse | null) => {
       console.log('Success:', data);
       setEmployeeInfo(data);
     }).catch((error: string | null) => {
@@ -109,7 +109,7 @@ function NavigationItem({ item, handleOptionClick, location, selectedOption }: N
 
 type ProfileProps = {
   close: () => void;
-  employeeInfo: User;
+  employeeInfo: UserResponse;
 }
 
 function Profile({ close, employeeInfo }: ProfileProps) {

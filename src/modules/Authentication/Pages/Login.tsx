@@ -1,4 +1,4 @@
-import { useState, useContext, ReactNode, ReactPortal } from "react"
+import { useState, useContext, ReactNode } from "react"
 import { useForm } from "react-hook-form"
 import { useNavigate, useSearchParams } from 'react-router-dom'
 import { login } from "../../../services/WorkiveApiClient"
@@ -7,7 +7,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler"
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 import { Logo } from '../../../core/components'
-import { Authentication } from "~/constants/types"
+import { AuthenticationResponse } from "~/constants/types"
 
 type LoginFormInputs = {
   email: string;
@@ -31,7 +31,7 @@ export default function Login() {
   const LoginInfo = (data: LoginFormInputs) => {
     setIsProcessing(true);
     login(data)
-      .then((response: Authentication) => {
+      .then((response: AuthenticationResponse) => {
         setIsProcessing(false);
         authenticate(response.accessToken, response.user);
         navigate(currentURL || '/calendar');

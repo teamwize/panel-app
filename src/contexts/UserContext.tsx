@@ -1,12 +1,12 @@
 import { useCallback, createContext, ReactNode } from "react"
 import useLocalStorage from "../hooks/useLocalStorage"
 import { isTokenExpired } from "../utils/jwtUtils";
-import { User } from "~/constants/types";
+import { UserResponse } from "~/constants/types";
 
 type UserContextType = {
-  user: User | null;
+  user: UserResponse | null;
   accessToken: string | null;
-  authenticate: (accessToken: string | null, user: User | null) => void;
+  authenticate: (accessToken: string | null, user: UserResponse | null) => void;
   logout: () => void;
   isAuthenticated: () => boolean;
 }
@@ -24,12 +24,12 @@ type UserContextProviderType = {
 }
 
 export const UserContextProvider = ({ children }: UserContextProviderType) => {
-  const [user, setUser] = useLocalStorage<User>({key: "USER", initialValue: null})
-  const [accessToken, setAccessToken] = useLocalStorage<string>({key: "ACCESS_TOKEN", initialValue: null})
+  const [user, setUser] = useLocalStorage<UserResponse | null>("USER", null)
+  const [accessToken, setAccessToken] = useLocalStorage<string | null>("ACCESS_TOKEN", null)
 
-  const authenticate = (accessToken: string | null, user: User | null) => {
-    setUser(user);
-    setAccessToken(accessToken);
+  const authenticate = (_accessToken: string | null, _user: UserResponse | null) => {
+    setUser(_user);
+    setAccessToken(_accessToken);
     console.log("userContext authenticate", accessToken, user)
   }
 
@@ -39,16 +39,16 @@ export const UserContextProvider = ({ children }: UserContextProviderType) => {
     console.log("userContext logout")
   }
 
-  const isAuthenticated = () => {
+  const isAuthenticated = (): boolean => {
     const accessToken = localStorage.getItem("ACCESS_TOKEN");
     return accessToken != null && accessToken !== "" && !isTokenExpired(accessToken)
   }
 
-  const contextValue: UserContextType = {
-    user: user as User,
-    accessToken: accessToken as string,
+  const contextValue = {
+    user: user,
+    accessToken: accessToken,
     isAuthenticated: useCallback(() => isAuthenticated(), [accessToken]),
-    authenticate: useCallback((accessToken: string | null, user: User | null) => authenticate(accessToken, user), []),
+    authenticate: useCallback((accessToken: string | null, user: UserResponse | null) => authenticate(accessToken, user), []),
     logout: useCallback(() => logout(), [])
   }
 
