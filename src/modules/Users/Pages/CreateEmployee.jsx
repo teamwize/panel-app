@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { createEmployee } from "../../../services/WorkiveApiClient.js"
+import { createEmployee } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import { Button } from '~/core/components'

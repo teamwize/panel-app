@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { employees, deleteEmployee } from "../../../services/WorkiveApiClient.js"
+import { getEmployee, deleteEmployee } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler.js"
 import {Pagination} from '../../../core/components'
@@ -25,7 +25,7 @@ export default function Employees() {
 
   //get list of employees
   useEffect(() => {
-    employees().then(data => {
+    getEmployee().then(data => {
       console.log('Success:', data);
       console.log(data)
       setEmployeesList(data);

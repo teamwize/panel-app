@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { leaveTypeJson, statusJson, leaveTypeColor, dayoffStatusColor } from '../../constants/index'
+import { DayOffLeaveTypeJson, DayOffStatusJson, DayOffLeaveTypeColor, DayOffStatusColor } from '../../constants/index'
 import { Label } from './index'
 import { DayOffResponse } from '~/constants/types';
 
@@ -17,8 +17,8 @@ export default function DayOffRequest({ request }: DayOffRequestProps) {
         </div>
 
         <div className='flex gap-4'>
-          <Label type={leaveTypeColor[request.type]} text={leaveTypeJson[request.type]}></Label>
-          <Label type={dayoffStatusColor[request.status]} text={statusJson[request.status]}></Label>
+          <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]}></Label>
+          <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]}></Label>
         </div>
       </div>
     </section>

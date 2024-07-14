@@ -2,9 +2,21 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import dayjs, { Dayjs } from 'dayjs';
 import { Dialog } from '@headlessui/react';
-import { leaveTypeJson } from '../../../constants/index';
+import { DayOffLeaveTypeJson } from '../../../constants/index';
 import { ExclamationCircleIcon } from '@heroicons/react/24/outline';
-import { DayOffResponse, Example } from '~/constants/types';
+import { DayOffRequestStatus, DayOffResponse } from '~/constants/types';
+
+type Example = {
+  id: number;
+  createdAt: string;
+  updatedAt: string;
+  startAt: string;
+  endAt: string;
+  status: string;
+  type: string;
+  team: string;
+  name: string
+}
 
 const example: Example[] = [
   {
@@ -68,14 +80,14 @@ const request: Example = {
 type DayOffModalProps = {
   selectedRequest: DayOffResponse;
   handleModal: () => void;
-  handleRequest: (status: string, id: number) => void;
+  handleRequest: (status: DayOffRequestStatus, id: number) => void;
   isProcessing: boolean;
   calculateDistance: (startAt: string, endAt: string) => number;
 };
 
 export default function DayOffModal({ selectedRequest, handleModal, calculateDistance, handleRequest, isProcessing }: DayOffModalProps) {
   const [dayOverlap, setDayOverlap] = useState<Example[]>([]);
-  const teamOverlap = example.filter(e => e.team === request.team);
+  const teamOverlap: Example[] = example.filter(e => e.team === request.team);
   const navigate = useNavigate();
 
   const viewBalance = (requestName: string) => {
@@ -83,13 +95,13 @@ export default function DayOffModal({ selectedRequest, handleModal, calculateDis
   };
 
   useEffect(() => {
-    const startDayoff = dayjs(request.startAt).date();
-    const endDayoff = dayjs(request.endAt).date();
+    const startDayoff: number = dayjs(request.startAt).date();
+    const endDayoff: number = dayjs(request.endAt).date();
     const overlap: Example[] = [];
 
     for (let i = startDayoff; i < endDayoff; i++) {
       const currentDate: Dayjs = dayjs(request.startAt).date(i);
-      const overlappingRequests = teamOverlap.filter(r =>
+      const overlappingRequests: Example[] = teamOverlap.filter(r =>
         currentDate.isBetween(dayjs(r.startAt), dayjs(r.endAt), 'day', '[]')
       );
       if (overlappingRequests.length > 0) {
@@ -99,7 +111,7 @@ export default function DayOffModal({ selectedRequest, handleModal, calculateDis
     setDayOverlap(overlap);
   }, [selectedRequest.id]);
 
-  const distance = calculateDistance(request.startAt, request.endAt);
+  const distance: number = calculateDistance(request.startAt, request.endAt);
 
   return (
     <Dialog open={true} onClose={handleModal}>
@@ -123,7 +135,7 @@ export default function DayOffModal({ selectedRequest, handleModal, calculateDis
 
                 <p className='type text-sm mb-2 flex flex-col'>
                   <label htmlFor='type' className="mr-1 text-xs text-gray-500">Type</label>
-                  {leaveTypeJson[request.type as keyof typeof leaveTypeJson]}
+                  {DayOffLeaveTypeJson[request.type as keyof typeof DayOffLeaveTypeJson]}
                 </p>
 
                 <p className='text-sm flex flex-col mb-2'>
@@ -148,10 +160,10 @@ export default function DayOffModal({ selectedRequest, handleModal, calculateDis
               </div>)}
 
             <section className='flex text-center justify-center'>
-              <button onClick={() => handleRequest('REJECTED', request.id)} className='rounded-md p-2 text-white shadow-md bg-red-600 w-1/2'>
+              <button onClick={() => handleRequest(DayOffRequestStatus.PENDING, request.id)} className='rounded-md p-2 text-white shadow-md bg-red-600 w-1/2'>
                 {isProcessing ? "Waiting ..." : "Reject"}
               </button>
-              <button onClick={() => handleRequest('ACCEPTED', request.id)} className='rounded-md p-2 text-white shadow-md ml-4 bg-green-500 w-1/2'>
+              <button onClick={() => handleRequest(DayOffRequestStatus.ACCEPTED, request.id)} className='rounded-md p-2 text-white shadow-md ml-4 bg-green-500 w-1/2'>
                 {isProcessing ? "Waiting ..." : "Accept"}
               </button>
             </section>

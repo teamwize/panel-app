@@ -8,16 +8,17 @@ import { getErrorMessage } from "../../../utils/errorHandler"
 import { countries } from '../../../constants/index'
 import { EyeIcon, EyeSlashIcon } from "@heroicons/react/24/outline"
 import { Logo } from "../../../core/components"
-import { Authentication } from "~/constants/types"
+import { AuthenticationResponse, UserCreateRequest } from "~/constants/types"
 
 type RegisterFormInputs = {
   email: string;
   password: string;
   firstName: string;
   lastName: string;
-  phone: string;
+  phone: string | null;
   organization: string;
-  location: string
+  location: string;
+  timezone: string | null;
 }
 
 export default function Register() {
@@ -33,7 +34,7 @@ export default function Register() {
   }
 
   const RegisterInfo = (data: RegisterFormInputs) => {
-    let payload = {
+    let payload: UserCreateRequest = {
       email: data.email,
       password: data.password,
       countryCode: data.location,
@@ -46,7 +47,7 @@ export default function Register() {
     console.log(payload)
     setIsProcessing(true);
     registration(payload)
-      .then((response: Authentication) => {
+      .then((response: AuthenticationResponse) => {
         setIsProcessing(false);
         console.log('Success:', response);
         authenticate(response.accessToken, response.user);

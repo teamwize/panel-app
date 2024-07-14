@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler";
 import { Button } from '../../../core/components';
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import { Organization } from "~/constants/types";
+import { OrganizationResponse } from "~/constants/types";
 
 type FormData = {
   vacation: string;
@@ -34,8 +34,8 @@ export default function OrganizationBalance() {
     }
     setIsProcessing(true);
 
-    updateOrganization(payload)
-      .then((response: Organization) => {
+    updateOrganization(null)
+      .then((response: OrganizationResponse) => {
         setIsProcessing(false);
         console.log('Success:', response);
         toast.success('Balance updated successfully');

@@ -3,12 +3,12 @@ import { useNavigate } from 'react-router-dom';
 import dayjs from 'dayjs';
 import { ChevronLeftIcon } from '@heroicons/react/24/outline';
 import { DayOffModal } from '../Components';
-import { daysoff, dayoffStatus } from "../../../services/WorkiveApiClient";
+import { getDaysoff, updateDayOffStatus } from "../../../services/WorkiveApiClient";
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler";
-import { leaveTypeJson, leaveTypeColor } from '../../../constants';
-import { Label, Pagination } from '~/core/components';
-import { DayOffRequestStatus, DayOffResponse, PagedResponseDayOffResponse } from '~/constants/types';
+import { DayOffLeaveTypeJson, DayOffLeaveTypeColor } from '../../../constants';
+import { Label, Pagination } from '../../../core/components';
+import { DayOffRequestStatus, DayOffResponse, PagedResponse } from '~/constants/types';
 
 export default function DayOffQueue() {
   const navigate = useNavigate();
@@ -21,8 +21,8 @@ export default function DayOffQueue() {
 
   // Get dayoff list
   useEffect(() => {
-    daysoff()
-      .then((response: PagedResponseDayOffResponse) => {
+    getDaysoff()
+      .then((response: PagedResponse<DayOffResponse>) => {
         console.log('Success:', response.contents);
         setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === DayOffRequestStatus.PENDING));
       })
@@ -45,8 +45,8 @@ export default function DayOffQueue() {
     };
     setIsProcessing(true);
 
-    dayoffStatus(payload, id)
-      .then((data: DayOffRequestStatus) => {
+    updateDayOffStatus(payload, id)
+      .then((data: DayOffResponse) => {
         setIsProcessing(false);
         console.log('Success:', data);
         setRequestsList(prevState => prevState.filter(r => r.id !== id));
@@ -59,7 +59,7 @@ export default function DayOffQueue() {
       });
   };
 
-  const calculateDistance = (startAt: string, endAt: string) => {
+  const calculateDistance = (startAt: string, endAt: string): number => {
     return dayjs(endAt).diff(startAt, 'day') + 1;
   };
 
@@ -100,7 +100,7 @@ export default function DayOffQueue() {
             handleModal={() => { setSelectedRequest(null); }}
             handleRequest={handleRequest}
             isProcessing={isProcessing}
-            calculateDistance = {calculateDistance}
+            calculateDistance={calculateDistance}
           />
         )}
       </div>
@@ -115,8 +115,8 @@ type RequestType = {
 };
 
 function Request({ request, onClick, calculateDistance }: RequestType) {
-  const distance = calculateDistance(request.startAt, request.endAt);
-  
+  const distance: number = calculateDistance(request.startAt, request.endAt);
+
   return (
     <div>
       <section onClick={() => onClick(request)} className='flex items-center text-indigo-900 dark:text-indigo-200 mb-2 pb-2 border-b border-gray-200 dark:border-gray-800 cursor-pointer'>
@@ -135,7 +135,7 @@ function Request({ request, onClick, calculateDistance }: RequestType) {
               </p>
             </div>
 
-            <Label type={leaveTypeColor[request.type]} text={leaveTypeJson[request.type]} />
+            <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]} />
           </div>
         </div>
       </section>

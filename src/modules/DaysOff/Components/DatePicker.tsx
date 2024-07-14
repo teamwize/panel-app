@@ -25,7 +25,7 @@ export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handl
     setCalendarCurrentDate(dayjs(newDate));
   };
 
-  const isDateDisabled = (date: Date) => {
+  const isDateDisabled = (date: Date): boolean => {
     const disableDays = dayjs(date).isBefore(daysBefore, 'day') || holidaysDate.some((h) => dayjs(date).isSame(h, 'day'));
     return disableDays;
   };

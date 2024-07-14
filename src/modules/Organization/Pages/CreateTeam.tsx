@@ -6,7 +6,7 @@ import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler";
 import { Button } from '../../../core/components';
 import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-import { User } from "~/constants/types";
+import { UserResponse } from "~/constants/types";
 
 type Example = {
   name: string;
@@ -48,11 +48,11 @@ export default function CreateTeam() {
     };
     setIsProcessing(true);
 
-    createEmployee(payload)
-      .then((response: User) => {
+    createEmployee(null)
+      .then((response: UserResponse) => {
         setIsProcessing(false);
         console.log('Success:', response);
-        navigate('/organization/team'); // Navigate to the team page after successful creation
+        navigate('/organization/team');
       })
       .catch((error: any) => {
         setIsProcessing(false);

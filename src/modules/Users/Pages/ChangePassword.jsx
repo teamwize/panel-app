@@ -1,9 +1,9 @@
 import { useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { updatePassword } from "../../../services/WorkiveApiClient.js"
+import { updatePassword } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
+import { getErrorMessage } from "../../../utils/errorHandler"
 import { Button } from '~/core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 

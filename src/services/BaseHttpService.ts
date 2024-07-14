@@ -1,7 +1,7 @@
 const BASE_URL: string = getBaseURL();
 console.log("BASE_URL", BASE_URL);
 
-function getBaseURL() {
+function getBaseURL(): string {
   let env: string = import.meta.env.MODE;
   console.log("env :", env);
   let customBaseURL: string | null = localStorage.getItem("BASE_URL");
@@ -20,12 +20,12 @@ function getBaseURL() {
       return "https://api.teamwize.app";
     }
     default: {
-      return "https://api.teamwize.app"; // Fallback URL
+      return "https://api.teamwize.app";
     }
   }
 }
 
-function doFetch(url: string, options?: RequestInit) {
+function doFetch(url: string, options?: RequestInit): Promise<any> {
   if (!options) options = {};
   if (!options.headers) options.headers = {};
   const abortController = new AbortController();
@@ -50,7 +50,7 @@ function doFetch(url: string, options?: RequestInit) {
   return promise;
 }
 
-function getAccessToken() {
+function getAccessToken(): string | null {
   return localStorage.getItem("ACCESS_TOKEN");
 }
 
