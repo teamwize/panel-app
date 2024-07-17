@@ -9,7 +9,7 @@ import { Toolbar, Button } from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
 import { dayOffleaveType } from '../../../constants/index';
 import useCalendarData from '../../../utils/holidays';
-import { DayOffResponse, DayOffType, DayOffleaveType } from '~/constants/types';
+import { DayOffCreateRequest, DayOffResponse, DayOffType, DayOffleaveType } from '~/constants/types';
 
 dayjs.extend(isBetween);
 

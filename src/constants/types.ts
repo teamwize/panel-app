@@ -62,21 +62,20 @@ export type UserCreateRequest = {
   firstName: string;
   lastName: string ;
   phone?: string;
-  organizationName: String;
+  organizationName?: string;
   timezone?: string;
-  countryCode: string
-
+  countryCode?: string
 }
 
 export type UserUpdateRequest = {
-  id: number;
-  status: UserStatus;
-  role: UserRole;
-  email: string;
+  id?: number;
+  status?: UserStatus;
+  role?: UserRole;
+  email?: string;
   firstName: string;
   lastName: string | null;
-  phone: string | null;
-  organization: OrganizationResponse;
+  phone?: string | null;
+  organization?: OrganizationResponse;
 }
 
 export enum DayOffRequestStatus {
@@ -98,7 +97,7 @@ export enum DayOffType {
 export type DayOffCreateRequest = {
   type: DayOffType;
   start: string;
-  end: string
+  end: string;
 }
 
 export type DayOffResponse = {

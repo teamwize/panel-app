@@ -1,20 +1,21 @@
 import { Chart as ChartJS, ArcElement, Tooltip, Legend, ChartData, ChartOptions } from 'chart.js'
 import { Doughnut } from 'react-chartjs-2'
 
-type GraphProps = {
-  dayoffTypeUsed: number;
-  dayoffTypeQuantity: number;
-  dayoffTypecolor: string
+type BalanceGraphProps = {
+  title: "Vacation" | "Sick leave" | "Paid time off";
+  dayOffTypeUsed: number;
+  dayOffTypeQuantity: number;
+  dayOffTypeColor: string;
 }
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-export default function Graph({ dayoffTypeUsed, dayoffTypeQuantity, dayoffTypecolor }: GraphProps) {
+export default function BalanceGraph({ title, dayOffTypeUsed, dayOffTypeQuantity, dayOffTypeColor }: BalanceGraphProps) {
   const data: ChartData<'doughnut'> = {
     datasets: [{
       label: "quantity",
-      data: [dayoffTypeUsed, dayoffTypeQuantity],
-      backgroundColor: [dayoffTypecolor, "#c7d2fe"],
+      data: [dayOffTypeUsed, dayOffTypeQuantity - dayOffTypeUsed], // Corrected the data to show used vs remaining
+      backgroundColor: [dayOffTypeColor, "#c7d2fe"],
       borderWidth: 2,
       borderRadius: 4,
     }]
@@ -29,5 +30,11 @@ export default function Graph({ dayoffTypeUsed, dayoffTypeQuantity, dayoffTypeco
     }
   }
 
-  return <Doughnut data={data} options={options}></Doughnut>
+  return (
+    <div className="balance-graph">
+      <Doughnut data={data} options={options}></Doughnut>
+      <p className='mt-2 text-sm md:text-base' style={{ color: dayOffTypeColor }}>{title}</p>
+      <p className='text-sm md:text-base'>{dayOffTypeUsed} / {dayOffTypeQuantity}</p>
+    </div>
+  );
 }

@@ -1,13 +1,11 @@
-import { DayOffResponse } from "~/constants/types";
-
-type PaginationProps = {
-  data: DayOffResponse[];
+type PaginationProps<T> = {
+  data: T[];
   currentPage: number;
   setCurrentPage: (page: number) => void;
   recordsPerPage: number;
 }
 
-export default function Pagination({ data, currentPage, setCurrentPage, recordsPerPage }: PaginationProps) {
+export default function Pagination<T>({ data, currentPage, setCurrentPage, recordsPerPage }: PaginationProps<T>) {
   const lastIndex: number = currentPage * recordsPerPage;
   const firstIndex: number = lastIndex - recordsPerPage;
   const totalPages: number = Math.ceil(data.length / recordsPerPage);
@@ -22,7 +20,7 @@ export default function Pagination({ data, currentPage, setCurrentPage, recordsP
     if (currentPage < totalPages) {
       setCurrentPage(currentPage + 1);
     }
-  };
+   };
 
   return (
     <nav className="flex items-center justify-between pb-3" aria-label="Pagination">

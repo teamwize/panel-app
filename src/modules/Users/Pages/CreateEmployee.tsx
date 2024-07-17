@@ -1,34 +1,48 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { createEmployee } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { Button } from '~/core/components'
+import { getErrorMessage } from "../../../utils/errorHandler"
+import { Button } from '../../../core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
+import { UserCreateRequest } from "~/constants/types";
 
-const example = [
+type Example = {
+  name: string;
+  count: string
+}
+
+const example: Example[] = [
   { name: 'Financial', count: '2' },
   { name: 'Support', count: '5' },
   { name: 'Sales', count: '3' },
   { name: 'Technical', count: '4' }
 ]
 
+type CreateEmployeeInputs = {
+  firstName: string;
+  lastName: string;
+  team: string;
+  email: string;
+  password: string;
+}
+
 export default function CreateEmployee() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+  const { register, handleSubmit, formState: { errors } } = useForm<CreateEmployeeInputs>()
   const navigate = useNavigate()
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>("")
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
   const goBack = () => navigate('/organization/employee');
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: CreateEmployeeInputs) => {
     addEmployeeInfo(data)
   }
 
-  const addEmployeeInfo = (data) => {
-    let payload = {
-      type: 'USER',
+  const addEmployeeInfo = (data: CreateEmployeeInputs) => {
+    let payload: UserCreateRequest = {
+      // type: 'USER',
       firstName: data.firstName,
       lastName: data.lastName,
       email: data.email,
@@ -36,15 +50,17 @@ export default function CreateEmployee() {
     }
     setIsProcessing(true);
 
-    createEmployee(payload).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data);
-    }).catch(error => {
-      setIsProcessing(false);
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    })
+    createEmployee(payload)
+      .then(data => {
+        setIsProcessing(false);
+        console.log('Success:', data);
+      })
+      .catch(error => {
+        setIsProcessing(false);
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      })
   }
 
 
@@ -85,7 +101,7 @@ export default function CreateEmployee() {
 
           <div>
             <label className="block text-sm leading-6 mb-2" htmlFor="team">Team Collection</label>
-            <select {...register("team", { required: "Choosing a team is required" })} aria-invalid={errors.startDay ? "true" : "false"} name="team"
+            <select {...register("team", { required: "Choosing a team is required" })} aria-invalid={errors.team ? "true" : "false"} name="team"
               className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 placeholder:text-gray-600 py-2.5 text-sm md:text-base sm:leading-6 px-2">
               <option value="">Choose a team</option>
               {example.map((e) => <option value={e.name} key={e.name}>{e.name}</option>)}
@@ -120,7 +136,11 @@ export default function CreateEmployee() {
   )
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode
+}
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )
