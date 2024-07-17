@@ -43,9 +43,9 @@ export default function Calendar() {
   const { calendarCurrentDate, setCalendarCurrentDate, holidaysDate } = useCalendarData();
   const navigate = useNavigate();
   const selectedDateRequests: DayOffResponse[] = requestsList.filter(r => dayjs(selectedDate).isBetween(dayjs(r.startAt), dayjs(r.endAt), 'days', '[]'));
-  const isWorkingDay: boolean = holidaysDate.every((d: string) => !dayjs(d).isSame(selectedDate, 'day'));
-  const formattedSelectedDate: string = dayjs(selectedDate).format('YYYY-MM-DD');
-  const formattedHolidaysDate: string = holidaysDate.map((date: string) => dayjs(date).format('YYYY-MM-DD')).join(', ');
+  const isWorkingDay: boolean = holidaysDate.every((d: Date) => !dayjs(d).isSame(selectedDate, 'day'));
+  const formattedSelectedDate = dayjs(selectedDate).format('YYYY-MM-DD');
+  const formattedHolidaysDate: string = holidaysDate.map((date: Date) => dayjs(date).format('YYYY-MM-DD')).join(', ');
   const [currentPage, setCurrentPage] = useState<number>(1);
   const recordsPerPage: number = 5;
 
@@ -71,7 +71,7 @@ export default function Calendar() {
     const result: Date[] = [];
     for (let i = 1; i <= monthDays; i++) {
       const currentDate: dayjs.Dayjs = dayjs(calendarCurrentDate).date(i);
-      const isHoliday: boolean = holidaysDate.some((date: string) => dayjs(date).isSame(currentDate, 'day'));
+      const isHoliday: boolean = holidaysDate.some((date: Date) => dayjs(date).isSame(currentDate, 'day'));
       if (isHoliday) continue;
       const off: DayOffResponse[] = requestsList.filter(r => currentDate.isBetween(dayjs(r.startAt), dayjs(r.endAt), 'days', '[]'));
       if (off.length > 0) {

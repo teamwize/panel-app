@@ -1,4 +1,4 @@
-function parseJwt(token) {
+function parseJwt(token: string): any {
   var base64Url = token.split('.')[1];
   var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
   var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
@@ -8,7 +8,7 @@ function parseJwt(token) {
   return JSON.parse(jsonPayload);
 }
 
-function isTokenExpired(token) {
+function isTokenExpired(token: string | null): boolean {
   const decoded = parseJwt(token);
   return Date.now() > decoded.exp * 1000;
 }

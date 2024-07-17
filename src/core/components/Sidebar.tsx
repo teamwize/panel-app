@@ -1,25 +1,18 @@
 import { useState, useEffect } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { getEmployee } from '../../services/WorkiveApiClient'
+import { getCurrentEmployee, getEmployee } from '../../services/WorkiveApiClient'
 import { navigation } from '../../constants'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
 import { Logo } from '.'
 import { Location, Navigation, UserResponse } from '~/constants/types'
 
-export default function Sidebar() {
-  const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null);
+type SidebarProps = {
+  user: UserResponse | null;
+  logout: ()=> void
+}
 
-  //get employee information
-  useEffect(() => {
-    getEmployee().then((data: UserResponse | null) => {
-      console.log('Success:', data);
-      setEmployeeInfo(data);
-    }).catch((error: string | null) => {
-      console.error('Error:', error);
-    });
-  }, [])
-
+export default function Sidebar({user, logout}: SidebarProps) {
 
   return (
     <div className="min-h-0 flex-col md:w-1/5 min-w-min max-w-[17%] md:fixed md:top-0 md:bottom-0 md:left-0 border-b md:border-r border-gray-200 dark:border-gray-800 dark:bg-gray-900 bg-gray-100">
@@ -30,7 +23,7 @@ export default function Sidebar() {
           </div>
           <Navbar close={close} />
         </div>
-        <Profile employeeInfo={employeeInfo} close={close} />
+        <Profile user={user} close={close} />
       </section>
 
       <section className='sm-size md:hidden fixed z-20 bg-gray-100 dark:bg-gray-900 w-full'>
@@ -51,7 +44,7 @@ export default function Sidebar() {
               {({ close }) => (
                 <div className='flex flex-col justify-between'>
                   <Navbar close={close} />
-                  <Profile close={close} employeeInfo={employeeInfo} />
+                  <Profile close={close} user={user} />
                 </div>
               )}
             </Disclosure.Panel>
@@ -109,10 +102,10 @@ function NavigationItem({ item, handleOptionClick, location, selectedOption }: N
 
 type ProfileProps = {
   close: () => void;
-  employeeInfo: UserResponse;
+  user: UserResponse | null;
 }
 
-function Profile({ close, employeeInfo }: ProfileProps) {
+function Profile({ close, user }: ProfileProps) {
   const navigate = useNavigate()
 
   const viewProfile = () => {
@@ -128,7 +121,7 @@ function Profile({ close, employeeInfo }: ProfileProps) {
         <img className="inline-block h-7 w-7 rounded-full mr-2"
           src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
         <p className="text-xs md:text-sm font-semibold text-indigo-900 dark:text-indigo-200">
-          {employeeInfo?.firstName} {employeeInfo?.lastName}
+          {user?.firstName} {user?.lastName}
         </p>
       </div>
     </div>
