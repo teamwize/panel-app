@@ -3,14 +3,15 @@ import { useNavigate } from 'react-router-dom'
 import { getEmployee } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler"
-import { Toolbar } from '~/core/components'
+import { Toolbar } from '../../../core/components'
 import { ThemeContext } from '../../../contexts/ThemeContext';
 import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline'
 import { Switch } from '@headlessui/react'
+import { UserResponse } from '~/constants/types';
 
 export default function Setting() {
-  const [employeeInfo, setEmployeeInfo] = useState([])
-  const [errorMessage, setErrorMessage] = useState("")
+  const [employeeInfo, setEmployeeInfo] = useState<UserResponse[]>([])
+  const [errorMessage, setErrorMessage] = useState<string>("")
   const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
   const navigate = useNavigate()
 
@@ -24,19 +25,21 @@ export default function Setting() {
 
   //get employee information
   useEffect(() => {
-    getEmployee().then(data => {
-      console.log('Success:', data);
-      setEmployeeInfo(data);
-    }).catch(error => {
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    });
+    getEmployee()
+      .then(data => {
+        console.log('Success:', data);
+        setEmployeeInfo(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      });
   }, [])
 
   console.log(employeeInfo)
 
-  function classNames(...classes) {
+  function classNames(...classes: string[]) {
     return classes.filter(Boolean).join(' ')
   }
 
@@ -66,7 +69,7 @@ export default function Setting() {
 
           <div className='flex justify-between items-center text-sm font-semibold md:text-base'>
             <div className='flex items-center'>
-              <MoonIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg'/>
+              <MoonIcon className='w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg' />
               Dark mode
             </div>
             <Switch checked={isDarkMode} onChange={toggleDarkMode} className={classNames(isDarkMode ? 'bg-indigo-500' :

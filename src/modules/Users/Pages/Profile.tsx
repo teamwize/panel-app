@@ -1,24 +1,37 @@
-import { useEffect, useState, useContext } from 'react'
+import React, { useEffect, useState, useContext, ReactNode } from 'react'
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
-import { getEmployee, updateEmployee, updateEmployeePicture } from "../../../services/WorkiveApiClient"
+import { getCurrentEmployee, getEmployee, updateEmployee, updateEmployeePicture } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { Toolbar, Button } from '~/core/components'
+import { getErrorMessage } from "../../../utils/errorHandler"
+import { Toolbar, Button } from '../../../core/components'
 import { UserContext } from '../../../contexts/UserContext';
-import AvatarEditor from "react-avatar-editor"
+import AvatarEditor from 'react-avatar-editor';
 import { Slider } from "@material-ui/core"
 import { Dialog } from '@headlessui/react'
 import { ArrowLeftOnRectangleIcon } from '@heroicons/react/24/outline'
 import { UserIcon, CameraIcon } from '@heroicons/react/20/solid'
+import { UserResponse, UserUpdateRequest } from '~/constants/types';
+
+type ProfileInputs = {
+  firstName: string;
+  lastName: string
+}
+
+type Picture = {
+  cropperOpen: boolean;
+  img: string | null;
+  zoom: number;
+  croppedImg: string
+}
 
 export default function Profile() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
-  const [employeeInfo, setEmployeeInfo] = useState({})
-  const [logOut, setLogOut] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(null)
-  const [isProcessing, setIsProcessing] = useState(false)
-  const [picture, setPicture] = useState({
+  const { register, handleSubmit, formState: { errors } } = useForm<ProfileInputs>()
+  const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null)
+  const [logOut, setLogOut] = useState<boolean>(false);
+  const [errorMessage, setErrorMessage] = useState<string | null>(null)
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
+  const [picture, setPicture] = useState<Picture>({
     cropperOpen: false,
     img: null,
     zoom: 2,
@@ -28,18 +41,20 @@ export default function Profile() {
 
   //employee information
   useEffect(() => {
-    getEmployee().then(data => {
-      console.log('Success:', data);
-      setEmployeeInfo(data);
-    }).catch(error => {
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    });
+    getCurrentEmployee()
+      .then(data => {
+        console.log('Success:', data);
+        setEmployeeInfo(data);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      });
   }, [])
 
   //change picture
-  const handleFileChange = (e) => {
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     let url = URL.createObjectURL(e.target.files[0]);
     setPicture({
       ...picture,
@@ -49,22 +64,25 @@ export default function Profile() {
   }
 
   //change full name
-  const onSubmit = (data) => {
-    let payload = {
-      fullname: data.fullname
+  const onSubmit = (data: ProfileInputs) => {
+    let payload: UserUpdateRequest = {
+      firstName: data.firstName,
+      lastName: data.lastName
     }
     setIsProcessing(true);
 
-    updateEmployee(payload).then(data => {
-      setIsProcessing(false);
-      console.log('Success:', data);
-      setEmployeeInfo(data);
-    }).catch(error => {
-      setIsProcessing(false);
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    });
+    updateEmployee(payload)
+      .then(data => {
+        setIsProcessing(false);
+        console.log('Success:', data);
+        setEmployeeInfo(data);
+      })
+      .catch(error => {
+        setIsProcessing(false);
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      });
   }
 
 
@@ -102,13 +120,26 @@ export default function Profile() {
 
             <form onSubmit={handleSubmit(onSubmit)}>
               {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
+              <div className="flex justify-between gap-4">
+                <div className="w-full">
+                  <label htmlFor="firstName" className="block text-sm leading-6">First Name</label>
+                  <div className="mt-2">
+                    <input {...register("firstName", { required: "First Name is required", maxLength: { value: 20, message: "First Name must be under 20 characters" }, minLength: { value: 2, message: "First Name must be over 2 characters" } })}
+                      aria-invalid={errors.firstName ? "true" : "false"} name="firstName" type="text"
+                      className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 placeholder:text-gray-600 py-1.5 text-sm md:text-base sm:leading-6 px-4" />
+                    {errors.firstName && <Alert>{errors.firstName.message}</Alert>}
+                  </div>
+                </div>
 
-              <div className='w-full'>
-                <label className="block text-sm leading-6 mb-2" htmlFor="fullName">Full Name</label>
-                <input {...register("fullname", { required: "FullName is required", maxLength: { value: 20, message: "FullName must be under 20 characters" }, minLength: { value: 2, message: "FullName must be over 2 characters" } })}
-                  aria-invalid={errors.fullname ? "true" : "false"} name="fullname" type="text"
-                  className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 px-4 py-1.5 shadow-sm placeholder:text-gray-600 text-sm md:text-base sm:leading-6 " />
-                {errors.fullname && <Alert>{errors.fullname.message}</Alert>}
+                <div className="w-full">
+                  <label htmlFor="lastName" className="block text-sm leading-6">Last Name</label>
+                  <div className="mt-2">
+                    <input {...register("lastName", { required: "Last Name is required", maxLength: { value: 20, message: "Last Name must be under 20 characters" }, minLength: { value: 2, message: "Last Name must be over 2 characters" } })}
+                      aria-invalid={errors.lastName ? "true" : "false"} name="lastName" type="text"
+                      className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 placeholder:text-gray-600 py-1.5 text-sm md:text-base sm:leading-6 px-4" />
+                    {errors.lastName && <Alert>{errors.lastName.message}</Alert>}
+                  </div>
+                </div>
               </div>
 
               <Button type='submit' isProcessing={isProcessing} text='Save' className=' flex justify-center w-full md:w-1/4 mt-4'></Button>
@@ -120,20 +151,29 @@ export default function Profile() {
   )
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode
+}
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-sm font-medium leading-6 text-red-800 mt-2" role="alert">{children}</p>
   )
 }
 
-function Logout({ setLogOut, logOut }) {
+type LogoutProps = {
+  setLogOut: (logOut: boolean) => void;
+  logOut: boolean;
+}
+
+function Logout({ setLogOut, logOut }: LogoutProps) {
   const navigate = useNavigate()
   const { logout } = useContext(UserContext)
 
   const closeLogOut = () => setLogOut(false)
 
   //logout
-  const handleRequest = (accepted) => {
+  const handleRequest = (accepted: boolean) => {
     if (accepted) {
       logout();
       navigate('/login')
@@ -164,17 +204,24 @@ function Logout({ setLogOut, logOut }) {
   )
 }
 
-function ChangePicture({ picture, setPicture }) {
-  var editor = ""
+type ChangePictureProps = {
+  picture: Picture;
+  setPicture: (pictue: Picture) => void;
+}
 
-  const setEditorRef = (ed) => editor = ed;
+function ChangePicture({ picture, setPicture }: ChangePictureProps) {
+  var editor: AvatarEditor | null = null;
 
-  const handleSlider = (event, value) => {
+  const setEditorRef = (ed: AvatarEditor | null) => editor = ed;
+
+  const handleSlider = (event: React.ChangeEvent<{}>, value: number | number[]) => {
     event.preventDefault();
-    setPicture({
-      ...picture,
-      zoom: value
-    })
+    if (typeof value === 'number') {
+      setPicture({
+        ...picture,
+        zoom: value,
+      });
+    }
   }
 
   const handleCancel = () => {
@@ -184,7 +231,7 @@ function ChangePicture({ picture, setPicture }) {
     })
   }
 
-  const handleSave = (e) => {
+  const handleSave = () => {
     if (setEditorRef) {
       const canvasScaled = editor.getImageScaledToCanvas();
       const croppedImg = canvasScaled.toDataURL();
@@ -196,16 +243,15 @@ function ChangePicture({ picture, setPicture }) {
         croppedImg: croppedImg
       })
 
-      let payload = {
-        picture: croppedImg
-      }
-      updateEmployeePicture(payload).then(data => {
-        console.log('Success:', data);
-      }).catch(error => {
-        console.error('Error:', error);
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage)
-      })
+      updateEmployeePicture(croppedImg)
+        .then(data => {
+          console.log('Success:', data);
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const errorMessage = getErrorMessage(error);
+          toast.error(errorMessage)
+        })
     }
   }
 

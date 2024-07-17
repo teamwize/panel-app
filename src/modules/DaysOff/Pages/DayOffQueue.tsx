@@ -86,7 +86,7 @@ export default function DayOffQueue() {
           ))}
 
         {requestsList.length > recordsPerPage && (
-          <Pagination
+          <Pagination<DayOffResponse>
             recordsPerPage={recordsPerPage}
             currentPage={currentPage}
             setCurrentPage={setCurrentPage}

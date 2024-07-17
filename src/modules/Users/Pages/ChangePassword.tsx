@@ -1,21 +1,31 @@
-import { useState } from "react";
+import { ReactNode, useState } from "react";
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom'
 import { updatePassword } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
 import { getErrorMessage } from "../../../utils/errorHandler"
-import { Button } from '~/core/components'
+import { Button } from '../../../core/components'
 import { ChevronLeftIcon } from "@heroicons/react/24/outline"
 
-export default function ChangePassword() {
-  const { register, handleSubmit, formState: { errors } } = useForm()
+type ChangePasswordInputs = {
+  password: string;
+  newPassword: string;
+  reNewPassword: string
+}
+
+type ChangePasswordProps = {
+  id: number
+}
+
+export default function ChangePassword({id}: ChangePasswordProps) {
+  const { register, handleSubmit, formState: { errors } } = useForm<ChangePasswordInputs>()
   const navigate = useNavigate()
-  const [errorMessage, setErrorMessage] = useState("")
-  const [isProcessing, setIsProcessing] = useState(false)
+  const [errorMessage, setErrorMessage] = useState<string>("")
+  const [isProcessing, setIsProcessing] = useState<boolean>(false)
 
   const goBack = () => navigate('/settings');
 
-  const onSubmit = (data) => {
+  const onSubmit = (data: ChangePasswordInputs) => {
     if (data.newPassword !== data.reNewPassword) {
       setErrorMessage("Passwords don't match. Try again");
       return
@@ -26,7 +36,7 @@ export default function ChangePassword() {
     changePasswordInfo(data);
   }
 
-  const changePasswordInfo = (data) => {
+  const changePasswordInfo = (data: ChangePasswordInputs) => {
     let payload = {
       currPass: data.password,
       newPass: data.newPassword
@@ -34,7 +44,7 @@ export default function ChangePassword() {
 
     setIsProcessing(true);
     console.log(payload)
-    updatePassword(payload).then(data => {
+    updatePassword(payload, id).then(data => {
       setIsProcessing(false)
       console.log('Success:', data);
     }).catch(error => {
@@ -100,7 +110,11 @@ export default function ChangePassword() {
   )
 }
 
-function Alert({ children }) {
+type AlertProps = {
+  children: ReactNode
+}
+
+function Alert({ children }: AlertProps) {
   return (
     <p className="text-xs leading-6 text-red-500 mt-1" role="alert">{children}</p>
   )

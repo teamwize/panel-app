@@ -31,7 +31,7 @@ async function createEmployee(payload: UserCreateRequest): Promise<UserResponse>
   });
 }
 
-async function getEmployee(): Promise<UserResponse> {
+async function getEmployee(): Promise<UserResponse[]> {
   return await doFetch(`${baseURL}/users`, {
     method: 'GET'
   });

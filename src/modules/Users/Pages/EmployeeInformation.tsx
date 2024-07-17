@@ -3,20 +3,27 @@ import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
 import { getDaysoff } from "../../../services/WorkiveApiClient"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler.js"
-import { DayOffRequest, BalanceGraph, Pagination } from '~/core/components'
+import { getErrorMessage } from "../../../utils/errorHandler"
+import { DayOffRequest, BalanceGraph, Pagination } from '../../../core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
+import { DayOffResponse } from '~/constants/types';
+
+type Balance = {
+  label: "Vacation" | "Sick leave" | "Paid time off";
+  dayOffTypeQuantity: number;
+  dayOffTypeUsed: number;
+  dayOffTypeColor: string;
+}
 
 export default function EmployeeInformation() {
-  const [balanceValue, setBalanceValue] = useState([])
-  const [requestsList, setRequestsList] = useState([])
-  const [errorMessage, setErrorMessage] = useState(null);
+  const [balanceValue, setBalanceValue] = useState<Balance[]>([])
+  const [requestsList, setRequestsList] = useState<DayOffResponse[]>([])
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const navigate = useNavigate();
   const { id } = useParams();
-  const [currentPage, setCurrentPage] = useState(1);
-  const recordsPerPage = 5;
+  const [currentPage, setCurrentPage] = useState<number>(1);
+  const recordsPerPage: number = 5;
 
-  // const [errorMessage, setErrorMessage] = useState(null)
   // useEffect(() => {
   //   doFetch('http://localhost:8080', {
   //     method: 'GET'
@@ -31,23 +38,25 @@ export default function EmployeeInformation() {
   // }, [])
 
   //example
-  const balance = [
-    { label: "Vacation", dayoffTypeQuantity: 18, dayoffTypeUsed: 3, dayoffTypecolor: "#22c55e" },
-    { label: "Sick leave", dayoffTypeQuantity: 5, dayoffTypeUsed: 2, dayoffTypecolor: "#f87171" },
-    { label: "Paid time off", dayoffTypeQuantity: 5, dayoffTypeUsed: 1, dayoffTypecolor: "#60a5fa" }
+  const balance: Balance[] = [
+    { label: "Vacation", dayOffTypeQuantity: 18, dayOffTypeUsed: 3, dayOffTypeColor: "#22c55e" },
+    { label: "Sick leave", dayOffTypeQuantity: 5, dayOffTypeUsed: 2, dayOffTypeColor: "#f87171" },
+    { label: "Paid time off", dayOffTypeQuantity: 5, dayOffTypeUsed: 1, dayOffTypeColor: "#60a5fa" }
   ]
 
   //get employee's dayoff list
   useEffect(() => {
     // doFetch('http://localhost:8080/days-off/' + id, {
-      getDaysoff().then(data => {
-      console.log('Success:', data.contents);
-      setRequestsList(data.contents)
-    }).catch(error => {
-      console.error('Error:', error);
-      const errorMessage = getErrorMessage(error);
-      toast.error(errorMessage)
-    })
+    getDaysoff()
+      .then(data => {
+        console.log('Success:', data.contents);
+        setRequestsList(data.contents)
+      })
+      .catch(error => {
+        console.error('Error:', error);
+        const errorMessage = getErrorMessage(error);
+        toast.error(errorMessage)
+      })
   }, [])
 
   const goBack = () => navigate('/organization/employee')
@@ -77,23 +86,27 @@ export default function EmployeeInformation() {
             <p className='text-sm font-semibold leading-6 mb-4 md:text-lg text-indigo-900 dark:text-indigo-200'>Requests ({requestsList ? requestsList.length : 0})</p>
             {requestsList ? requestsList
               .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
-              .sort((a, b) => Date.parse(b.start) - Date.parse(a.start))
+              .sort((a, b) => Date.parse(b.startAt) - Date.parse(a.startAt))
               .map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
           </div>
 
-          {requestsList.length > recordsPerPage ? <Pagination recordsPerPage={recordsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} data={requestsList} /> : ' '}
+          {requestsList.length > recordsPerPage ? <Pagination<DayOffResponse> recordsPerPage={recordsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} data={requestsList} /> : ' '}
         </main>
       </div>
     </div>
   )
 }
 
-function BalanceItem({ i }) {
+type BalanceItemProps = {
+  i: Balance;
+}
+
+function BalanceItem({ i }: BalanceItemProps) {
   return (
     <div className='md:w-1/4 w-1/3 border rounded-md mx-1 p-2 lg:w-1/4 md:p-4 md:mx-2 border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800'>
-      <BalanceGraph title={i.label} dayoffTypeUsed={i.dayoffTypeUsed} dayoffTypeQuantity={i.dayoffTypeQuantity} dayoffTypecolor={i.dayoffTypecolor}></BalanceGraph>
-      <p className='mt-2 text-sm md:text-base' style={{ dayoffTypecolor: i.dayoffTypecolor }}>{i.label}</p>
-      <p className='text-sm md:text-base'>{i.dayoffTypeUsed} / {i.dayoffTypeQuantity}</p>
+      <BalanceGraph title={i.label} dayOffTypeUsed={i.dayOffTypeUsed} dayOffTypeQuantity={i.dayOffTypeQuantity} dayOffTypeColor={i.dayOffTypeColor}></BalanceGraph>
+      <p className='mt-2 text-sm md:text-base' style={{ backgroundColor: i.dayOffTypeColor }}>{i.label}</p>
+      <p className='text-sm md:text-base'>{i.dayOffTypeUsed} / {i.dayOffTypeQuantity}</p>
     </div>
   )
 }
