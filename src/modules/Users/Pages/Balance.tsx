@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getDaysoff } from "../../../services/WorkiveApiClient";
+import { getDaysoff } from "~/services/WorkiveApiClient.ts";
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler";
+import { getErrorMessage } from "~/utils/errorHandler.ts";
 import { Toolbar, DayOffRequest, Pagination, BalanceGraph } from '../../../core/components';
 import { PlusIcon } from '@heroicons/react/20/solid';
 import { DayOffResponse } from '~/constants/types';
