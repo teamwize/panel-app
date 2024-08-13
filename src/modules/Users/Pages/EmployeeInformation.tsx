@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react'
+import React, { useState, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import { useNavigate } from 'react-router-dom'
-import { getDaysoff } from "../../../services/WorkiveApiClient"
+import { getDaysoff } from "~/services/WorkiveApiClient.ts"
 import { toast } from "react-toastify";
-import { getErrorMessage } from "../../../utils/errorHandler"
+import { getErrorMessage } from "~/utils/errorHandler.ts"
 import { DayOffRequest, BalanceGraph, Pagination } from '../../../core/components'
 import { ChevronLeftIcon } from '@heroicons/react/24/outline'
 import { DayOffResponse } from '~/constants/types';
@@ -90,7 +90,7 @@ export default function EmployeeInformation() {
               .map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
           </div>
 
-          {requestsList.length > recordsPerPage ? <Pagination<DayOffResponse> recordsPerPage={recordsPerPage} currentPage={currentPage} setCurrentPage={setCurrentPage} data={requestsList} /> : ' '}
+          {requestsList.length > recordsPerPage ? <Pagination pageSize={recordsPerPage} pageNumber={currentPage} setPageNumber={setCurrentPage} totalContents={requestsList.length} /> : ' '}
         </main>
       </div>
     </div>

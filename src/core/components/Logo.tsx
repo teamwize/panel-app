@@ -5,5 +5,5 @@ type LogoProps = {
 }
 
 export default function Logo({ className }: LogoProps) {
-  return (<img className={className} src={logo} />);
+  return (<img alt="Logo" className={className} src={logo} />);
 }

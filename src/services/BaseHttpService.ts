@@ -2,7 +2,8 @@ const BASE_URL: string = getBaseURL();
 console.log("BASE_URL", BASE_URL);
 
 function getBaseURL(): string {
-  let env: string = import.meta.env.MODE;
+  // @ts-ignore
+  let env = import.meta.env.MODE;
   console.log("env :", env);
   let customBaseURL: string | null = localStorage.getItem("BASE_URL");
   if (customBaseURL) return customBaseURL;
@@ -34,6 +35,7 @@ function doFetch(url: string, options?: RequestInit): Promise<any> {
   if (accessToken) {
     (options.headers as Record<string, string>)["Authorization"] = "Bearer " + accessToken;
   }
+  options.mode= "cors";
   const promise = fetch(url, options).then(async response => {
     const isJson = response.headers.get('content-type')?.includes('application/json');
     const data = isJson ? await response.json() : null;

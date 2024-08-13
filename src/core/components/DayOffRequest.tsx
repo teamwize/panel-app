@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { DayOffLeaveTypeJson, DayOffStatusJson, DayOffLeaveTypeColor, DayOffStatusColor } from '../../constants/index'
+import { DayOffLeaveTypeJson, DayOffStatusJson, DayOffLeaveTypeColor, DayOffStatusColor } from '~/constants/index.ts'
 import { Label } from './index'
 import { DayOffResponse } from '~/constants/types';
 

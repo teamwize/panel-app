@@ -37,8 +37,9 @@ function useCalendarData() {
 
   const officialHolidaysDate: Date[] = example.flatMap((e: Example) =>
     e.holidays.map(h => {
+      const sanitizedDate: string = h.date.replace(/(\d+)(st|nd|rd|th)/, '$1');
       // Parsing the date without the year and adding the current year
-      const parsedOfficialHolidaysDate: Date = dayjs(h.date, 'MMMM D', true).year(calendarCurrentDate.year()).toDate();
+      const parsedOfficialHolidaysDate: Date = dayjs(sanitizedDate, 'MMMM D', true).year(calendarCurrentDate.year()).toDate();
       return parsedOfficialHolidaysDate;
     })
   );

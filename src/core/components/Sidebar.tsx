@@ -1,6 +1,5 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate, useLocation } from 'react-router-dom'
-import { getCurrentEmployee, getEmployee } from '../../services/WorkiveApiClient'
 import { navigation } from '../../constants'
 import { Disclosure } from '@headlessui/react'
 import { Bars3Icon } from '@heroicons/react/24/outline'
@@ -69,7 +68,7 @@ function Navbar({ close }: NavbarProps) {
     navigate(href);
     if (close) {
       close()
-    };
+    }
   }
 
   return (
@@ -111,14 +110,14 @@ function Profile({ close, user }: ProfileProps) {
   const viewProfile = () => {
     if (close) {
       close()
-    };
+    }
     navigate("/profile")
   }
 
   return (
     <div onClick={viewProfile} className="flex p-4 absolute bottom-0 w-full right-0 left-0 cursor-pointer">
       <div className="flex items-center hover:bg-indigo-200 dark:hover:bg-indigo-700 hover:bg-opacity-75 rounded-md w-full p-2">
-        <img className="inline-block h-7 w-7 rounded-full mr-2"
+        <img alt="Profile Image" className="inline-block h-7 w-7 rounded-full mr-2"
           src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png" />
         <p className="text-xs md:text-sm font-semibold text-indigo-900 dark:text-indigo-200">
           {user?.firstName} {user?.lastName}

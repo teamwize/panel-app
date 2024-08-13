@@ -5,7 +5,7 @@ type LabelProps = {
 }
 
 export default function Label({ type, text, className }: LabelProps) {
-  var labelClassNames = className + " text-xs py-0.5 px-2 rounded-2xl w-fit ";
+  let labelClassNames = className + " text-xs py-0.5 px-2 rounded-2xl w-fit ";
 
   switch (type.toUpperCase()) {
     case 'GREEN':

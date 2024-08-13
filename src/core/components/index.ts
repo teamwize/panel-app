@@ -7,5 +7,6 @@ import Label from './Label'
 import Button from './Button'
 import Pagination from './Pagination'
 import Logo from './Logo'
+import Alert from './Alert.tsx'
 
-export { Sidebar, Toolbar, DayOffRequest, BalanceGraph, AuthenticatedRoute, Label, Button, Pagination, Logo}
+export { Sidebar, Toolbar, DayOffRequest, BalanceGraph, AuthenticatedRoute, Label, Button, Pagination, Logo, Alert}
