@@ -5,5 +5,6 @@ import OfficialHolidays from './Pages/OfficialHolidays'
 import OrganizationTeam from './Pages/OrganizationTeam'
 import CreateTeam from './Pages/CreateTeam'
 import UpdateTeam from './Pages/UpdateTeam'
+import ImportHolidays from './Pages/ImportHolidays'
 
-export { Organization, OrganizationBalance, OrganizationInformation, OfficialHolidays, OrganizationTeam, CreateTeam, UpdateTeam }
+export { Organization, OrganizationBalance, OrganizationInformation, OfficialHolidays, OrganizationTeam, CreateTeam, UpdateTeam, ImportHolidays }

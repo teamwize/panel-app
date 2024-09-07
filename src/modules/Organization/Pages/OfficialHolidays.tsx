@@ -1,109 +1,162 @@
-import { useNavigate } from 'react-router-dom';
-import { Fragment } from 'react';
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
-
-type Holiday = {
-  date: string;
-  weekday: string;
-  name: string;
-}
-
-type Example = {
-  month: string;
-  holidays: Holiday[];
-}
-
-const example: Example[] = [
-  {
-    month: 'June 2024',
-    holidays: [
-      { date: 'June 4th', weekday: 'Sunday', name: 'Death of Khomeini' },
-      { date: 'June 5th', weekday: 'Monday', name: 'Revolt of Khordad' },
-    ],
-  },
-  {
-    month: 'September 2024',
-    holidays: [
-      { date: 'September 23rd', weekday: 'Saturday', name: 'September Equinox' },
-    ],
-  },
-];
-
-function classNames(...classes: string[]) {
-  return classes.filter(Boolean).join(' ');
-}
+import {useNavigate} from 'react-router-dom';
+import React, {useContext, useEffect, useState} from 'react';
+import {ChevronLeft} from "lucide-react";
+import {Card} from "@/components/ui/card";
+import {HolidayResponse} from "@/constants/types";
+import {getHolidays} from "@/services/WorkiveApiClient";
+import {toast} from "@/components/ui/use-toast";
+import {UserContext} from "@/contexts/UserContext";
+import {getErrorMessage} from "~/utils/errorHandler.ts";
+import {Button} from "@/components/ui/button";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuLabel,
+    DropdownMenuRadioGroup,
+    DropdownMenuRadioItem,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+    Table,
+    TableBody,
+    TableCaption,
+    TableCell,
+    TableFooter,
+    TableHead,
+    TableHeader,
+    TableRow,
+} from "@/components/ui/table";
+import {countries} from "@/constants";
 
 export default function OfficialHolidays() {
-  const navigate = useNavigate();
-  const goBack = () => navigate('/settings');
+    const {user} = useContext(UserContext);
+    const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
+    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
+    const [selectedCountry, setSelectedCountry] = useState<string>(user?.countryCode || "AT");
+    const navigate = useNavigate();
+    const goBack = () => navigate('/settings');
 
-  return (
-      <div className="md:w-4/5 overflow-y-auto w-full fixed mb-2 top-16 md:top-0 bottom-0 right-0 h-screen">
-        <div className="pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]">
-          <div className="flex items-center pb-4 border-b border-gray-200 dark:border-gray-800">
-            <button onClick={goBack}>
-              <ChevronLeftIcon className="w-5 h-5 mx-4 text-indigo-600" />
-            </button>
-            <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">
-              Official Holidays
-            </h1>
-          </div>
+    // Get holidays
+    useEffect(() => {
+        if (selectedCountry) {
+            getHolidays(selectedYear, selectedCountry)
+                .then((data: HolidayResponse[]) => {
+                    console.log("Success:", data);
+                    setHolidays(data);
+                })
+                .catch((error) => {
+                    console.error("Error:", error);
+                    const errorMessage = getErrorMessage(error);
+                    toast({
+                        title: "Error",
+                        description: errorMessage,
+                        variant: "destructive"
+                    });
+                });
+        }
+    }, [selectedYear, selectedCountry]);
 
-          <div className="-my-[9px] sm:-mx-6 lg:-mx-8 px-4">
-            <div className="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
-              <table className="min-w-full">
-                <tbody className="bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700">
-                {example.map((e) => (
-                    <HolidayTable e={e} key={e.month} />
-                ))}
-                </tbody>
-              </table>
+    const importHolidays = () => {
+        navigate('/settings/official-holiday/import')
+    }
+
+    return (
+        <>
+            <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
+                <div className="flex flex-wrap items-center gap-2">
+                    <button onClick={goBack}>
+                        <ChevronLeft className="h-6 w-6"/>
+                    </button>
+                    <h1 className="text-lg font-semibold md:text-2xl">Official Holidays</h1>
+                </div>
+                <Button onClick={importHolidays}>Import</Button>
             </div>
-          </div>
-        </div>
-      </div>
-  );
-}
 
-type HolidayTableProps = {
-  e: Example;
-}
+            <main className="flex flex-1 flex-col gap-4 p-4">
+                <Card
+                    className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4"
+                    x-chunk="dashboard-02-chunk-1"
+                >
+                    <div className="flex items-center gap-4 mb-4">
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">{selectedYear}</Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56">
+                                <DropdownMenuLabel>Select Year</DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuRadioGroup
+                                    value={String(selectedYear)}
+                                    onValueChange={(value) => setSelectedYear(Number(value))}
+                                >
+                                    <DropdownMenuRadioItem value={String(new Date().getFullYear() - 1)}>
+                                        {String(new Date().getFullYear() - 1)}
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value={String(new Date().getFullYear())}>
+                                        {String(new Date().getFullYear())}
+                                    </DropdownMenuRadioItem>
+                                    <DropdownMenuRadioItem value={String(new Date().getFullYear() + 1)}>
+                                        {String(new Date().getFullYear() + 1)}
+                                    </DropdownMenuRadioItem>
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
 
-function HolidayTable({ e }: HolidayTableProps) {
-  return (
-      <Fragment>
-        <tr className="border-t border-gray-200 dark:border-gray-700">
-          <th
-              colSpan={3}
-              scope="colgroup"
-              className="bg-gray-100 dark:bg-gray-900 py-2 pl-2 text-left text-sm font-semibold"
-          >
-            {e.month}
-          </th>
-        </tr>
-        {e.holidays.map((h, hIdx) => (
-            <HolidaysItem h={h} hIdx={hIdx} key={h.date} />
-        ))}
-      </Fragment>
-  );
-}
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    {countries.find((country) => country.code === selectedCountry)?.name || "Select Country"}
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent className="w-56 max-h-60 overflow-y-auto">
+                                <DropdownMenuLabel>Select Country</DropdownMenuLabel>
+                                <DropdownMenuSeparator/>
+                                <DropdownMenuRadioGroup
+                                    value={selectedCountry}
+                                    onValueChange={setSelectedCountry}
+                                >
+                                    {countries.map((country) => (
+                                        <DropdownMenuRadioItem key={country.code} value={country.code}>
+                                            {country.name}
+                                        </DropdownMenuRadioItem>
+                                    ))}
+                                </DropdownMenuRadioGroup>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                    </div>
 
-type HolidaysItemProps = {
-  h: Holiday;
-  hIdx: number;
-}
-
-function HolidaysItem({ h, hIdx }: HolidaysItemProps) {
-  return (
-      <tr
-          className={classNames(
-              hIdx === 0 ? 'border-gray-300 dark:border-gray-600' : 'border-gray-200 dark:border-gray-700',
-              'border-t'
-          )}
-      >
-        <td className="whitespace-nowrap px-2 py-3 text-sm">{h.date}</td>
-        <td className="whitespace-nowrap px-2 py-3 text-sm">{h.weekday}</td>
-        <td className="whitespace-nowrap px-2 py-3 text-sm">{h.name}</td>
-      </tr>
-  );
+                    <Table>
+                        <TableCaption>
+                            A list of official holidays
+                            for {countries.find((country) => country.code === selectedCountry)?.name} in {selectedYear}.
+                        </TableCaption>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead className="w-[150px]">Date</TableHead>
+                                <TableHead>Holiday Description</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {holidays.map((holiday) => (
+                                <TableRow key={holiday.date}>
+                                    <TableCell className="font-medium">{holiday.date}</TableCell>
+                                    <TableCell>{holiday.description}</TableCell>
+                                </TableRow>
+                            ))}
+                        </TableBody>
+                        {holidays.length === 0 && (
+                            <TableFooter>
+                                <TableRow>
+                                    <TableCell colSpan={2} className="text-center">
+                                        No holidays found for the selected year and country.
+                                    </TableCell>
+                                </TableRow>
+                            </TableFooter>
+                        )}
+                    </Table>
+                </Card>
+            </main>
+        </>
+    );
 }

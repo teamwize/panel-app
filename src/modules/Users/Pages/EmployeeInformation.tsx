@@ -1,112 +1,157 @@
-import React, { useState, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
-import { useNavigate } from 'react-router-dom'
-import { getDaysoff } from "~/services/WorkiveApiClient.ts"
-import { toast } from "react-toastify";
-import { getErrorMessage } from "~/utils/errorHandler.ts"
-import { DayOffRequest, BalanceGraph, Pagination } from '../../../core/components'
-import { ChevronLeftIcon } from '@heroicons/react/24/outline'
-import { DayOffResponse } from '~/constants/types';
+import React, {useState, useEffect} from 'react'
+import {useParams} from 'react-router-dom'
+import {useNavigate} from 'react-router-dom'
+import {getUserDaysoff} from "~/services/WorkiveApiClient.ts"
+import {toast} from "@/components/ui/use-toast";
+import {getErrorMessage} from "~/utils/errorHandler.ts"
+import {DayOffRequest, BalanceGraph, Pagination} from '../../../core/components'
+import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
+import {DayOffResponse} from '~/constants/types';
+import dayjs from "dayjs";
+import {ChevronLeft} from "lucide-react";
+import {Alert, AlertDescription} from "@/components/ui/alert";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 
 type Balance = {
-  label: "Vacation" | "Sick leave" | "Paid time off";
-  dayOffTypeQuantity: number;
-  dayOffTypeUsed: number;
-  dayOffTypeColor: string;
+    label: "Vacation" | "Sick leave" | "Paid time off";
+    dayOffTypeQuantity: number;
+    dayOffTypeUsed: number;
+    dayOffTypeColor: string;
 }
 
 export default function EmployeeInformation() {
-  const [balanceValue, setBalanceValue] = useState<Balance[]>([])
-  const [requestsList, setRequestsList] = useState<DayOffResponse[]>([])
-  const [errorMessage, setErrorMessage] = useState<string | null>(null);
-  const navigate = useNavigate();
-  const { id } = useParams();
-  const [currentPage, setCurrentPage] = useState<number>(1);
-  const recordsPerPage: number = 5;
+    const [balanceValue, setBalanceValue] = useState<Balance[]>([])
+    const [requestsList, setRequestsList] = useState<DayOffResponse[]>([])
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const navigate = useNavigate();
+    const {id} = useParams();
+    const [currentPage, setCurrentPage] = useState<number>(1);
+    const recordsPerPage: number = 5;
 
-  // useEffect(() => {
-  //   doFetch('http://localhost:8080', {
-  //     method: 'GET'
-  //   }).then(data => {
-  //     console.log('Success:', data);
-  //     setBalanceValue(data)
-  //   }).catch(error => {
-  //     console.error('Error:', error);
-  //     const errorMessage = getErrorMessage(error);
-  //     toast.error(errorMessage)
-  //   })
-  // }, [])
+    // Example balance data
+    const balanceExample: Balance[] = [
+        {label: 'Vacation', dayOffTypeQuantity: 18, dayOffTypeUsed: 3, dayOffTypeColor: '#088636'},
+        {label: 'Sick leave', dayOffTypeQuantity: 5, dayOffTypeUsed: 2, dayOffTypeColor: '#ef4444'},
+        {label: 'Paid time off', dayOffTypeQuantity: 5, dayOffTypeUsed: 1, dayOffTypeColor: '#3b87f7'},
+    ];
 
-  //example
-  const balance: Balance[] = [
-    { label: "Vacation", dayOffTypeQuantity: 18, dayOffTypeUsed: 3, dayOffTypeColor: "#22c55e" },
-    { label: "Sick leave", dayOffTypeQuantity: 5, dayOffTypeUsed: 2, dayOffTypeColor: "#f87171" },
-    { label: "Paid time off", dayOffTypeQuantity: 5, dayOffTypeUsed: 1, dayOffTypeColor: "#60a5fa" }
-  ]
+    // Get list of requests
+    useEffect(() => {
+        getUserDaysoff(Number(id))
+            .then((data) => {
+                console.log('Success:', data.contents);
+                setRequestsList(data.contents);
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+                const errorMessage = getErrorMessage(error);
+                toast({
+                    title: "Error",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
+            });
+    }, []);
 
-  //get employee's dayoff list
-  useEffect(() => {
-    // doFetch('http://localhost:8080/days-off/' + id, {
-    getDaysoff()
-      .then(data => {
-        console.log('Success:', data.contents);
-        setRequestsList(data.contents)
-      })
-      .catch(error => {
-        console.error('Error:', error);
-        const errorMessage = getErrorMessage(error);
-        toast.error(errorMessage)
-      })
-  }, [])
+    const goBack = () => navigate('/organization/employee')
 
-  const goBack = () => navigate('/organization/employee')
+    const calculateDistance = (startAt: string, endAt: string): number => {
+        return dayjs(endAt).diff(startAt, "day") + 1;
+    };
 
+    return (
+        <>
+            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
+                <button onClick={goBack}>
+                    <ChevronLeft className="h-6 w-6"/>
+                </button>
+                <h1 className="text-lg font-semibold md:text-2xl">Employee Information</h1>
+            </div>
 
-  return (
-    <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
-      <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
-        <div className='flex items-center justify-between border-b border-gray-200 dark:border-gray-800 mb-4 pb-4'>
-          <div className="flex items-center">
-            <button onClick={goBack}>
-              <ChevronLeftIcon className='w-5 h-5 mx-4 text-indigo-600'></ChevronLeftIcon>
-            </button>
-            <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Employee Information</h1>
-          </div>
-        </div>
+            {errorMessage && (
+                <Alert>
+                    <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+            )}
 
-        {errorMessage && <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">{errorMessage}</p>}
+            <main className="flex flex-1 flex-col gap-4 p-4">
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
+                      x-chunk="dashboard-02-chunk-1">
+                    <div className="grid grid-cols-3 text-center gap-2 mx-auto">
+                        {balanceExample.map((i) => (
+                            <BalanceItem i={i} key={i.label}/>
+                        ))}
+                    </div>
 
-        <main className='px-4'>
-          <p className='text-sm font-semibold leading-6 mb-2 md:text-lg text-gray-900 dark:text-gray-300'>Balance</p>
-          <div className='flex text-center justify-center mb-4 mx-2'>
-            {balance.map(i => <BalanceItem i={i} key={i.label} />)}
-          </div>
+                    <div>
+                        <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
+                            <CardHeader className="px-6 py-4">
+                                <CardTitle className="text-xl">
+                                    Requests ({requestsList.length})
+                                </CardTitle>
+                            </CardHeader>
 
-          <div className='mb-4'>
-            <p className='text-sm font-semibold leading-6 mb-4 md:text-lg text-indigo-900 dark:text-indigo-200'>Requests ({requestsList ? requestsList.length : 0})</p>
-            {requestsList ? requestsList
-              .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
-              .sort((a, b) => Date.parse(b.startAt) - Date.parse(a.startAt))
-              .map((request) => <DayOffRequest request={request} key={request.id} />) : <p>There is no pending request</p>}
-          </div>
+                            <CardContent>
+                                <Table>
+                                    <TableHeader>
+                                        <TableRow>
+                                            <TableHead>Date</TableHead>
+                                            <TableHead>Status</TableHead>
+                                            <TableHead>Type</TableHead>
+                                        </TableRow>
+                                    </TableHeader>
+                                    <TableBody>
+                                        {requestsList.length > 0 ? (
+                                            requestsList
+                                                .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+                                                .map((request) => (
+                                                    <DayOffRequest
+                                                        request={request}
+                                                        key={request.id}
+                                                        calculateDistance={calculateDistance}
+                                                    />
+                                                ))
+                                        ) : (
+                                            <TableRow>
+                                                <TableCell colSpan={3} className="text-center">
+                                                    There is no pending request
+                                                </TableCell>
+                                            </TableRow>
+                                        )}
+                                    </TableBody>
+                                </Table>
+                            </CardContent>
 
-          {requestsList.length > recordsPerPage ? <Pagination pageSize={recordsPerPage} pageNumber={currentPage} setPageNumber={setCurrentPage} totalContents={requestsList.length} /> : ' '}
-        </main>
-      </div>
-    </div>
-  )
+                            {requestsList.length > recordsPerPage && (
+                                <Pagination
+                                    pageSize={recordsPerPage}
+                                    pageNumber={currentPage}
+                                    setPageNumber={setCurrentPage}
+                                    totalContents={requestsList.length}
+                                />
+                            )}
+                        </Card>
+                    </div>
+                </Card>
+            </main>
+        </>
+    )
 }
 
 type BalanceItemProps = {
-  i: Balance;
-}
+    i: Balance;
+};
 
-function BalanceItem({ i }: BalanceItemProps) {
-  return (
-    <div className='md:w-1/4 w-1/3 border rounded-md mx-1 p-2 lg:w-1/4 md:p-4 md:mx-2 border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800'>
-      <BalanceGraph title={i.label} dayOffTypeUsed={i.dayOffTypeUsed} dayOffTypeQuantity={i.dayOffTypeQuantity} dayOffTypeColor={i.dayOffTypeColor}></BalanceGraph>
-      <p className='mt-2 text-sm md:text-base' style={{ backgroundColor: i.dayOffTypeColor }}>{i.label}</p>
-      <p className='text-sm md:text-base'>{i.dayOffTypeUsed} / {i.dayOffTypeQuantity}</p>
-    </div>
-  )
+function BalanceItem({i}: BalanceItemProps) {
+    return (
+        <div
+            className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
+            <BalanceGraph
+                title={i.label}
+                dayOffTypeUsed={i.dayOffTypeUsed}
+                dayOffTypeQuantity={i.dayOffTypeQuantity}
+                dayOffTypeColor={i.dayOffTypeColor}
+            />
+        </div>
+    );
 }

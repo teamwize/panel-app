@@ -1,36 +1,50 @@
-import {useState, useContext, ReactNode} from "react"
-import {useForm} from "react-hook-form"
-import {useNavigate, useSearchParams} from 'react-router-dom'
-import {login} from "~/services/WorkiveApiClient.ts"
-import {UserContext} from "~/contexts/UserContext.tsx"
-import {toast} from "react-toastify";
-import {getErrorMessage} from "~/utils/errorHandler.ts"
-import {EyeIcon, EyeSlashIcon} from "@heroicons/react/24/outline"
-import {Logo, Alert} from '../../../core/components'
-import {AuthenticationResponse} from "~/constants/types"
+import React, { useState, useContext } from "react";
+import { useForm } from "react-hook-form";
+import { useNavigate, useSearchParams } from 'react-router-dom';
+import { login } from "~/services/WorkiveApiClient.ts";
+import { UserContext } from "~/contexts/UserContext.tsx";
+import { toast } from "@/components/ui/use-toast";
+import { getErrorMessage } from "~/utils/errorHandler.ts";
+import { Logo } from '../../../core/components';
+import { AuthenticationResponse, LoginRequest } from "~/constants/types";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
+import { z } from "zod";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Eye, EyeOff } from 'lucide-react';
 
-type LoginFormInputs = {
-    email: string;
-    password: string
-}
+const FormSchema = z.object({
+    email: z.string().email({ message: "Email format is not correct" }),
+    password: z.string().min(8, { message: "Password must be over 8 characters" }),
+});
 
 export default function Login() {
-    const {register, handleSubmit, formState: {errors}} = useForm<LoginFormInputs>()
-    const {authenticate} = useContext(UserContext)
-    const navigate = useNavigate()
+    const { authenticate } = useContext(UserContext);
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
-    const currentURL = searchParams.get('redirect')
-    const [showPassword, setShowPassword] = useState<boolean>(false)
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
-    const [isProcessing, setIsProcessing] = useState<boolean>(false)
+    const currentURL = searchParams.get('redirect');
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+    const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
-    const onSubmit = (data: LoginFormInputs) => {
-        LoginInfo(data);
-    }
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            email: "",
+            password: "",
+        },
+    });
 
-    const LoginInfo = (data: LoginFormInputs) => {
+    const onSubmit = (data: z.infer<typeof FormSchema>) => {
+        const payload: LoginRequest = {
+            email: data.email,
+            password: data.password,
+        };
+
         setIsProcessing(true);
-        login(data)
+        login(payload)
             .then((response: AuthenticationResponse) => {
                 setIsProcessing(false);
                 authenticate(response.accessToken, response.user);
@@ -40,80 +54,88 @@ export default function Login() {
                 setIsProcessing(false);
                 const errorMessage = getErrorMessage(error);
                 setErrorMessage(errorMessage);
-                toast.error(errorMessage);
+                toast({
+                    title: "Error",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
             });
     };
 
     return (
-        <>
-            <div className="flex flex-col w-full justify-center p-4 lg:px-8 h-screen">
-                <div className="md:mx-auto md:w-full md:max-w-5xl">
-                    <Logo className="mx-auto h-10 w-auto"/>
-                    <h2 className="my-4 text-center text-xl md:text-2xl font-semibold tracking-tight">Sign in to your
-                        account</h2>
+        <div className="flex items-center justify-center h-screen bg-gray-100">
+            <div className="w-full max-w-sm p-6 bg-white shadow-lg rounded-lg">
+                <div className="flex flex-col items-center mb-6">
+                    <Logo className="h-10 w-auto" />
+                    <h2 className="text-2xl font-semibold mt-4">Login</h2>
                 </div>
 
-                <div className="sm:mx-auto sm:w-full sm:max-w-md">
-                    <div
-                        className="border-indigo-200 bg-white dark:bg-slate-950 p-4 shadow sm:rounded-lg mx-2 rounded-xl flex flex-col">
-                        {errorMessage &&
-                            <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">
-                                {errorMessage}
-                            </p>}
-                        <form className="space-y-4" onSubmit={handleSubmit(onSubmit)}>
-                            <div>
-                                <label htmlFor="email" className="block text-sm leading-6">Email</label>
-                                <div className="mt-2">
-                                    <input {...register("email", {
-                                        required: "Email is required",
-                                        pattern: {
-                                            value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i,
-                                            message: "Please enter a valid email address"
-                                        }
-                                    })}
-                                           aria-invalid={errors.email ? "true" : "false"} name="email"
-                                           autoComplete="email"
-                                           className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-600 text-sm md:text-base sm:leading-6 px-4"/>
-                                    {errors.email && <Alert>{errors.email.message}</Alert>}
-                                </div>
-                            </div>
+                {errorMessage && (
+                    <Alert>
+                        <AlertDescription>{errorMessage}</AlertDescription>
+                    </Alert>
+                )}
 
-                            <div>
-                                <label htmlFor="password" className="block text-sm leading-6">Password</label>
-                                <div
-                                    className="mt-2 flex justify-between px-2 bg-indigo-50 dark:bg-slate-800 border border-gray-200 dark:border-gray-700 rounded-md">
-                                    <input {...register("password", {
-                                        required: "Password is required",
-                                        minLength: {value: 8, message: "Password is incorrect, please try again"}
-                                    })}
-                                           aria-invalid={errors.password ? "true" : "false"} name="password"
-                                           autoComplete="current-password" type={showPassword ? "text" : "password"}
-                                           className="block w-full py-1.5 bg-indigo-50 dark:bg-slate-800 placeholder:text-gray-600 text-sm md:text-base sm:leading-6 px-4"/>
-                                    <button type="button" onClick={() => setShowPassword(!showPassword)}
-                                            className="ml-2 outline-none focus:outline-none">
-                                        {showPassword ? (<EyeSlashIcon className="h-5 w-5 text-indigo-500"/>) : (
-                                            <EyeIcon className="h-5 w-5 text-gray-500"/>)}
-                                    </button>
-                                    {errors.password && <Alert>{errors.password.message}</Alert>}
-                                </div>
-                            </div>
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="email"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Email</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            id="email"
+                                            placeholder="Email"
+                                            {...field}
+                                        />
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <div className="flex justify-center md:flex-row">
-                                <a href="#"
-                                   className="text-indigo-600 hover:text-indigo-500 ml-4 block font-medium leading-6">
-                                    Forgot your password?
-                                </a>
-                            </div>
+                        <FormField
+                            control={form.control}
+                            name="password"
+                            render={({ field }) => (
+                                <FormItem>
+                                    <FormLabel>Password</FormLabel>
+                                    <FormControl>
+                                        <div className="relative">
+                                            <Input
+                                                id="password"
+                                                placeholder="Password"
+                                                type={showPassword ? "text" : "password"}
+                                                {...field}
+                                            />
+                                            <button
+                                                type="button"
+                                                onClick={() => setShowPassword(!showPassword)}
+                                                className="absolute inset-y-0 right-0 flex items-center px-2"
+                                            >
+                                                {showPassword ? (
+                                                    <EyeOff className="h-5 w-5" />
+                                                ) : (
+                                                    <Eye className="h-5 w-5" />
+                                                )}
+                                            </button>
+                                        </div>
+                                    </FormControl>
+                                    <FormMessage />
+                                </FormItem>
+                            )}
+                        />
 
-                            <button type="submit"
-                                    className="flex w-full justify-center rounded-md bg-indigo-600 py-2 px-3 text-sm font-semibold text-indigo-100 shadow-sm hover:bg-indigo-700">
-                                {isProcessing ? "Waiting ..." : "Sign in"}
-                            </button>
-                        </form>
+                        <div className="flex items-center justify-between">
+                            <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500">Forgot your password?</a>
+                        </div>
 
-                    </div>
-                </div>
+                        <Button type="submit" className="w-full mt-4">{isProcessing ? "Waiting ..." : "Sign in"}</Button>
+                    </form>
+                </Form>
             </div>
-        </>
-    )
+        </div>
+    );
 }

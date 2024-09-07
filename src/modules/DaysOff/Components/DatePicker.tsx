@@ -1,67 +1,77 @@
-import dayjs, { Dayjs } from 'dayjs';
-import { DayPicker } from 'react-day-picker';
+import dayjs from 'dayjs';
+import {useState} from 'react';
 import 'react-day-picker/dist/style.css';
-import { Dialog } from '@headlessui/react';
-import { CalendarDaysIcon } from "@heroicons/react/20/solid";
 import '../../../constants/style.css';
+import {CalendarDays} from 'lucide-react';
+import {Button} from "@/components/ui/button";
+import {Calendar} from "@/components/ui/calendar";
+import {
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from "@/components/ui/popover";
+import {Label} from "@/components/ui/label";
+import {isDateInWeekend} from "@/utils/dateUtils";
 
 type DatePickerProps = {
-  title: string;
-  calendarIsOn: boolean;
-  setCalendarIsOn: (isOn: boolean) => void;
-  handleDateSelected: (date: Date) => void;
-  selectedDate: Date;
-  daysBefore: Date;
-  setCalendarCurrentDate: (date: Dayjs) => void;
-  holidaysDate: Date[];
+    title: string;
+    handleDateSelected: (date: Date) => void;
+    selectedDate: Date;
+    daysBefore: Date;
+    holidays: Date[];
+    weekendsDays : string[]
+
 };
 
-export default function DatePicker({ title, calendarIsOn, setCalendarIsOn, handleDateSelected, selectedDate, daysBefore, setCalendarCurrentDate, holidaysDate }: DatePickerProps) {
-  const handleDaySelected = (date: Date) => {
-    handleDateSelected(date);
-  };
+export default function DatePicker({
+                                       title,
+                                       handleDateSelected,
+                                       selectedDate,
+                                       daysBefore,
+                                       holidays,
+                                       weekendsDays
+                                   }: DatePickerProps) {
+    const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-  const handleMonthChange = (newDate: Date) => {
-    setCalendarCurrentDate(dayjs(newDate));
-  };
+    const handleDaySelected = ((date: Date) => {
+        handleDateSelected(date);
+        setIsPopoverOpen(false);
+    });
 
-  const isDateDisabled = (date: Date): boolean => {
-    const disableDays = dayjs(date).isBefore(daysBefore, 'day') || holidaysDate.some((h) => dayjs(date).isSame(h, 'day'));
-    return disableDays;
-  };
+    const isDateDisabled = (date: Date): boolean => {
+        if (isDateInWeekend(date, weekendsDays)) {
+            return true;
+        }
+        return dayjs(date).isBefore(dayjs(daysBefore), 'day') ||
+            holidays.some((holiday) => dayjs(date).isSame(dayjs(holiday), 'day'));
+    };
 
-  return (
-    <div className="flex-1 bg-gray-100 dark:bg-gray-900 text-indigo-900 dark:text-indigo-200">
-      <div className={`${title === 'Start' ? 'mr-2' : ''} ${title === 'End' ? 'ml-2' : ''} flex flex-col justify-between`}>
-        <label htmlFor={title} className="block text-sm leading-6 mb-1">{title}</label>
-        <button
-          onClick={() => setCalendarIsOn(true)}
-          className="border py-3 rounded-md flex justify-center items-center text-sm md:text-base bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700"
-        >
-          <CalendarDaysIcon className="h-5 w-5 text-indigo-500 mr-1" aria-hidden="true" />
-          {dayjs(selectedDate).format('D MMM')}
-        </button>
-      </div>
-
-      <Dialog open={calendarIsOn} onClose={() => setCalendarIsOn(false)}>
-        <div className="fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-40">
-          <div className="flex min-h-full items-center justify-center text-center">
-            <Dialog.Panel className="max-w-xs transform overflow-hidden rounded-2xl text-left align-middle transition-all mx-4 w-full border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800">
-              <DayPicker
-                modifiers={{ holiday: holidaysDate }}
-                modifiersStyles={{ holiday: { color: '#ef4444' } }}
-                onMonthChange={handleMonthChange}
-                onDayClick={handleDaySelected}
-                disabled={isDateDisabled}
-                selected={selectedDate}
-                modifiersClassNames={{ today: 'my-today', selected: 'my-selected' }}
-                mode="single"
-                className="rounded-xl flex justify-center md:right-0 md:left-0 mx-auto max-w-xs"
-              />
-            </Dialog.Panel>
-          </div>
-        </div>
-      </Dialog>
-    </div>
-  );
+    return (
+        <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
+            <PopoverTrigger asChild>
+                <div className="flex flex-col gap-2">
+                    <Label htmlFor={title}>{title}</Label>
+                    <Button
+                        type={"button"}
+                        variant={"outline"}
+                        onClick={() => setIsPopoverOpen(!isPopoverOpen)}
+                    >
+                        <CalendarDays className="mr-2 h-4 w-4"/>
+                        <span>{dayjs(selectedDate).format('D MMM')}</span>
+                    </Button>
+                </div>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+                <Calendar
+                    modifiers={{notWorkingDay: isDateDisabled}}
+                    modifiersStyles={{notWorkingDay: {color: '#ef4444'}}}
+                    modifiersClassNames={{today: 'my-today', selected: 'my-selected'}}
+                    mode="single"
+                    selected={selectedDate}
+                    onSelect={handleDaySelected}
+                    disabled={isDateDisabled}
+                />
+            </PopoverContent>
+        </Popover>
+    );
 }

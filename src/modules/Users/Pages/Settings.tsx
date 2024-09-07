@@ -1,78 +1,53 @@
-import { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { Toolbar } from '../../../core/components';
-import { ThemeContext } from '~/contexts/ThemeContext.tsx';
-import { LockClosedIcon, GlobeAltIcon, MoonIcon } from '@heroicons/react/24/outline';
-import { Switch } from '@headlessui/react';
+import React, {useContext} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {PageTitle} from '../../../core/components';
+import {ThemeContext} from '~/contexts/ThemeContext.tsx';
+import { Switch } from "@/components/ui/switch"
+import {Card} from "@/components/ui/card";
+import {Lock, Globe, Moon} from 'lucide-react';
 
 export default function Settings() {
-  const { isDarkMode, toggleDarkMode } = useContext(ThemeContext);
-  const navigate = useNavigate();
+    const {isDarkMode, toggleDarkMode} = useContext(ThemeContext);
+    const navigate = useNavigate();
+    const navigateTo = (path: string) => () => navigate(path);
 
-  const viewChangePassword = () => {
-    navigate('/settings/change-password');
-  };
+    return (
+        <>
+            <PageTitle title="Setting"/>
 
-  const viewOfficialHolidays = () => {
-    navigate('/settings/official-holiday');
-  };
+            <main className="flex flex-1 flex-col gap-4 p-4">
 
-  function classNames(...classes: string[]) {
-    return classes.filter(Boolean).join(' ');
-  }
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
+                      x-chunk="dashboard-02-chunk-1">
+                    <button
+                        onClick={navigateTo('/settings/change-password')}
+                        className="flex items-center text-md font-semibold gap-2"
+                    >
+                        <Lock className="w-5 h-5"/>
+                        Change Password
+                    </button>
 
-  return (
-      <div className="md:w-4/5 w-full overflow-y-auto fixed top-16 md:top-0 bottom-0 right-0">
-        <div className="pt-4 md:mx-auto md:w-full md:max-w-[70%]">
-          <Toolbar title="Settings" />
+                    <button
+                        onClick={navigateTo('/settings/official-holiday')}
+                        className="flex items-center text-md font-semibold gap-2"
+                    >
+                        <Globe className="w-5 h-5"/>
+                        Official Holidays
+                    </button>
 
-          <main className="px-4">
-            <button
-                onClick={viewChangePassword}
-                className="flex items-center mb-5 text-sm font-semibold md:text-base"
-            >
-              <LockClosedIcon
-                  className="w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg"
-              />
-              Change Password
-            </button>
-
-            <button
-                onClick={viewOfficialHolidays}
-                className="flex items-center mb-5 text-sm font-semibold md:text-base"
-            >
-              <GlobeAltIcon
-                  className="w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg"
-              />
-              Official Holidays
-            </button>
-
-            <div className="flex justify-between items-center text-sm font-semibold md:text-base">
-              <div className="flex items-center">
-                <MoonIcon
-                    className="w-8 h-8 mr-2 bg-indigo-200 dark:bg-indigo-300 p-1.5 text-indigo-500 rounded-lg"
-                />
-                Dark mode
-              </div>
-              <Switch
-                  checked={isDarkMode}
-                  onChange={toggleDarkMode}
-                  className={classNames(
-                      isDarkMode ? 'bg-indigo-500' : 'bg-slate-300',
-                      'relative inline-flex h-5 w-10 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none focus:ring-2 focus:ring-indigo-600 focus:ring-offset-2'
-                  )}
-              >
-              <span
-                  aria-hidden="true"
-                  className={classNames(
-                      isDarkMode ? 'translate-x-5' : 'translate-x-0',
-                      'pointer-events-none inline-block h-4 w-4 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out'
-                  )}
-              />
-              </Switch>
-            </div>
-          </main>
-        </div>
-      </div>
-  );
+                    <div className="flex justify-between">
+                        <div className="flex items-center text-md font-semibold gap-2">
+                            <Moon className="w-5 h-5"/>
+                            Dark mode
+                        </div>
+                        <Switch
+                            checked={isDarkMode}
+                            onCheckedChange={toggleDarkMode}
+                        >
+                        </Switch>
+                    </div>
+                </Card>
+            </main>
+        </>
+    );
 }

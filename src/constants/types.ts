@@ -61,6 +61,16 @@ export enum UserRole {
     API = "API"
 }
 
+export type TeamCompactResponse = {
+    id: number;
+    name: string;
+}
+
+export type OrganizationCompactResponse = {
+    id: number;
+    name: string;
+}
+
 export type UserResponse = {
     id: number;
     status: UserStatus;
@@ -69,7 +79,10 @@ export type UserResponse = {
     firstName: string;
     lastName: string | null;
     phone: string | null;
-    team: OrganizationResponse;
+    team: TeamCompactResponse;
+    timezone: string | null;
+    countryCode: string | null;
+    organization: OrganizationCompactResponse;
 }
 
 export type UserCreateRequest = {
@@ -77,10 +90,11 @@ export type UserCreateRequest = {
     password: string;
     firstName: string;
     lastName: string;
-    phone?: string;
-    organizationName?: string;
-    timezone?: string;
-    countryCode?: string
+    phone: string;
+    role: UserRole;
+    timezone: string;
+    countryCode: string;
+    teamId: number
 }
 
 export type UserUpdateRequest = {
@@ -124,6 +138,7 @@ export type DayOffResponse = {
     endAt: string;
     status: DayOffRequestStatus;
     type: DayOffType;
+    reason: string;
     user: UserResponse
 }
 
@@ -151,8 +166,8 @@ export type LoginRequest = {
 }
 
 export type ChangePasswordRequest = {
-    currPass: string;
-    newPass: string
+    currentPassword: string;
+    newPassword: string
 }
 
 export type Balance = {
@@ -171,4 +186,34 @@ export type TeamResponse = {
     id: number;
     name: string;
     metadata: Record<string, object>;
+}
+
+export type HolidayResponse = {
+    id: number;
+    description: string;
+    date: string;
+    countryCode: string
+}
+
+export type HolidaysCreateRequest = {
+    description: string;
+    date: string;
+    countryCode: string
+}
+
+export  type FetchedPublicHoliday = {
+    date: string;
+    type: string;
+    name: string
+}
+
+export type RegistrationRequest = {
+    firstName: string;
+    lastName: string;
+    organizationName: string;
+    phone: string | null;
+    countryCode: string;
+    timezone: string | null;
+    email: string;
+    password: string
 }

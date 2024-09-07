@@ -12,11 +12,15 @@ import {
     OrganizationResponse,
     DayOffStatusUpdatePayload,
     TeamCreateRequest,
-    TeamResponse
+    TeamResponse,
+    HolidayResponse,
+    HolidaysCreateRequest,
+    FetchedPublicHoliday
 } from "~/constants/types";
 import {doFetch, baseURL} from "./BaseHttpService";
+import {RegistrationRequest} from "@/constants/types";
 
-async function registration(payload: UserCreateRequest): Promise<AuthenticationResponse> {
+async function registration(payload: RegistrationRequest): Promise<AuthenticationResponse> {
     return await doFetch(`${baseURL}/auth/register`, {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -94,6 +98,15 @@ async function getDaysoff(): Promise<PagedResponse<DayOffResponse>> {
     });
 }
 
+async function getUserDaysoff(id: number): Promise<PagedResponse<DayOffResponse>> {
+    const queryParams: URLSearchParams = new URLSearchParams({
+        id: id.toString(),
+    })
+    return await doFetch(`${baseURL}/days-off?` + queryParams.toString(), {
+        method: 'GET'
+    });
+}
+
 async function updateDayOffStatus(payload: DayOffStatusUpdatePayload, id: number): Promise<DayOffResponse> {
     return await doFetch(`${baseURL}/days-off/${id}`, {
         method: 'PUT',
@@ -115,7 +128,7 @@ async function createDayoff(payload: DayOffCreateRequest): Promise<DayOffRespons
 }
 
 async function updatePassword(payload: ChangePasswordRequest) {
-    return await doFetch(`${baseURL}/users/password`, {
+    return await doFetch(`${baseURL}/users/mine/password`, {
         method: 'PATCH',
         body: JSON.stringify(payload),
         headers: {
@@ -163,12 +176,41 @@ async function deleteTeam(id: number) {
 }
 
 async function updateTeam(payload: TeamCreateRequest, id: number): Promise<TeamResponse> {
-    return await doFetch(`${baseURL}/teams${id}`, {
+    return await doFetch(`${baseURL}/teams/${id}`, {
         method: 'PUT',
         body: JSON.stringify(payload),
         headers: {
             "Content-Type": "application/json"
         }
+    });
+}
+
+async  function getHolidays(year: number, countryCode: string): Promise<HolidayResponse[]> {
+    const queryParams: URLSearchParams = new URLSearchParams({
+        year: year.toString(),
+        countryCode: countryCode
+    })
+    return await doFetch(`${baseURL}/holidays?` + queryParams.toString(), {
+        method: 'GET'
+    });
+}
+
+async  function createHolidays(payload: HolidaysCreateRequest[]): Promise<HolidayResponse> {
+    return await doFetch(`${baseURL}/holidays/batch`, {
+        method: 'POST',
+        body: JSON.stringify(payload),
+        headers: {
+            "Content-Type": "application/json"
+        }
+    });
+}
+
+async  function fetchHolidays(year: number): Promise<FetchedPublicHoliday[]> {
+    const queryParams: URLSearchParams = new URLSearchParams({
+        year: year.toString(),
+    })
+    return await doFetch(`${baseURL}/holidays/fetch?` + queryParams.toString(), {
+        method: 'GET'
     });
 }
 
@@ -190,5 +232,9 @@ export {
     createTeam,
     getTeam,
     deleteTeam,
-    updateTeam
+    updateTeam,
+    getHolidays,
+    fetchHolidays,
+    createHolidays,
+    getUserDaysoff
 }

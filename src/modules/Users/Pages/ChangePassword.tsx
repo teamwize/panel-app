@@ -1,27 +1,56 @@
-import { useState } from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from 'react-router-dom';
-import { updatePassword } from "~/services/WorkiveApiClient.ts";
-import { toast } from "react-toastify";
-import { getErrorMessage } from "~/utils/errorHandler.ts";
-import { Button, Alert } from '../../../core/components';
-import { ChevronLeftIcon } from "@heroicons/react/24/outline";
+import React, {useState} from "react";
+import {useNavigate} from 'react-router-dom';
+import {updatePassword} from "~/services/WorkiveApiClient.ts";
+import {toast} from "@/components/ui/use-toast";
+import {getErrorMessage} from "~/utils/errorHandler.ts";
+import {Alert} from '../../../core/components';
+import {ChevronLeft} from 'lucide-react';
+import {AlertDescription} from "@/components/ui/alert";
+import {Button} from "@/components/ui/button";
+import {useForm} from "react-hook-form";
+import {z} from "zod";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {ChangePasswordRequest} from "@/constants/types";
+import {Input} from "@/components/ui/input";
+import {Card} from "@/components/ui/card";
 
-type ChangePasswordInputs = {
-    password: string;
-    newPassword: string;
-    reNewPassword: string;
-};
+const FormSchema = z.object({
+    password: z.string().min(8, {
+        message: "Current Password is incorrect, please try again",
+    }),
+    newPassword: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    }),
+    reNewPassword: z.string().min(8, {
+        message: "Password must be at least 8 characters.",
+    })
+});
 
 export default function ChangePassword() {
-    const { register, handleSubmit, formState: { errors } } = useForm<ChangePasswordInputs>();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            password: "",
+            newPassword: "",
+            reNewPassword: "",
+        },
+    });
+
     const goBack = () => navigate('/settings');
 
-    const onSubmit = (data: ChangePasswordInputs) => {
+    const onSubmit = (data: z.infer<typeof FormSchema>) => {
         if (data.newPassword !== data.reNewPassword) {
             setErrorMessage("Passwords don't match. Try again");
             return;
@@ -32,116 +61,102 @@ export default function ChangePassword() {
         changePasswordInfo(data);
     };
 
-    const changePasswordInfo = (data: ChangePasswordInputs) => {
-        const payload = {
-            currPass: data.password,
-            newPass: data.newPassword,
+    const changePasswordInfo = (data: z.infer<typeof FormSchema>) => {
+        const payload: ChangePasswordRequest = {
+            currentPassword: data.password,
+            newPassword: data.newPassword,
         };
 
         setIsProcessing(true);
         updatePassword(payload)
-            .then(data => {
+            .then(() => {
                 setIsProcessing(false);
-                console.log('Success:', data);
+                toast({
+                    title: "Success",
+                    description: "Profile updated successfully!",
+                    variant: "default",
+                });
+                navigate('/settings');
             })
             .catch(error => {
                 setIsProcessing(false);
-                console.error('Error:', error);
                 const errorMessage = getErrorMessage(error);
-                toast.error(errorMessage);
+                toast({
+                    title: "Error",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
             });
     };
 
     return (
-        <div className="md:w-4/5 overflow-y-auto w-full fixed mb-2 top-16 md:top-0 bottom-0 right-0 h-screen">
-            <div className="pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]">
-                <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
-                    <button onClick={goBack}>
-                        <ChevronLeftIcon className="w-5 h-5 mx-4 text-indigo-600" />
-                    </button>
-                    <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">
-                        Change Password
-                    </h1>
-                </div>
-
-                {errorMessage && (
-                    <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">
-                        {errorMessage}
-                    </p>
-                )}
-
-                <form className="space-y-4 px-4" onSubmit={handleSubmit(onSubmit)}>
-                    <div>
-                        <label htmlFor="password" className="block text-sm leading-6">
-                            Current Password
-                        </label>
-                        <div className="mt-2">
-                            <input
-                                {...register("password", {
-                                    required: "Password is required",
-                                    minLength: { value: 8, message: "Current Password is incorrect, please try again" }
-                                })}
-                                aria-invalid={errors.password ? "true" : "false"}
-                                name="password"
-                                type="password"
-                                className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-600 text-sm md:text-base sm:leading-6 px-4"
-                            />
-                            {errors.password && <Alert>{errors.password.message}</Alert>}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label htmlFor="newPassword" className="block text-sm leading-6">
-                            New Password
-                        </label>
-                        <div className="mt-2">
-                            <input
-                                {...register("newPassword", {
-                                    required: "New Password is required",
-                                    minLength: { value: 8, message: "Password must be over 8 characters" }
-                                })}
-                                aria-invalid={errors.newPassword ? "true" : "false"}
-                                name="newPassword"
-                                type="password"
-                                className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-600 text-sm md:text-base sm:leading-6 px-4"
-                            />
-                            {errors.newPassword && <Alert>{errors.newPassword.message}</Alert>}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label htmlFor="reNewPassword" className="block text-sm leading-6">
-                            Re-type New Password
-                        </label>
-                        <div className="mt-2">
-                            <input
-                                {...register("reNewPassword", {
-                                    required: "Re-type New Password is required",
-                                    minLength: { value: 8, message: "Password must be over 8 characters" }
-                                })}
-                                aria-invalid={errors.reNewPassword ? "true" : "false"}
-                                name="reNewPassword"
-                                type="password"
-                                className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-600 text-sm md:text-base sm:leading-6 px-4"
-                            />
-                            {errors.reNewPassword && <Alert>{errors.reNewPassword.message}</Alert>}
-                        </div>
-                    </div>
-
-                    <div className="text-sm">
-                        <a href="#" className="font-medium text-indigo-600 hover:text-indigo-500">
-                            Forgot your password?
-                        </a>
-                    </div>
-
-                    <Button
-                        type="submit"
-                        isProcessing={isProcessing}
-                        text="Change Password"
-                        className="flex justify-center w-full md:w-1/4"
-                    />
-                </form>
+        <>
+            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
+                <button onClick={goBack}>
+                    <ChevronLeft className="h-6 w-6"/>
+                </button>
+                <h1 className="text-lg font-semibold md:text-2xl">Change Password</h1>
             </div>
-        </div>
+
+            {errorMessage && (
+                <Alert>
+                    <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+            )}
+
+            <main className="flex flex-1 flex-col gap-4 p-4">
+                <Card
+                    className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4"
+                    x-chunk="dashboard-02-chunk-1"
+                >
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                            <FormField
+                                control={form.control}
+                                name="password"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Password</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Password" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="newPassword"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>New Password</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="New Password" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="reNewPassword"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Re-New Password</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Re-New Password" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit" className="w-fit" disabled={isProcessing}>
+                                {isProcessing ? 'Processing...' : 'Submit'}
+                            </Button>
+                        </form>
+                    </Form>
+                </Card>
+            </main>
+        </>
     );
 }

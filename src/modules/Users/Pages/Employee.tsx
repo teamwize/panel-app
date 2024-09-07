@@ -1,13 +1,22 @@
 import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {getEmployee, deleteEmployee} from '~/services/WorkiveApiClient.ts';
-import {toast} from 'react-toastify';
+import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {Pagination} from '../../../core/components';
-import {Dialog} from '@headlessui/react';
-import {XMarkIcon, ChevronLeftIcon} from '@heroicons/react/24/outline';
-import {PlusIcon} from '@heroicons/react/20/solid';
+import {
+    Dialog,
+    DialogContent,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription
+} from "@/components/ui/dialog";
+import {Card} from "@/components/ui/card";
 import {PagedResponse, UserResponse} from '~/constants/types';
+import {ChevronLeft} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Alert, AlertDescription} from "@/components/ui/alert";
 
 export default function Employees() {
     const [employeesList, setEmployeesList] = useState<PagedResponse<UserResponse> | null>(null);
@@ -20,7 +29,7 @@ export default function Employees() {
     const recordsPerPage: number = 5;
 
     useEffect(() => {
-        getEmployee(1, 30)
+        getEmployee(0, 30)
             .then((data: PagedResponse<UserResponse>) => {
                 console.log('Success:', data);
                 setEmployeesList(data);
@@ -29,7 +38,11 @@ export default function Employees() {
                 console.error('Error:', error);
                 const errorMessage = getErrorMessage(error);
                 setErrorMessage(errorMessage);
-                toast.error(errorMessage);
+                toast({
+                    title: "Error",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
             });
     }, []);
 
@@ -58,7 +71,11 @@ export default function Employees() {
                     setIsProcessing(false);
                     console.error('Error:', error);
                     const errorMessage = getErrorMessage(error);
-                    toast.error(errorMessage);
+                    toast({
+                        title: "Error",
+                        description: errorMessage,
+                        variant: "destructive",
+                    });
                 });
         } else {
             closeRemove();
@@ -70,63 +87,61 @@ export default function Employees() {
     };
 
     return (
-        <div className='md:w-4/5 overflow-y-auto w-full mb-2 fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
-            <div className='pt-5 md:mx-auto md:w-full md:max-w-[70%]'>
-                <div
-                    className='flex items-center justify-between px-4 border-b border-gray-200 dark:border-gray-800 pb-4'>
-                    <div className="flex items-center">
-                        <button onClick={goBack}>
-                            <ChevronLeftIcon className='w-5 h-5 mr-4 text-indigo-600'/>
-                        </button>
-                        <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">
-                            Employees ({employeesList ? employeesList.contents.length : 0})
-                        </h1>
-                    </div>
-                    <button onClick={viewAddEmployee}
-                            className='flex items-center rounded-md px-2 py-1 shadow-sm bg-indigo-600 text-indigo-100 text-sm font-semibold hover:bg-indigo-700'>
-                        <PlusIcon className='h-5 w-5 mr-2 text-indigo-300'/>
-                        Create
+        <>
+            <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
+                <div className="flex flex-wrap items-center gap-2">
+                    <button onClick={goBack}>
+                        <ChevronLeft className="h-6 w-6"/>
                     </button>
+                    <h1 className="text-lg font-semibold md:text-2xl">
+                        Employees ({employeesList ? employeesList.contents.length : 0})
+                    </h1>
                 </div>
-
-                {errorMessage &&
-                    <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">
-                        {errorMessage}
-                    </p>
-                }
-
-                {employeesList && employeesList.contents.length > 0 ? (
-                    employeesList.contents
-                        .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
-                        .map(e => (
-                            <EmployeeItem
-                                e={e}
-                                key={e.id}
-                                viewDetails={viewDetails}
-                                setRemove={(id) => {
-                                    setRemove(true);
-                                    setSelectedEmployeeId(id);
-                                }}
-                                remove={remove}
-                                closeRemove={closeRemove}
-                                handleRequest={handleRequest}
-                                isProcessing={isProcessing}
-                            />
-                        ))
-                ) : (
-                    <p className="text-center text-gray-500 py-6">No employees found.</p>
-                )}
-
-                {employeesList && employeesList.contents.length > recordsPerPage && (
-                    <Pagination
-                        pageSize={recordsPerPage}
-                        pageNumber={currentPage}
-                        setPageNumber={setCurrentPage}
-                        totalContents={employeesList.totalContents}
-                    />
-                )}
+                <Button onClick={viewAddEmployee}>Create</Button>
             </div>
-        </div>
+
+            {errorMessage && (
+                <Alert>
+                    <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+            )}
+
+             <main className="flex flex-1 flex-col gap-4 p-4">
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
+                      x-chunk="dashboard-02-chunk-1">
+                    {employeesList && employeesList.contents.length > 0 ? (
+                        employeesList.contents
+                            .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+                            .map(e => (
+                                <EmployeeItem
+                                    e={e}
+                                    key={e.id}
+                                    viewDetails={viewDetails}
+                                    setRemove={(id) => {
+                                        setRemove(true);
+                                        setSelectedEmployeeId(id);
+                                    }}
+                                    remove={remove}
+                                    closeRemove={closeRemove}
+                                    handleRequest={handleRequest}
+                                    isProcessing={isProcessing}
+                                />
+                            ))
+                    ) : (
+                        <p className="p-2 text-center text-sm">No employees found.</p>
+                    )}
+
+                    {employeesList && employeesList.contents.length > recordsPerPage && (
+                        <Pagination
+                            pageSize={recordsPerPage}
+                            pageNumber={currentPage}
+                            setPageNumber={setCurrentPage}
+                            totalContents={employeesList.totalContents}
+                        />
+                    )}
+                </Card>
+            </main>
+        </>
     );
 }
 
@@ -155,47 +170,29 @@ function EmployeeItem({
                 <img className="inline-block h-10 w-10 rounded-full mr-2"
                      src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
                      alt={`${e.firstName} ${e.lastName}`}/>
-                <div>
-                    <p className="font-semibold text-sm mb-1">{e.firstName} {e.lastName}</p>
-                    <button onClick={() => viewDetails(e.id)}
-                            className="rounded-md px-2 py-1 shadow-md bg-indigo-400 text-xs text-white">
-                        View Details
-                    </button>
+                <div className='flex flex-col'>
+                    <p className="text-sm mb-1">{e.firstName} {e.lastName}</p>
+                    <Button className='h-7 px-2 text-xs rounded-full w-fit' onClick={() => viewDetails(e.id)}>Details</Button>
                 </div>
             </div>
 
-            <button onClick={() => setRemove(e.id)}
-                    className='rounded-xl px-2 py-1 shadow-md bg-red-600 hover:bg-red-700 text-xs font-semibold text-white'>
-                Remove
-            </button>
+            <Button onClick={() => setRemove(e.id)}>Remove</Button>
 
-            <Dialog open={remove} onClose={closeRemove}>
-                <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#00000042] z-40'>
-                    <div className="flex min-h-full items-center justify-center p-4 text-center">
-                        <Dialog.Panel
-                            className="w-full max-w-md transform overflow-hidden rounded-2xl border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800 p-6 text-left align-middle transition-all">
-                            <div className='flex items-center mb-6'>
-                                <XMarkIcon onClick={closeRemove}
-                                           className='w-5 h-5 mr-2 cursor-pointer text-red-600'/>
-                                <h1 className='font-semibold md:text-lg'>Remove Employee</h1>
-                            </div>
-
-                            <p className="fullname text-sm text-center mb-12">Are you sure you want to remove the
-                                employee?</p>
-
-                            <section className='flex text-center justify-center'>
-                                <button onClick={closeRemove}
-                                        className='rounded-lg p-2 shadow-md border border-red-600 w-1/2'>
-                                    No
-                                </button>
-                                <button onClick={() => handleRequest(true, e.id)}
-                                        className='rounded-lg p-2 shadow-md ml-4 bg-red-600 text-indigo-100 w-1/2'>
-                                    {isProcessing ? "Waiting ..." : "Yes"}
-                                </button>
-                            </section>
-                        </Dialog.Panel>
-                    </div>
-                </div>
+            <Dialog open={remove} onOpenChange={closeRemove}>
+                <DialogContent className="sm:max-w-md">
+                    <DialogHeader>
+                        <DialogTitle>Remove Employee</DialogTitle>
+                    </DialogHeader>
+                    <DialogDescription>Are you sure you want to remove the employee?</DialogDescription>
+                    <DialogFooter className="flex justify-center">
+                        <Button variant="outline" onClick={closeRemove}>
+                            No
+                        </Button>
+                        <Button variant="destructive" className="ml-4" onClick={() => handleRequest(true, e.id)}>
+                            {isProcessing ? "Waiting ..." : "Yes"}
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
             </Dialog>
         </div>
     );

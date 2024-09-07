@@ -1,10 +1,19 @@
 import {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import dayjs, {Dayjs} from 'dayjs';
-import {Dialog} from '@headlessui/react';
+import {
+    Dialog,
+    DialogContent,
+    DialogHeader,
+    DialogTitle,
+    DialogDescription,
+    DialogFooter
+} from "@/components/ui/dialog";
 import {DayOffLeaveTypeJson} from '~/constants/index.ts';
-import {ExclamationCircleIcon} from '@heroicons/react/24/outline';
 import {DayOffRequestStatus, DayOffResponse} from '~/constants/types';
+import {Button} from '@/components/ui/button';
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {CircleAlert} from 'lucide-react';
 
 type DayOffModalProps = {
     selectedRequest: DayOffResponse;
@@ -40,95 +49,111 @@ export default function DayOffModal({
             const start = dayjs(r.startAt);
             const end = dayjs(r.endAt);
 
-            return (start.isBefore(endDayoff) && end.isAfter(startDayoff));
-        })
+            return start.isBefore(endDayoff) && end.isAfter(startDayoff);
+        });
 
-        setDayOverlap(overlap)
+        setDayOverlap(overlap);
     }, [selectedRequest.id, teamRequests]);
 
     const distance: number = calculateDistance(selectedRequest.startAt, selectedRequest.endAt);
 
     return (
-        <Dialog open={true} onClose={handleModal}>
-            <div className='fixed inset-0 overflow-y-auto top-[-22px] bg-[#1111118c] z-50'>
-                <div className="flex min-h-full items-center justify-center p-4 text-center">
-                    <Dialog.Panel
-                        className="w-full max-w-md transform overflow-hidden rounded-2xl border-indigo-100 dark:border-slate-700 bg-indigo-50 dark:bg-slate-800 dark:text-indigo-100 text-indigo-800 p-6 text-left align-middle transition-all">
-                        <section className='flex-col items-start mb-4'>
-                            <div className='flex items-center mb-2'>
-                                <img className="inline-block h-10 w-10 rounded-full mr-2"
-                                     src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
-                                     alt="User"/>
-                                <div>
-                                    <p className="fullname text-sm font-semibold mb-1">{selectedRequest.user.firstName} {selectedRequest.user.lastName}</p>
-                                    <p onClick={() => viewBalance(selectedRequest.user.team.name)}
-                                       className="rounded-md px-2 py-1 shadow-md bg-indigo-400 text-xs w-fit cursor-pointer text-white">View
-                                        balance</p>
-                                </div>
+        <Dialog open={true} onOpenChange={handleModal}>
+            <DialogContent className="text-sm">
+                <DialogHeader>
+                    <DialogTitle className='mb-1.5'>Day Off Request</DialogTitle>
+                    <DialogDescription className='py-1'>
+                        <div className='flex items-center'>
+                            <img className="inline-block h-10 w-10 rounded-full mr-2"
+                                 src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
+                                 alt="User"/>
+                            <div className="flex flex-col gap-1 font-semibold">
+                                <span>{selectedRequest.user.firstName} {selectedRequest.user.lastName}</span>
+                                <Button className='h-7 px-2 text-xs rounded-full'
+                                        onClick={() => viewBalance(selectedRequest.user.team.name)}>View
+                                    Balance</Button>
                             </div>
+                        </div>
 
-                            <div>
-                                <p className='date text-sm mb-2 flex flex-col'>
-                                    <label htmlFor='start' className="mr-1 text-xs text-gray-500">Date</label>
-                                    {distance === 1 ? dayjs(selectedRequest.startAt).format('D MMM') : `${dayjs(selectedRequest.startAt).format('D MMM')} - ${dayjs(selectedRequest.endAt).format('D MMM')}`} ({distance} {distance === 1 ? "Day" : "Days"})
-                                </p>
+                        <Table>
+                            <TableHeader>
+                                <TableRow className='text-xs'>
+                                    <TableHead>Date</TableHead>
+                                    <TableHead>Type</TableHead>
+                                    <TableHead>Request Date</TableHead>
+                                    {selectedRequest.reason && (
+                                        <TableHead>Explanation</TableHead>
+                                    )}
+                                </TableRow>
+                            </TableHeader>
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell>
+                                        {distance === 1
+                                            ? dayjs(selectedRequest.startAt).format('D MMM YYYY')
+                                            : `${dayjs(selectedRequest.startAt).format('D MMM YYYY')} - ${dayjs(selectedRequest.endAt).format('D MMM YYYY')}`}
+                                        {" "}({distance} {distance === 1 ? "Day" : "Days"})
+                                    </TableCell>
+                                    <TableCell>
+                                        {DayOffLeaveTypeJson[selectedRequest.type as keyof typeof DayOffLeaveTypeJson]}
+                                    </TableCell>
+                                    <TableCell>
+                                        {dayjs(selectedRequest.createdAt).format('D MMM YYYY')}
+                                    </TableCell>
+                                    {selectedRequest.reason && (
+                                        <TableCell>{selectedRequest.reason}</TableCell>
+                                    )}
+                                </TableRow>
+                            </TableBody>
+                        </Table>
+                    </DialogDescription>
+                </DialogHeader>
 
-                                <p className='type text-sm mb-2 flex flex-col'>
-                                    <label htmlFor='type' className="mr-1 text-xs text-gray-500">Type</label>
-                                    {DayOffLeaveTypeJson[selectedRequest.type as keyof typeof DayOffLeaveTypeJson]}
-                                </p>
+                {dayOverlap.length > 0 && (
+                    <div className='rounded-lg mb-4'>
+                        <p className='text-red-500 text-xs mb-1 flex items-center'>
+                            <CircleAlert className='w-4 h-4 mr-1'/>
+                            {dayOverlap.length} Other teammates also on leave
+                        </p>
+                        {dayOverlap.map(r => (
+                            <RequestItem r={r} distance={distance} key={r.id}/>
+                        ))}
+                    </div>
+                )}
 
-                                <p className='text-sm flex flex-col mb-2'>
-                                    <label className="mr-1 text-xs text-gray-500">Created at</label>
-                                    {dayjs(selectedRequest.createdAt).format('D MMM')}
-                                </p>
-
-                                <p className='reason text-sm flex flex-col'>
-                                    <label htmlFor='explanation'
-                                           className="mr-1 text-xs text-gray-500">Explanation</label>
-                                    {/* {request.reason || 'No explanation provided'} */}
-                                </p>
-                            </div>
-                        </section>
-
-                        {dayOverlap.length > 0 &&
-                            (<div className='rounded-lg mb-4'>
-                                <p className='text-red-500 dark:text-red-300 text-xs mb-1 flex items-center'>
-                                    <ExclamationCircleIcon className='w-4 h-4 mr-1'/>
-                                    {dayOverlap.length} Other teammates also on leave
-                                </p>
-                                {dayOverlap.map(r => <RequestItem r={r} key={r.id} distance={distance}/>)}
-                            </div>)}
-
-                        <section className='flex text-center justify-center'>
-                            <button onClick={() => handleRequest(DayOffRequestStatus.REJECTED, selectedRequest.id)}
-                                    className='rounded-md p-2 text-white shadow-md bg-red-600 w-1/2'>
-                                {isProcessing ? "Waiting ..." : "Reject"}
-                            </button>
-                            <button onClick={() => handleRequest(DayOffRequestStatus.ACCEPTED, selectedRequest.id)}
-                                    className='rounded-md p-2 text-white shadow-md ml-4 bg-green-500 w-1/2'>
-                                {isProcessing ? "Waiting ..." : "Accept"}
-                            </button>
-                        </section>
-                    </Dialog.Panel>
-                </div>
-            </div>
+                <DialogFooter className="flex justify-center">
+                    <Button
+                        onClick={() => handleRequest(DayOffRequestStatus.REJECTED, selectedRequest.id)}
+                        variant="outline"
+                        disabled={isProcessing}
+                    >
+                        {isProcessing ? "Waiting ..." : "Reject"}
+                    </Button>
+                    <Button
+                        onClick={() => handleRequest(DayOffRequestStatus.ACCEPTED, selectedRequest.id)}
+                        className="ml-4 bg-[#088636]"
+                        disabled={isProcessing}
+                    >
+                        {isProcessing ? "Waiting ..." : "Accept"}
+                    </Button>
+                </DialogFooter>
+            </DialogContent>
         </Dialog>
     );
 }
 
 type RequestItemProps = {
     r: DayOffResponse;
-    distance: number
+    distance: number;
 };
 
 function RequestItem({r, distance}: RequestItemProps) {
     return (
-        <section>
-            <h1 className='text-sm mb-1'>{r.user.firstName} {r.user.lastName}</h1>
-            <p className="text-xs text-gray-500 mb-2">
-                {distance === 1 ? dayjs(r.startAt).format('D MMM') : `${dayjs(r.startAt).format('D MMM')} - ${dayjs(r.endAt).format('D MMM')}`}
+        <div className="mb-2">
+            <h1>{r.user.firstName} {r.user.lastName}</h1>
+            <p>
+                {distance === 1 ? dayjs(r.startAt).format('D MMM YYYY') : `${dayjs(r.startAt).format('D MMM YYYY')} - ${dayjs(r.endAt).format('D MMM YYYY')}`}
             </p>
-        </section>
+        </div>
     );
 }

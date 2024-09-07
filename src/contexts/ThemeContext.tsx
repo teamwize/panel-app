@@ -17,7 +17,7 @@ export const ThemeContextProvider = ({ children }: ThemeContextProviderProps) =>
   const [isDarkMode, setIsDarkMode] = useLocalStorage<boolean>("DARK_MODE", prefersDarkMode)
 
   useEffect(() => {
-    if (isDarkMode) {
+    if (!isDarkMode) {
       document.body.classList.add('dark');
     } else {
       document.body.classList.remove('dark');

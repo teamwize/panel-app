@@ -1,115 +1,193 @@
-import {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useNavigate} from 'react-router-dom';
 import {updateOrganization} from "~/services/WorkiveApiClient.ts";
-import {toast} from "react-toastify";
+import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {Button, Alert} from '../../../core/components';
-import {ChevronLeftIcon} from "@heroicons/react/24/outline";
-import {OrganizationResponse, OrganizationUpdateRequest} from "~/constants/types";
+import {Alert} from '../../../core/components';
+import {Card} from "@/components/ui/card";
+import {OrganizationResponse, OrganizationUpdateRequest, DayOffType} from "~/constants/types";
+import {Button} from "@/components/ui/button";
+import {ChevronLeft} from "lucide-react";
+import {AlertDescription} from "@/components/ui/alert";
+import {z} from "zod";
+import {
+    Form,
+    FormControl,
+    FormField,
+    FormItem,
+    FormLabel,
+    FormMessage,
+} from "@/components/ui/form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Input} from "@/components/ui/input";
 
-type FormInput = {
-    vacation: number;
-    sick: number;
-    paidTime: number;
-}
+const FormSchema = z.object({
+    vacation: z.number().min(0, {message: "Vacation is required"}),
+    sick: z.number().min(0, {message: "Sick leave is required"}),
+    paidTime: z.number().min(0, {message: "Paid time is required"}),
+});
 
 export default function OrganizationBalance() {
-    const {register, handleSubmit, formState: {errors}} = useForm<FormInput>();
+    const [balanceInfo, setBalanceInfo] = useState<DayOffType>();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
+    const form = useForm<z.infer<typeof FormSchema>>({
+        resolver: zodResolver(FormSchema),
+        defaultValues: {
+            vacation: 0,
+            sick: 0,
+            paidTime: 0,
+        },
+    });
+
     const goBack = () => navigate('/organization');
 
-    const onSubmit = (data: FormInput) => {
-        setBalance(data);
-    }
+    // useEffect(() => {
+    //     getOrganization()
+    //         .then((response: OrganizationResponse) => {
+    //             setBalanceInfo(response);
+    //             console.log(response);
+    //             form.reset({
+    //                 vacation: response.vacation,
+    //                 sick: response.sick,
+    //                 paidTime: response.paidTime,
+    //             });
+    //         })
+    //         .catch((error) => {
+    //             const errorMessage = getErrorMessage(error);
+    //             toast({
+    //                 title: "Error",
+    //                 description: errorMessage,
+    //                 variant: "destructive",
+    //             });
+    //         });
+    // }, []);
 
-    const setBalance = (data: FormInput) => {
-        let payload  = {
+    const onSubmit = (data: z.infer<typeof FormSchema>) => {
+        const payload = {
             VACATION: data.vacation,
             SICK_LEAVE: data.sick,
-            PAID_TIME: data.paidTime
-        }
+            PAID_TIME: data.paidTime,
+        };
+        setBalance(payload);
+    }
+
+    const setBalance = (payload: { VACATION: number; SICK_LEAVE: number; PAID_TIME: number; }) => {
         setIsProcessing(true);
 
-        updateOrganization(null)
-            .then((response: OrganizationResponse) => {
-                setIsProcessing(false);
-                console.log('Success:', response);
-                toast.success('Balance updated successfully');
-            })
-            .catch((error: string) => {
-                setIsProcessing(false);
-                console.error('Error:', error);
-                const errorMessage = getErrorMessage(error);
-                setErrorMessage(errorMessage);
-                toast.error(errorMessage);
-            });
+        // updateOrganization(payload)
+        //     .then((response: OrganizationResponse) => {
+        //         setIsProcessing(false);
+        //         console.log('Success:', response);
+        //         toast({
+        //             title: 'Success',
+        //             description: 'Balance updated successfully',
+        //             variant: 'default'
+        //         });
+        //     })
+        //     .catch((error: string) => {
+        //         setIsProcessing(false);
+        //         console.error('Error:', error);
+        //         const errorMessage = getErrorMessage(error);
+        //         setErrorMessage(errorMessage);
+        //         toast({
+        //             title: 'Error',
+        //             description: errorMessage,
+        //             variant: 'destructive'
+        //         });
+        //     });
     }
 
     return (
-        <div className='md:w-4/5 overflow-y-auto mb-2 w-full fixed top-16 md:top-0 bottom-0 right-0 h-screen'>
-            <div className='pt-5 py-4 md:mx-auto md:w-full md:max-w-[70%]'>
-                <div className="flex items-center border-b border-gray-200 dark:border-gray-800 pb-4 mb-4">
-                    <button onClick={goBack}>
-                        <ChevronLeftIcon className='w-5 h-5 mx-4 text-indigo-600'></ChevronLeftIcon>
-                    </button>
-                    <h1 className="text-lg md:text-xl font-semibold text-indigo-900 dark:text-indigo-200">Set
-                        Balance</h1>
-                </div>
-
-                {errorMessage && (
-                    <p className="mb-4 text-center text-red-500 bg-red-200 dark:bg-red-900 dark:text-red-300 py-2 text-sm px-4 rounded-md right-0 left-0 mx-auto max-w-lg">
-                        {errorMessage}
-                    </p>
-                )}
-
-                <form className="space-y-4 px-4" onSubmit={handleSubmit(onSubmit)}>
-                    <div>
-                        <label htmlFor="vacation" className="block text-sm leading-6">Vacation</label>
-                        <div className="mt-2">
-                            <input {...register("vacation", {
-                                required: "Vacation is required",
-                                pattern: {value: /^[0-9]+$/, message: 'Please enter a valid number'}
-                            })} aria-invalid={errors.vacation ? "true" : "false"}
-                                   name="vacation"
-                                   className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-500 text-sm md:text-base sm:leading-6 px-4"/>
-                            {errors.vacation && <Alert>{errors.vacation.message}</Alert>}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label htmlFor="sick" className="block text-sm leading-6">Sick leave</label>
-                        <div className="mt-2">
-                            <input {...register("sick", {
-                                required: "Sick leave is required",
-                                pattern: {value: /^[0-9]+$/, message: 'Please enter a valid number'}
-                            })} aria-invalid={errors.sick ? "true" : "false"}
-                                   name="sick"
-                                   className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-500 text-sm md:text-base sm:leading-6 px-4"/>
-                            {errors.sick && <Alert>{errors.sick.message}</Alert>}
-                        </div>
-                    </div>
-
-                    <div>
-                        <label htmlFor="paidTime" className="block text-sm leading-6">Paid time</label>
-                        <div className="mt-2">
-                            <input {...register("paidTime", {
-                                required: "Paid time is required",
-                                pattern: {value: /^[0-9]+$/, message: 'Please enter a valid number'}
-                            })} aria-invalid={errors.paidTime ? "true" : "false"}
-                                   name="paidTime"
-                                   className="block w-full rounded-md border bg-indigo-50 dark:bg-slate-800 border-indigo-100 dark:border-slate-700 py-1.5 placeholder:text-gray-500 text-sm md:text-base sm:leading-6 px-4"/>
-                            {errors.paidTime && <Alert>{errors.paidTime.message}</Alert>}
-                        </div>
-                    </div>
-
-                    <Button type='submit' isProcessing={isProcessing} text='Save'
-                            className='flex justify-center w-full md:w-1/4 mt-4'></Button>
-                </form>
+        <>
+            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
+                <button onClick={goBack}>
+                    <ChevronLeft className="h-6 w-6"/>
+                </button>
+                <h1 className="text-lg font-semibold md:text-2xl">Set Balance</h1>
             </div>
-        </div>
+
+            {errorMessage && (
+                <Alert>
+                    <AlertDescription>{errorMessage}</AlertDescription>
+                </Alert>
+            )}
+
+            <main className="flex flex-1 flex-col gap-4 p-4">
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
+                      x-chunk="dashboard-02-chunk-1">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4 px-4">
+                            <FormField
+                                control={form.control}
+                                name="vacation"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Vacation</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Vacation"
+                                                type="number"
+                                                min="0"
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="sick"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Sick Leave</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Sick Leave"
+                                                type="number"
+                                                min="0"
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <FormField
+                                control={form.control}
+                                name="paidTime"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Paid Time</FormLabel>
+                                        <FormControl>
+                                            <Input
+                                                {...field}
+                                                placeholder="Paid Time"
+                                                type="number"
+                                                min="0"
+                                                onChange={(e) => field.onChange(e.target.valueAsNumber)}
+                                            />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+
+                            <Button type="submit" className="w-fit" disabled={isProcessing}>
+                                {isProcessing ? 'Processing...' : 'Save'}
+                            </Button>
+                        </form>
+                    </Form>
+                </Card>
+            </main>
+        </>
     )
 }
