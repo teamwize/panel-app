@@ -19,7 +19,7 @@ export default function Root() {
     <>
       <Routes>
         <Route path='/register' element={<Register />}></Route>
-        <Route path='/calendar' element={<AuthenticatedRoute><Calendar /></AuthenticatedRoute>}></Route>
+        <Route path='/' element={<AuthenticatedRoute><Calendar /></AuthenticatedRoute>}></Route>
         <Route path='/login' element={<Login />}></Route>
         <Route path='/dayoff/create' element={<AuthenticatedRoute><CreateDayOff /></AuthenticatedRoute>}></Route>
         <Route path='/dayoff/pending' element={<AuthenticatedRoute><PendingDayOff /></AuthenticatedRoute>}></Route>

@@ -48,7 +48,7 @@ export default function CalendarPage() {
     const [calendarCurrentDate, setCalendarCurrentDate] = useState<dayjs.Dayjs>(dayjs(new Date()));
     const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
     const navigate = useNavigate();
-    const { user } = useContext(UserContext);
+    const {user} = useContext(UserContext);
 
     const selectedDateRequests: DayOffResponse[] = requestsList.filter((r) =>
         dayjs(selectedDate).isBetween(dayjs(r.startAt), dayjs(r.endAt), "days", "[]")
@@ -173,22 +173,26 @@ export default function CalendarPage() {
                 </Alert>
             )}
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
+            <main className="flex flex-1 flex-col gap-4 p-4  justify-start justify-items-start">
                 <Card
-                    className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm"
-                    x-chunk="dashboard-02-chunk-1"
+                    className="flex  flex-col rounded-lg border border-dashed shadow-sm justify-start"
                 >
-                    <Calendar
-                        modifiers={{highlighted: offDays, notWorkingDay: isDateDisabled}}
-                        modifiersStyles={{highlighted: {backgroundColor: "#d8e2fc"}, notWorkingDay: {color: "#ef4444"}}}
-                        modifiersClassNames={{today: "my-today", selected: "my-selected"}}
-                        onMonthChange={handleMonthChange}
-                        mode="single"
-                        selected={selectedDate}
-                        onSelect={showDayOff}
-                        initialFocus
-                        className='border rounded-lg w-fit p-4 bg-[hsl(var(--muted)/0.4)] mx-auto'
-                    />
+                    <div>
+                        <Calendar
+                            modifiers={{highlighted: offDays, notWorkingDay: isDateDisabled}}
+                            modifiersStyles={{
+                                highlighted: {fontWeight: 'bold', color: '#1e61a4'},
+                                notWorkingDay: {color: "#ef4444"}
+                            }}
+                            modifiersClassNames={{today: "my-today", selected: "my-selected"}}
+                            onMonthChange={handleMonthChange}
+                            mode="single"
+                            selected={selectedDate}
+                            onSelect={showDayOff}
+                            initialFocus
+                            className='border rounded-lg w-fit p-4 bg-[hsl(var(--muted)/0.4)]'
+                        />
+                    </div>
 
                     <div>
                         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">

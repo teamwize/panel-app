@@ -201,7 +201,7 @@ export type HolidaysCreateRequest = {
     countryCode: string
 }
 
-export  type FetchedPublicHoliday = {
+export type FetchedPublicHoliday = {
     date: string;
     type: string;
     name: string
