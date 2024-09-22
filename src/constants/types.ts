@@ -56,8 +56,8 @@ export enum UserStatus {
 }
 
 export enum UserRole {
-    ADMIN = "ADMIN",
-    EMPLOYEE = "EMPLOYEE",
+    Admin = "ORGANIZATION_ADMIN",
+    Employee = "EMPLOYEE",
     API = "API"
 }
 
@@ -71,6 +71,13 @@ export type OrganizationCompactResponse = {
     name: string;
 }
 
+export type AssetResponse = {
+    id: number;
+    size: number;
+    contentType: string;
+    url: string
+}
+
 export type UserResponse = {
     id: number;
     status: UserStatus;
@@ -81,8 +88,9 @@ export type UserResponse = {
     phone: string | null;
     team: TeamCompactResponse;
     timezone: string | null;
-    countryCode: string | null;
+    country: string | null;
     organization: OrganizationCompactResponse;
+    avatar: AssetResponse;
 }
 
 export type UserCreateRequest = {
@@ -93,7 +101,7 @@ export type UserCreateRequest = {
     phone: string;
     role: UserRole;
     timezone: string;
-    countryCode: string;
+    country: string;
     teamId: number
 }
 
@@ -192,13 +200,13 @@ export type HolidayResponse = {
     id: number;
     description: string;
     date: string;
-    countryCode: string
+    country: string
 }
 
 export type HolidaysCreateRequest = {
     description: string;
     date: string;
-    countryCode: string
+    country: string
 }
 
 export  type FetchedPublicHoliday = {
@@ -212,7 +220,7 @@ export type RegistrationRequest = {
     lastName: string;
     organizationName: string;
     phone: string | null;
-    countryCode: string;
+    country: string;
     timezone: string | null;
     email: string;
     password: string
