@@ -1,7 +1,7 @@
 import React, {useContext, useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { createEmployee, getTeam } from "~/services/WorkiveApiClient.ts";
+import { createUser, getTeam } from "~/services/WorkiveApiClient.ts";
 import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
 import { Card } from "@/components/ui/card";
@@ -31,8 +31,6 @@ const FormSchema = z.object({
     email: z.string().email({ message: "Email format is not correct" }),
     password: z.string().min(8, { message: "Password must be over 8 characters" }),
     phone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
-    role: z.nativeEnum(UserRole, { errorMap: () => ({ message: "Role is required" }) }),
-    timezone: z.string().min(1, { message: "Timezone is required" }),
     country: z.string().min(1, { message: "Country is required" }),
     teamId: z.number({ invalid_type_error: "Team selection is required" }).positive(),
 });
@@ -52,14 +50,12 @@ export default function CreateEmployee() {
             email: "",
             password: "",
             phone: "",
-            role: UserRole.EMPLOYEE,
-            timezone: user?.timezone,
             country: "",
             teamId: 0,
         },
     });
 
-    const goBack = () => navigate("/organization/employee");
+    const goBack = () => navigate("/employees");
 
     useEffect(() => {
         getTeam()
@@ -74,7 +70,6 @@ export default function CreateEmployee() {
                     variant: "destructive",
                 });
             });
-        console.log(user, "user")
     }, []);
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
@@ -84,14 +79,14 @@ export default function CreateEmployee() {
             firstName: data.firstName,
             lastName: data.lastName,
             phone: data.phone,
-            role: data.role,
-            timezone: data.timezone,
-            countryCode: data.country,
+            role: UserRole.Employee,
+            timezone: user.timezone,
+            country: data.country,
             teamId: data.teamId,
         };
 
         setIsProcessing(true);
-        createEmployee(payload)
+        createUser(payload)
             .then(() => {
                 setIsProcessing(false);
                 toast({
@@ -99,7 +94,7 @@ export default function CreateEmployee() {
                     description: "Employee created successfully!",
                     variant: "default",
                 });
-                navigate("/organization/employee");
+                navigate("/employees");
             })
             .catch((error) => {
                 setIsProcessing(false);
@@ -203,37 +198,26 @@ export default function CreateEmployee() {
 
                             <FormField
                                 control={form.control}
-                                name="role"
+                                name="teamId"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Role</FormLabel>
+                                        <FormLabel>Team</FormLabel>
                                         <FormControl>
-                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                            <Select
+                                                onValueChange={(value) => field.onChange(parseInt(value))}
+                                                value={field.value !== 0 ? field.value?.toString() : ""}
+                                            >
                                                 <SelectTrigger>
-                                                    <SelectValue placeholder="Select a role" />
+                                                    <SelectValue placeholder="Select a team" />
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {Object.values(UserRole).map((role) => (
-                                                        <SelectItem key={role} value={role}>
-                                                            {role}
+                                                    {teamList.map((team) => (
+                                                        <SelectItem key={team.id} value={team.id.toString()}>
+                                                            {team.name}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="timezone"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Timezone</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Timezone" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -255,31 +239,6 @@ export default function CreateEmployee() {
                                                     {countries.map((country) => (
                                                         <SelectItem key={country.code} value={country.code}>
                                                             {country.name}
-                                                        </SelectItem>
-                                                    ))}
-                                                </SelectContent>
-                                            </Select>
-                                        </FormControl>
-                                        <FormMessage />
-                                    </FormItem>
-                                )}
-                            />
-
-                            <FormField
-                                control={form.control}
-                                name="teamId"
-                                render={({ field }) => (
-                                    <FormItem>
-                                        <FormLabel>Team</FormLabel>
-                                        <FormControl>
-                                            <Select onValueChange={(value) => field.onChange(parseInt(value))} defaultValue={field.value?.toString()}>
-                                                <SelectTrigger>
-                                                    <SelectValue placeholder="Select a team" />
-                                                </SelectTrigger>
-                                                <SelectContent>
-                                                    {teamList.map((team) => (
-                                                        <SelectItem key={team.id} value={team.id.toString()}>
-                                                            {team.name}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>
