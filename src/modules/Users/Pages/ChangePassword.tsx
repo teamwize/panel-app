@@ -29,7 +29,7 @@ const FormSchema = z.object({
     newPassword: z.string().min(8, {
         message: "Password must be at least 8 characters.",
     }),
-    reNewPassword: z.string().min(8, {
+    confirmNewPassword: z.string().min(8, {
         message: "Password must be at least 8 characters.",
     })
 });
@@ -44,14 +44,14 @@ export default function ChangePassword() {
         defaultValues: {
             password: "",
             newPassword: "",
-            reNewPassword: "",
+            confirmNewPassword: "",
         },
     });
 
     const goBack = () => navigate('/settings');
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
-        if (data.newPassword !== data.reNewPassword) {
+        if (data.newPassword !== data.confirmNewPassword) {
             setErrorMessage("Passwords don't match. Try again");
             return;
         }
@@ -139,19 +139,19 @@ export default function ChangePassword() {
                             />
                             <FormField
                                 control={form.control}
-                                name="reNewPassword"
+                                name="confirmNewPassword"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Re-New Password</FormLabel>
+                                        <FormLabel>Confirm New Password</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Re-New Password" {...field} />
+                                            <Input placeholder="Confirm New Password" {...field} />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
                                 )}
                             />
                             <Button type="submit" className="w-fit" disabled={isProcessing}>
-                                {isProcessing ? 'Processing...' : 'Submit'}
+                                {isProcessing ? 'Processing...' : 'Save'}
                             </Button>
                         </form>
                     </Form>
