@@ -1,4 +1,4 @@
-import {useState, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import dayjs, {Dayjs} from 'dayjs';
 import {
@@ -12,11 +12,10 @@ import {
 import {DayOffLeaveTypeJson} from '~/constants/index.ts';
 import {DayOffRequestStatus, DayOffResponse} from '~/constants/types';
 import {Button} from '@/components/ui/button';
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {CircleAlert} from 'lucide-react';
+import {CircleAlert, UserPen} from 'lucide-react';
 
 type DayOffModalProps = {
-    selectedRequest: DayOffResponse;
+    selectedRequest: DayOffResponse | null;
     teamRequests: DayOffResponse[];
     handleModal: () => void;
     handleRequest: (status: DayOffRequestStatus, id: number) => void;
@@ -59,53 +58,44 @@ export default function DayOffModal({
 
     return (
         <Dialog open={true} onOpenChange={handleModal}>
-            <DialogContent className="text-sm">
+            <DialogContent>
                 <DialogHeader>
-                    <DialogTitle className='mb-1.5'>Day Off Request</DialogTitle>
                     <DialogDescription className='py-1'>
-                        <div className='flex items-center'>
+                        <div className='flex items-center mb-4'>
                             <img className="inline-block h-10 w-10 rounded-full mr-2"
                                  src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
                                  alt="User"/>
-                            <div className="flex flex-col gap-1 font-semibold">
+                            <div
+                                onClick={() => viewBalance(selectedRequest.user.team.name)}
+                                className="cursor-pointer text-sm font-medium text-blue-600 underline hover:text-blue-800">
                                 <span>{selectedRequest.user.firstName} {selectedRequest.user.lastName}</span>
-                                <Button className='h-7 px-2 text-xs rounded-full'
-                                        onClick={() => viewBalance(selectedRequest.user.team.name)}>View
-                                    Balance</Button>
                             </div>
                         </div>
 
-                        <Table>
-                            <TableHeader>
-                                <TableRow className='text-xs'>
-                                    <TableHead>Date</TableHead>
-                                    <TableHead>Type</TableHead>
-                                    <TableHead>Request Date</TableHead>
-                                    {selectedRequest.reason && (
-                                        <TableHead>Explanation</TableHead>
-                                    )}
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                <TableRow>
-                                    <TableCell>
-                                        {distance === 1
-                                            ? dayjs(selectedRequest.startAt).format('D MMM YYYY')
-                                            : `${dayjs(selectedRequest.startAt).format('D MMM YYYY')} - ${dayjs(selectedRequest.endAt).format('D MMM YYYY')}`}
-                                        {" "}({distance} {distance === 1 ? "Day" : "Days"})
-                                    </TableCell>
-                                    <TableCell>
-                                        {DayOffLeaveTypeJson[selectedRequest.type as keyof typeof DayOffLeaveTypeJson]}
-                                    </TableCell>
-                                    <TableCell>
-                                        {dayjs(selectedRequest.createdAt).format('D MMM YYYY')}
-                                    </TableCell>
-                                    {selectedRequest.reason && (
-                                        <TableCell>{selectedRequest.reason}</TableCell>
-                                    )}
-                                </TableRow>
-                            </TableBody>
-                        </Table>
+                        <div className="grid grid-cols-4 gap-4 mb-4 text-black text-xs">
+                            <div className={"col-span-2"}>
+                                <h5 className='text-[10px] text-gray-600 mb-1'>Date</h5>
+                                <div>{distance === 1
+                                    ? dayjs(selectedRequest.startAt).format('D MMM YYYY')
+                                    : `${dayjs(selectedRequest.startAt).format('D MMM YYYY')} - ${dayjs(selectedRequest.endAt).format('D MMM YYYY')}`}
+                                </div>
+                            </div>
+                            <div>
+                                <h5 className='text-[10px] text-gray-600 mb-1'>Duration</h5>
+                                <div>{distance} {distance === 1 ? "Day" : "Days"}
+                                </div>
+                            </div>
+                            <div>
+                                <h5 className='text-[10px] text-gray-600 mb-1'>Type</h5>
+                                <div>{DayOffLeaveTypeJson[selectedRequest.type as keyof typeof DayOffLeaveTypeJson]}</div>
+                            </div>
+                            {selectedRequest.reason && (
+                                <div>
+                                    <h5 className='text-[10px] text-gray-600 mb-1'>Description</h5>
+                                    <div>{selectedRequest.reason}</div>
+                                </div>
+                            )}
+                        </div>
                     </DialogDescription>
                 </DialogHeader>
 
