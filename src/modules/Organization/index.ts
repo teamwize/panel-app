@@ -1,10 +1,9 @@
 import Organization from './Pages/Organization'
-import OrganizationInformation from './Pages/OrganizationInformation'
-import OrganizationBalance from './Pages/OrganizationBalance'
+import Policy from './Pages/Policy'
 import OfficialHolidays from './Pages/OfficialHolidays'
-import OrganizationTeam from './Pages/OrganizationTeam'
+import Teams from './Pages/Teams'
 import CreateTeam from './Pages/CreateTeam'
 import UpdateTeam from './Pages/UpdateTeam'
 import ImportHolidays from './Pages/ImportHolidays'
 
-export { Organization, OrganizationBalance, OrganizationInformation, OfficialHolidays, OrganizationTeam, CreateTeam, UpdateTeam, ImportHolidays }
+export {Policy, Organization, OfficialHolidays, Teams, CreateTeam, UpdateTeam, ImportHolidays }

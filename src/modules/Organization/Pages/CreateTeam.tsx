@@ -44,7 +44,7 @@ export default function CreateTeam() {
         },
     });
 
-    const goBack = () => navigate('/organization/team');
+    const goBack = () => navigate('/teams');
 
     useEffect(() => {
         getTeam()
@@ -82,7 +82,7 @@ export default function CreateTeam() {
         createTeam(payload)
             .then(() => {
                 setIsProcessing(false);
-                navigate('/organization/team');
+                navigate('/teams');
             })
             .catch((error) => {
                 setIsProcessing(false);
@@ -119,9 +119,9 @@ export default function CreateTeam() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Team Name</FormLabel>
+                                        <FormLabel>Name</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Team Name" {...field} />
+                                            <Input placeholder="Name" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>

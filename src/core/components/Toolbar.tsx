@@ -26,7 +26,7 @@ type ToolbarProps = {
 };
 
 export default function Toolbar({ user }: ToolbarProps) {
-    const [logOut, setLogOut] = useState<boolean>(false);
+    const [signOut, setSignOut] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const viewProfile = () => {
@@ -49,37 +49,37 @@ export default function Toolbar({ user }: ToolbarProps) {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={viewProfile}>Profile</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => setLogOut(true)}>Logout</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSignOut(true)}>Sign Out</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {logOut && <Logout logOut={logOut} setLogOut={setLogOut} />}
+                {signOut && <SignOutut signOut={signOut} setSignOut={setSignOut} />}
             </header>
         </div>
     );
 }
 
-type LogoutProps = {
-    setLogOut: (logOut: boolean) => void;
-    logOut: boolean;
+type SignOutProps = {
+    setSignOut: (signOut: boolean) => void;
+    signOut: boolean;
 };
 
-function Logout({ setLogOut, logOut }: LogoutProps) {
+function SignOutut({ setSignOut, signOut }: SignOutProps) {
     const navigate = useNavigate();
-    const { logout } = useContext(UserContext);
+    const { signout } = useContext(UserContext);
 
-    const closeLogOut = () => setLogOut(false);
+    const closeSignOut = () => setSignOut(false);
 
     const handleRequest = (accepted: boolean) => {
         if (accepted) {
-            logout();
-            navigate('/login');
+            signout();
+            navigate('/signin');
         }
-        closeLogOut();
+        closeSignOut();
     };
 
     return (
-        <Dialog open={logOut} onOpenChange={closeLogOut}>
+        <Dialog open={signOut} onOpenChange={closeSignOut}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Log Out</DialogTitle>

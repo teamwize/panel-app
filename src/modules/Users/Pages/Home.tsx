@@ -34,13 +34,13 @@ import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar"
 import {Alert, AlertDescription} from "@/components/ui/alert"
 import {isDateInWeekend} from "@/utils/dateUtils";
-import {getHolidays} from "@/services/WorkiveApiClient";
-import {HolidayResponse} from "@/constants/types";
+import {getHolidays, getEmployee} from "@/services/WorkiveApiClient";
+import {HolidayResponse, UserResponse, PagedResponse} from "@/constants/types";
 import {UserContext} from "@/contexts/UserContext";
 
 dayjs.extend(isBetween);
 
-export default function CalendarPage() {
+export default function Home() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [requestsList, setRequestsList] = useState<DayOffResponse[]>([]);
     const [offDays, setOffDays] = useState<Date[]>([]);
@@ -48,7 +48,7 @@ export default function CalendarPage() {
     const [calendarCurrentDate, setCalendarCurrentDate] = useState<dayjs.Dayjs>(dayjs(new Date()));
     const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
     const navigate = useNavigate();
-    const { user } = useContext(UserContext);
+    const {user} = useContext(UserContext);
 
     const selectedDateRequests: DayOffResponse[] = requestsList.filter((r) =>
         dayjs(selectedDate).isBetween(dayjs(r.startAt), dayjs(r.endAt), "days", "[]")
@@ -66,7 +66,7 @@ export default function CalendarPage() {
 
     // Get holidays
     useEffect(() => {
-        getHolidays(new Date().getFullYear(), user?.countryCode)
+        getHolidays(new Date().getFullYear(), user?.country)
             .then((data: HolidayResponse[]) => {
                 console.log("Success:", data);
                 setHolidays(data);
@@ -156,7 +156,7 @@ export default function CalendarPage() {
 
     return (
         <>
-            <PageTitle title="Calendar">
+            <PageTitle title="Home">
                 <div className="flex justify-center">
                     <Button
                         onClick={sendRequest}
@@ -180,7 +180,10 @@ export default function CalendarPage() {
                 >
                     <Calendar
                         modifiers={{highlighted: offDays, notWorkingDay: isDateDisabled}}
-                        modifiersStyles={{highlighted: {backgroundColor: "#d8e2fc"}, notWorkingDay: {color: "#ef4444"}}}
+                        modifiersStyles={{
+                            highlighted: {color: "#6366f1", fontWeight: "bolder"},
+                            notWorkingDay: {color: "#ef4444"}
+                        }}
                         modifiersClassNames={{today: "my-today", selected: "my-selected"}}
                         onMonthChange={handleMonthChange}
                         mode="single"
@@ -210,6 +213,7 @@ export default function CalendarPage() {
                                                     <TableHead>Status</TableHead>
                                                     <TableHead>Type</TableHead>
                                                     <TableHead>Date</TableHead>
+                                                    <TableHead>Duration</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             {selectedDateRequests
@@ -247,28 +251,39 @@ type RequestItemProps = {
     calculateDistance: (startAt: string, endAt: string) => number;
 };
 
-function RequestItem({request, calculateDistance}: RequestItemProps) {
+function RequestItem({ request, calculateDistance }: RequestItemProps) {
     const distance: number = calculateDistance(request.startAt, request.endAt);
+    const { accessToken } = useContext(UserContext);
 
     return (
         <TableBody className="border-b">
             <TableRow>
                 <TableCell className="flex flex-wrap flex-row gap-2 font-medium">
-                    <CircleUser className="h-6 w-6"/>
+                    <img
+                        src={
+                            request.user?.avatar
+                                ? `${request.user?.avatar?.url}?token=${accessToken}`
+                                : "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
+                        }
+                        alt="Profile Image"
+                        className="h-8 rounded-full"
+                    />
                     {request.user.firstName} {request.user.lastName}
                 </TableCell>
-                <TableCell>{request.user.team.name}</TableCell>
+                <TableCell>{request.user.team?.name}</TableCell>
                 <TableCell>
-                    <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]}/>
+                    <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]} />
                 </TableCell>
                 <TableCell>
-                    <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]}/>
+                    <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]} />
                 </TableCell>
                 <TableCell>
                     {distance === 1
-                        ? dayjs(request.startAt).format("D MMM")
-                        : `${dayjs(request.startAt).format("D MMM")} - ${dayjs(request.endAt).format("D MMM")}`}
-                    {' '} ({distance} {distance === 1 ? "Day" : "Days"})
+                        ? dayjs(request.startAt).format("D MMM YYYY")
+                        : `${dayjs(request.startAt).format("D MMM YYYY")} - ${dayjs(request.endAt).format("D MMM YYYY")}`}
+                </TableCell>
+                <TableCell>
+                    {distance} {distance === 1 ? "Day" : "Days"}
                 </TableCell>
             </TableRow>
         </TableBody>

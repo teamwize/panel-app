@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
@@ -10,10 +10,14 @@ import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {DayOffLeaveTypeJson, DayOffLeaveTypeColor} from '@/constants';
 import {Label, Pagination} from '../../../core/components';
 import {DayOffRequestStatus, DayOffResponse, PagedResponse} from '~/constants/types';
-import {ChevronLeft} from "lucide-react";
+import {Eye} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
+import {Button} from "@/components/ui/button";
+import {UserContext} from "@/contexts/UserContext";
+import {UserResponse} from "@/constants/types";
+import {getEmployee} from "@/services/WorkiveApiClient";
 
-export default function DayOffQueue() {
+export default function Requests() {
     const navigate = useNavigate();
     const [requestsList, setRequestsList] = useState<DayOffResponse[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -42,8 +46,6 @@ export default function DayOffQueue() {
         }
     }, [selectedRequest, requestsList])
 
-    const goBack = () => navigate('/organization');
-
     const handleRowClick = (request: DayOffResponse) => {
         setSelectedRequest(request);
     };
@@ -56,6 +58,12 @@ export default function DayOffQueue() {
             .then((data: DayOffResponse) => {
                 setIsProcessing(false);
                 setRequestsList(prevState => prevState.filter(r => r.id !== id));
+                setSelectedRequest(null);
+                toast({
+                    title: "Success",
+                    description: "Request accepted.",
+                    variant: "default",
+                });
             })
             .catch((error: string | null) => {
                 setIsProcessing(false);
@@ -65,7 +73,7 @@ export default function DayOffQueue() {
                     description: errorMessage,
                     variant: "destructive",
                 });
-            });
+            })
     };
 
     const calculateDistance = (startAt: string, endAt: string): number => {
@@ -75,10 +83,7 @@ export default function DayOffQueue() {
     return (
         <>
             <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <button onClick={goBack}>
-                    <ChevronLeft className="h-6 w-6"/>
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">Day Off Queue</h1>
+                <h1 className="text-lg font-semibold md:text-2xl">Requests</h1>
             </div>
 
             {errorMessage && (
@@ -88,44 +93,40 @@ export default function DayOffQueue() {
             )}
 
             <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card className="border-0 shadow-amber-50">
-                    <CardHeader className="px-6 py-4">
-                        <CardTitle className="text-xl">Requests</CardTitle>
-                    </CardHeader>
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Employee</TableHead>
+                                <TableHead>Team</TableHead>
+                                <TableHead>Type</TableHead>
+                                <TableHead>Date</TableHead>
+                                <TableHead>Duration</TableHead>
+                                <TableHead>Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {requestsList
+                                .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+                                .map((request) => (
+                                    <RequestRowItem
+                                        key={request.id}
+                                        request={request}
+                                        calculateDistance={calculateDistance}
+                                        onClick={() => handleRowClick(request)}
+                                    />
+                                ))}
+                        </TableBody>
+                    </Table>
 
-                    <CardContent>
-                        <Table>
-                            <TableHeader>
-                                <TableRow>
-                                    <TableHead>Employee</TableHead>
-                                    <TableHead>Team</TableHead>
-                                    <TableHead>Type</TableHead>
-                                    <TableHead>Date</TableHead>
-                                </TableRow>
-                            </TableHeader>
-                            <TableBody>
-                                {requestsList
-                                    .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
-                                    .map((request) => (
-                                        <RequestItem
-                                            key={request.id}
-                                            request={request}
-                                            calculateDistance={calculateDistance}
-                                            onClick={() => handleRowClick(request)}
-                                        />
-                                    ))}
-                            </TableBody>
-                        </Table>
-
-                        {requestsList.length > recordsPerPage && (
-                            <Pagination
-                                pageSize={recordsPerPage}
-                                pageNumber={currentPage}
-                                setPageNumber={setCurrentPage}
-                                totalContents={requestsList.length}
-                            />
-                        )}
-                    </CardContent>
+                    {requestsList.length > recordsPerPage && (
+                        <Pagination
+                            pageSize={recordsPerPage}
+                            pageNumber={currentPage}
+                            setPageNumber={setCurrentPage}
+                            totalContents={requestsList.length}
+                        />
+                    )}
                 </Card>
 
                 {selectedRequest && (
@@ -149,18 +150,33 @@ type RequestItemProps = {
     onClick: (request: DayOffResponse) => void;
 };
 
-function RequestItem({request, calculateDistance, onClick}: RequestItemProps) {
+function RequestRowItem({request, calculateDistance, onClick}: RequestItemProps) {
     const distance: number = calculateDistance(request.startAt, request.endAt);
+    const {accessToken} = useContext(UserContext)
+    const navigate = useNavigate();
+
+    const viewBalance = (id: string) => {
+        navigate('/balance?query=' + id);
+    };
 
     return (
-        <TableRow onClick={() => onClick(request)} className="cursor-pointer">
+        <TableRow>
             <TableCell className="flex items-center gap-2 font-medium">
                 <img
-                    className="h-6 w-6 rounded-full"
-                    src="https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
+                    className="h-10 w-10 rounded-full"
+                    src={
+                        request.user?.avatar
+                            ? `${request.user?.avatar?.url}?token=${accessToken}`
+                            : "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
+                    }
                     alt="User avatar"
                 />
-                {request.user.firstName} {request.user.lastName}
+                <h2
+                    className="cursor-pointer text-sm font-medium text-blue-600 underline hover:text-blue-800"
+                    onClick={() => viewBalance(request.user.team.name)}
+                >
+                    {request.user.firstName} {request.user.lastName}
+                </h2>
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
@@ -168,9 +184,18 @@ function RequestItem({request, calculateDistance, onClick}: RequestItemProps) {
             </TableCell>
             <TableCell>
                 {distance === 1
-                    ? dayjs(request.startAt).format("D MMM")
-                    : `${dayjs(request.startAt).format("D MMM")} - ${dayjs(request.endAt).format("D MMM")}`}
-                {' '} ({distance} {distance === 1 ? "Day" : "Days"})
+                    ? dayjs(request.startAt).format("D MMM YYYY")
+                    : `${dayjs(request.startAt).format("D MMM YYYY")} - ${dayjs(request.endAt).format("D MMM YYYY")}`}
+            </TableCell>
+            <TableCell>
+                {distance} {distance === 1 ? "Day" : "Days"}
+            </TableCell>
+            <TableCell>
+                <Button  className={"px-1"}
+                         variant="outline"
+                         size="sm">
+                    <Eye onClick={() => viewBalance(request.user.team.name)} className="h-4 text-[#3b87f7]"/>
+                </Button>
             </TableCell>
         </TableRow>
     );

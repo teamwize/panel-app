@@ -1,5 +1,5 @@
 import CreateDayOff from './Pages/CreateDayOff'
 import PendingDayOff from './Pages/PendingDayOff'
-import DayOffQueue from './Pages/DayOffQueue'
+import Requests from './Pages/Requests'
 
-export { CreateDayOff, PendingDayOff, DayOffQueue }
+export { CreateDayOff, PendingDayOff, Requests }

@@ -40,7 +40,7 @@ export default function UpdateTeam() {
         },
     });
 
-    const goBack = () => navigate('/organization/team');
+    const goBack = () => navigate('/teams');
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
         if (errorMessage) {
@@ -64,7 +64,7 @@ export default function UpdateTeam() {
                     description: "Team updated successfully!",
                     variant: "default",
                 });
-                navigate('/organization/team');
+                navigate('/teams');
             })
             .catch(error => {
                 setIsProcessing(false);
@@ -104,7 +104,7 @@ export default function UpdateTeam() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Team Name</FormLabel>
+                                        <FormLabel>Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Team Name" {...field} />
                                         </FormControl>
@@ -113,7 +113,7 @@ export default function UpdateTeam() {
                                 )}
                             />
                             <Button type="submit" className="w-fit" disabled={isProcessing}>
-                                {isProcessing ? 'Processing...' : 'Submit'}
+                                {isProcessing ? 'Processing...' : 'Save'}
                             </Button>
                         </form>
                     </Form>

@@ -77,7 +77,7 @@ export default function BalancePage() {
                         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
                             <CardHeader className="px-6 py-4">
                                 <CardTitle className="text-xl">
-                                    Requests ({requestsList.length})
+                                    History ({requestsList.length})
                                 </CardTitle>
                             </CardHeader>
 
@@ -86,6 +86,7 @@ export default function BalancePage() {
                                     <TableHeader>
                                         <TableRow>
                                             <TableHead>Date</TableHead>
+                                            <TableHead>Duration</TableHead>
                                             <TableHead>Status</TableHead>
                                             <TableHead>Type</TableHead>
                                         </TableRow>
@@ -113,12 +114,14 @@ export default function BalancePage() {
                             </CardContent>
 
                             {requestsList.length > recordsPerPage && (
-                                <Pagination
-                                    pageSize={recordsPerPage}
-                                    pageNumber={currentPage}
-                                    setPageNumber={setCurrentPage}
-                                    totalContents={requestsList.length}
-                                />
+                                <div className='mx-6'>
+                                    <Pagination
+                                        pageSize={recordsPerPage}
+                                        pageNumber={currentPage}
+                                        setPageNumber={setCurrentPage}
+                                        totalContents={requestsList.length}
+                                    />
+                                </div>
                             )}
                         </Card>
                     </div>

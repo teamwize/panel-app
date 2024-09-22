@@ -67,7 +67,7 @@ export default function CreateDayOff() {
 
     // Get holidays
     useEffect(() => {
-        getHolidays(new Date().getFullYear(), user?.countryCode)
+        getHolidays(new Date().getFullYear(), user?.country)
             .then((data: HolidayResponse[]) => {
                 console.log("Success:", data);
                 // Convert data to Date[]
@@ -136,7 +136,7 @@ export default function CreateDayOff() {
 
     return (
         <>
-            <PageTitle title="Send Leave Request"></PageTitle>
+            <PageTitle title="Day Off Request"></PageTitle>
 
             {errorMessage && (
                 <Alert>
@@ -153,7 +153,7 @@ export default function CreateDayOff() {
                                 name="dayOffType"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Leave Type</FormLabel>
+                                        <FormLabel>Type</FormLabel>
                                         <FormControl>
                                             <Select value={field.value} onValueChange={field.onChange}>
                                                 <SelectTrigger>
@@ -192,9 +192,9 @@ export default function CreateDayOff() {
                                 />
                             </section>
 
-                            <p className="p-2 text-center text-sm">
-                                Day off request is
-                                for {calculateDistance(startDate, endDate, holidays)} {calculateDistance(startDate, endDate, holidays) === 1 ? 'Day' : 'Days'}
+                            <p className="p-2 text-center text-sm border rounded-md font-semibold">
+                                Duration:
+                                {calculateDistance(startDate, endDate, holidays)} {calculateDistance(startDate, endDate, holidays) === 1 ? 'Day' : 'Days'}
                             </p>
 
                             <FormField

@@ -28,7 +28,7 @@ const FormSchema = z.object({
     paidTime: z.number().min(0, {message: "Paid time is required"}),
 });
 
-export default function OrganizationBalance() {
+export default function Policy() {
     const [balanceInfo, setBalanceInfo] = useState<DayOffType>();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string>("");
@@ -42,8 +42,6 @@ export default function OrganizationBalance() {
             paidTime: 0,
         },
     });
-
-    const goBack = () => navigate('/organization');
 
     // useEffect(() => {
     //     getOrganization()
@@ -104,10 +102,7 @@ export default function OrganizationBalance() {
     return (
         <>
             <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <button onClick={goBack}>
-                    <ChevronLeft className="h-6 w-6"/>
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">Set Balance</h1>
+                <h1 className="text-lg font-semibold md:text-2xl">Policy</h1>
             </div>
 
             {errorMessage && (

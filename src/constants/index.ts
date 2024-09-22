@@ -256,7 +256,7 @@ export const countries: CountryType[] = [
 import {CalendarIcon, Cog6ToothIcon, ChartPieIcon, BuildingOfficeIcon} from '@heroicons/react/24/outline'
 
 export const navigation: Navigation[] = [
-    {name: 'Calendar', icon: CalendarIcon, href: '/calendar'},
+    {name: 'Calendar', icon: CalendarIcon, href: '/'},
     {name: 'Balance', icon: ChartPieIcon, href: '/balance'},
     {name: 'Settings', icon: Cog6ToothIcon, href: '/settings'},
     {name: 'Organization', icon: BuildingOfficeIcon, href: '/organization'}

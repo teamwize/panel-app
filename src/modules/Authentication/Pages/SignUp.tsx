@@ -1,7 +1,7 @@
 import React, {useState, useContext} from "react";
 import {useForm} from "react-hook-form";
-import {useNavigate} from "react-router-dom";
-import {registration} from "~/services/WorkiveApiClient.ts";
+import {Link, useNavigate} from "react-router-dom";
+import {signup} from "~/services/WorkiveApiClient.ts";
 import {UserContext} from "~/contexts/UserContext.tsx";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
@@ -26,7 +26,7 @@ const FormSchema = z.object({
     country: z.string().min(1, {message: "Country is required"}),
 });
 
-export default function Register() {
+export default function SignUp() {
     const {authenticate} = useContext(UserContext);
     const navigate = useNavigate();
     const [showPassword, setShowPassword] = useState<boolean>(false);
@@ -47,6 +47,9 @@ export default function Register() {
     });
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
+        const userTimezone = Intl.DateTimeFormat().resolvedOptions().timeZone;
+
+
         const payload: RegistrationRequest = {
             email: data.email,
             password: data.password,
@@ -54,16 +57,16 @@ export default function Register() {
             lastName: data.lastName,
             organizationName: data.organization,
             phone: data.phone,
-            countryCode: data.country,
-            timezone: 'Asia/Tehran',
+            country: data.country,
+            timezone: userTimezone,
         };
 
         setIsProcessing(true);
-        registration(payload)
+        signup(payload)
             .then((response: AuthenticationResponse) => {
                 setIsProcessing(false);
                 authenticate(response.accessToken, response.user);
-                navigate('/organization');
+                navigate('/');
             })
             .catch((error: string | null) => {
                 setIsProcessing(false);
@@ -78,13 +81,14 @@ export default function Register() {
     };
 
     return (
-        <div className="flex items-center justify-center h-screen bg-gray-100">
+        <div className="relative min-h-screen bg-gray-100 flex flex-col gap-6 items-center justify-center">
+            <div className="flex flex-col justify-center">
+                <Logo className="h-14 border-2 rounded mb-2 mx-auto"/>
+                <h1 className="text-xl font-semibold text-gray-700">Teamwize</h1>
+            </div>
+
             <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
-                <div className="flex flex-col items-center mb-6">
-                    <Logo className="h-10 w-auto"/>
-                    <h1 className="text-3xl font-semibold">Teamwize</h1>
-                    <h2 className="text-2xl font-semibold mt-4">Create an Account</h2>
-                </div>
+
 
                 {errorMessage && (
                     <Alert>
@@ -101,14 +105,14 @@ export default function Register() {
                                 <FormItem>
                                     <FormLabel>Organization Name</FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Organization" {...field}/>
+                                        <Input placeholder="Organization Name" {...field}/>
                                     </FormControl>
                                     <FormMessage/>
                                 </FormItem>
                             )}
                         />
 
-                        <div className="flex gap-4">
+                        <div className="grid grid-cols-2 gap-4">
                             <FormField
                                 control={form.control}
                                 name="firstName"
@@ -220,6 +224,13 @@ export default function Register() {
                         />
 
                         <Button type="submit" className="w-full mt-4">{isProcessing ? "Waiting..." : "Sign Up"}</Button>
+
+                        <div className="mt-4 text-center text-sm">
+                            Already have an account?
+                            <Link to="/signin" className="underline ml-1">
+                                Sign in
+                            </Link>
+                        </div>
                     </form>
                 </Form>
             </div>

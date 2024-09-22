@@ -1,4 +1,4 @@
-import Login from './Pages/Login'
-import Register from './Pages/Register'
+import SignIn from './Pages/SignIn'
+import SignUp from './Pages/SignUp'
 
-export { Login, Register }
+export { SignIn, SignUp }

@@ -20,7 +20,7 @@ import {
 import {doFetch, baseURL} from "./BaseHttpService";
 import {RegistrationRequest} from "@/constants/types";
 
-async function registration(payload: RegistrationRequest): Promise<AuthenticationResponse> {
+async function signup(payload: RegistrationRequest): Promise<AuthenticationResponse> {
     return await doFetch(`${baseURL}/auth/register`, {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -30,7 +30,7 @@ async function registration(payload: RegistrationRequest): Promise<Authenticatio
     });
 }
 
-async function login(data: LoginRequest): Promise<AuthenticationResponse> {
+async function signin(data: LoginRequest): Promise<AuthenticationResponse> {
     return await doFetch(`${baseURL}/auth/login`, {
         method: 'POST',
         body: JSON.stringify(data),
@@ -40,7 +40,7 @@ async function login(data: LoginRequest): Promise<AuthenticationResponse> {
     });
 }
 
-async function createEmployee(payload: UserCreateRequest): Promise<UserResponse> {
+async function createUser(payload: UserCreateRequest): Promise<UserResponse> {
     return await doFetch(`${baseURL}/users`, {
         method: 'POST',
         body: JSON.stringify(payload),
@@ -185,10 +185,10 @@ async function updateTeam(payload: TeamCreateRequest, id: number): Promise<TeamR
     });
 }
 
-async  function getHolidays(year: number, countryCode: string): Promise<HolidayResponse[]> {
+async  function getHolidays(year: number, country: string): Promise<HolidayResponse[]> {
     const queryParams: URLSearchParams = new URLSearchParams({
         year: year.toString(),
-        countryCode: countryCode
+        country: country
     })
     return await doFetch(`${baseURL}/holidays?` + queryParams.toString(), {
         method: 'GET'
@@ -215,15 +215,15 @@ async  function fetchHolidays(year: number): Promise<FetchedPublicHoliday[]> {
 }
 
 export {
-    registration,
-    createEmployee,
+    signup,
+    createUser,
     getDaysoff,
     updatePassword,
     updateEmployee,
     getCurrentEmployee,
     getEmployee,
     deleteEmployee,
-    login,
+    signin,
     updateEmployeePicture,
     updateDayOffStatus,
     createDayoff,

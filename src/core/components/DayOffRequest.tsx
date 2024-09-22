@@ -19,8 +19,8 @@ export default function DayOffRequest({ request, calculateDistance }: DayOffRequ
                 {distance === 1
                     ? dayjs(request.startAt).format("D MMM")
                     : `${dayjs(request.startAt).format("D MMM")} - ${dayjs(request.endAt).format("D MMM")}`}
-                {' '} ({distance} {distance === 1 ? "Day" : "Days"})
             </TableCell>
+            <TableCell>{distance} {distance === 1 ? "Day" : "Days"}</TableCell>
             <TableCell>
                 <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]} />
             </TableCell>

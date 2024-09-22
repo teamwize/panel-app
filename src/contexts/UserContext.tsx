@@ -9,7 +9,7 @@ type UserContextType = {
   organization: OrganizationResponse | null;
   accessToken: string | null;
   authenticate: (accessToken: string | null, user: UserResponse | null) => void;
-  logout: () => void;
+  signout: () => void;
   isAuthenticated: () => boolean;
 }
 
@@ -18,7 +18,7 @@ export const UserContext = createContext<UserContextType>({
   organization: null,
   accessToken: null,
   authenticate: () => { },
-  logout: () => { },
+  signout: () => { },
   isAuthenticated: () => false
 })
 
@@ -36,9 +36,9 @@ export const UserContextProvider = ({ children, user, organization }: UserContex
     console.log("userContext authenticate", accessToken, user)
   }
 
-  const logout = () => {
+  const signout = () => {
     setAccessToken(null);
-    console.log("userContext logout")
+    console.log("userContext signout")
   }
 
   const isAuthenticated = (): boolean => {
@@ -52,7 +52,7 @@ export const UserContextProvider = ({ children, user, organization }: UserContex
     accessToken: accessToken,
     isAuthenticated: useCallback(() => isAuthenticated(), [accessToken]),
     authenticate: useCallback((accessToken: string | null) => authenticate(accessToken), []),
-    logout: useCallback(() => logout(), [])
+    signout: useCallback(() => signout(), [])
   }
 
   return (
