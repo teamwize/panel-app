@@ -4,10 +4,10 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - master  # Only run on push to the main branch
+      - feature/implement-ci-cd  # Only run on push to the main branch
   pull_request:
     branches:
-      - master  # Run on pull requests to the main branch
+      - feature/implement-ci-cd  # Run on pull requests to the main branch
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,7 +22,7 @@ jobs:
           node-version: '22' # Specify Node.js version if needed
 
       - name: Install dependencies
-        run: npm ci # Uses 'ci' to ensure a clean install of dependencies
+        run: npm install # Uses 'ci' to ensure a clean install of dependencies
 
       - name: Build the React app
         run: npm run build
