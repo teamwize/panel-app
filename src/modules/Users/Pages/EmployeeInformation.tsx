@@ -53,7 +53,7 @@ export default function EmployeeInformation() {
             });
     }, []);
 
-    const goBack = () => navigate('/organization/employee')
+    const goBack = () => navigate('/employees')
 
     const calculateDistance = (startAt: string, endAt: string): number => {
         return dayjs(endAt).diff(startAt, "day") + 1;
