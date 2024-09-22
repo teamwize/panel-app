@@ -57,6 +57,5 @@
     "tailwindcss": "^3.3.3",
     "typescript": "^5.3.3",
     "vite": "^4.1.0"
-  },
-  "packageManager": "yarn@1.22.19+sha1.4ba7fc5c6e704fce2066ecbfb0b0d8976fe62447"
+  }
 }
