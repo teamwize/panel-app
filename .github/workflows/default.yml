@@ -43,4 +43,4 @@ jobs:
 
       - name: Push the Docker image
         run: |
-          docker push ghcr.io/teamwize/api:latest
+          docker push ghcr.io/teamwize/dashboard-app:latest
