@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React, {useContext, useEffect, useState} from 'react'
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {z} from "zod"
@@ -22,6 +22,10 @@ import {
 } from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {toast} from "@/components/ui/use-toast"
+import {Card} from "@/components/ui/card";
+import {UserContext} from "@/contexts/UserContext";
+import {PagedResponse} from "@/constants/types";
+import {getEmployee} from "@/services/WorkiveApiClient";
 
 const FormSchema = z.object({
     firstName: z.string().min(2, {
@@ -47,9 +51,11 @@ export default function Profile() {
     const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null)
     const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
+    const {user, accessToken} = useContext(UserContext);
+    const [employeesList, setEmployeesList] = useState<PagedResponse<UserResponse> | null>(null);
     const [picture, setPicture] = useState<Picture>({
         cropperOpen: false,
-        img: null,
+        img: "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png",
         zoom: 2,
         croppedImg:
             "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
@@ -137,53 +143,64 @@ export default function Profile() {
             )}
 
             <main className="flex flex-1 flex-col gap-4 p-4">
-                <div>
-                    <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
-                        <img src={picture.croppedImg} alt='Profile Image' className="h-40 w-40 rounded-full"/>
-                        <div
-                            className='bg-indigo-500 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
-                            <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">
-                                <Camera className='w-7 h-7 text-white'></Camera>
-                            </label>
-                            <input key={picture.img} id='upload-photo' type="file" accept="image/jpeg, image/png"
-                                   className='hidden' onChange={handleFileChange}/>
+                <Card
+                    className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4"
+                    x-chunk="dashboard-02-chunk-1"
+                >
+                    <div>
+                        <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
+                            <img
+                                src={
+                                    employeeInfo?.avatar
+                                        ? `${employeeInfo.avatar?.url}?token=${accessToken}`
+                                        : "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
+                                }
+                                alt='Profile Image' className="h-40 w-40 rounded-full"/>
+                            <div
+                                className='bg-indigo-500 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
+                                <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">
+                                    <Camera className='w-7 h-7 text-white'></Camera>
+                                </label>
+                                <input key={picture.img} id='upload-photo' type="file" accept="image/jpeg, image/png"
+                                       className='hidden' onChange={handleFileChange}/>
+                            </div>
                         </div>
+
+                        <ChangePicture picture={picture} setPicture={setPicture}></ChangePicture>
                     </div>
 
-                    <ChangePicture picture={picture} setPicture={setPicture}></ChangePicture>
-                </div>
-
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid grid-cols-2 gap-4">
-                        <FormField
-                            control={form.control}
-                            name="firstName"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>First Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="First Name" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                        <FormField
-                            control={form.control}
-                            name="lastName"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Last Name</FormLabel>
-                                    <FormControl>
-                                        <Input placeholder="Last Name" {...field} />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-                        <Button type="submit" className="w-fit">Submit</Button>
-                    </form>
-                </Form>
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                            <FormField
+                                control={form.control}
+                                name="firstName"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>First Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="First Name" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <FormField
+                                control={form.control}
+                                name="lastName"
+                                render={({field}) => (
+                                    <FormItem>
+                                        <FormLabel>Last Name</FormLabel>
+                                        <FormControl>
+                                            <Input placeholder="Last Name" {...field} />
+                                        </FormControl>
+                                        <FormMessage/>
+                                    </FormItem>
+                                )}
+                            />
+                            <Button type="submit" className="w-fit">Save</Button>
+                        </form>
+                    </Form>
+                </Card>
             </main>
         </>
     )
