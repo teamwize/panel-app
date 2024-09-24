@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
 import {useState} from 'react';
 import 'react-day-picker/dist/style.css';
-import '../../../constants/style.css';
+import "@/index.css";
 import {CalendarDays} from 'lucide-react';
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";

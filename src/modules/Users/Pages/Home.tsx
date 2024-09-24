@@ -6,7 +6,7 @@ import isBetween from "dayjs/plugin/isBetween";
 import {getDaysOff} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import "../../../constants/style.css";
+import "@/index.css";
 import {PageTitle, Label, Pagination} from "../../../core/components";
 import {DayOffJson, DayOffColor, DayOffStatusColor, Status} from "@/constants/types/enums";
 import {CircleUser, Plus} from "lucide-react";
