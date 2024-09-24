@@ -1,12 +1,12 @@
 import React, {useState, useContext} from "react";
 import {useForm} from "react-hook-form";
 import {Link, useNavigate} from "react-router-dom";
-import {signup} from "~/services/WorkiveApiClient.ts";
+import {signup} from "@/services/authService";
 import {UserContext} from "~/contexts/UserContext.tsx";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {countries} from '~/constants/index.ts';
-import {AuthenticationResponse, RegistrationRequest} from "~/constants/types";
+import {countries} from '~/constants/countries.ts';
+import {AuthenticationResponse, RegistrationRequest} from "@/constants/types/authTypes";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";

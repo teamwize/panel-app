@@ -1,6 +1,7 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useNavigate} from 'react-router-dom';
-import {updatePassword} from "~/services/WorkiveApiClient.ts";
+import {getCurrentUser} from "@/services/userService";
+import {updateUserPassword} from "@/services/userService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Alert} from '../../../core/components';
@@ -18,7 +19,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ChangePasswordRequest} from "@/constants/types";
+import {ChangePasswordRequest, UserResponse} from "@/constants/types/userTypes";
 import {Input} from "@/components/ui/input";
 import {Card} from "@/components/ui/card";
 
@@ -38,6 +39,7 @@ export default function ChangePassword() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -47,6 +49,22 @@ export default function ChangePassword() {
             confirmNewPassword: "",
         },
     });
+
+    // Fetch employee information on mount
+    useEffect(() => {
+        getCurrentUser()
+            .then(data => {
+                setEmployeeInfo(data);
+            })
+            .catch(error => {
+                const errorMessage = getErrorMessage(error);
+                toast({
+                    title: "Error",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
+            });
+    }, [])
 
     const goBack = () => navigate('/settings');
 
@@ -68,7 +86,7 @@ export default function ChangePassword() {
         };
 
         setIsProcessing(true);
-        updatePassword(payload)
+        updateUserPassword(payload, employeeInfo.id)
             .then(() => {
                 setIsProcessing(false);
                 toast({

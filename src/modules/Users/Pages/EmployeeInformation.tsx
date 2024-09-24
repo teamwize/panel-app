@@ -1,23 +1,17 @@
 import React, {useState, useEffect} from 'react'
 import {useParams} from 'react-router-dom'
 import {useNavigate} from 'react-router-dom'
-import {getUserDaysoff} from "~/services/WorkiveApiClient.ts"
+import {getUserDaysOff} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts"
 import {DayOffRequest, BalanceGraph, Pagination} from '../../../core/components'
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
-import {DayOffResponse} from '~/constants/types';
+import {Balance} from '@/constants/types/commonTypes';
+import {DayOffResponse} from '@/constants/types/dayOffTypes';
 import dayjs from "dayjs";
 import {ChevronLeft} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-
-type Balance = {
-    label: "Vacation" | "Sick leave" | "Paid time off";
-    dayOffTypeQuantity: number;
-    dayOffTypeUsed: number;
-    dayOffTypeColor: string;
-}
 
 export default function EmployeeInformation() {
     const [balanceValue, setBalanceValue] = useState<Balance[]>([])
@@ -30,14 +24,14 @@ export default function EmployeeInformation() {
 
     // Example balance data
     const balanceExample: Balance[] = [
-        {label: 'Vacation', dayOffTypeQuantity: 18, dayOffTypeUsed: 3, dayOffTypeColor: '#088636'},
-        {label: 'Sick leave', dayOffTypeQuantity: 5, dayOffTypeUsed: 2, dayOffTypeColor: '#ef4444'},
-        {label: 'Paid time off', dayOffTypeQuantity: 5, dayOffTypeUsed: 1, dayOffTypeColor: '#3b87f7'},
+        {label: 'Vacation', dayOffQuantity: 18, dayOffUsed: 3, dayOffColor: '#088636'},
+        {label: 'Sick leave', dayOffQuantity: 5, dayOffUsed: 2, dayOffColor: '#ef4444'},
+        {label: 'Paid time off', dayOffQuantity: 5, dayOffUsed: 1, dayOffColor: '#3b87f7'},
     ];
 
     // Get list of requests
     useEffect(() => {
-        getUserDaysoff(Number(id))
+        getUserDaysOff(Number(id))
             .then((data) => {
                 console.log('Success:', data.contents);
                 setRequestsList(data.contents);
@@ -148,9 +142,9 @@ function BalanceItem({i}: BalanceItemProps) {
             className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
                 title={i.label}
-                dayOffTypeUsed={i.dayOffTypeUsed}
-                dayOffTypeQuantity={i.dayOffTypeQuantity}
-                dayOffTypeColor={i.dayOffTypeColor}
+                dayOffUsed={i.dayOffUsed}
+                dayOffQuantity={i.dayOffQuantity}
+                dayOffColor={i.dayOffColor}
             />
         </div>
     );

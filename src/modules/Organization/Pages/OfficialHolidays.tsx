@@ -2,8 +2,8 @@ import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
-import { HolidayResponse } from "@/constants/types";
-import { getHolidays } from "@/services/WorkiveApiClient";
+import { HolidayResponse } from "@/constants/types/holidayTypes";
+import { getHolidays } from "@/services/holidayService";
 import { toast } from "@/components/ui/use-toast";
 import { UserContext } from "@/contexts/UserContext";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
@@ -19,7 +19,7 @@ import {
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
-import { countries } from "@/constants";
+import { countries } from "@/constants/countries";
 
 export default function OfficialHolidays() {
     const { user } = useContext(UserContext);

@@ -3,18 +3,12 @@ import {useNavigate} from "react-router-dom";
 import "react-day-picker/dist/style.css";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-import {getDaysoff} from "~/services/WorkiveApiClient.ts";
+import {getDaysOff} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {
-    DayOffLeaveTypeJson,
-    DayOffStatusJson,
-    DayOffLeaveTypeColor,
-    DayOffStatusColor,
-} from "@/constants";
 import "../../../constants/style.css";
 import {PageTitle, Label, Pagination} from "../../../core/components";
-import {DayOffResponse} from "~/constants/types";
+import {DayOffJson, DayOffColor, DayOffStatusColor, Status} from "@/constants/types/enums";
 import {CircleUser, Plus} from "lucide-react";
 import {
     Card,
@@ -34,8 +28,10 @@ import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar"
 import {Alert, AlertDescription} from "@/components/ui/alert"
 import {isDateInWeekend} from "@/utils/dateUtils";
-import {getHolidays, getEmployee} from "@/services/WorkiveApiClient";
-import {HolidayResponse, UserResponse, PagedResponse} from "@/constants/types";
+import {getHolidays} from "@/services/holidayService";
+import {HolidayResponse} from "@/constants/types/holidayTypes";
+import {DayOffResponse} from "@/constants/types/dayOffTypes";
+import {UserResponse} from "@/constants/types/userTypes";
 import {UserContext} from "@/contexts/UserContext";
 
 dayjs.extend(isBetween);
@@ -84,7 +80,7 @@ export default function Home() {
 
     // Get list of requests
     useEffect(() => {
-        getDaysoff()
+        getDaysOff()
             .then((data) => {
                 console.log("Success:", data.contents);
                 setRequestsList(data.contents);
@@ -251,20 +247,16 @@ type RequestItemProps = {
     calculateDistance: (startAt: string, endAt: string) => number;
 };
 
-function RequestItem({ request, calculateDistance }: RequestItemProps) {
+function RequestItem({request, calculateDistance}: RequestItemProps) {
     const distance: number = calculateDistance(request.startAt, request.endAt);
-    const { accessToken } = useContext(UserContext);
+    const {accessToken} = useContext(UserContext);
 
     return (
         <TableBody className="border-b">
             <TableRow>
                 <TableCell className="flex flex-wrap flex-row gap-2 font-medium">
                     <img
-                        src={
-                            request.user?.avatar
-                                ? `${request.user?.avatar?.url}?token=${accessToken}`
-                                : "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
-                        }
+                        src={getUserAvatarURL(request.user, accessToken)}
                         alt="Profile Image"
                         className="h-8 rounded-full"
                     />
@@ -272,10 +264,10 @@ function RequestItem({ request, calculateDistance }: RequestItemProps) {
                 </TableCell>
                 <TableCell>{request.user.team?.name}</TableCell>
                 <TableCell>
-                    <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]} />
+                    <Label type={DayOffStatusColor[request.status]} text={Status[request.status]}/>
                 </TableCell>
                 <TableCell>
-                    <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]} />
+                    <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]}/>
                 </TableCell>
                 <TableCell>
                     {distance === 1
@@ -288,4 +280,11 @@ function RequestItem({ request, calculateDistance }: RequestItemProps) {
             </TableRow>
         </TableBody>
     );
+}
+
+function getUserAvatarURL(user: UserResponse, accessToken: string): string {
+    if (!user.avatar) {
+        return "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
+    }
+    return `${user.avatar.url}?token=${accessToken}`;
 }

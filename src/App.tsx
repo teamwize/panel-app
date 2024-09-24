@@ -4,10 +4,11 @@ import {toast} from "@/components/ui/use-toast";
 import {Sidebar, Toolbar} from './core/components';
 import {UserContext, UserContextProvider} from './contexts/UserContext';
 import {ThemeContextProvider} from './contexts/ThemeContext';
-import {getCurrentEmployee, getOrganization} from "@/services/WorkiveApiClient";
-import {OrganizationResponse, UserResponse} from "@/constants/types";
+import {getCurrentUser} from "@/services/userService";
+import {getOrganization} from "@/services/organizationService";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {isTokenExpired} from "@/utils/jwtUtils";
+import {UserResponse} from "@/constants/types/userTypes";
+import {OrganizationResponse} from "@/constants/types/organizationTypes";
 
 export default function App() {
     const [user, setUser] = useState<UserResponse | null>(null);
@@ -15,7 +16,7 @@ export default function App() {
 
     if (isAuthenticated()) {
         useEffect(() => {
-            getCurrentEmployee()
+            getCurrentUser()
                 .then((data: UserResponse) => {
                     console.log("Success:", data);
                     setUser(data);
@@ -79,5 +80,5 @@ function AppLayout() {
 
 const isAuthenticated = (): boolean => {
     const accessToken = localStorage.getItem("ACCESS_TOKEN");
-    return accessToken != null && accessToken !== "" && !isTokenExpired(accessToken)
+    return accessToken != null && accessToken !== ""
 }

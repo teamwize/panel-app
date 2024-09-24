@@ -10,8 +10,8 @@ import {
 } from "@/components/ui/dialog";
 import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
-import { TeamResponse } from "~/constants/types.ts";
-import { deleteTeam, getTeam } from "~/services/WorkiveApiClient.ts";
+import { TeamResponse } from "@/constants/types/teamTypes";
+import {deleteTeam, getTeam} from "@/services/teamService";
 import { Pencil, Trash } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";

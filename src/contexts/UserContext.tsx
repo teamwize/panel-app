@@ -1,8 +1,7 @@
 import { useCallback, createContext, ReactNode } from "react"
 import useLocalStorage from "../hooks/useLocalStorage"
-import { isTokenExpired } from "@/utils/jwtUtils";
-import { UserResponse } from "~/constants/types";
-import {OrganizationResponse} from "@/constants/types";
+import { UserResponse } from "@/constants/types/userTypes";
+import {OrganizationResponse} from "@/constants/types/organizationTypes";
 
 type UserContextType = {
   user: UserResponse | null;
@@ -43,7 +42,7 @@ export const UserContextProvider = ({ children, user, organization }: UserContex
 
   const isAuthenticated = (): boolean => {
     const accessToken = localStorage.getItem("ACCESS_TOKEN");
-    return accessToken != null && accessToken !== "" && !isTokenExpired(accessToken)
+    return accessToken != null && accessToken !== ""
   }
 
   const contextValue = {

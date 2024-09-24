@@ -4,18 +4,17 @@ import dayjs from 'dayjs';
 import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {DayOffModal} from '../Components';
-import {getDaysoff, updateDayOffStatus} from "~/services/WorkiveApiClient.ts";
+import {getDaysOff, updateDayOffStatus} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {DayOffLeaveTypeJson, DayOffLeaveTypeColor} from '@/constants';
 import {Label, Pagination} from '../../../core/components';
-import {DayOffRequestStatus, DayOffResponse, PagedResponse} from '~/constants/types';
+import {Status, DayOffJson, DayOffColor} from '@/constants/types/enums';
+import {DayOffResponse} from '@/constants/types/dayOffTypes';
+import {PagedResponse} from '@/constants/types/commonTypes';
 import {Eye} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {UserContext} from "@/contexts/UserContext";
-import {UserResponse} from "@/constants/types";
-import {getEmployee} from "@/services/WorkiveApiClient";
 
 export default function Requests() {
     const navigate = useNavigate();
@@ -29,9 +28,9 @@ export default function Requests() {
 
     // Get dayoff list
     useEffect(() => {
-        getDaysoff()
+        getDaysOff()
             .then((response: PagedResponse<DayOffResponse>) => {
-                setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === DayOffRequestStatus.PENDING));
+                setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === Status.PENDING));
             })
             .catch((error: any) => {
                 setErrorMessage(getErrorMessage(error));
@@ -50,7 +49,7 @@ export default function Requests() {
         setSelectedRequest(request);
     };
 
-    const handleRequest = (status: DayOffRequestStatus, id: number) => {
+    const handleRequest = (status: Status, id: number) => {
         let payload = {status: status};
         setIsProcessing(true);
 
@@ -180,7 +179,7 @@ function RequestRowItem({request, calculateDistance, onClick}: RequestItemProps)
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
-                <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]}/>
+                <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]}/>
             </TableCell>
             <TableCell>
                 {distance === 1

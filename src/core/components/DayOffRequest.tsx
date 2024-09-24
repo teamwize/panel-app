@@ -1,7 +1,7 @@
 import dayjs from 'dayjs';
-import { DayOffLeaveTypeJson, DayOffStatusJson, DayOffLeaveTypeColor, DayOffStatusColor } from '~/constants/index.ts';
 import { Label } from './index';
-import { DayOffResponse } from '~/constants/types';
+import { DayOffJson, DayOffColor, DayOffStatusColor, Status } from '~/constants/types/enums';
+import {DayOffResponse} from "@/constants/types/dayOffTypes";
 import React from "react";
 import { TableCell, TableRow } from "@/components/ui/table";
 
@@ -22,10 +22,10 @@ export default function DayOffRequest({ request, calculateDistance }: DayOffRequ
             </TableCell>
             <TableCell>{distance} {distance === 1 ? "Day" : "Days"}</TableCell>
             <TableCell>
-                <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]} />
+                <Label type={DayOffStatusColor[request.status]} text={Status[request.status]} />
             </TableCell>
             <TableCell>
-                <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]} />
+                <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]} />
             </TableCell>
         </TableRow>
     );

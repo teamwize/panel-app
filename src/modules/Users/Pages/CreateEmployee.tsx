@@ -1,7 +1,8 @@
 import React, {useContext, useEffect, useState} from "react";
 import { useForm } from "react-hook-form";
 import { useNavigate } from "react-router-dom";
-import { createUser, getTeam } from "~/services/WorkiveApiClient.ts";
+import {createUser} from "@/services/userService";
+import {getTeam} from "@/services/teamService";
 import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
 import { Card } from "@/components/ui/card";
@@ -20,8 +21,10 @@ import {
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronLeft } from "lucide-react";
-import { TeamResponse, UserRole, UserCreateRequest } from "~/constants/types";
-import {countries} from "@/constants";
+import { UserCreateRequest } from "@/constants/types/userTypes";
+import {UserRole} from "@/constants/types/enums";
+import {TeamResponse} from "@/constants/types/teamTypes";
+import {countries} from "@/constants/countries";
 import {UserContext} from "@/contexts/UserContext";
 
 

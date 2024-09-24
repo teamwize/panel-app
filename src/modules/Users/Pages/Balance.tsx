@@ -1,15 +1,16 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {getDaysoff} from '~/services/WorkiveApiClient.ts';
+import {getDaysOff} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {PageTitle, DayOffRequest, Pagination, BalanceGraph} from '../../../core/components';
-import {DayOffResponse, Balance} from '~/constants/types';
 import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Table, TableHead, TableHeader, TableRow, TableBody, TableCell} from "@/components/ui/table";
 import dayjs from "dayjs";
+import {Balance} from "@/constants/types/commonTypes";
+import {DayOffResponse} from "@/constants/types/dayOffTypes";
 
 export default function BalancePage() {
     const [balanceValue, setBalanceValue] = useState<Balance[]>([]);
@@ -20,14 +21,14 @@ export default function BalancePage() {
 
     // Example balance data
     const balanceExample: Balance[] = [
-        {label: 'Vacation', dayOffTypeQuantity: 18, dayOffTypeUsed: 3, dayOffTypeColor: '#088636'},
-        {label: 'Sick leave', dayOffTypeQuantity: 5, dayOffTypeUsed: 2, dayOffTypeColor: '#ef4444'},
-        {label: 'Paid time off', dayOffTypeQuantity: 5, dayOffTypeUsed: 1, dayOffTypeColor: '#3b87f7'},
+        {label: 'Vacation', dayOffQuantity: 18, dayOffUsed: 3, dayOffColor: '#088636'},
+        {label: 'Sick leave', dayOffQuantity: 5, dayOffUsed: 2, dayOffColor: '#ef4444'},
+        {label: 'Paid time off', dayOffQuantity: 5, dayOffUsed: 1, dayOffColor: '#3b87f7'},
     ];
 
     // Get list of requests
     useEffect(() => {
-        getDaysoff()
+        getDaysOff()
             .then((data) => {
                 console.log('Success:', data.contents);
                 setRequestsList(data.contents);
@@ -141,9 +142,9 @@ function BalanceItem({i}: BalanceItemProps) {
             className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
                 title={i.label}
-                dayOffTypeUsed={i.dayOffTypeUsed}
-                dayOffTypeQuantity={i.dayOffTypeQuantity}
-                dayOffTypeColor={i.dayOffTypeColor}
+                dayOffUsed={i.dayOffUsed}
+                dayOffQuantity={i.dayOffQuantity}
+                dayOffColor={i.dayOffColor}
             />
         </div>
     );

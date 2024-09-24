@@ -3,19 +3,19 @@ import {Doughnut} from 'react-chartjs-2'
 
 type BalanceGraphProps = {
     title: "Vacation" | "Sick leave" | "Paid time off";
-    dayOffTypeUsed: number;
-    dayOffTypeQuantity: number;
-    dayOffTypeColor: string;
+    dayOffUsed: number;
+    dayOffQuantity: number;
+    dayOffColor: string;
 }
 
 ChartJS.register(ArcElement, Tooltip, Legend)
 
-export default function BalanceGraph({title, dayOffTypeUsed, dayOffTypeQuantity, dayOffTypeColor}: BalanceGraphProps) {
+export default function BalanceGraph({title, dayOffUsed, dayOffQuantity, dayOffColor}: BalanceGraphProps) {
     const data: ChartData<'doughnut'> = {
         datasets: [{
             label: "quantity",
-            data: [dayOffTypeUsed, dayOffTypeQuantity - dayOffTypeUsed], // Corrected the data to show used vs remaining
-            backgroundColor: [dayOffTypeColor, "#64748b"],
+            data: [dayOffUsed, dayOffQuantity - dayOffUsed], // Corrected the data to show used vs remaining
+            backgroundColor: [dayOffColor, "#64748b"],
             borderWidth: 2,
             borderRadius: 4,
         }]
@@ -33,8 +33,8 @@ export default function BalanceGraph({title, dayOffTypeUsed, dayOffTypeQuantity,
     return (
         <div className="balance-graph">
             <Doughnut data={data} options={options}></Doughnut>
-            <p style={{color: dayOffTypeColor}}>{title}</p>
-            <p>{dayOffTypeUsed} / {dayOffTypeQuantity}</p>
+            <p style={{color: dayOffColor}}>{title}</p>
+            <p>{dayOffUsed} / {dayOffQuantity}</p>
         </div>
     );
 }

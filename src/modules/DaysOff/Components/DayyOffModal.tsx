@@ -5,20 +5,19 @@ import {
     Dialog,
     DialogContent,
     DialogHeader,
-    DialogTitle,
     DialogDescription,
     DialogFooter
 } from "@/components/ui/dialog";
-import {DayOffLeaveTypeJson} from '~/constants/index.ts';
-import {DayOffRequestStatus, DayOffResponse} from '~/constants/types';
+import {DayOffResponse} from '@/constants/types/dayOffTypes';
+import {Status, DayOffJson} from '@/constants/types/enums';
 import {Button} from '@/components/ui/button';
-import {CircleAlert, UserPen} from 'lucide-react';
+import {CircleAlert} from 'lucide-react';
 
 type DayOffModalProps = {
     selectedRequest: DayOffResponse | null;
     teamRequests: DayOffResponse[];
     handleModal: () => void;
-    handleRequest: (status: DayOffRequestStatus, id: number) => void;
+    handleRequest: (status: Status, id: number) => void;
     isProcessing: boolean;
     calculateDistance: (startAt: string, endAt: string) => number;
 };
@@ -87,7 +86,7 @@ export default function DayOffModal({
                             </div>
                             <div>
                                 <h5 className='text-[10px] text-gray-600 mb-1'>Type</h5>
-                                <div>{DayOffLeaveTypeJson[selectedRequest.type as keyof typeof DayOffLeaveTypeJson]}</div>
+                                <div>{DayOffJson[selectedRequest.type as keyof typeof DayOffJson]}</div>
                             </div>
                             {selectedRequest.reason && (
                                 <div>
@@ -113,14 +112,14 @@ export default function DayOffModal({
 
                 <DialogFooter className="flex justify-center">
                     <Button
-                        onClick={() => handleRequest(DayOffRequestStatus.REJECTED, selectedRequest.id)}
+                        onClick={() => handleRequest(Status.REJECTED, selectedRequest.id)}
                         variant="outline"
                         disabled={isProcessing}
                     >
                         {isProcessing ? "Waiting ..." : "Reject"}
                     </Button>
                     <Button
-                        onClick={() => handleRequest(DayOffRequestStatus.ACCEPTED, selectedRequest.id)}
+                        onClick={() => handleRequest(Status.ACCEPTED, selectedRequest.id)}
                         className="ml-4 bg-[#088636]"
                         disabled={isProcessing}
                     >

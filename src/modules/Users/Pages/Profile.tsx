@@ -2,12 +2,12 @@ import React, {useContext, useEffect, useState} from 'react'
 import {useForm} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {z} from "zod"
-import {getCurrentEmployee, updateEmployee, updateEmployeePicture} from "~/services/WorkiveApiClient.ts"
+import {getCurrentUser, getUsers, updateUser} from "@/services/userService";
 import {getErrorMessage} from "~/utils/errorHandler.ts"
 import {PageTitle, Alert} from '../../../core/components'
 import AvatarEditor from 'react-avatar-editor'
 import {Dialog, DialogContent, DialogTitle} from "@/components/ui/dialog";
-import {UserResponse, UserUpdateRequest} from '~/constants/types'
+import {UserResponse, UserUpdateRequest} from '@/constants/types/userTypes'
 import {AlertDescription} from "@/components/ui/alert"
 import {Slider} from "@/components/ui/slider"
 import {Button} from "@/components/ui/button"
@@ -24,8 +24,7 @@ import {Input} from "@/components/ui/input"
 import {toast} from "@/components/ui/use-toast"
 import {Card} from "@/components/ui/card";
 import {UserContext} from "@/contexts/UserContext";
-import {PagedResponse} from "@/constants/types";
-import {getEmployee} from "@/services/WorkiveApiClient";
+import {PagedResponse} from "@/constants/types/commonTypes";
 
 const FormSchema = z.object({
     firstName: z.string().min(2, {
@@ -73,7 +72,7 @@ export default function Profile() {
 
     // Fetch employee information on mount
     useEffect(() => {
-        getCurrentEmployee()
+        getCurrentUser()
             .then(data => {
                 setEmployeeInfo(data);
                 reset({
@@ -99,7 +98,7 @@ export default function Profile() {
         };
         setIsProcessing(true);
 
-        updateEmployee(payload)
+        updateUser(payload)
             .then(data => {
                 setIsProcessing(false);
                 setEmployeeInfo(data);
@@ -244,19 +243,19 @@ function ChangePicture({picture, setPicture}: ChangePictureProps) {
                 croppedImg: croppedImg
             })
 
-            updateEmployeePicture(croppedImg)
-                .then(data => {
-                    console.log('Success:', data);
-                })
-                .catch(error => {
-                    console.error('Error:', error);
-                    const errorMessage = getErrorMessage(error);
-                    toast({
-                        title: "Error",
-                        description: errorMessage,
-                        variant: "destructive",
-                    });
-                })
+            // createAsset(croppedImg)
+            //     .then(data => {
+            //         console.log('Success:', data);
+            //     })
+            //     .catch(error => {
+            //         console.error('Error:', error);
+            //         const errorMessage = getErrorMessage(error);
+            //         toast({
+            //             title: "Error",
+            //             description: errorMessage,
+            //             variant: "destructive",
+            //         });
+            //     })
         }
     }
 

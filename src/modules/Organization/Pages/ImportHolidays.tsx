@@ -4,10 +4,10 @@ import { useNavigate } from "react-router-dom";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { countries } from "@/constants";
+import { countries } from "@/constants/countries";
 import { UserContext } from "@/contexts/UserContext";
-import { fetchHolidays, createHolidays } from "@/services/WorkiveApiClient";
-import { FetchedPublicHoliday } from "@/constants/types";
+import { fetchHolidays, createHolidays } from "@/services/holidayService";
+import { FetchedPublicHoliday } from "@/constants/types/holidayTypes";
 import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
 import {

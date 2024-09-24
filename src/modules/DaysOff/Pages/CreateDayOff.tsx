@@ -5,11 +5,10 @@ import {z} from 'zod';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import {createDayoff} from '~/services/WorkiveApiClient.ts';
+import {createDayOff} from "@/services/dayOffService";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {PageTitle} from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
-import {dayOffleaveType} from '~/constants/index.ts';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
@@ -30,10 +29,11 @@ import {
     FormMessage,
 } from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
-import {DayOffType} from '~/constants/types.ts';
+import {DayOffType} from '@/constants/types/enums';
 import {getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
-import {getHolidays} from "@/services/WorkiveApiClient";
-import {HolidayResponse} from "@/constants/types";
+import {getHolidays} from "@/services/holidayService";
+import {HolidayResponse} from "@/constants/types/holidayTypes";
+import  {DayOffJson} from "@/constants/types/enums";
 import {UserContext} from "@/contexts/UserContext";
 
 dayjs.extend(isBetween);
@@ -54,7 +54,7 @@ export default function CreateDayOff() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            dayOffType: dayOffleaveType[0].value as DayOffType,
+            dayOffType: DayOffType.VACATION,
             startDate: new Date(),
             endDate: new Date(),
             reason: '',
@@ -98,7 +98,7 @@ export default function CreateDayOff() {
             distance: calculateDistance(startDate, endDate, holidays),
         };
 
-        createDayoff(payload)
+        createDayOff(payload)
             .then(() => {
                 navigate('/dayoff/pending');
             })
@@ -160,9 +160,9 @@ export default function CreateDayOff() {
                                                     <SelectValue placeholder="Select a type"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {dayOffleaveType.map((type) => (
-                                                        <SelectItem key={type.value} value={type.value}>
-                                                            {type.name}
+                                                    {Object.keys(DayOffType).map((key) => (
+                                                        <SelectItem key={key} value={key}>
+                                                            {DayOffJson[key as keyof typeof DayOffJson]}
                                                         </SelectItem>
                                                     ))}
                                                 </SelectContent>

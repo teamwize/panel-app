@@ -1,14 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useNavigate} from 'react-router-dom';
-import {updateOrganization} from "~/services/WorkiveApiClient.ts";
+import {updateOrganization} from "@/services/organizationService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Alert} from '../../../core/components';
 import {Card} from "@/components/ui/card";
-import {OrganizationResponse, OrganizationUpdateRequest, DayOffType} from "~/constants/types";
+import {OrganizationResponse, OrganizationUpdateRequest} from "@/constants/types/organizationTypes";
+import { DayOffType} from "@/constants/types/enums";
 import {Button} from "@/components/ui/button";
-import {ChevronLeft} from "lucide-react";
 import {AlertDescription} from "@/components/ui/alert";
 import {z} from "zod";
 import {

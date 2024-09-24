@@ -1,10 +1,11 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useForm} from 'react-hook-form';
 import {useNavigate} from 'react-router-dom';
-import {getOrganization, updateOrganization} from '~/services/WorkiveApiClient.ts';
+import {getOrganization, updateOrganization} from "@/services/organizationService";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
-import {countries} from '~/constants/index.ts';
-import {OrganizationResponse, Week, OrganizationUpdateRequest} from '~/constants/types';
+import {countries} from '~/constants/countries.ts';
+import {OrganizationResponse, OrganizationUpdateRequest} from '@/constants/types/organizationTypes';
+import {Week} from '@/constants/types/enums'
 import {toast} from "@/components/ui/use-toast";
 import {Button} from "@/components/ui/button";
 import {Alert, AlertDescription} from "@/components/ui/alert";
@@ -22,7 +23,6 @@ import {
 } from "@/components/ui/form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {ChevronLeft} from "lucide-react";
 import {UserContext} from "@/contexts/UserContext";
 
 const FormSchema = z.object({

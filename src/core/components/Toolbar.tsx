@@ -19,7 +19,7 @@ import {
     DialogDescription
 } from "@/components/ui/dialog";
 import { UserContext } from '~/contexts/UserContext.tsx';
-import { UserResponse } from "@/constants/types";
+import { UserResponse } from "@/constants/types/userTypes";
 
 type ToolbarProps = {
     user: UserResponse | null;

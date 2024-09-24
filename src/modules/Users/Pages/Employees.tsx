@@ -1,6 +1,6 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {getEmployee, deleteEmployee} from '~/services/WorkiveApiClient.ts';
+import {getUsers, deleteUser} from "@/services/userService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {Pagination} from '../../../core/components';
@@ -13,7 +13,8 @@ import {
     DialogDescription
 } from "@/components/ui/dialog";
 import {Card} from "@/components/ui/card";
-import {PagedResponse, UserResponse} from '~/constants/types';
+import {UserResponse} from '@/constants/types/userTypes';
+import {PagedResponse} from '@/constants/types/commonTypes';
 import {ChevronLeft, Trash, UserPen} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Alert, AlertDescription} from "@/components/ui/alert";
@@ -30,7 +31,7 @@ export default function Employees() {
     const recordsPerPage: number = 5;
 
     useEffect(() => {
-        getEmployee(0, 30)
+        getUsers(0, 30)
             .then((data: PagedResponse<UserResponse>) => {
                 setEmployeesList(data);
             })
@@ -54,7 +55,7 @@ export default function Employees() {
     const handleRequest = (confirmed: boolean, id: number) => {
         setIsProcessing(true);
         if (confirmed && selectedEmployeeId !== null) {
-            deleteEmployee(String(id))
+            deleteUser(String(id))
                 .then(() => {
                     setIsProcessing(false);
                     setEmployeesList(prevState => ({

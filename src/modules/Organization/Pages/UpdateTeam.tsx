@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateTeam } from "~/services/WorkiveApiClient.ts";
+import {updateTeam} from "@/services/teamService";
 import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
 import { ChevronLeft } from 'lucide-react';
@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { TeamCreateRequest } from "~/constants/types";
+import { TeamCreateRequest } from "@/constants/types/teamTypes";
 
 const FormSchema = z.object({
     name: z.string().min(2, { message: "Team Name must be over 2 characters" }).max(20, {
