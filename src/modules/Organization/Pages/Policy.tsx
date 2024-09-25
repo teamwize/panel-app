@@ -4,12 +4,11 @@ import {useNavigate} from 'react-router-dom';
 import {updateOrganization} from "@/services/organizationService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {Alert} from '../../../core/components';
 import {Card} from "@/components/ui/card";
 import {OrganizationResponse, OrganizationUpdateRequest} from "@/constants/types/organizationTypes";
 import { DayOffType} from "@/constants/types/enums";
 import {Button} from "@/components/ui/button";
-import {AlertDescription} from "@/components/ui/alert";
+import {AlertDescription, Alert} from "@/components/ui/alert";
 import {z} from "zod";
 import {
     Form,

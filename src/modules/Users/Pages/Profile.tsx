@@ -4,11 +4,11 @@ import {zodResolver} from "@hookform/resolvers/zod"
 import {z} from "zod"
 import {getCurrentUser, getUsers, updateUser} from "@/services/userService";
 import {getErrorMessage} from "~/utils/errorHandler.ts"
-import {PageTitle, Alert} from '../../../core/components'
+import {PageTitle} from '../../../core/components'
 import AvatarEditor from 'react-avatar-editor'
 import {Dialog, DialogContent, DialogTitle} from "@/components/ui/dialog";
 import {UserResponse, UserUpdateRequest} from '@/constants/types/userTypes'
-import {AlertDescription} from "@/components/ui/alert"
+import {AlertDescription, Alert} from "@/components/ui/alert"
 import {Slider} from "@/components/ui/slider"
 import {Button} from "@/components/ui/button"
 import {Camera} from "lucide-react"
