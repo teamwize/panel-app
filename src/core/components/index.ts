@@ -7,5 +7,6 @@ import Label from './Label'
 import Pagination from './Pagination'
 import Logo from './Logo'
 import Toolbar from "@/core/components/Toolbar";
+import DayOffDuration from "@/core/components/DayOffDuration";
 
-export {Sidebar, PageTitle, DayOffRequest, BalanceGraph, AuthenticatedRoute, Label, Pagination, Logo, Toolbar}
+export {DayOffDuration, Sidebar, PageTitle, DayOffRequest, BalanceGraph, AuthenticatedRoute, Label, Pagination, Logo, Toolbar}

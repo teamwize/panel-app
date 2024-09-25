@@ -49,10 +49,6 @@ export default function EmployeeInformation() {
 
     const goBack = () => navigate('/employees')
 
-    const calculateDistance = (startAt: string, endAt: string): number => {
-        return dayjs(endAt).diff(startAt, "day") + 1;
-    };
-
     return (
         <>
             <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
@@ -102,7 +98,6 @@ export default function EmployeeInformation() {
                                                     <DayOffRequest
                                                         request={request}
                                                         key={request.id}
-                                                        calculateDistance={calculateDistance}
                                                     />
                                                 ))
                                         ) : (
@@ -142,9 +137,9 @@ function BalanceItem({i}: BalanceItemProps) {
             className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
                 title={i.label}
-                dayOffUsed={i.dayOffUsed}
-                dayOffQuantity={i.dayOffQuantity}
-                dayOffColor={i.dayOffColor}
+                used={i.dayOffUsed}
+                quantity={i.dayOffQuantity}
+                color={i.dayOffColor}
             />
         </div>
     );

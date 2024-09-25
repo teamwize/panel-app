@@ -33,6 +33,7 @@ import {HolidayResponse} from "@/constants/types/holidayTypes";
 import {DayOffResponse} from "@/constants/types/dayOffTypes";
 import {UserResponse} from "@/constants/types/userTypes";
 import {UserContext} from "@/contexts/UserContext";
+import {DayOffDuration} from "@/core/components";
 
 dayjs.extend(isBetween);
 
@@ -137,10 +138,6 @@ export default function Home() {
         navigate("/dayoff/create");
     };
 
-    const calculateDistance = (startAt: string, endAt: string): number => {
-        return dayjs(endAt).diff(startAt, "day") + 1;
-    };
-
     const weekendsDays: string[] = ['Saturday', 'Sunday'];
 
     const isDateDisabled = (date: Date): boolean => {
@@ -216,7 +213,6 @@ export default function Home() {
                                                 .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
                                                 .map((request) => (
                                                     <RequestItem
-                                                        calculateDistance={calculateDistance}
                                                         request={request}
                                                         key={request.id}
                                                     />
@@ -244,11 +240,9 @@ export default function Home() {
 
 type RequestItemProps = {
     request: DayOffResponse;
-    calculateDistance: (startAt: string, endAt: string) => number;
 };
 
-function RequestItem({request, calculateDistance}: RequestItemProps) {
-    const distance: number = calculateDistance(request.startAt, request.endAt);
+function RequestItem({request}: RequestItemProps) {
     const {accessToken} = useContext(UserContext);
 
     return (
@@ -269,14 +263,7 @@ function RequestItem({request, calculateDistance}: RequestItemProps) {
                 <TableCell>
                     <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]}/>
                 </TableCell>
-                <TableCell>
-                    {distance === 1
-                        ? dayjs(request.startAt).format("D MMM YYYY")
-                        : `${dayjs(request.startAt).format("D MMM YYYY")} - ${dayjs(request.endAt).format("D MMM YYYY")}`}
-                </TableCell>
-                <TableCell>
-                    {distance} {distance === 1 ? "Day" : "Days"}
-                </TableCell>
+                <DayOffDuration request={request}/>
             </TableRow>
         </TableBody>
     );

@@ -48,10 +48,6 @@ export default function BalancePage() {
         navigate('/dayoff/create');
     };
 
-    const calculateDistance = (startAt: string, endAt: string): number => {
-        return dayjs(endAt).diff(startAt, "day") + 1;
-    };
-
     return (
         <>
             <PageTitle title="Balance">
@@ -100,7 +96,6 @@ export default function BalancePage() {
                                                     <DayOffRequest
                                                         request={request}
                                                         key={request.id}
-                                                        calculateDistance={calculateDistance}
                                                     />
                                                 ))
                                         ) : (
@@ -142,9 +137,9 @@ function BalanceItem({i}: BalanceItemProps) {
             className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
                 title={i.label}
-                dayOffUsed={i.dayOffUsed}
-                dayOffQuantity={i.dayOffQuantity}
-                dayOffColor={i.dayOffColor}
+                used={i.dayOffUsed}
+                quantity={i.dayOffQuantity}
+                color={i.dayOffColor}
             />
         </div>
     );

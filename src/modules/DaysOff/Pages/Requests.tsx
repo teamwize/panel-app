@@ -1,13 +1,12 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
-import dayjs from 'dayjs';
 import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {DayOffModal} from '../Components';
 import {getDaysOff, updateDayOffStatus} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {Label, Pagination} from '../../../core/components';
+import {Label, Pagination, DayOffDuration} from '../../../core/components';
 import {Status, DayOffJson, DayOffColor} from '@/constants/types/enums';
 import {DayOffResponse} from '@/constants/types/dayOffTypes';
 import {PagedResponse} from '@/constants/types/commonTypes';
@@ -75,10 +74,6 @@ export default function Requests() {
             })
     };
 
-    const calculateDistance = (startAt: string, endAt: string): number => {
-        return dayjs(endAt).diff(startAt, 'day') + 1;
-    };
-
     return (
         <>
             <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
@@ -111,7 +106,6 @@ export default function Requests() {
                                     <RequestRowItem
                                         key={request.id}
                                         request={request}
-                                        calculateDistance={calculateDistance}
                                         onClick={() => handleRowClick(request)}
                                     />
                                 ))}
@@ -135,7 +129,6 @@ export default function Requests() {
                         handleModal={() => setSelectedRequest(null)}
                         handleRequest={handleRequest}
                         isProcessing={isProcessing}
-                        calculateDistance={calculateDistance}
                     />
                 )}
             </main>
@@ -145,12 +138,10 @@ export default function Requests() {
 
 type RequestItemProps = {
     request: DayOffResponse;
-    calculateDistance: (startAt: string, endAt: string) => number;
     onClick: (request: DayOffResponse) => void;
 };
 
-function RequestRowItem({request, calculateDistance, onClick}: RequestItemProps) {
-    const distance: number = calculateDistance(request.startAt, request.endAt);
+function RequestRowItem({request, onClick}: RequestItemProps) {
     const {accessToken} = useContext(UserContext)
     const navigate = useNavigate();
 
@@ -181,14 +172,7 @@ function RequestRowItem({request, calculateDistance, onClick}: RequestItemProps)
             <TableCell>
                 <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]}/>
             </TableCell>
-            <TableCell>
-                {distance === 1
-                    ? dayjs(request.startAt).format("D MMM YYYY")
-                    : `${dayjs(request.startAt).format("D MMM YYYY")} - ${dayjs(request.endAt).format("D MMM YYYY")}`}
-            </TableCell>
-            <TableCell>
-                {distance} {distance === 1 ? "Day" : "Days"}
-            </TableCell>
+            <DayOffDuration request={request}/>
             <TableCell>
                 <Button  className={"px-1"}
                          variant="outline"

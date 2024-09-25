@@ -12,6 +12,8 @@ import {DayOffResponse} from '@/constants/types/dayOffTypes';
 import {Status, DayOffJson} from '@/constants/types/enums';
 import {Button} from '@/components/ui/button';
 import {CircleAlert} from 'lucide-react';
+import { calculateDuration, formatDurationRange } from '@/utils/dateUtils';
+import {duration} from "@material-ui/core";
 
 type DayOffModalProps = {
     selectedRequest: DayOffResponse | null;
@@ -19,19 +21,19 @@ type DayOffModalProps = {
     handleModal: () => void;
     handleRequest: (status: Status, id: number) => void;
     isProcessing: boolean;
-    calculateDistance: (startAt: string, endAt: string) => number;
 };
 
 export default function DayOffModal({
                                         selectedRequest,
                                         teamRequests,
                                         handleModal,
-                                        calculateDistance,
                                         handleRequest,
                                         isProcessing
                                     }: DayOffModalProps) {
     const [dayOverlap, setDayOverlap] = useState<DayOffResponse[]>([]);
     const navigate = useNavigate();
+    const duration = calculateDuration(selectedRequest.startAt, selectedRequest.endAt);
+    const durationText = formatDurationRange(selectedRequest.startAt, selectedRequest.endAt);
 
     const viewBalance = (requestName: string) => {
         navigate('/balance?query=' + requestName);
@@ -53,8 +55,6 @@ export default function DayOffModal({
         setDayOverlap(overlap);
     }, [selectedRequest.id, teamRequests]);
 
-    const distance: number = calculateDistance(selectedRequest.startAt, selectedRequest.endAt);
-
     return (
         <Dialog open={true} onOpenChange={handleModal}>
             <DialogContent>
@@ -74,14 +74,11 @@ export default function DayOffModal({
                         <div className="grid grid-cols-4 gap-4 mb-4 text-black text-xs">
                             <div className={"col-span-2"}>
                                 <h5 className='text-[10px] text-gray-600 mb-1'>Date</h5>
-                                <div>{distance === 1
-                                    ? dayjs(selectedRequest.startAt).format('D MMM YYYY')
-                                    : `${dayjs(selectedRequest.startAt).format('D MMM YYYY')} - ${dayjs(selectedRequest.endAt).format('D MMM YYYY')}`}
-                                </div>
+                                <div>{durationText}</div>
                             </div>
                             <div>
                                 <h5 className='text-[10px] text-gray-600 mb-1'>Duration</h5>
-                                <div>{distance} {distance === 1 ? "Day" : "Days"}
+                                <div>{duration} {duration === 1 ? "Day" : "Days"}
                                 </div>
                             </div>
                             <div>
@@ -105,7 +102,7 @@ export default function DayOffModal({
                             {dayOverlap.length} Other teammates also on leave
                         </p>
                         {dayOverlap.map(r => (
-                            <RequestItem r={r} distance={distance} key={r.id}/>
+                            <RequestItem r={r} key={r.id}/>
                         ))}
                     </div>
                 )}
@@ -133,16 +130,15 @@ export default function DayOffModal({
 
 type RequestItemProps = {
     r: DayOffResponse;
-    distance: number;
 };
 
-function RequestItem({r, distance}: RequestItemProps) {
+function RequestItem({r}: RequestItemProps) {
+    const durationText = formatDurationRange(r.startAt, r.endAt);
+
     return (
         <div className="mb-2">
             <h1>{r.user.firstName} {r.user.lastName}</h1>
-            <p>
-                {distance === 1 ? dayjs(r.startAt).format('D MMM YYYY') : `${dayjs(r.startAt).format('D MMM YYYY')} - ${dayjs(r.endAt).format('D MMM YYYY')}`}
-            </p>
+            <p>{durationText}</p>
         </div>
     );
 }

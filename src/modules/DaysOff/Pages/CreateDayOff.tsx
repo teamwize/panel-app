@@ -30,7 +30,7 @@ import {
 } from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
 import {DayOffType} from '@/constants/types/enums';
-import {getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
+import {calculateDuration, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
 import  {DayOffJson} from "@/constants/types/enums";
@@ -113,11 +113,11 @@ export default function CreateDayOff() {
     };
 
     const calculateDistance = (startDate: Date, endDate: Date, holidaysDate: Date[]): number => {
-        const distance = dayjs(endDate).diff(startDate, 'day') + 1;
+        const duration = calculateDuration(startDate, endDate);
         const filteredHolidays = holidaysDate.filter((h: Date) =>
             dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]')
         );
-        return distance - filteredHolidays.length;
+        return duration - filteredHolidays.length;
     };
 
     useEffect(() => {
