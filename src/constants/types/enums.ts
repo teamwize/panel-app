@@ -12,7 +12,7 @@ export enum UserRole {
     API = "API"
 }
 
-//dayOff enum
+//dayOff enum and const
 
 export enum DayOffType {
     PAID_TIME = 'PAID_TIME',
@@ -20,10 +20,10 @@ export enum DayOffType {
     SICK_LEAVE = 'SICK_LEAVE'
 }
 
-export enum DayOffJson {
-    VACATION = "Vacation",
-    SICK_LEAVE = "Sick leave",
-    PAID_TIME = "Paid time"
+export const DayOffJson:  { [key in DayOffType]: string } = {
+    [DayOffType.VACATION] : 'Vacation',
+    [DayOffType.SICK_LEAVE] : 'Sick leave',
+    [DayOffType.PAID_TIME] : 'Paid time off',
 }
 
 export enum Status {
@@ -32,23 +32,30 @@ export enum Status {
     PENDING = 'PENDING'
 }
 
-export enum DayOffStatusJson {
-    PENDING = "Pending",
-    ACCEPTED = "Accepted",
-    REJECTED = "Rejected"
+export const DayOffStatusJson: { [key in Status]: string } = {
+    [Status.PENDING]: 'Pending',
+    [Status.ACCEPTED]: 'Accepted',
+    [Status.REJECTED]: 'Rejected',
+};
+
+export enum LabelType {
+    GREEN = 'GREEN',
+    RED = 'RED',
+    BLUE = 'BLUE',
+    YELLOW = 'YELLOW',
 }
 
-export enum DayOffColor {
-    VACATION = "GREEN",
-    SICK_LEAVE = "RED",
-    PAID_TIME = "BLUE"
+export const DayOffColor: { [key in DayOffType]: LabelType } = {
+    [DayOffType.VACATION] : LabelType.GREEN,
+    [DayOffType.SICK_LEAVE] : LabelType.RED,
+    [DayOffType.PAID_TIME] : LabelType.BLUE,
 }
 
-export enum DayOffStatusColor {
-    PENDING = "YELLOW",
-    ACCEPTED = "GREEN",
-    REJECTED = "RED"
-}
+export const DayOffStatusColor: { [key in Status]: LabelType } = {
+    [Status.PENDING]: LabelType.YELLOW,
+    [Status.ACCEPTED]: LabelType.GREEN,
+    [Status.REJECTED]: LabelType.RED,
+};
 
 
 export enum Week {

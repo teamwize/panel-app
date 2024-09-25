@@ -1,30 +1,22 @@
-import { Badge } from "@/components/ui/badge";
+import {Badge} from "@/components/ui/badge";
+import {LabelType} from "@/constants/types/enums";
 
 type LabelProps = {
-  type: 'GREEN' | 'RED' | 'BLUE' | 'YELLOW';
-  text?: string;
-  className?: string;
+    type: LabelType;
+    text?: string;
 }
 
-export default function Label({ type, text, className }: LabelProps) {
-  let labelClassNames;
+export default function Label({type, text}: LabelProps) {
+    const colorClasses: { [key in LabelType]: string } = {
+        [LabelType.GREEN]: 'bg-[#088636]',
+        [LabelType.RED]: 'bg-[#ef4444]',
+        [LabelType.BLUE]: 'bg-[#3b87f7]',
+        [LabelType.YELLOW]: 'bg-yellow-500',
+    };
 
-  switch (type.toUpperCase()) {
-    case 'GREEN':
-      labelClassNames = 'bg-[#088636]';
-      break;
-    case 'RED':
-      labelClassNames = 'bg-[#ef4444]';
-      break;
-    case 'BLUE':
-      labelClassNames = 'bg-[#3b87f7]';
-      break;
-    case 'YELLOW':
-      labelClassNames = 'bg-yellow-500';
-      break;
-  }
+    const labelClassNames = `text-white ${colorClasses[type]}`;
 
-  return (
-    <Badge className={labelClassNames}>{text}</Badge>
-  )
+    return (
+        <Badge className={labelClassNames}>{text}</Badge>
+    )
 }

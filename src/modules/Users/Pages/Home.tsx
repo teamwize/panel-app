@@ -8,7 +8,7 @@ import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import "@/index.css";
 import {PageTitle, Label, Pagination} from "../../../core/components";
-import {DayOffJson, DayOffColor, DayOffStatusColor, Status} from "@/constants/types/enums";
+import {DayOffJson, DayOffColor, DayOffStatusColor, Status, DayOffStatusJson} from "@/constants/types/enums";
 import {CircleUser, Plus} from "lucide-react";
 import {
     Card,
@@ -258,7 +258,7 @@ function RequestItem({request}: RequestItemProps) {
                 </TableCell>
                 <TableCell>{request.user.team?.name}</TableCell>
                 <TableCell>
-                    <Label type={DayOffStatusColor[request.status]} text={Status[request.status]}/>
+                    <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]}/>
                 </TableCell>
                 <TableCell>
                     <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]}/>
