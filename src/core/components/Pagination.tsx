@@ -25,7 +25,7 @@ export default function PaginationComponent({totalContents, pageNumber, setPageN
     }
 
     return (
-        <Pagination className={'flex flex-wrap justify-start'}>
+        <Pagination className='flex flex-wrap justify-start'>
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious onClick={() => handlePageChange(pageNumber - 1)}/>

@@ -19,13 +19,8 @@ import {
     DialogDescription
 } from "@/components/ui/dialog";
 import { UserContext } from '~/contexts/UserContext.tsx';
-import { UserResponse } from "@/constants/types/userTypes";
 
-type ToolbarProps = {
-    user: UserResponse | null;
-};
-
-export default function Toolbar({ user }: ToolbarProps) {
+export default function Toolbar() {
     const [signOut, setSignOut] = useState<boolean>(false);
     const navigate = useNavigate();
 
@@ -35,8 +30,7 @@ export default function Toolbar({ user }: ToolbarProps) {
 
     return (
         <div>
-            <header
-                className="flex flex-row-reverse h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+            <header className="flex flex-row-reverse h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="secondary" size="icon" className="rounded-full">
@@ -53,7 +47,7 @@ export default function Toolbar({ user }: ToolbarProps) {
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {signOut && <SignOutut signOut={signOut} setSignOut={setSignOut} />}
+                {signOut && <SignOut signOut={signOut} setSignOut={setSignOut} />}
             </header>
         </div>
     );
@@ -64,7 +58,7 @@ type SignOutProps = {
     signOut: boolean;
 };
 
-function SignOutut({ setSignOut, signOut }: SignOutProps) {
+function SignOut({ setSignOut, signOut }: SignOutProps) {
     const navigate = useNavigate();
     const { signout } = useContext(UserContext);
 
