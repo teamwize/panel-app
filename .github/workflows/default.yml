@@ -4,10 +4,10 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - feature/implement-ci-cd  # Only run on push to the main branch
+      - master  # Only run on push to the main branch
   pull_request:
     branches:
-      - feature/implement-ci-cd  # Run on pull requests to the main branch
+      - master  # Run on pull requests to the main branch
 jobs:
   build:
     runs-on: ubuntu-latest
