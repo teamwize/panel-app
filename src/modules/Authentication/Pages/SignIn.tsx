@@ -1,5 +1,5 @@
 import React, {useState, useContext} from "react";
-import {useForm} from "react-hook-form";
+import {useForm, UseFormReturn} from "react-hook-form";
 import {useNavigate, useSearchParams, Link} from 'react-router-dom';
 import {signin} from "@/services/authService";
 import {UserContext} from "~/contexts/UserContext.tsx";
@@ -25,7 +25,6 @@ export default function SignIn() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const currentURL = searchParams.get('redirect');
-    const [showPassword, setShowPassword] = useState<boolean>(false);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
@@ -70,86 +69,88 @@ export default function SignIn() {
             </div>
 
             <div className="w-full max-w-sm p-6 bg-white shadow-lg rounded-lg">
-
-
                 {errorMessage && (
                     <Alert>
                         <AlertDescription>{errorMessage}</AlertDescription>
                     </Alert>
                 )}
-
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <FormField
-                            control={form.control}
-                            name="email"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Email</FormLabel>
-                                    <FormControl>
-                                        <Input
-                                            id="email"
-                                            placeholder="Email"
-                                            {...field}
-                                        />
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <FormField
-                            control={form.control}
-                            name="password"
-                            render={({field}) => (
-                                <FormItem>
-                                    <FormLabel>Password</FormLabel>
-                                    <FormControl>
-                                        <div className="relative">
-                                            <Input
-                                                id="password"
-                                                placeholder="Password"
-                                                type={showPassword ? "text" : "password"}
-                                                {...field}
-                                            />
-                                            <button
-                                                type="button"
-                                                onClick={() => setShowPassword(!showPassword)}
-                                                className="absolute inset-y-0 right-0 flex items-center px-2"
-                                            >
-                                                {showPassword ? (
-                                                    <EyeOff className="h-5 w-5"/>
-                                                ) : (
-                                                    <Eye className="h-5 w-5"/>
-                                                )}
-                                            </button>
-                                        </div>
-                                    </FormControl>
-                                    <FormMessage/>
-                                </FormItem>
-                            )}
-                        />
-
-                        <div className="flex items-center justify-between">
-                            <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500">
-                                Forgot your password?
-                            </a>
-                        </div>
-
-                        <Button type="submit" className="w-full mt-4">
-                            {isProcessing ? "Waiting ..." : "Sign in"}
-                        </Button>
-
+                        <EmailField form={form}/>
+                        <PasswordField form={form}/>
+                        <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500 block">Forgot your password?</a>
+                        <Button type="submit" className="w-full mt-4">{isProcessing ? "Waiting ..." : "Sign in"}</Button>
                         <div className="mt-4 text-center text-sm">
-                            Don&apos;t have an account?
-                            <Link to="/signup" className="underline ml-1">
-                                Sign up
-                            </Link>
+                            Don't have an account?
+                            <Link to="/signup" className="underline ml-1">Sign up</Link>
                         </div>
                     </form>
                 </Form>
             </div>
         </div>
+    );
+}
+
+
+type FieldProps = {
+    form: UseFormReturn
+}
+
+function EmailField({form}: FieldProps) {
+    return (
+        <FormField
+            control={form.control}
+            name="email"
+            render={({field}) => (
+                <FormItem>
+                    <FormLabel>Email</FormLabel>
+                    <FormControl>
+                        <Input
+                            id="email"
+                            placeholder="Email"
+                            {...field}
+                        />
+                    </FormControl>
+                </FormItem>
+            )}
+        />
     )
-        ;
+}
+
+
+function PasswordField({form}: FieldProps) {
+    const [showPassword, setShowPassword] = useState<boolean>(false);
+
+    return (
+        <FormField
+            control={form.control}
+            name="password"
+            render={({field}) => (
+                <FormItem>
+                    <FormLabel>Password</FormLabel>
+                    <FormControl>
+                        <div className="relative">
+                            <Input
+                                id="password"
+                                placeholder="Password"
+                                type={showPassword ? "text" : "password"}
+                                {...field}
+                            />
+                            <button
+                                type="button"
+                                onClick={() => setShowPassword(!showPassword)}
+                                className="absolute inset-y-0 right-0 flex items-center px-2"
+                            >
+                                {showPassword
+                                    ?
+                                    (<EyeOff className="h-5 w-5"/>)
+                                    :
+                                    (<Eye className="h-5 w-5"/>)}
+                            </button>
+                        </div>
+                    </FormControl>
+                </FormItem>
+            )}
+        />
+    )
 }

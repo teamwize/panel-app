@@ -13,27 +13,13 @@ import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
 import {Card} from '@/components/ui/card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
 import {DayOffType} from '@/constants/types/enums';
 import {calculateDuration, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
-import  {DayOffJson} from "@/constants/types/enums";
 import {UserContext} from "@/contexts/UserContext";
 
 dayjs.extend(isBetween);
@@ -137,7 +123,6 @@ export default function CreateDayOff() {
     return (
         <>
             <PageTitle title="Day Off Request"></PageTitle>
-
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>
@@ -160,10 +145,8 @@ export default function CreateDayOff() {
                                                     <SelectValue placeholder="Select a type"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {Object.keys(DayOffType).map((key) => (
-                                                        <SelectItem key={key} value={key}>
-                                                            {DayOffJson[key as keyof typeof DayOffJson]}
-                                                        </SelectItem>
+                                                    {Object.values(DayOffType).map((value) => (
+                                                        <SelectItem key={value} value={value}>{value}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
@@ -193,8 +176,7 @@ export default function CreateDayOff() {
                             </section>
 
                             <p className="p-2 text-center text-sm border rounded-md font-semibold">
-                                Duration:
-                                {calculateDistance(startDate, endDate, holidays)} {calculateDistance(startDate, endDate, holidays) === 1 ? 'Day' : 'Days'}
+                                Duration:{calculateDistance(startDate, endDate, holidays)} {calculateDistance(startDate, endDate, holidays) === 1 ? 'Day' : 'Days'}
                             </p>
 
                             <FormField

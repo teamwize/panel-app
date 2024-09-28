@@ -3,10 +3,10 @@ import PageTitle from './PageTitle'
 import DayOffRequest from './DayOffRequest'
 import BalanceGraph from './BalanceGraph'
 import AuthenticatedRoute from './AuthenticatedRoute'
-import Label from './Label'
 import Pagination from './Pagination'
 import Logo from './Logo'
 import Toolbar from "@/core/components/Toolbar";
 import DayOffDuration from "@/core/components/DayOffDuration";
+import Avatar from "@/core/components/Avatar";
 
-export {DayOffDuration, Sidebar, PageTitle, DayOffRequest, BalanceGraph, AuthenticatedRoute, Label, Pagination, Logo, Toolbar}
+export {Avatar, DayOffDuration, Sidebar, PageTitle, DayOffRequest, BalanceGraph, AuthenticatedRoute, Pagination, Logo, Toolbar}

@@ -1,22 +1,22 @@
 import React, {useEffect, useState, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Card, CardHeader, CardTitle, CardContent} from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {DayOffModal} from '../Components';
+import {DayOffDialog} from '../Components';
 import {getDaysOff, updateDayOffStatus} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {Label, Pagination, DayOffDuration} from '../../../core/components';
-import {Status, DayOffJson, DayOffColor} from '@/constants/types/enums';
+import {Pagination, DayOffDuration} from '../../../core/components';
+import {DayOffStatus} from '@/constants/types/enums';
 import {DayOffResponse} from '@/constants/types/dayOffTypes';
 import {PagedResponse} from '@/constants/types/commonTypes';
 import {Eye} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {UserContext} from "@/contexts/UserContext";
+import {Badge} from "@/components/ui/badge.tsx";
 
 export default function Requests() {
-    const navigate = useNavigate();
     const [requestsList, setRequestsList] = useState<DayOffResponse[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -29,7 +29,8 @@ export default function Requests() {
     useEffect(() => {
         getDaysOff()
             .then((response: PagedResponse<DayOffResponse>) => {
-                setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === Status.PENDING));
+                setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === DayOffStatus.PENDING));
+                console.log(requestsList)
             })
             .catch((error: any) => {
                 setErrorMessage(getErrorMessage(error));
@@ -48,7 +49,7 @@ export default function Requests() {
         setSelectedRequest(request);
     };
 
-    const handleRequest = (status: Status, id: number) => {
+    const handleRequest = (status: DayOffStatus, id: number) => {
         let payload = {status: status};
         setIsProcessing(true);
 
@@ -106,7 +107,7 @@ export default function Requests() {
                                     <RequestRowItem
                                         key={request.id}
                                         request={request}
-                                        onClick={() => handleRowClick(request)}
+                                        handleRowClick={()=> handleRowClick(request)}
                                     />
                                 ))}
                         </TableBody>
@@ -123,10 +124,10 @@ export default function Requests() {
                 </Card>
 
                 {selectedRequest && (
-                    <DayOffModal
+                    <DayOffDialog
                         teamRequests={teamRequests}
                         selectedRequest={selectedRequest}
-                        handleModal={() => setSelectedRequest(null)}
+                        toggleModal={() => setSelectedRequest(null)}
                         handleRequest={handleRequest}
                         isProcessing={isProcessing}
                     />
@@ -138,10 +139,10 @@ export default function Requests() {
 
 type RequestItemProps = {
     request: DayOffResponse;
-    onClick: (request: DayOffResponse) => void;
+    handleRowClick: () => void;
 };
 
-function RequestRowItem({request, onClick}: RequestItemProps) {
+function RequestRowItem({request, handleRowClick}: RequestItemProps) {
     const {accessToken} = useContext(UserContext)
     const navigate = useNavigate();
 
@@ -170,14 +171,14 @@ function RequestRowItem({request, onClick}: RequestItemProps) {
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
-                <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]}/>
+                <Badge variant="outline">{request.type}</Badge>
             </TableCell>
             <DayOffDuration request={request}/>
             <TableCell>
                 <Button  className={"px-1"}
                          variant="outline"
                          size="sm">
-                    <Eye onClick={() => viewBalance(request.user.team.name)} className="h-4 text-[#3b87f7]"/>
+                    <Eye onClick={handleRowClick} className="h-4 text-[#3b87f7]"/>
                 </Button>
             </TableCell>
         </TableRow>

@@ -1,14 +1,11 @@
 import dayjs from 'dayjs';
-import {useState} from 'react';
+import {useState, useCallback} from 'react';
 import 'react-day-picker/dist/style.css';
 import "@/index.css";
 import {CalendarDays} from 'lucide-react';
 import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar";
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
+import {Popover, PopoverContent, PopoverTrigger,
 } from "@/components/ui/popover";
 import {Label} from "@/components/ui/label";
 import {isDateInWeekend} from "@/utils/dateUtils";
@@ -20,31 +17,22 @@ type DatePickerProps = {
     daysBefore: Date;
     holidays: Date[];
     weekendsDays : string[]
-
 };
 
-export default function DatePicker({
-                                       title,
-                                       handleDateSelected,
-                                       selectedDate,
-                                       daysBefore,
-                                       holidays,
-                                       weekendsDays
-                                   }: DatePickerProps) {
+export default function DatePicker({title, handleDateSelected, selectedDate, daysBefore, holidays, weekendsDays}: DatePickerProps) {
     const [isPopoverOpen, setIsPopoverOpen] = useState(false);
 
-    const handleDaySelected = ((date: Date) => {
+    const handleDaySelected = useCallback((date: Date) => {
         handleDateSelected(date);
         setIsPopoverOpen(false);
-    });
+    }, [handleDateSelected]);
 
-    const isDateDisabled = (date: Date): boolean => {
-        if (isDateInWeekend(date, weekendsDays)) {
-            return true;
+    const isDateDisabled = useCallback((date: Date): boolean => {
+        if (!isDateInWeekend(date, weekendsDays)) {
+            return dayjs(date).isBefore(dayjs(daysBefore), 'day') || holidays.some(holiday => dayjs(date).isSame(dayjs(holiday), 'day'));
         }
-        return dayjs(date).isBefore(dayjs(daysBefore), 'day') ||
-            holidays.some((holiday) => dayjs(date).isSame(dayjs(holiday), 'day'));
-    };
+        return true;
+    }, [holidays, weekendsDays, daysBefore]);
 
     return (
         <Popover open={isPopoverOpen} onOpenChange={setIsPopoverOpen}>
@@ -52,8 +40,8 @@ export default function DatePicker({
                 <div className="flex flex-col gap-2">
                     <Label htmlFor={title}>{title}</Label>
                     <Button
-                        type={"button"}
-                        variant={"outline"}
+                        type="button"
+                        variant="outline"
                         onClick={() => setIsPopoverOpen(!isPopoverOpen)}
                     >
                         <CalendarDays className="mr-2 h-4 w-4"/>

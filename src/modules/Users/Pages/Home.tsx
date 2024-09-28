@@ -7,8 +7,7 @@ import {getDaysOff} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import "@/index.css";
-import {PageTitle, Label, Pagination} from "../../../core/components";
-import {DayOffJson, DayOffColor, DayOffStatusColor, Status, DayOffStatusJson} from "@/constants/types/enums";
+import {PageTitle, Pagination} from "../../../core/components";
 import {CircleUser, Plus} from "lucide-react";
 import {
     Card,
@@ -34,6 +33,9 @@ import {DayOffResponse} from "@/constants/types/dayOffTypes";
 import {UserResponse} from "@/constants/types/userTypes";
 import {UserContext} from "@/contexts/UserContext";
 import {DayOffDuration} from "@/core/components";
+import LeaveStatusBadge from "@/core/components/LeaveStatusBadge.tsx";
+import {Badge} from "@/components/ui/badge.tsx";
+import {DayOffType} from "@/constants/types/enums.ts";
 
 dayjs.extend(isBetween);
 
@@ -244,7 +246,7 @@ type RequestItemProps = {
 
 function RequestItem({request}: RequestItemProps) {
     const {accessToken} = useContext(UserContext);
-
+    console.log("request-item",typeof request.type,typeof DayOffType.PAID_TIME);
     return (
         <TableBody className="border-b">
             <TableRow>
@@ -258,10 +260,10 @@ function RequestItem({request}: RequestItemProps) {
                 </TableCell>
                 <TableCell>{request.user.team?.name}</TableCell>
                 <TableCell>
-                    <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]}/>
+                    <LeaveStatusBadge status={request.status} />
                 </TableCell>
                 <TableCell>
-                    <Label type={DayOffColor[request.type]} text={DayOffJson[request.type]}/>
+                    <Badge variant={"outline"}>{DayOffType[request.type]}</Badge>
                 </TableCell>
                 <DayOffDuration request={request}/>
             </TableRow>
