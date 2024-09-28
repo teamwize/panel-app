@@ -10,7 +10,7 @@
     --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
     --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
+    --primary: 238.7 83.5% 66.7%;
     --primary-foreground: 210 40% 98%;
     --secondary: 210 40% 96.1%;
     --secondary-foreground: 222.2 47.4% 11.2%;
@@ -66,4 +66,38 @@
   body {
     @apply bg-background text-foreground;
   }
+}
+
+
+/*calendar style*/
+
+.my-selected:not([disabled]) {
+  font-weight: bold;
+  border: 2px solid currentColor;
+}
+
+.my-selected:hover:not([disabled]) {
+  background-color: #c7d2fe;
+}
+
+.my-today {
+  font-weight: bold;
+}
+
+@media (min-width: 768px) {
+  .my-styles .day {
+    padding: 20px;
+    margin: 7px 12px;
+    font-size: 8px
+  },
+.my-styles .head {
+  font-size: 18px
+},
+.my-styles .caption {
+  margin: 7px
+}
+}
+
+.holidaysDate {
+  background-color: #ef4444
 }

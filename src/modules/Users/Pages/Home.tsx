@@ -3,18 +3,11 @@ import {useNavigate} from "react-router-dom";
 import "react-day-picker/dist/style.css";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-import {getDaysoff} from "~/services/WorkiveApiClient.ts";
+import {getDaysOff} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {
-    DayOffLeaveTypeJson,
-    DayOffStatusJson,
-    DayOffLeaveTypeColor,
-    DayOffStatusColor,
-} from "@/constants";
-import "../../../constants/style.css";
-import {PageTitle, Label, Pagination} from "../../../core/components";
-import {DayOffResponse} from "~/constants/types";
+import "@/index.css";
+import {PageTitle, Pagination} from "../../../core/components";
 import {CircleUser, Plus} from "lucide-react";
 import {
     Card,
@@ -34,13 +27,19 @@ import {Button} from "@/components/ui/button";
 import {Calendar} from "@/components/ui/calendar"
 import {Alert, AlertDescription} from "@/components/ui/alert"
 import {isDateInWeekend} from "@/utils/dateUtils";
-import {getHolidays} from "@/services/WorkiveApiClient";
-import {HolidayResponse} from "@/constants/types";
+import {getHolidays} from "@/services/holidayService";
+import {HolidayResponse} from "@/constants/types/holidayTypes";
+import {DayOffResponse} from "@/constants/types/dayOffTypes";
+import {UserResponse} from "@/constants/types/userTypes";
 import {UserContext} from "@/contexts/UserContext";
+import {DayOffDuration} from "@/core/components";
+import LeaveStatusBadge from "@/core/components/LeaveStatusBadge.tsx";
+import {Badge} from "@/components/ui/badge.tsx";
+import {DayOffType} from "@/constants/types/enums.ts";
 
 dayjs.extend(isBetween);
 
-export default function CalendarPage() {
+export default function Home() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
     const [requestsList, setRequestsList] = useState<DayOffResponse[]>([]);
     const [offDays, setOffDays] = useState<Date[]>([]);
@@ -66,7 +65,7 @@ export default function CalendarPage() {
 
     // Get holidays
     useEffect(() => {
-        getHolidays(new Date().getFullYear(), user?.countryCode)
+        getHolidays(new Date().getFullYear(), user?.country)
             .then((data: HolidayResponse[]) => {
                 console.log("Success:", data);
                 setHolidays(data);
@@ -84,7 +83,7 @@ export default function CalendarPage() {
 
     // Get list of requests
     useEffect(() => {
-        getDaysoff()
+        getDaysOff()
             .then((data) => {
                 console.log("Success:", data.contents);
                 setRequestsList(data.contents);
@@ -141,10 +140,6 @@ export default function CalendarPage() {
         navigate("/dayoff/create");
     };
 
-    const calculateDistance = (startAt: string, endAt: string): number => {
-        return dayjs(endAt).diff(startAt, "day") + 1;
-    };
-
     const weekendsDays: string[] = ['Saturday', 'Sunday'];
 
     const isDateDisabled = (date: Date): boolean => {
@@ -156,7 +151,7 @@ export default function CalendarPage() {
 
     return (
         <>
-            <PageTitle title="Calendar">
+            <PageTitle title="Home">
                 <div className="flex justify-center">
                     <Button
                         onClick={sendRequest}
@@ -173,26 +168,25 @@ export default function CalendarPage() {
                 </Alert>
             )}
 
-            <main className="flex flex-1 flex-col gap-4 p-4  justify-start justify-items-start">
+            <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card
-                    className="flex  flex-col rounded-lg border border-dashed shadow-sm justify-start"
+                    className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm"
+                    x-chunk="dashboard-02-chunk-1"
                 >
-                    <div>
-                        <Calendar
-                            modifiers={{highlighted: offDays, notWorkingDay: isDateDisabled}}
-                            modifiersStyles={{
-                                highlighted: {fontWeight: 'bold', color: '#1e61a4'},
-                                notWorkingDay: {color: "#ef4444"}
-                            }}
-                            modifiersClassNames={{today: "my-today", selected: "my-selected"}}
-                            onMonthChange={handleMonthChange}
-                            mode="single"
-                            selected={selectedDate}
-                            onSelect={showDayOff}
-                            initialFocus
-                            className='border rounded-lg w-fit p-4 bg-[hsl(var(--muted)/0.4)]'
-                        />
-                    </div>
+                    <Calendar
+                        modifiers={{highlighted: offDays, notWorkingDay: isDateDisabled}}
+                        modifiersStyles={{
+                            highlighted: {color: "#6366f1", fontWeight: "bolder"},
+                            notWorkingDay: {color: "#ef4444"}
+                        }}
+                        modifiersClassNames={{today: "my-today", selected: "my-selected"}}
+                        onMonthChange={handleMonthChange}
+                        mode="single"
+                        selected={selectedDate}
+                        onSelect={showDayOff}
+                        initialFocus
+                        className='border rounded-lg w-fit p-4 bg-[hsl(var(--muted)/0.4)] mx-auto'
+                    />
 
                     <div>
                         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
@@ -214,13 +208,13 @@ export default function CalendarPage() {
                                                     <TableHead>Status</TableHead>
                                                     <TableHead>Type</TableHead>
                                                     <TableHead>Date</TableHead>
+                                                    <TableHead>Duration</TableHead>
                                                 </TableRow>
                                             </TableHeader>
                                             {selectedDateRequests
                                                 .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
                                                 .map((request) => (
                                                     <RequestItem
-                                                        calculateDistance={calculateDistance}
                                                         request={request}
                                                         key={request.id}
                                                     />
@@ -248,33 +242,38 @@ export default function CalendarPage() {
 
 type RequestItemProps = {
     request: DayOffResponse;
-    calculateDistance: (startAt: string, endAt: string) => number;
 };
 
-function RequestItem({request, calculateDistance}: RequestItemProps) {
-    const distance: number = calculateDistance(request.startAt, request.endAt);
-
+function RequestItem({request}: RequestItemProps) {
+    const {accessToken} = useContext(UserContext);
+    console.log("request-item",typeof request.type,typeof DayOffType.PAID_TIME);
     return (
         <TableBody className="border-b">
             <TableRow>
                 <TableCell className="flex flex-wrap flex-row gap-2 font-medium">
-                    <CircleUser className="h-6 w-6"/>
+                    <img
+                        src={getUserAvatarURL(request.user, accessToken)}
+                        alt="Profile Image"
+                        className="h-8 rounded-full"
+                    />
                     {request.user.firstName} {request.user.lastName}
                 </TableCell>
-                <TableCell>{request.user.team.name}</TableCell>
+                <TableCell>{request.user.team?.name}</TableCell>
                 <TableCell>
-                    <Label type={DayOffStatusColor[request.status]} text={DayOffStatusJson[request.status]}/>
+                    <LeaveStatusBadge status={request.status} />
                 </TableCell>
                 <TableCell>
-                    <Label type={DayOffLeaveTypeColor[request.type]} text={DayOffLeaveTypeJson[request.type]}/>
+                    <Badge variant={"outline"}>{DayOffType[request.type]}</Badge>
                 </TableCell>
-                <TableCell>
-                    {distance === 1
-                        ? dayjs(request.startAt).format("D MMM")
-                        : `${dayjs(request.startAt).format("D MMM")} - ${dayjs(request.endAt).format("D MMM")}`}
-                    {' '} ({distance} {distance === 1 ? "Day" : "Days"})
-                </TableCell>
+                <DayOffDuration request={request}/>
             </TableRow>
         </TableBody>
     );
+}
+
+function getUserAvatarURL(user: UserResponse, accessToken: string): string {
+    if (!user.avatar) {
+        return "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
+    }
+    return `${user.avatar.url}?token=${accessToken}`;
 }

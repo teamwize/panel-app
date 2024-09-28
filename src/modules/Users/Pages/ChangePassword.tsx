@@ -1,11 +1,11 @@
-import React, {useState} from "react";
+import React, {useEffect, useState} from "react";
 import {useNavigate} from 'react-router-dom';
-import {updatePassword} from "~/services/WorkiveApiClient.ts";
+import {getCurrentUser} from "@/services/userService";
+import {updateUserPassword} from "@/services/userService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {Alert} from '../../../core/components';
 import {ChevronLeft} from 'lucide-react';
-import {AlertDescription} from "@/components/ui/alert";
+import {AlertDescription, Alert} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
@@ -18,7 +18,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {ChangePasswordRequest} from "@/constants/types";
+import {ChangePasswordRequest, UserResponse} from "@/constants/types/userTypes";
 import {Input} from "@/components/ui/input";
 import {Card} from "@/components/ui/card";
 
@@ -29,7 +29,7 @@ const FormSchema = z.object({
     newPassword: z.string().min(8, {
         message: "Password must be at least 8 characters.",
     }),
-    reNewPassword: z.string().min(8, {
+    confirmNewPassword: z.string().min(8, {
         message: "Password must be at least 8 characters.",
     })
 });
@@ -38,20 +38,37 @@ export default function ChangePassword() {
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null)
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
             password: "",
             newPassword: "",
-            reNewPassword: "",
+            confirmNewPassword: "",
         },
     });
+
+    // Fetch employee information on mount
+    useEffect(() => {
+        getCurrentUser()
+            .then(data => {
+                setEmployeeInfo(data);
+            })
+            .catch(error => {
+                const errorMessage = getErrorMessage(error);
+                toast({
+                    title: "Error",
+                    description: errorMessage,
+                    variant: "destructive",
+                });
+            });
+    }, [])
 
     const goBack = () => navigate('/settings');
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
-        if (data.newPassword !== data.reNewPassword) {
+        if (data.newPassword !== data.confirmNewPassword) {
             setErrorMessage("Passwords don't match. Try again");
             return;
         }
@@ -68,7 +85,7 @@ export default function ChangePassword() {
         };
 
         setIsProcessing(true);
-        updatePassword(payload)
+        updateUserPassword(payload, employeeInfo.id)
             .then(() => {
                 setIsProcessing(false);
                 toast({
@@ -139,19 +156,19 @@ export default function ChangePassword() {
                             />
                             <FormField
                                 control={form.control}
-                                name="reNewPassword"
+                                name="confirmNewPassword"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Re-New Password</FormLabel>
+                                        <FormLabel>Confirm New Password</FormLabel>
                                         <FormControl>
-                                            <Input placeholder="Re-New Password" {...field} />
+                                            <Input placeholder="Confirm New Password" {...field} />
                                         </FormControl>
                                         <FormMessage/>
                                     </FormItem>
                                 )}
                             />
                             <Button type="submit" className="w-fit" disabled={isProcessing}>
-                                {isProcessing ? 'Processing...' : 'Submit'}
+                                {isProcessing ? 'Processing...' : 'Save'}
                             </Button>
                         </form>
                     </Form>

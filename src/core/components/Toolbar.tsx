@@ -19,14 +19,9 @@ import {
     DialogDescription
 } from "@/components/ui/dialog";
 import { UserContext } from '~/contexts/UserContext.tsx';
-import { UserResponse } from "@/constants/types";
 
-type ToolbarProps = {
-    user: UserResponse | null;
-};
-
-export default function Toolbar({ user }: ToolbarProps) {
-    const [logOut, setLogOut] = useState<boolean>(false);
+export default function Toolbar() {
+    const [signOut, setSignOut] = useState<boolean>(false);
     const navigate = useNavigate();
 
     const viewProfile = () => {
@@ -35,8 +30,7 @@ export default function Toolbar({ user }: ToolbarProps) {
 
     return (
         <div>
-            <header
-                className="flex flex-row-reverse h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
+            <header className="flex flex-row-reverse h-14 items-center gap-4 border-b bg-muted/40 px-4 lg:h-[60px] lg:px-6">
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="secondary" size="icon" className="rounded-full">
@@ -49,37 +43,37 @@ export default function Toolbar({ user }: ToolbarProps) {
                         <DropdownMenuSeparator />
                         <DropdownMenuItem onClick={viewProfile}>Profile</DropdownMenuItem>
                         <DropdownMenuSeparator />
-                        <DropdownMenuItem onClick={() => setLogOut(true)}>Logout</DropdownMenuItem>
+                        <DropdownMenuItem onClick={() => setSignOut(true)}>Sign Out</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {logOut && <Logout logOut={logOut} setLogOut={setLogOut} />}
+                {signOut && <SignOut signOut={signOut} setSignOut={setSignOut} />}
             </header>
         </div>
     );
 }
 
-type LogoutProps = {
-    setLogOut: (logOut: boolean) => void;
-    logOut: boolean;
+type SignOutProps = {
+    setSignOut: (signOut: boolean) => void;
+    signOut: boolean;
 };
 
-function Logout({ setLogOut, logOut }: LogoutProps) {
+function SignOut({ setSignOut, signOut }: SignOutProps) {
     const navigate = useNavigate();
-    const { logout } = useContext(UserContext);
+    const { signout } = useContext(UserContext);
 
-    const closeLogOut = () => setLogOut(false);
+    const closeSignOut = () => setSignOut(false);
 
     const handleRequest = (accepted: boolean) => {
         if (accepted) {
-            logout();
-            navigate('/login');
+            signout();
+            navigate('/signin');
         }
-        closeLogOut();
+        closeSignOut();
     };
 
     return (
-        <Dialog open={logOut} onOpenChange={closeLogOut}>
+        <Dialog open={signOut} onOpenChange={closeSignOut}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
                     <DialogTitle>Log Out</DialogTitle>

@@ -1,4 +1,4 @@
 import DatePicker from './DatePicker'
-import DayOffModal from './DayyOffModal'
+import DayOffDialog from './DayOffDialog'
 
-export {DatePicker, DayOffModal}
+export {DatePicker, DayOffDialog}
