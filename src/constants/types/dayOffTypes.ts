@@ -1,8 +1,8 @@
 import {UserResponse} from "@/constants/types/userTypes";
-import {DayOffType, Status} from "@/constants/types/enums";
+import {DayOffType, DayOffStatus} from "@/constants/types/enums";
 
 export type DayOffUpdateRequest = {
-    status: Status;
+    status: DayOffStatus;
 }
 
 export type DayOffCreateRequest = {
@@ -17,7 +17,7 @@ export type DayOffResponse = {
     updatedAt: string;
     startAt: string;
     endAt: string;
-    status: Status;
+    status: DayOffStatus;
     type: DayOffType;
     reason: string;
     user: UserResponse
