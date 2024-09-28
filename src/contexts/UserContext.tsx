@@ -1,15 +1,14 @@
 import { useCallback, createContext, ReactNode } from "react"
 import useLocalStorage from "../hooks/useLocalStorage"
-import { isTokenExpired } from "@/utils/jwtUtils";
-import { UserResponse } from "~/constants/types";
-import {OrganizationResponse} from "@/constants/types";
+import { UserResponse } from "@/constants/types/userTypes";
+import {OrganizationResponse} from "@/constants/types/organizationTypes";
 
 type UserContextType = {
   user: UserResponse | null;
   organization: OrganizationResponse | null;
   accessToken: string | null;
   authenticate: (accessToken: string | null, user: UserResponse | null) => void;
-  logout: () => void;
+  signout: () => void;
   isAuthenticated: () => boolean;
 }
 
@@ -18,7 +17,7 @@ export const UserContext = createContext<UserContextType>({
   organization: null,
   accessToken: null,
   authenticate: () => { },
-  logout: () => { },
+  signout: () => { },
   isAuthenticated: () => false
 })
 
@@ -36,14 +35,14 @@ export const UserContextProvider = ({ children, user, organization }: UserContex
     console.log("userContext authenticate", accessToken, user)
   }
 
-  const logout = () => {
+  const signout = () => {
     setAccessToken(null);
-    console.log("userContext logout")
+    console.log("userContext signout")
   }
 
   const isAuthenticated = (): boolean => {
     const accessToken = localStorage.getItem("ACCESS_TOKEN");
-    return accessToken != null && accessToken !== "" && !isTokenExpired(accessToken)
+    return accessToken != null && accessToken !== ""
   }
 
   const contextValue = {
@@ -52,7 +51,7 @@ export const UserContextProvider = ({ children, user, organization }: UserContex
     accessToken: accessToken,
     isAuthenticated: useCallback(() => isAuthenticated(), [accessToken]),
     authenticate: useCallback((accessToken: string | null) => authenticate(accessToken), []),
-    logout: useCallback(() => logout(), [])
+    signout: useCallback(() => signout(), [])
   }
 
   return (

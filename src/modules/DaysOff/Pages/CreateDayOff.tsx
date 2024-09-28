@@ -5,35 +5,21 @@ import {z} from 'zod';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import {createDayoff} from '~/services/WorkiveApiClient.ts';
+import {createDayOff} from "@/services/dayOffService";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {PageTitle} from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
-import {dayOffleaveType} from '~/constants/index.ts';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
 import {Card} from '@/components/ui/card';
-import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/components/ui/select';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/components/ui/form';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
-import {DayOffType} from '~/constants/types.ts';
-import {getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
-import {getHolidays} from "@/services/WorkiveApiClient";
-import {HolidayResponse} from "@/constants/types";
+import {DayOffType} from '@/constants/types/enums';
+import {calculateDuration, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
+import {getHolidays} from "@/services/holidayService";
+import {HolidayResponse} from "@/constants/types/holidayTypes";
 import {UserContext} from "@/contexts/UserContext";
 
 dayjs.extend(isBetween);
@@ -54,7 +40,7 @@ export default function CreateDayOff() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            dayOffType: dayOffleaveType[0].value as DayOffType,
+            dayOffType: DayOffType.VACATION,
             startDate: new Date(),
             endDate: new Date(),
             reason: '',
@@ -67,7 +53,7 @@ export default function CreateDayOff() {
 
     // Get holidays
     useEffect(() => {
-        getHolidays(new Date().getFullYear(), user?.countryCode)
+        getHolidays(new Date().getFullYear(), user?.country)
             .then((data: HolidayResponse[]) => {
                 console.log("Success:", data);
                 // Convert data to Date[]
@@ -98,7 +84,7 @@ export default function CreateDayOff() {
             distance: calculateDistance(startDate, endDate, holidays),
         };
 
-        createDayoff(payload)
+        createDayOff(payload)
             .then(() => {
                 navigate('/dayoff/pending');
             })
@@ -113,11 +99,11 @@ export default function CreateDayOff() {
     };
 
     const calculateDistance = (startDate: Date, endDate: Date, holidaysDate: Date[]): number => {
-        const distance = dayjs(endDate).diff(startDate, 'day') + 1;
+        const duration = calculateDuration(startDate, endDate);
         const filteredHolidays = holidaysDate.filter((h: Date) =>
             dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]')
         );
-        return distance - filteredHolidays.length;
+        return duration - filteredHolidays.length;
     };
 
     useEffect(() => {
@@ -136,8 +122,7 @@ export default function CreateDayOff() {
 
     return (
         <>
-            <PageTitle title="Send Leave Request"></PageTitle>
-
+            <PageTitle title="Day Off Request"></PageTitle>
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>
@@ -153,17 +138,15 @@ export default function CreateDayOff() {
                                 name="dayOffType"
                                 render={({field}) => (
                                     <FormItem>
-                                        <FormLabel>Leave Type</FormLabel>
+                                        <FormLabel>Type</FormLabel>
                                         <FormControl>
                                             <Select value={field.value} onValueChange={field.onChange}>
                                                 <SelectTrigger>
                                                     <SelectValue placeholder="Select a type"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {dayOffleaveType.map((type) => (
-                                                        <SelectItem key={type.value} value={type.value}>
-                                                            {type.name}
-                                                        </SelectItem>
+                                                    {Object.values(DayOffType).map((value) => (
+                                                        <SelectItem key={value} value={value}>{value}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
@@ -192,9 +175,8 @@ export default function CreateDayOff() {
                                 />
                             </section>
 
-                            <p className="p-2 text-center text-sm">
-                                Day off request is
-                                for {calculateDistance(startDate, endDate, holidays)} {calculateDistance(startDate, endDate, holidays) === 1 ? 'Day' : 'Days'}
+                            <p className="p-2 text-center text-sm border rounded-md font-semibold">
+                                Duration:{calculateDistance(startDate, endDate, holidays)} {calculateDistance(startDate, endDate, holidays) === 1 ? 'Day' : 'Days'}
                             </p>
 
                             <FormField

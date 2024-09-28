@@ -1,6 +1,6 @@
-import {CountryType, Navigation, DayOffleaveType} from './types';
+import {Country} from './types/commonTypes';
 
-export const countries: CountryType[] = [
+export const countries: Country[] = [
     {name: "Afghanistan", code: "AF"},
     {name: "Åland Islands", code: "AX"},
     {name: "Albania", code: "AL"},
@@ -252,42 +252,3 @@ export const countries: CountryType[] = [
     {name: "Zambia", code: "ZM"},
     {name: "Zimbabwe", code: "ZW"}
 ];
-
-import {CalendarIcon, Cog6ToothIcon, ChartPieIcon, BuildingOfficeIcon} from '@heroicons/react/24/outline'
-
-export const navigation: Navigation[] = [
-    {name: 'Calendar', icon: CalendarIcon, href: '/calendar'},
-    {name: 'Balance', icon: ChartPieIcon, href: '/balance'},
-    {name: 'Settings', icon: Cog6ToothIcon, href: '/settings'},
-    {name: 'Organization', icon: BuildingOfficeIcon, href: '/organization'}
-]
-
-export const dayOffleaveType: DayOffleaveType[] = [
-    {name: "Vacation", value: 'VACATION'},
-    {name: "Sick leave", value: "SICK_LEAVE"},
-    {name: 'Paid time', value: 'PAID_TIME'}
-]
-
-export enum DayOffLeaveTypeJson {
-    VACATION = "Vacation",
-    SICK_LEAVE = "Sick leave",
-    PAID_TIME = "Paid time"
-}
-
-export enum DayOffStatusJson {
-    PENDING = "Pending",
-    ACCEPTED = "Accepted",
-    REJECTED = "Rejected"
-}
-
-export enum DayOffLeaveTypeColor {
-    VACATION = "GREEN",
-    SICK_LEAVE = "RED",
-    PAID_TIME = "BLUE"
-}
-
-export enum DayOffStatusColor {
-    PENDING = "YELLOW",
-    ACCEPTED = "GREEN",
-    REJECTED = "RED"
-}

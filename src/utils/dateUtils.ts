@@ -22,4 +22,16 @@ const getNextWorkingDay = (startDate: Date, holidays: Date[], weekend: string[])
     return updatedStartDate.toDate();
 }
 
-export {isDateInWeekend, isDateInHoliday, getNextWorkingDay};
+const calculateDuration = (startAt: string | Date, endAt: string | Date): number => {
+    return dayjs(endAt).diff(dayjs(startAt), 'day') + 1;
+}
+
+const formatDurationRange = (startAt: string, endAt: string, format: string = 'D MMM YYYY'): string => {
+    const duration = calculateDuration(startAt, endAt);
+    if (duration !== 1) {
+        return `${dayjs(startAt).format(format)} - ${dayjs(endAt).format(format)}`;
+    }
+    return dayjs(startAt).format(format);
+}
+
+export {isDateInWeekend, isDateInHoliday, getNextWorkingDay, calculateDuration, formatDurationRange};

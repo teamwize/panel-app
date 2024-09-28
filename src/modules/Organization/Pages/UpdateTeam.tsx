@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { updateTeam } from "~/services/WorkiveApiClient.ts";
+import {updateTeam} from "@/services/teamService";
 import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
 import { ChevronLeft } from 'lucide-react';
@@ -19,7 +19,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { TeamCreateRequest } from "~/constants/types";
+import { TeamCreateRequest } from "@/constants/types/teamTypes";
 
 const FormSchema = z.object({
     name: z.string().min(2, { message: "Team Name must be over 2 characters" }).max(20, {
@@ -40,7 +40,7 @@ export default function UpdateTeam() {
         },
     });
 
-    const goBack = () => navigate('/organization/team');
+    const goBack = () => navigate('/teams');
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
         if (errorMessage) {
@@ -64,7 +64,7 @@ export default function UpdateTeam() {
                     description: "Team updated successfully!",
                     variant: "default",
                 });
-                navigate('/organization/team');
+                navigate('/teams');
             })
             .catch(error => {
                 setIsProcessing(false);
@@ -104,7 +104,7 @@ export default function UpdateTeam() {
                                 name="name"
                                 render={({ field }) => (
                                     <FormItem>
-                                        <FormLabel>Team Name</FormLabel>
+                                        <FormLabel>Name</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Team Name" {...field} />
                                         </FormControl>
@@ -113,7 +113,7 @@ export default function UpdateTeam() {
                                 )}
                             />
                             <Button type="submit" className="w-fit" disabled={isProcessing}>
-                                {isProcessing ? 'Processing...' : 'Submit'}
+                                {isProcessing ? 'Processing...' : 'Save'}
                             </Button>
                         </form>
                     </Form>
