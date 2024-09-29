@@ -7,7 +7,7 @@ import {getDaysOff, updateDayOffStatus} from "@/services/dayOffService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Pagination, DayOffDuration} from '../../../core/components';
-import {DayOffStatus} from '@/constants/types/enums';
+import {DAY_OFF_TYPE, DayOffStatus} from '@/constants/types/enums';
 import {DayOffResponse} from '@/constants/types/dayOffTypes';
 import {PagedResponse} from '@/constants/types/commonTypes';
 import {Eye} from "lucide-react";
@@ -29,7 +29,7 @@ export default function Requests() {
     useEffect(() => {
         getDaysOff()
             .then((response: PagedResponse<DayOffResponse>) => {
-                setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === DayOffStatus.PENDING));
+                setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === "PENDING"));
                 console.log(requestsList)
             })
             .catch((error: any) => {
@@ -171,7 +171,7 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
-                <Badge variant="outline">{request.type}</Badge>
+                <Badge variant="outline">{DAY_OFF_TYPE[request.type]}</Badge>
             </TableCell>
             <DayOffDuration request={request}/>
             <TableCell>

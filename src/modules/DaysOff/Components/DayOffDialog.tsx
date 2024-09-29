@@ -3,7 +3,7 @@ import {useNavigate} from 'react-router-dom';
 import dayjs, {Dayjs} from 'dayjs';
 import {Dialog, DialogContent, DialogHeader, DialogDescription, DialogFooter} from "@/components/ui/dialog";
 import {DayOffResponse} from '@/constants/types/dayOffTypes';
-import {DayOffStatus} from '@/constants/types/enums';
+import {DAY_OFF_TYPE, DayOffStatus, DayOffType} from '@/constants/types/enums';
 import {Button} from '@/components/ui/button';
 import {CircleAlert} from 'lucide-react';
 import {calculateDuration, formatDurationRange} from '@/utils/dateUtils';
@@ -80,7 +80,7 @@ function UserInfo({user, onClick}: UserInfoProps) {
 type LeaveDetailsProps = {
     durationText: string;
     duration: number;
-    type: string;
+    type: DayOffType;
     reason?: string;
 };
 
@@ -97,7 +97,7 @@ function LeaveDetails({durationText, duration, type, reason}: LeaveDetailsProps)
             </div>
             <div>
                 <h5 className='text-[10px] text-gray-600 mb-1'>Type</h5>
-                <div>{type}</div>
+                <div>{DAY_OFF_TYPE[type]}</div>
             </div>
             {reason && (
                 <div>
@@ -150,14 +150,14 @@ function FooterButtons({handleRequest, id, isProcessing}: FooterButtonsProps) {
     return (
         <DialogFooter className="flex justify-center">
             <Button
-                onClick={() => handleRequest(DayOffStatus.REJECTED, id)}
+                onClick={() => handleRequest("REJECTED", id)}
                 variant="outline"
                 disabled={isProcessing}
             >
                 {isProcessing ? "Waiting ..." : "Reject"}
             </Button>
             <Button
-                onClick={() => handleRequest(DayOffStatus.ACCEPTED, id)}
+                onClick={() => handleRequest('ACCEPTED', id)}
                 className="ml-4 bg-[#088636]"
                 disabled={isProcessing}
             >

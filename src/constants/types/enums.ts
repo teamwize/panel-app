@@ -6,32 +6,27 @@ export enum UserStatus {
     ARCHIVED = "ARCHIVED"
 }
 
-export enum UserRole {
-    Admin = "ORGANIZATION_ADMIN",
-    Employee = "EMPLOYEE",
-    API = "API"
-}
+export const USER_ROLE = {
+    ORGANIZATION_ADMIN : "ORGANIZATION_ADMIN",
+    EMPLOYEE : "EMPLOYEE",
+} as const;
+export type UserRole = keyof typeof USER_ROLE;
 
 //dayOff enum and const
 
-export enum DayOffType {
-    PAID_TIME = 'Paid time',
-    VACATION = 'Vacation',
-    SICK_LEAVE = 'Sick Leave'
-}
+export const DAY_OFF_TYPE = {
+    PAID_TIME: 'Paid time',
+    VACATION: 'Vacation',
+    SICK_LEAVE: 'Sick Leave'
+} as const;
+export type DayOffType = keyof typeof DAY_OFF_TYPE;
 
-export enum DayOffStatus {
-    ACCEPTED = 'Accepted',
-    REJECTED = 'Rejected',
-    PENDING = 'Pending'
+export const DAY_OFF_STATUS = {
+    ACCEPTED : 'Accepted',
+    REJECTED : 'Rejected',
+    PENDING : 'Pending'
 }
-
-export enum LabelType {
-    GREEN = 'GREEN',
-    RED = 'RED',
-    BLUE = 'BLUE',
-    YELLOW = 'YELLOW',
-}
+export type DayOffStatus = keyof typeof DAY_OFF_STATUS;
 
 export enum Week {
     MONDAY = "MONDAY",

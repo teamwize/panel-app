@@ -22,7 +22,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { ChevronLeft } from "lucide-react";
 import { UserCreateRequest } from "@/constants/types/userTypes";
-import {UserRole} from "@/constants/types/enums";
 import {TeamResponse} from "@/constants/types/teamTypes";
 import {countries} from "@/constants/countries";
 import {UserContext} from "@/contexts/UserContext";
@@ -82,7 +81,7 @@ export default function CreateEmployee() {
             firstName: data.firstName,
             lastName: data.lastName,
             phone: data.phone,
-            role: UserRole.Employee,
+            role: "EMPLOYEE",
             timezone: user.timezone,
             country: data.country,
             teamId: data.teamId,

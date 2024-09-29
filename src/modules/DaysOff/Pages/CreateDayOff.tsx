@@ -16,16 +16,17 @@ import {Card} from '@/components/ui/card';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
-import {DayOffType} from '@/constants/types/enums';
+import {DAY_OFF_TYPE, DayOffType} from '@/constants/types/enums';
 import {calculateDuration, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
 import {UserContext} from "@/contexts/UserContext";
+import {DayOffCreateRequest} from "@/constants/types/dayOffTypes";
 
 dayjs.extend(isBetween);
 
 const FormSchema = z.object({
-    dayOffType: z.nativeEnum(DayOffType, {errorMap: () => ({message: "Please select a valid leave type."})}),
+    dayOffType: z.enum(Object.keys(DAY_OFF_TYPE) as [DayOffType]),
     startDate: z.date(),
     endDate: z.date(),
     reason: z.string().optional(),
@@ -40,7 +41,7 @@ export default function CreateDayOff() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            dayOffType: DayOffType.VACATION,
+            dayOffType: "VACATION",
             startDate: new Date(),
             endDate: new Date(),
             reason: '',
@@ -75,13 +76,11 @@ export default function CreateDayOff() {
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
         const {dayOffType, startDate, endDate, reason} = data;
-        const payload = {
+        const payload: DayOffCreateRequest = {
             type: dayOffType,
             start: dayjs(startDate).toISOString(),
             end: dayjs(endDate).toISOString(),
             reason: reason,
-            createdAt: dayjs().toISOString(),
-            distance: calculateDistance(startDate, endDate, holidays),
         };
 
         createDayOff(payload)
@@ -145,7 +144,7 @@ export default function CreateDayOff() {
                                                     <SelectValue placeholder="Select a type"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {Object.values(DayOffType).map((value) => (
+                                                    {Object.values(DAY_OFF_TYPE).map((value) => (
                                                         <SelectItem key={value} value={value}>{value}</SelectItem>
                                                     ))}
                                                 </SelectContent>

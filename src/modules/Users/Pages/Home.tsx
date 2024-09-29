@@ -35,7 +35,7 @@ import {UserContext} from "@/contexts/UserContext";
 import {DayOffDuration} from "@/core/components";
 import LeaveStatusBadge from "@/core/components/LeaveStatusBadge.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
-import {DayOffType} from "@/constants/types/enums.ts";
+import {DAY_OFF_TYPE} from "@/constants/types/enums.ts";
 
 dayjs.extend(isBetween);
 
@@ -246,7 +246,6 @@ type RequestItemProps = {
 
 function RequestItem({request}: RequestItemProps) {
     const {accessToken} = useContext(UserContext);
-    console.log("request-item",typeof request.type,typeof DayOffType.PAID_TIME);
     return (
         <TableBody className="border-b">
             <TableRow>
@@ -263,7 +262,7 @@ function RequestItem({request}: RequestItemProps) {
                     <LeaveStatusBadge status={request.status} />
                 </TableCell>
                 <TableCell>
-                    <Badge variant={"outline"}>{DayOffType[request.type]}</Badge>
+                    <Badge variant={"outline"}>{DAY_OFF_TYPE[request.type]}</Badge>
                 </TableCell>
                 <DayOffDuration request={request}/>
             </TableRow>

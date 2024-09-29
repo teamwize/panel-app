@@ -25,7 +25,6 @@
     "isolatedModules": true,
     "allowJs": false,
     "declaration": true,
-    "emitDeclarationOnly": true,
     "outDir": "dist",
     "declarationMap": true,
     "paths": {

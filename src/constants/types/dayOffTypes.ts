@@ -9,6 +9,7 @@ export type DayOffCreateRequest = {
     type: DayOffType;
     start: string;
     end: string;
+    reason?: string | null
 }
 
 export type DayOffResponse = {

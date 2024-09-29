@@ -1,6 +1,6 @@
 import {Badge} from "@/components/ui/badge.tsx";
 import React from "react";
-import {DayOffStatus} from "@/constants/types/enums.ts";
+import {DAY_OFF_STATUS, DayOffStatus} from "@/constants/types/enums.ts";
 
 type BadgeVariant = "default" | "secondary" | "destructive";
 
@@ -10,17 +10,17 @@ type LeaveStatusBadgeProps = {
 
 const toBadgeVariant = (status: DayOffStatus): BadgeVariant => {
     switch (status) {
-        case DayOffStatus.ACCEPTED:
+        case 'ACCEPTED':
             return 'default';
-        case DayOffStatus.PENDING:
+        case 'PENDING':
             return 'secondary';
-        case DayOffStatus.REJECTED:
+        case 'REJECTED':
             return 'destructive'
     }
 }
 
 export default function LeaveStatusBadge({status}: LeaveStatusBadgeProps) {
     return (
-        <Badge variant={toBadgeVariant(status)}>{DayOffStatus[status]}</Badge>
+        <Badge variant={toBadgeVariant(status)}>{DAY_OFF_STATUS[status]}</Badge>
     )
 }
