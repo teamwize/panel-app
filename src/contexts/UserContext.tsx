@@ -1,4 +1,4 @@
-import { useCallback, createContext, ReactNode } from "react"
+import { useCallback, createContext, ReactNode, useState } from "react"
 import useLocalStorage from "../hooks/useLocalStorage"
 import { UserResponse } from "@/constants/types/userTypes";
 import {OrganizationResponse} from "@/constants/types/organizationTypes";
@@ -23,26 +23,29 @@ export const UserContext = createContext<UserContextType>({
 
 type UserContextProviderType = {
   children: ReactNode;
-  user: UserResponse | null;
-  organization: OrganizationResponse | null;
 }
 
-export const UserContextProvider = ({ children, user, organization }: UserContextProviderType) => {
+export const UserContextProvider = ({ children}: UserContextProviderType) => {
   const [accessToken, setAccessToken] = useLocalStorage<string | null>("ACCESS_TOKEN", null)
+  const [user, setUser] = useState<UserResponse | null>(null);
+  const [organization, setOrganization] = useState<OrganizationResponse | null>(null);
 
   const authenticate = (_accessToken: string | null) => {
     setAccessToken(_accessToken);
+    setUser(user);
+    setOrganization(organization);
     console.log("userContext authenticate", accessToken, user)
   }
 
   const signout = () => {
     setAccessToken(null);
+    setUser(null);
+    setOrganization(null);
     console.log("userContext signout")
   }
 
   const isAuthenticated = (): boolean => {
-    const accessToken = localStorage.getItem("ACCESS_TOKEN");
-    return accessToken != null && accessToken !== ""
+    return accessToken != null && accessToken !== "";
   }
 
   const contextValue = {

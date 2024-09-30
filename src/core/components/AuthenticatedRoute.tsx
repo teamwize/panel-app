@@ -11,7 +11,7 @@ export default function AuthenticatedRoute({ children }: AuthenticatedRouteProps
   const { pathname, search } = location;
   const { isAuthenticated } = useContext(UserContext)
 
-  if (!isAuthenticated ) {
+  if (!isAuthenticated()) {
     return <Navigate to={`/signin?redirect=${pathname}${search}`} />
   }
 
