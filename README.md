@@ -28,12 +28,16 @@ Teamwize is an open-source **vacation tracker web application** built for small 
 - [Lucide Icons](https://lucide.dev/)
 
 ## Screenshots
-![VacationTracker Screenshot](screenshot-1.png)
-![VacationTracker Screenshot](screenshot-2.png)
+| ![Teamwize Screenshot](./screenshots/home.png)         | ![Teamwize Screenshot](./screenshots/balance.png) |
+|-------------------------------------------------------------|--------------------------------------------------|
+| ![Teamwize Screenshot](./screenshots/day-off-request.png)           | ![Teamwize Screenshot](./screenshots/official-holidays.png) |
+| ![Teamwize Screenshot](./screenshots/requests.png) | ![Teamwize Screenshot](./screenshots/organization.png) |
+| ![Teamwize Screenshot](./screenshots/employees.png)      | ![Teamwize Screenshot](./screenshots/teams.png) |
+| ![Teamwize Screenshot](./screenshots/signup.png)                |                                                      |
 
 ## Quick Start
-To use the project:
-(link)
+To run the project:
+([link](https://github.com/teamwize/backend?tab=readme-ov-file#getting-started))
 
 ## Contributing
 We welcome contributions! To contribute:
