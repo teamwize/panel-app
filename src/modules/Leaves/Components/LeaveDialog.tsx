@@ -6,7 +6,7 @@ import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
 import {LeaveStatus, LeaveType, LeaveTypeJson} from '@/constants/types/enums';
 import {Button} from '@/components/ui/button';
 import {CircleAlert} from 'lucide-react';
-import {calculateDuration, formatDurationRange} from '@/utils/dateUtils';
+import {formatDurationRange} from '@/utils/dateUtils';
 import {Avatar} from '@/core/components'
 
 type LeaveModalProps = {
@@ -20,9 +20,8 @@ type LeaveModalProps = {
 export default function LeaveModal({selectedRequest, teamRequests, toggleModal, handleRequest, isProcessing}: LeaveModalProps) {
     const [dayOverlap, setDayOverlap] = useState<LeaveResponse[]>([]);
     const navigate = useNavigate();
-    const {id, startAt, endAt, user, type, reason} = selectedRequest;
-    const duration = calculateDuration(startAt, endAt);
-    const durationText = formatDurationRange(startAt, endAt);
+    const {id, startAt, endAt, user, type, reason, duration} = selectedRequest;
+    const durationText = formatDurationRange(duration, startAt, endAt);
 
     const navigateToBalance = (requestName: string) => {
         navigate('/balance?query=' + requestName);
@@ -130,7 +129,7 @@ type RequestItemProps = {
 };
 
 function RequestItem({response}: RequestItemProps) {
-    const durationText = formatDurationRange(response.startAt, response.endAt);
+    const durationText = formatDurationRange(response.duration, response.startAt, response.endAt);
 
     return (
         <div className="mb-2">

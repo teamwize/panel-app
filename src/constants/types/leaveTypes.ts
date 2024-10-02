@@ -19,6 +19,7 @@ export type LeaveResponse = {
     startAt: string;
     endAt: string;
     status: LeaveStatus;
+    duration: number;
     type: LeaveType;
     reason: string;
     user: UserResponse
