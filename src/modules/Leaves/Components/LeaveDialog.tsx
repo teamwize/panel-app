@@ -1,9 +1,9 @@
-import React, {useState, useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import dayjs, {Dayjs} from 'dayjs';
-import {Dialog, DialogContent, DialogHeader, DialogDescription, DialogFooter} from "@/components/ui/dialog";
+import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader} from "@/components/ui/dialog";
 import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
-import {LEAVE_TYPE, LeaveStatus, LeaveType} from '@/constants/types/enums';
+import {LeaveStatus, LeaveType, LeaveTypeJson} from '@/constants/types/enums';
 import {Button} from '@/components/ui/button';
 import {CircleAlert} from 'lucide-react';
 import {calculateDuration, formatDurationRange} from '@/utils/dateUtils';
@@ -97,7 +97,7 @@ function LeaveDetails({durationText, duration, type, reason}: LeaveDetailsProps)
             </div>
             <div>
                 <h5 className='text-[10px] text-gray-600 mb-1'>Type</h5>
-                <div>{LEAVE_TYPE[type]}</div>
+                <div>{LeaveTypeJson[type]}</div>
             </div>
             {reason && (
                 <div>
@@ -150,14 +150,14 @@ function FooterButtons({handleRequest, id, isProcessing}: FooterButtonsProps) {
     return (
         <DialogFooter className="flex justify-center">
             <Button
-                onClick={() => handleRequest("REJECTED", id)}
+                onClick={() => handleRequest(LeaveStatus.REJECTED, id)}
                 variant="outline"
                 disabled={isProcessing}
             >
                 {isProcessing ? "Waiting ..." : "Reject"}
             </Button>
             <Button
-                onClick={() => handleRequest('ACCEPTED', id)}
+                onClick={() => handleRequest(LeaveStatus.ACCEPTED, id)}
                 className="ml-4 bg-[#088636]"
                 disabled={isProcessing}
             >

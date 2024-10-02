@@ -3,7 +3,7 @@ import React from "react";
 import {TableCell, TableRow} from "@/components/ui/table";
 import {LeaveDuration} from "./index";
 import {Badge} from "@/components/ui/badge"
-import {LEAVE_TYPE} from "@/constants/types/enums";
+import {LeaveTypeJson} from "@/constants/types/enums";
 import LeaveStatusBadge from "@/core/components/LeaveStatusBadge";
 
 type LeaveRequestTableProps = {
@@ -18,7 +18,7 @@ export default function LeaveRequestTable({request}: LeaveRequestTableProps) {
                 <LeaveStatusBadge status={request.status} />
             </TableCell>
             <TableCell>
-                <Badge variant="outline">{LEAVE_TYPE[request.type]}</Badge>
+                <Badge variant="outline">{LeaveTypeJson[request.type]}</Badge>
             </TableCell>
         </TableRow>
     );

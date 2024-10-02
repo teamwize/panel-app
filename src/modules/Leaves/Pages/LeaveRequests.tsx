@@ -7,7 +7,7 @@ import {getLeaves, updateLeavesStatus} from "@/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Pagination, LeaveDuration} from '../../../core/components';
-import {LEAVE_TYPE, LeaveStatus} from '@/constants/types/enums';
+import {LeaveTypeJson, LeaveStatus} from '@/constants/types/enums';
 import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
 import {PagedResponse} from '@/constants/types/commonTypes';
 import {Eye} from "lucide-react";
@@ -171,7 +171,7 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
-                <Badge variant="outline">{LEAVE_TYPE[request.type]}</Badge>
+                <Badge variant="outline">{LeaveTypeJson[request.type]}</Badge>
             </TableCell>
             <LeaveDuration request={request}/>
             <TableCell>

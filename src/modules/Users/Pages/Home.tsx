@@ -35,7 +35,7 @@ import {UserContext} from "@/contexts/UserContext";
 import {LeaveDuration} from "@/core/components";
 import LeaveStatusBadge from "@/core/components/LeaveStatusBadge.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
-import {LEAVE_TYPE} from "@/constants/types/enums.ts";
+import {LeaveTypeJson} from "@/constants/types/enums.ts";
 
 dayjs.extend(isBetween);
 
@@ -85,7 +85,7 @@ export default function Home() {
     useEffect(() => {
         getLeaves()
             .then((data) => {
-                console.log("Success:", data.contents);
+                console.log("Leaves List:", data.contents);
                 setRequestsList(data.contents);
             })
             .catch((error) => {
@@ -262,7 +262,7 @@ function RequestItem({request}: RequestItemProps) {
                     <LeaveStatusBadge status={request.status} />
                 </TableCell>
                 <TableCell>
-                    <Badge variant={"outline"}>{LEAVE_TYPE[request.type]}</Badge>
+                    <Badge variant={"outline"}>{LeaveTypeJson[request.type]}</Badge>
                 </TableCell>
                 <LeaveDuration request={request}/>
             </TableRow>

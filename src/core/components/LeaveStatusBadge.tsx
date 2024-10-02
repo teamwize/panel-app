@@ -1,6 +1,6 @@
 import {Badge} from "@/components/ui/badge.tsx";
 import React from "react";
-import {LEAVE_STATUS, LeaveStatus} from "@/constants/types/enums.ts";
+import {LeaveStatus, LeaveStatusJson} from "@/constants/types/enums.ts";
 
 type BadgeVariant = "default" | "secondary" | "destructive";
 
@@ -21,6 +21,6 @@ const toBadgeVariant = (status: LeaveStatus): BadgeVariant => {
 
 export default function LeaveStatusBadge({status}: LeaveStatusBadgeProps) {
     return (
-        <Badge variant={toBadgeVariant(status)}>{LEAVE_STATUS[status]}</Badge>
+        <Badge variant={toBadgeVariant(status)}>{LeaveStatusJson[status]}</Badge>
     )
 }

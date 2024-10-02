@@ -16,7 +16,7 @@ import {Card} from '@/components/ui/card';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
-import {LEAVE_TYPE, LeaveType} from '@/constants/types/enums';
+import {LeaveType, LeaveTypeJson} from '@/constants/types/enums';
 import {calculateDuration, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
@@ -26,7 +26,7 @@ import {LeaveCreateRequest} from "@/constants/types/leaveTypes.ts";
 dayjs.extend(isBetween);
 
 const FormSchema = z.object({
-    leaveType: z.enum(Object.keys(LEAVE_TYPE) as [LeaveType]),
+    leaveType: z.nativeEnum(LeaveType, {errorMap: () => ({message: "Please select a valid leave type."})}),
     startDate: z.date(),
     endDate: z.date(),
     reason: z.string().optional(),
@@ -41,7 +41,7 @@ export default function CreateLeave() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            leaveType: "VACATION",
+            leaveType: LeaveType.VACATION,
             startDate: new Date(),
             endDate: new Date(),
             reason: '',
@@ -144,8 +144,8 @@ export default function CreateLeave() {
                                                     <SelectValue placeholder="Select a type"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {Object.values(LEAVE_TYPE).map((value) => (
-                                                        <SelectItem key={value} value={value}>{value}</SelectItem>
+                                                    {Object.values(LeaveType).map((type) => (
+                                                        <SelectItem key={type} value={type}>{LeaveTypeJson[type]}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>

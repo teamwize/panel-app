@@ -1,30 +1,24 @@
 import React, {useContext, useEffect, useState} from "react";
-import { useForm } from "react-hook-form";
-import { useNavigate } from "react-router-dom";
+import {useForm} from "react-hook-form";
+import {useNavigate} from "react-router-dom";
 import {createUser} from "@/services/userService";
 import {getTeam} from "@/services/teamService";
-import { toast } from "@/components/ui/use-toast";
-import { getErrorMessage } from "~/utils/errorHandler.ts";
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Input } from "@/components/ui/input";
-import { z } from "zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { ChevronLeft } from "lucide-react";
-import { UserCreateRequest } from "@/constants/types/userTypes";
+import {toast} from "@/components/ui/use-toast";
+import {getErrorMessage} from "~/utils/errorHandler.ts";
+import {Card} from "@/components/ui/card";
+import {Button} from "@/components/ui/button";
+import {Alert, AlertDescription} from "@/components/ui/alert";
+import {Input} from "@/components/ui/input";
+import {z} from "zod";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {ChevronLeft} from "lucide-react";
+import {UserCreateRequest} from "@/constants/types/userTypes";
 import {TeamResponse} from "@/constants/types/teamTypes";
 import {countries} from "@/constants/countries";
 import {UserContext} from "@/contexts/UserContext";
+import {UserRole} from "@/constants/types/enums.ts";
 
 
 const FormSchema = z.object({
@@ -81,7 +75,7 @@ export default function CreateEmployee() {
             firstName: data.firstName,
             lastName: data.lastName,
             phone: data.phone,
-            role: "EMPLOYEE",
+            role: UserRole.Employee,
             timezone: user.timezone,
             country: data.country,
             teamId: data.teamId,
