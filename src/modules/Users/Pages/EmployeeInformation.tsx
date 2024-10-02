@@ -1,13 +1,13 @@
 import React, {useState, useEffect} from 'react'
 import {useParams} from 'react-router-dom'
 import {useNavigate} from 'react-router-dom'
-import {getUserDaysOff} from "@/services/dayOffService";
+import {getUserLeaves} from "@/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts"
-import {DayOffRequest, BalanceGraph, Pagination} from '../../../core/components'
+import {LeaveRequestTable, BalanceGraph, Pagination} from '../../../core/components'
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Balance} from '@/constants/types/commonTypes';
-import {DayOffResponse} from '@/constants/types/dayOffTypes';
+import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
 import dayjs from "dayjs";
 import {ChevronLeft} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
@@ -15,7 +15,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 
 export default function EmployeeInformation() {
     const [balanceValue, setBalanceValue] = useState<Balance[]>([])
-    const [requestsList, setRequestsList] = useState<DayOffResponse[]>([])
+    const [requestsList, setRequestsList] = useState<LeaveResponse[]>([])
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const navigate = useNavigate();
     const {id} = useParams();
@@ -24,14 +24,14 @@ export default function EmployeeInformation() {
 
     // Example balance data
     const balanceExample: Balance[] = [
-        {label: 'Vacation', dayOffQuantity: 18, dayOffUsed: 3, dayOffColor: '#088636'},
-        {label: 'Sick leave', dayOffQuantity: 5, dayOffUsed: 2, dayOffColor: '#ef4444'},
-        {label: 'Paid time off', dayOffQuantity: 5, dayOffUsed: 1, dayOffColor: '#3b87f7'},
+        {label: 'Vacation', leaveQuantity: 18, leaveUsed: 3, leaveColor: '#088636'},
+        {label: 'Sick leave', leaveQuantity: 5, leaveUsed: 2, leaveColor: '#ef4444'},
+        {label: 'Paid time off', leaveQuantity: 5, leaveUsed: 1, leaveColor: '#3b87f7'},
     ];
 
     // Get list of requests
     useEffect(() => {
-        getUserDaysOff(Number(id))
+        getUserLeaves(Number(id))
             .then((data) => {
                 console.log('Success:', data.contents);
                 setRequestsList(data.contents);
@@ -95,7 +95,7 @@ export default function EmployeeInformation() {
                                             requestsList
                                                 .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
                                                 .map((request) => (
-                                                    <DayOffRequest
+                                                    <LeaveRequestTable
                                                         request={request}
                                                         key={request.id}
                                                     />
@@ -137,9 +137,9 @@ function BalanceItem({i}: BalanceItemProps) {
             className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
                 title={i.label}
-                used={i.dayOffUsed}
-                quantity={i.dayOffQuantity}
-                color={i.dayOffColor}
+                used={i.leaveUsed}
+                quantity={i.leaveQuantity}
+                color={i.leaveColor}
             />
         </div>
     );

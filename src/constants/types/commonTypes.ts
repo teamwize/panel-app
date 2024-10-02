@@ -19,7 +19,7 @@ export type Country = {
 
 export type Balance = {
     label: 'Vacation' | 'Sick leave' | 'Paid time off';
-    dayOffQuantity: number;
-    dayOffUsed: number;
-    dayOffColor: string;
+    leaveQuantity: number;
+    leaveUsed: number;
+    leaveColor: string;
 };

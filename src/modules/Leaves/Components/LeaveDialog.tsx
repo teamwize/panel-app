@@ -2,23 +2,23 @@ import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
 import dayjs, {Dayjs} from 'dayjs';
 import {Dialog, DialogContent, DialogHeader, DialogDescription, DialogFooter} from "@/components/ui/dialog";
-import {DayOffResponse} from '@/constants/types/dayOffTypes';
-import {DAY_OFF_TYPE, DayOffStatus, DayOffType} from '@/constants/types/enums';
+import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
+import {LEAVE_TYPE, LeaveStatus, LeaveType} from '@/constants/types/enums';
 import {Button} from '@/components/ui/button';
 import {CircleAlert} from 'lucide-react';
 import {calculateDuration, formatDurationRange} from '@/utils/dateUtils';
 import {Avatar} from '@/core/components'
 
-type DayOffModalProps = {
-    selectedRequest: DayOffResponse | null;
-    teamRequests: DayOffResponse[];
+type LeaveModalProps = {
+    selectedRequest: LeaveResponse | null;
+    teamRequests: LeaveResponse[];
     toggleModal: () => void;
-    handleRequest: (status: DayOffStatus, id: number) => void;
+    handleRequest: (status: LeaveStatus, id: number) => void;
     isProcessing: boolean;
 };
 
-export default function DayOffModal({selectedRequest, teamRequests, toggleModal, handleRequest, isProcessing}: DayOffModalProps) {
-    const [dayOverlap, setDayOverlap] = useState<DayOffResponse[]>([]);
+export default function LeaveModal({selectedRequest, teamRequests, toggleModal, handleRequest, isProcessing}: LeaveModalProps) {
+    const [dayOverlap, setDayOverlap] = useState<LeaveResponse[]>([]);
     const navigate = useNavigate();
     const {id, startAt, endAt, user, type, reason} = selectedRequest;
     const duration = calculateDuration(startAt, endAt);
@@ -29,12 +29,12 @@ export default function DayOffModal({selectedRequest, teamRequests, toggleModal,
     };
 
     useEffect(() => {
-        const startDayOff: Dayjs = dayjs(startAt);
-        const endDayOff: Dayjs = dayjs(endAt);
-        const overlap: DayOffResponse[] = teamRequests.filter((r) =>
+        const startLeave: Dayjs = dayjs(startAt);
+        const endLeave: Dayjs = dayjs(endAt);
+        const overlap: LeaveResponse[] = teamRequests.filter((r) =>
             r.id !== id &&
-            dayjs(r.startAt).isBefore(endDayOff, 'day') &&
-            dayjs(r.endAt).isAfter(startDayOff, 'day')
+            dayjs(r.startAt).isBefore(endLeave, 'day') &&
+            dayjs(r.endAt).isAfter(startLeave, 'day')
         );
         setDayOverlap(overlap);
     }, [id, teamRequests, startAt, endAt]);
@@ -59,7 +59,7 @@ export default function DayOffModal({selectedRequest, teamRequests, toggleModal,
 
 
 type UserInfoProps = {
-    user: DayOffResponse['user'];
+    user: LeaveResponse['user'];
     onClick: () => void;
 };
 
@@ -80,7 +80,7 @@ function UserInfo({user, onClick}: UserInfoProps) {
 type LeaveDetailsProps = {
     durationText: string;
     duration: number;
-    type: DayOffType;
+    type: LeaveType;
     reason?: string;
 };
 
@@ -97,7 +97,7 @@ function LeaveDetails({durationText, duration, type, reason}: LeaveDetailsProps)
             </div>
             <div>
                 <h5 className='text-[10px] text-gray-600 mb-1'>Type</h5>
-                <div>{DAY_OFF_TYPE[type]}</div>
+                <div>{LEAVE_TYPE[type]}</div>
             </div>
             {reason && (
                 <div>
@@ -110,7 +110,7 @@ function LeaveDetails({durationText, duration, type, reason}: LeaveDetailsProps)
 }
 
 type OverlappingRequestsProps = {
-    overlap: DayOffResponse[];
+    overlap: LeaveResponse[];
 };
 
 function OverlappingRequests({overlap}: OverlappingRequestsProps) {
@@ -126,7 +126,7 @@ function OverlappingRequests({overlap}: OverlappingRequestsProps) {
 }
 
 type RequestItemProps = {
-    response: DayOffResponse;
+    response: LeaveResponse;
 };
 
 function RequestItem({response}: RequestItemProps) {
@@ -141,7 +141,7 @@ function RequestItem({response}: RequestItemProps) {
 }
 
 type FooterButtonsProps = {
-    handleRequest: (status: DayOffStatus, id: number) => void;
+    handleRequest: (status: LeaveStatus, id: number) => void;
     id: number;
     isProcessing: boolean;
 }

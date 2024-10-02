@@ -6,7 +6,7 @@ import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Card} from "@/components/ui/card";
 import {OrganizationResponse, OrganizationUpdateRequest} from "@/constants/types/organizationTypes";
-import { DayOffType} from "@/constants/types/enums";
+import { LeaveType} from "@/constants/types/enums";
 import {Button} from "@/components/ui/button";
 import {AlertDescription, Alert} from "@/components/ui/alert";
 import {z} from "zod";
@@ -28,7 +28,7 @@ const FormSchema = z.object({
 });
 
 export default function Policy() {
-    const [balanceInfo, setBalanceInfo] = useState<DayOffType>();
+    const [balanceInfo, setBalanceInfo] = useState<LeaveType>();
     const navigate = useNavigate();
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isProcessing, setIsProcessing] = useState<boolean>(false);

@@ -1,6 +1,6 @@
 import { Route, Routes } from "react-router-dom";
 import { SignIn, SignUp } from './Authentication'
-import { CreateDayOff, PendingDayOff, Requests } from './DaysOff'
+import { CreateLeave, PendingLeave, LeaveRequests } from './Leaves'
 import {
   Policy,
   Organization,
@@ -20,9 +20,9 @@ export default function Root() {
         <Route path='/signup' element={<SignUp />}></Route>
         <Route path='/' element={<AuthenticatedRoute><Home /></AuthenticatedRoute>}></Route>
         <Route path='/signin' element={<SignIn />}></Route>
-        <Route path='/dayoff/create' element={<AuthenticatedRoute><CreateDayOff /></AuthenticatedRoute>}></Route>
-        <Route path='/dayoff/pending' element={<AuthenticatedRoute><PendingDayOff /></AuthenticatedRoute>}></Route>
-        <Route path='/requests' element={<AuthenticatedRoute><Requests /></AuthenticatedRoute>}></Route>
+        <Route path='/leave/create' element={<AuthenticatedRoute><CreateLeave /></AuthenticatedRoute>}></Route>
+        <Route path='/leave/pending' element={<AuthenticatedRoute><PendingLeave /></AuthenticatedRoute>}></Route>
+        <Route path='/requests' element={<AuthenticatedRoute><LeaveRequests /></AuthenticatedRoute>}></Route>
         <Route path='/balance' element={<AuthenticatedRoute><Balance /></AuthenticatedRoute>}></Route>
         <Route path='/employees' element={<AuthenticatedRoute><Employees /></AuthenticatedRoute>}></Route>
         <Route path='/employee/:id' element={<AuthenticatedRoute><EmployeeInformation /></AuthenticatedRoute>}></Route>

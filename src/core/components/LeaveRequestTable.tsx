@@ -1,24 +1,24 @@
-import {DayOffResponse} from "@/constants/types/dayOffTypes";
+import {LeaveResponse} from "@/constants/types/leaveTypes.ts";
 import React from "react";
 import {TableCell, TableRow} from "@/components/ui/table";
-import {DayOffDuration} from "./index";
+import {LeaveDuration} from "./index";
 import {Badge} from "@/components/ui/badge"
-import {DAY_OFF_TYPE} from "@/constants/types/enums";
+import {LEAVE_TYPE} from "@/constants/types/enums";
 import LeaveStatusBadge from "@/core/components/LeaveStatusBadge";
 
-type DayOffRequestProps = {
-    request: DayOffResponse;
+type LeaveRequestTableProps = {
+    request: LeaveResponse;
 }
 
-export default function DayOffRequest({request}: DayOffRequestProps) {
+export default function LeaveRequestTable({request}: LeaveRequestTableProps) {
     return (
         <TableRow>
-            <DayOffDuration request={request}/>
+            <LeaveDuration request={request}/>
             <TableCell>
                 <LeaveStatusBadge status={request.status} />
             </TableCell>
             <TableCell>
-                <Badge variant="outline">{DAY_OFF_TYPE[request.type]}</Badge>
+                <Badge variant="outline">{LEAVE_TYPE[request.type]}</Badge>
             </TableCell>
         </TableRow>
     );

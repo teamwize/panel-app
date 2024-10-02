@@ -5,7 +5,7 @@ import {Button} from '@/components/ui/button';
 import React from "react";
 import {Card} from "@/components/ui/card";
 
-export default function PendingDayOff() {
+export default function PendingLeave() {
     const navigate = useNavigate();
 
     const goHome = () => {
@@ -14,7 +14,7 @@ export default function PendingDayOff() {
 
     return (
         <>
-            <PageTitle title="Day off Request"/>
+            <PageTitle title="Leave Request"/>
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card
                     className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm justify-center items-center"

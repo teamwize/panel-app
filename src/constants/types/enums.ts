@@ -12,21 +12,21 @@ export const USER_ROLE = {
 } as const;
 export type UserRole = keyof typeof USER_ROLE;
 
-//dayOff enum and const
+//leave enum and const
 
-export const DAY_OFF_TYPE = {
+export const LEAVE_TYPE = {
     PAID_TIME: 'Paid time',
     VACATION: 'Vacation',
     SICK_LEAVE: 'Sick Leave'
 } as const;
-export type DayOffType = keyof typeof DAY_OFF_TYPE;
+export type LeaveType = keyof typeof LEAVE_TYPE;
 
-export const DAY_OFF_STATUS = {
+export const LEAVE_STATUS = {
     ACCEPTED : 'Accepted',
     REJECTED : 'Rejected',
     PENDING : 'Pending'
 }
-export type DayOffStatus = keyof typeof DAY_OFF_STATUS;
+export type LeaveStatus = keyof typeof LEAVE_STATUS;
 
 export enum Week {
     MONDAY = "MONDAY",

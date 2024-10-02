@@ -2,13 +2,13 @@ import React, {useEffect, useState, useContext} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import {DayOffDialog} from '../Components';
-import {getDaysOff, updateDayOffStatus} from "@/services/dayOffService";
+import {LeaveDialog} from '../Components';
+import {getLeaves, updateLeavesStatus} from "@/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {Pagination, DayOffDuration} from '../../../core/components';
-import {DAY_OFF_TYPE, DayOffStatus} from '@/constants/types/enums';
-import {DayOffResponse} from '@/constants/types/dayOffTypes';
+import {Pagination, LeaveDuration} from '../../../core/components';
+import {LEAVE_TYPE, LeaveStatus} from '@/constants/types/enums';
+import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
 import {PagedResponse} from '@/constants/types/commonTypes';
 import {Eye} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
@@ -16,20 +16,20 @@ import {Button} from "@/components/ui/button";
 import {UserContext} from "@/contexts/UserContext";
 import {Badge} from "@/components/ui/badge.tsx";
 
-export default function Requests() {
-    const [requestsList, setRequestsList] = useState<DayOffResponse[]>([]);
+export default function LeaveRequests() {
+    const [requestsList, setRequestsList] = useState<LeaveResponse[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const [selectedRequest, setSelectedRequest] = useState<DayOffResponse | null>(null);
+    const [selectedRequest, setSelectedRequest] = useState<LeaveResponse | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const [teamRequests, setTeamRequests] = useState<DayOffResponse[]>([]);
+    const [teamRequests, setTeamRequests] = useState<LeaveResponse[]>([]);
     const recordsPerPage: number = 5;
 
-    // Get dayoff list
+    // Get leave list
     useEffect(() => {
-        getDaysOff()
-            .then((response: PagedResponse<DayOffResponse>) => {
-                setRequestsList(response.contents.filter((item: DayOffResponse) => item.status === "PENDING"));
+        getLeaves()
+            .then((response: PagedResponse<LeaveResponse>) => {
+                setRequestsList(response.contents.filter((item: LeaveResponse) => item.status === "PENDING"));
                 console.log(requestsList)
             })
             .catch((error: any) => {
@@ -45,16 +45,16 @@ export default function Requests() {
         }
     }, [selectedRequest, requestsList])
 
-    const handleRowClick = (request: DayOffResponse) => {
+    const handleRowClick = (request: LeaveResponse) => {
         setSelectedRequest(request);
     };
 
-    const handleRequest = (status: DayOffStatus, id: number) => {
+    const handleRequest = (status: LeaveStatus, id: number) => {
         let payload = {status: status};
         setIsProcessing(true);
 
-        updateDayOffStatus(payload, id)
-            .then((data: DayOffResponse) => {
+        updateLeavesStatus(payload, id)
+            .then((data: LeaveResponse) => {
                 setIsProcessing(false);
                 setRequestsList(prevState => prevState.filter(r => r.id !== id));
                 setSelectedRequest(null);
@@ -124,7 +124,7 @@ export default function Requests() {
                 </Card>
 
                 {selectedRequest && (
-                    <DayOffDialog
+                    <LeaveDialog
                         teamRequests={teamRequests}
                         selectedRequest={selectedRequest}
                         toggleModal={() => setSelectedRequest(null)}
@@ -138,7 +138,7 @@ export default function Requests() {
 }
 
 type RequestItemProps = {
-    request: DayOffResponse;
+    request: LeaveResponse;
     handleRowClick: () => void;
 };
 
@@ -171,9 +171,9 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
-                <Badge variant="outline">{DAY_OFF_TYPE[request.type]}</Badge>
+                <Badge variant="outline">{LEAVE_TYPE[request.type]}</Badge>
             </TableCell>
-            <DayOffDuration request={request}/>
+            <LeaveDuration request={request}/>
             <TableCell>
                 <Button  className={"px-1"}
                          variant="outline"

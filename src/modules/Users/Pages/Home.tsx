@@ -3,7 +3,7 @@ import {useNavigate} from "react-router-dom";
 import "react-day-picker/dist/style.css";
 import dayjs from "dayjs";
 import isBetween from "dayjs/plugin/isBetween";
-import {getDaysOff} from "@/services/dayOffService";
+import {getLeaves} from "@/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import "@/index.css";
@@ -29,27 +29,27 @@ import {Alert, AlertDescription} from "@/components/ui/alert"
 import {isDateInWeekend} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
-import {DayOffResponse} from "@/constants/types/dayOffTypes";
+import {LeaveResponse} from "@/constants/types/leaveTypes.ts";
 import {UserResponse} from "@/constants/types/userTypes";
 import {UserContext} from "@/contexts/UserContext";
-import {DayOffDuration} from "@/core/components";
+import {LeaveDuration} from "@/core/components";
 import LeaveStatusBadge from "@/core/components/LeaveStatusBadge.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
-import {DAY_OFF_TYPE} from "@/constants/types/enums.ts";
+import {LEAVE_TYPE} from "@/constants/types/enums.ts";
 
 dayjs.extend(isBetween);
 
 export default function Home() {
     const [selectedDate, setSelectedDate] = useState<Date>(new Date());
-    const [requestsList, setRequestsList] = useState<DayOffResponse[]>([]);
-    const [offDays, setOffDays] = useState<Date[]>([]);
+    const [requestsList, setRequestsList] = useState<LeaveResponse[]>([]);
+    const [leaveDays, setLeaveDays] = useState<Date[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [calendarCurrentDate, setCalendarCurrentDate] = useState<dayjs.Dayjs>(dayjs(new Date()));
     const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
     const navigate = useNavigate();
     const {user} = useContext(UserContext);
 
-    const selectedDateRequests: DayOffResponse[] = requestsList.filter((r) =>
+    const selectedDateRequests: LeaveResponse[] = requestsList.filter((r) =>
         dayjs(selectedDate).isBetween(dayjs(r.startAt), dayjs(r.endAt), "days", "[]")
     );
 
@@ -83,7 +83,7 @@ export default function Home() {
 
     // Get list of requests
     useEffect(() => {
-        getDaysOff()
+        getLeaves()
             .then((data) => {
                 console.log("Success:", data.contents);
                 setRequestsList(data.contents);
@@ -99,7 +99,7 @@ export default function Home() {
             });
     }, []);
 
-    // Show dayoff lists of working days
+    // Show leave lists of working days
     useEffect(() => {
         if (requestsList.length === 0) return;
 
@@ -111,15 +111,15 @@ export default function Home() {
                 dayjs(holiday.date).isSame(currentDate, "day")
             );
             if (isHoliday) continue;
-            const off: DayOffResponse[] = requestsList.filter((r) =>
+            const off: LeaveResponse[] = requestsList.filter((r) =>
                 currentDate.isBetween(dayjs(r.startAt), dayjs(r.endAt), "days", "[]")
             );
             if (off.length > 0) {
                 result.push(currentDate.toDate());
             }
         }
-        if (JSON.stringify(result) !== JSON.stringify(offDays)) {
-            setOffDays(result);
+        if (JSON.stringify(result) !== JSON.stringify(leaveDays)) {
+            setLeaveDays(result);
         }
     }, [requestsList, calendarCurrentDate, holidays]);
 
@@ -132,12 +132,12 @@ export default function Home() {
         setCalendarCurrentDate(dayjs(newDate));
     };
 
-    const showDayOff = (date: Date | undefined) => {
+    const showLeave = (date: Date | undefined) => {
         if (date) setSelectedDate(date);
     };
 
     const sendRequest = () => {
-        navigate("/dayoff/create");
+        navigate("/leave/create");
     };
 
     const weekendsDays: string[] = ['Saturday', 'Sunday'];
@@ -157,7 +157,7 @@ export default function Home() {
                         onClick={sendRequest}
                     >
                         <Plus className="h-5 w-5"/>
-                        Request Day Off
+                        Request Leave
                     </Button>
                 </div>
             </PageTitle>
@@ -174,7 +174,7 @@ export default function Home() {
                     x-chunk="dashboard-02-chunk-1"
                 >
                     <Calendar
-                        modifiers={{highlighted: offDays, notWorkingDay: isDateDisabled}}
+                        modifiers={{highlighted: leaveDays, notWorkingDay: isDateDisabled}}
                         modifiersStyles={{
                             highlighted: {color: "#6366f1", fontWeight: "bolder"},
                             notWorkingDay: {color: "#ef4444"}
@@ -183,7 +183,7 @@ export default function Home() {
                         onMonthChange={handleMonthChange}
                         mode="single"
                         selected={selectedDate}
-                        onSelect={showDayOff}
+                        onSelect={showLeave}
                         initialFocus
                         className='border rounded-lg w-fit p-4 bg-[hsl(var(--muted)/0.4)] mx-auto'
                     />
@@ -241,7 +241,7 @@ export default function Home() {
 }
 
 type RequestItemProps = {
-    request: DayOffResponse;
+    request: LeaveResponse;
 };
 
 function RequestItem({request}: RequestItemProps) {
@@ -262,9 +262,9 @@ function RequestItem({request}: RequestItemProps) {
                     <LeaveStatusBadge status={request.status} />
                 </TableCell>
                 <TableCell>
-                    <Badge variant={"outline"}>{DAY_OFF_TYPE[request.type]}</Badge>
+                    <Badge variant={"outline"}>{LEAVE_TYPE[request.type]}</Badge>
                 </TableCell>
-                <DayOffDuration request={request}/>
+                <LeaveDuration request={request}/>
             </TableRow>
         </TableBody>
     );

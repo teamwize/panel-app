@@ -5,7 +5,7 @@ import {z} from 'zod';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import {createDayOff} from "@/services/dayOffService";
+import {createLeaves} from "@/services/leaveService.ts";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {PageTitle} from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
@@ -16,23 +16,23 @@ import {Card} from '@/components/ui/card';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
-import {DAY_OFF_TYPE, DayOffType} from '@/constants/types/enums';
+import {LEAVE_TYPE, LeaveType} from '@/constants/types/enums';
 import {calculateDuration, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
 import {UserContext} from "@/contexts/UserContext";
-import {DayOffCreateRequest} from "@/constants/types/dayOffTypes";
+import {LeaveCreateRequest} from "@/constants/types/leaveTypes.ts";
 
 dayjs.extend(isBetween);
 
 const FormSchema = z.object({
-    dayOffType: z.enum(Object.keys(DAY_OFF_TYPE) as [DayOffType]),
+    leaveType: z.enum(Object.keys(LEAVE_TYPE) as [LeaveType]),
     startDate: z.date(),
     endDate: z.date(),
     reason: z.string().optional(),
 });
 
-export default function CreateDayOff() {
+export default function CreateLeave() {
     const [holidays, setHolidays] = useState<Date[]>([]);
     const {user} = useContext(UserContext);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
@@ -41,7 +41,7 @@ export default function CreateDayOff() {
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            dayOffType: "VACATION",
+            leaveType: "VACATION",
             startDate: new Date(),
             endDate: new Date(),
             reason: '',
@@ -75,17 +75,17 @@ export default function CreateDayOff() {
     const weekendsDays: string[] = ['Saturday', 'Sunday'];
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
-        const {dayOffType, startDate, endDate, reason} = data;
-        const payload: DayOffCreateRequest = {
-            type: dayOffType,
+        const {leaveType, startDate, endDate, reason} = data;
+        const payload: LeaveCreateRequest = {
+            type: leaveType,
             start: dayjs(startDate).toISOString(),
             end: dayjs(endDate).toISOString(),
             reason: reason,
         };
 
-        createDayOff(payload)
+        createLeaves(payload)
             .then(() => {
-                navigate('/dayoff/pending');
+                navigate('/leave/pending');
             })
             .catch((error: any) => {
                 const errorMessage = getErrorMessage(error);
@@ -121,7 +121,7 @@ export default function CreateDayOff() {
 
     return (
         <>
-            <PageTitle title="Day Off Request"></PageTitle>
+            <PageTitle title="Leave Request"></PageTitle>
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>
@@ -134,7 +134,7 @@ export default function CreateDayOff() {
                         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
                             <FormField
                                 control={control}
-                                name="dayOffType"
+                                name="leaveType"
                                 render={({field}) => (
                                     <FormItem>
                                         <FormLabel>Type</FormLabel>
@@ -144,13 +144,13 @@ export default function CreateDayOff() {
                                                     <SelectValue placeholder="Select a type"/>
                                                 </SelectTrigger>
                                                 <SelectContent>
-                                                    {Object.values(DAY_OFF_TYPE).map((value) => (
+                                                    {Object.values(LEAVE_TYPE).map((value) => (
                                                         <SelectItem key={value} value={value}>{value}</SelectItem>
                                                     ))}
                                                 </SelectContent>
                                             </Select>
                                         </FormControl>
-                                        <FormMessage>{errors.dayOffType && errors.dayOffType.message}</FormMessage>
+                                        <FormMessage>{errors.leaveType && errors.leaveType.message}</FormMessage>
                                     </FormItem>
                                 )}
                             />
