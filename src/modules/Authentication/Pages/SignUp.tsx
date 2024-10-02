@@ -63,7 +63,7 @@ export default function SignUp() {
         signup(payload)
             .then((response: AuthenticationResponse) => {
                 setIsProcessing(false);
-                authenticate(response.accessToken, response.user);
+                authenticate(response.accessToken);
                 navigate('/');
             })
             .catch((error: string | null) => {

@@ -46,7 +46,7 @@ export default function SignIn() {
         signin(payload)
             .then((response: AuthenticationResponse) => {
                 setIsProcessing(false);
-                authenticate(response.accessToken, response.user);
+                authenticate(response.accessToken);
                 navigate(currentURL || '/');
             })
             .catch((error: string | null) => {

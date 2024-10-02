@@ -1,13 +1,17 @@
-import { useCallback, createContext, ReactNode, useState } from "react"
-import useLocalStorage from "../hooks/useLocalStorage"
+import { useCallback, createContext, ReactNode, useEffect, useState } from "react";
 import { UserResponse } from "@/constants/types/userTypes";
-import {OrganizationResponse} from "@/constants/types/organizationTypes";
+import { OrganizationResponse } from "@/constants/types/organizationTypes";
+import { getCurrentUser } from "@/services/userService";
+import { getOrganization } from "@/services/organizationService";
+import { getErrorMessage } from "~/utils/errorHandler.ts";
+import useLocalStorage from "../hooks/useLocalStorage";
+import { toast } from "@/components/ui/use-toast";
 
 type UserContextType = {
   user: UserResponse | null;
   organization: OrganizationResponse | null;
   accessToken: string | null;
-  authenticate: (accessToken: string | null, user: UserResponse | null) => void;
+  authenticate: (accessToken: string | null) => void;
   signout: () => void;
   isAuthenticated: () => boolean;
 }
@@ -30,12 +34,13 @@ export const UserContextProvider = ({ children}: UserContextProviderType) => {
   const [user, setUser] = useState<UserResponse | null>(null);
   const [organization, setOrganization] = useState<OrganizationResponse | null>(null);
 
+  const isAuthenticated = (): boolean => {
+    return accessToken != null && accessToken !== "";
+  };
+
   const authenticate = (_accessToken: string | null) => {
     setAccessToken(_accessToken);
-    setUser(user);
-    setOrganization(organization);
-    console.log("userContext authenticate", accessToken, user)
-  }
+  };
 
   const signout = () => {
     setAccessToken(null);
@@ -44,9 +49,33 @@ export const UserContextProvider = ({ children}: UserContextProviderType) => {
     console.log("userContext signout")
   }
 
-  const isAuthenticated = (): boolean => {
-    return accessToken != null && accessToken !== "";
-  }
+  useEffect(() => {
+    if (isAuthenticated()) {
+      // Fetch user data
+      getCurrentUser()
+          .then((data: UserResponse) => setUser(data))
+          .catch((error) => {
+            const errorMessage = getErrorMessage(error);
+            toast({
+              title: "Error",
+              description: errorMessage,
+              variant: "destructive",
+            });
+          });
+
+      // Fetch organization data
+      getOrganization()
+          .then((data: OrganizationResponse) => setOrganization(data))
+          .catch((error) => {
+            const errorMessage = getErrorMessage(error);
+            toast({
+              title: "Error",
+              description: errorMessage,
+              variant: "destructive",
+            });
+          });
+    }
+  }, [accessToken]);
 
   const contextValue = {
     user: user,

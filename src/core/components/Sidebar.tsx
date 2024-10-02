@@ -74,6 +74,7 @@ export default function Sidebar() {
                                     </div>
                                     {managementNavigation.map((item) =>
                                         <NavigationLink
+                                            key={item.name}
                                             href={item.href}
                                             title={item.name}
                                             isActive={isNavigationActive(item.href)}
