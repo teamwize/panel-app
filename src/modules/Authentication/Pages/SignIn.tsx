@@ -43,6 +43,7 @@ export default function SignIn() {
         };
 
         setIsProcessing(true);
+
         signin(payload)
             .then((response: AuthenticationResponse) => {
                 setIsProcessing(false);
@@ -62,7 +63,7 @@ export default function SignIn() {
     };
 
     return (
-        <div className="relative min-h-screen bg-gray-100 flex flex-col gap-6 items-center justify-center">
+        <div className="relative min-h-screen bg-gray-100 flex flex-col gap-6 items-center justify-center px-4">
             <div className="flex flex-col justify-center">
                 <Logo className="h-14 border-2 rounded mb-2 mx-auto"/>
                 <h1 className="text-xl font-semibold text-gray-700">Teamwize</h1>
@@ -70,7 +71,7 @@ export default function SignIn() {
 
             <div className="w-full max-w-sm p-6 bg-white shadow-lg rounded-lg">
                 {errorMessage && (
-                    <Alert>
+                    <Alert className='text-red-500 border-none px-0 font-semibold'>
                         <AlertDescription>{errorMessage}</AlertDescription>
                     </Alert>
                 )}
@@ -105,12 +106,9 @@ function EmailField({form}: FieldProps) {
                 <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                        <Input
-                            id="email"
-                            placeholder="Email"
-                            {...field}
-                        />
+                        <Input id="email" placeholder="Email"{...field}/>
                     </FormControl>
+                    <FormMessage/>
                 </FormItem>
             )}
         />
@@ -141,14 +139,11 @@ function PasswordField({form}: FieldProps) {
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute inset-y-0 right-0 flex items-center px-2"
                             >
-                                {showPassword
-                                    ?
-                                    (<EyeOff className="h-5 w-5"/>)
-                                    :
-                                    (<Eye className="h-5 w-5"/>)}
+                                {showPassword ? (<EyeOff className="h-5 w-5"/>) : (<Eye className="h-5 w-5"/>)}
                             </button>
                         </div>
                     </FormControl>
+                    <FormMessage/>
                 </FormItem>
             )}
         />
