@@ -1,6 +1,7 @@
 import {UserRole, UserStatus} from "@/constants/types/enums";
 import {OrganizationResponse, OrganizationCompactResponse} from "@/constants/types/organizationTypes";
 import {TeamCompactResponse} from "@/constants/types/teamTypes";
+import {LeavePolicyCompactResponse} from "@/constants/types/leaveTypes.ts";
 
 export type UserCreateRequest = {
     email: string;
@@ -43,6 +44,7 @@ export type UserResponse = {
     country: string | null;
     organization: OrganizationCompactResponse;
     avatar: AssetResponse;
+    leavePolicy: LeavePolicyCompactResponse;
 }
 
 export type AssetResponse = {

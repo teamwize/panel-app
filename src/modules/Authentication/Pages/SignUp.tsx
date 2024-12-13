@@ -9,7 +9,7 @@ import {countries} from '~/constants/countries.ts';
 import {AuthenticationResponse, RegistrationRequest} from "@/constants/types/authTypes";
 import {Button} from "@/components/ui/button";
 import {Input} from "@/components/ui/input";
-import {Form, FormControl, FormField, FormItem, FormLabel} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Alert, AlertDescription} from "@/components/ui/alert";
@@ -60,6 +60,7 @@ export default function SignUp() {
         };
 
         setIsProcessing(true);
+
         signup(payload)
             .then((response: AuthenticationResponse) => {
                 setIsProcessing(false);
@@ -79,7 +80,7 @@ export default function SignUp() {
     };
 
     return (
-        <div className="relative min-h-screen bg-gray-100 flex flex-col gap-6 items-center justify-center">
+        <div className="relative min-h-screen bg-gray-100 flex flex-col gap-6 items-center justify-center px-4">
             <div className="flex flex-col justify-center">
                 <Logo className="h-14 border-2 rounded mb-2 mx-auto"/>
                 <h1 className="text-xl font-semibold text-gray-700">Teamwize</h1>
@@ -87,7 +88,7 @@ export default function SignUp() {
 
             <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
                 {errorMessage && (
-                    <Alert>
+                    <Alert className='text-red-500 border-none px-0 font-semibold'>
                         <AlertDescription>{errorMessage}</AlertDescription>
                     </Alert>
                 )}
@@ -128,6 +129,7 @@ function OrganizationField({form}: FieldProps) {
                     <FormControl>
                         <Input placeholder="Organization Name" {...field}/>
                     </FormControl>
+                    <FormMessage/>
                 </FormItem>
             )}
         />
@@ -146,6 +148,7 @@ function FullNameField({form}: FieldProps) {
                         <FormControl>
                             <Input placeholder="First Name" {...field}/>
                         </FormControl>
+                        <FormMessage/>
                     </FormItem>
                 )}
             />
@@ -159,6 +162,7 @@ function FullNameField({form}: FieldProps) {
                         <FormControl>
                             <Input placeholder="Last Name" {...field}/>
                         </FormControl>
+                        <FormMessage/>
                     </FormItem>
                 )}
             />
@@ -175,12 +179,9 @@ function EmailField({form}: FieldProps) {
                 <FormItem>
                     <FormLabel>Email</FormLabel>
                     <FormControl>
-                        <Input
-                            id="email"
-                            placeholder="Email"
-                            {...field}
-                        />
+                        <Input id="email" placeholder="Email"{...field}/>
                     </FormControl>
+                    <FormMessage/>
                 </FormItem>
             )}
         />
@@ -198,6 +199,7 @@ function PhoneField({form}: FieldProps) {
                     <FormControl>
                         <Input placeholder="Phone" {...field}/>
                     </FormControl>
+                    <FormMessage/>
                 </FormItem>
             )}
         />
@@ -216,25 +218,17 @@ function PasswordField({form}: FieldProps) {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                         <div className="relative">
-                            <Input
-                                id="password"
-                                placeholder="Password"
-                                type={showPassword ? "text" : "password"}
-                                {...field}
-                            />
+                            <Input id="password" placeholder="Password" type={showPassword ? "text" : "password"}{...field}/>
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
                                 className="absolute inset-y-0 right-0 flex items-center px-2"
                             >
-                                {showPassword
-                                    ?
-                                    (<EyeOff className="h-5 w-5"/>)
-                                    :
-                                    (<Eye className="h-5 w-5"/>)}
+                                {showPassword ? (<EyeOff className="h-5 w-5"/>) : (<Eye className="h-5 w-5"/>)}
                             </button>
                         </div>
                     </FormControl>
+                    <FormMessage/>
                 </FormItem>
             )}
         />
@@ -250,16 +244,14 @@ function CountryField({form}: FieldProps) {
                 <FormItem>
                     <FormLabel>Country</FormLabel>
                     <FormControl>
-                        <select
-                            className="block w-full rounded-md border border-gray-300 bg-white px-4 py-2 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-                            {...field}
-                        >
+                        <select className="block w-full rounded-md border border-gray-300 bg-white p-2 h-10 shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"{...field}>
                             <option value="">Choose your country</option>
                             {countries.map((country) => (
                                 <option key={country.code} value={country.code}>{country.name}</option>
                             ))}
                         </select>
                     </FormControl>
+                    <FormMessage/>
                 </FormItem>
             )}
         />
