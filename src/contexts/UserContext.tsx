@@ -9,6 +9,7 @@ import { toast } from "@/components/ui/use-toast";
 
 type UserContextType = {
   user: UserResponse | null;
+  setUser: (user: UserResponse | null) => void;
   organization: OrganizationResponse | null;
   accessToken: string | null;
   authenticate: (accessToken: string | null) => void;
@@ -18,6 +19,7 @@ type UserContextType = {
 
 export const UserContext = createContext<UserContextType>({
   user: null,
+  setUser: () => {},
   organization: null,
   accessToken: null,
   authenticate: () => { },
@@ -79,6 +81,7 @@ export const UserContextProvider = ({ children}: UserContextProviderType) => {
 
   const contextValue = {
     user: user,
+    setUser: setUser,
     organization: organization,
     accessToken: accessToken,
     isAuthenticated: useCallback(() => isAuthenticated(), [accessToken]),
