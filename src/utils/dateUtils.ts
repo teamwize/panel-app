@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {Week} from "@/constants/types/enums.ts";
 
 const isDateInHoliday = (date: Date, holidays: Date[]): boolean => {
     let dayJsDate = dayjs(date);
@@ -8,6 +9,20 @@ const isDateInHoliday = (date: Date, holidays: Date[]): boolean => {
 const isDateInWeekend = (date: Date, weekend: string[]): boolean => {
     return weekend.includes(dayjs(date).format('dddd'));
 }
+
+const FULL_WEEK: Week[] = [
+    Week.SUNDAY,
+    Week.MONDAY,
+    Week.TUESDAY,
+    Week.WEDNESDAY,
+    Week.THURSDAY,
+    Week.FRIDAY,
+    Week.SATURDAY,
+];
+
+const calculateWeekends = (workingDays: Week[]): Week[] => {
+    return FULL_WEEK.filter(day => !workingDays.includes(day));
+};
 
 const getNextWorkingDay = (startDate: Date, holidays: Date[], weekend: string[]): Date => {
     let updatedStartDate = dayjs(startDate);
@@ -33,4 +48,4 @@ const formatDurationRange = (duration: number, startAt: string, endAt: string, f
     return dayjs(startAt).format(format);
 }
 
-export {isDateInWeekend, isDateInHoliday, getNextWorkingDay, calculateDuration, formatDurationRange};
+export {isDateInWeekend, isDateInHoliday, calculateWeekends, getNextWorkingDay, calculateDuration, formatDurationRange};

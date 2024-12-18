@@ -1,12 +1,12 @@
 import {UserResponse} from "@/constants/types/userTypes";
-import {LeaveType, LeaveStatus} from "@/constants/types/enums";
+import {LeaveType, LeaveStatus, LeaveTypeCycle, LeaveTypeStatus} from "@/constants/types/enums";
 
 export type LeaveUpdateRequest = {
     status: LeaveStatus;
 }
 
 export type LeaveCreateRequest = {
-    type: LeaveType;
+    typeId: number;
     start: string;
     end: string;
     reason?: string | null
@@ -20,7 +20,40 @@ export type LeaveResponse = {
     endAt: string;
     status: LeaveStatus;
     duration: number;
-    type: LeaveType;
+    type: LeaveTypeResponse;
     reason: string;
     user: UserResponse
+}
+
+export type LeaveTypeCreateRequest = {
+    name: string;
+    cycle: LeaveTypeCycle;
+    amount: number;
+    requiresApproval: boolean
+}
+
+export type LeaveTypeResponse = {
+    id: number;
+    name: string;
+    cycle: LeaveTypeCycle;
+    amount: number;
+    status: LeaveTypeStatus;
+    requiresApproval: boolean
+}
+
+export type LeavePolicyCreateRequest = {
+    name: string;
+    types: LeaveTypeCreateRequest[];
+    isDefault: boolean;
+}
+
+export type LeavePolicyResponse = {
+    id: number;
+    name: string;
+    types: LeaveTypeResponse[];
+    isDefault: boolean
+}
+
+export type LeavePolicyCompactResponse = {
+    id: number;
 }

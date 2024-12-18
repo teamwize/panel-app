@@ -6,25 +6,13 @@ export enum UserStatus {
     ARCHIVED = "ARCHIVED"
 }
 
-// export const USER_ROLE = {
-//     ORGANIZATION_ADMIN : "ORGANIZATION_ADMIN",
-//     EMPLOYEE : "EMPLOYEE",
-// } as const;
-// export type UserRole = keyof typeof USER_ROLE;
-
 export enum UserRole {
     Admin = "ORGANIZATION_ADMIN",
     Employee = "EMPLOYEE",
+    TeamAdmin = "TEAM_ADMIN"
 }
 
 //leave enum and const
-
-// export const LEAVE_TYPE = {
-//     PAID_TIME: 'Paid time',
-//     VACATION: 'Vacation',
-//     SICK_LEAVE: 'Sick Leave'
-// } as const;
-// export type LeaveType = keyof typeof LEAVE_TYPE;
 
 export enum LeaveType {
     PAID_TIME = 'PAID_TIME',
@@ -37,13 +25,6 @@ export enum LeaveTypeJson {
     PAID_TIME = "Paid time"
 }
 
-// export const LEAVE_STATUS = {
-//     ACCEPTED : 'Accepted',
-//     REJECTED : 'Rejected',
-//     PENDING : 'Pending'
-// }
-// export type LeaveStatus = keyof typeof LEAVE_STATUS;
-
 export enum LeaveStatus {
     ACCEPTED = 'ACCEPTED',
     REJECTED = 'REJECTED',
@@ -54,6 +35,24 @@ export enum LeaveStatusJson {
     ACCEPTED = "Accepted",
     REJECTED = "Rejected"
 }
+
+export enum LeaveTypeCycle {
+    UNLIMITED = 'UNLIMITED',
+    PER_MONTH = 'PER_MONTH',
+    PER_YEAR = 'PER_YEAR'
+}
+
+export enum LeaveTypeCycleJson {
+    UNLIMITED = 'Unlimited',
+    PER_MONTH = 'Per Month',
+    PER_YEAR = 'Per Year'
+}
+
+export enum LeaveTypeStatus {
+    ACTIVE = 'ACTIVE',
+    ARCHIVED = 'ARCHIVED'
+}
+
 
 export enum Week {
     MONDAY = "MONDAY",

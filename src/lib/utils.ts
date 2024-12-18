@@ -18,3 +18,7 @@ export function dataURLtoFile(dataURL: string, filename: string): File {
 
   return new File([u8arr], filename, { type: mime });
 }
+
+export const capitalizeFirstLetter = (str: string): string => {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+};
