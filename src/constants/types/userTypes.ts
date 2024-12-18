@@ -16,14 +16,11 @@ export type UserCreateRequest = {
 }
 
 export type UserUpdateRequest = {
-    id?: number;
-    status?: UserStatus;
-    role?: UserRole;
     email?: string;
-    firstName: string;
-    lastName: string | null;
+    firstName?: string;
+    lastName?: string;
     phone?: string | null;
-    organization?: OrganizationResponse;
+    avatarAssetId?: number
 }
 
 export type ChangePasswordRequest = {
@@ -50,6 +47,8 @@ export type UserResponse = {
 export type AssetResponse = {
     id: number;
     size: number;
+    name: string
     contentType: string;
-    url: string
+    url: string;
+    category: string;
 }

@@ -38,11 +38,19 @@ async function updateUserPassword(payload: ChangePasswordRequest, id: number) {
 
 // asset
 
-async function createAsset(bucket: string, files: any[]): Promise<AssetResponse> {
-    const response = await axiosInstance.post('/assets', {
-        params: {bucket, files}
-    })
+async function createAssets(bucket: string, files: File[]): Promise<AssetResponse[]> {
+    const formData = new FormData();
+    // Append all files to FormData
+    files.forEach((file) => {
+        formData.append('files', file);
+    });
+    const response = await axiosInstance.post(`/assets`, formData, {
+        params: { bucket },
+        headers: {
+            'Content-Type': 'multipart/form-data',
+        }
+    });
     return response.data;
 }
 
-export {updateUserPassword, updateUser, deleteUser, getUsers, getCurrentUser, createUser, createAsset}
+export {updateUserPassword, updateUser, deleteUser, getUsers, getCurrentUser, createUser, createAssets}
