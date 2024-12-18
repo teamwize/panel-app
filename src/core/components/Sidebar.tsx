@@ -5,7 +5,6 @@ import {Logo} from '.';
 import {House, ChartPie, Settings, Building, Bell, User, Users, Clock, TreePalm} from 'lucide-react';
 import {Button} from "@/components/ui/button";
 import {UserContext} from "@/contexts/UserContext";
-import {Badge} from "@/components/ui/badge"
 
 const mainNavigation = [
     {name: 'Home', href: '/', icon: House},
