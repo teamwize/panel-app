@@ -2,11 +2,10 @@ import React, {useContext, useState} from 'react';
 import clsx from 'clsx';
 import {useLocation, Link} from 'react-router-dom';
 import {Logo} from '.';
-import {House, ChartPie, Settings, Building, Bell, User, Users, Clock, TreePalm, LucideProps} from 'lucide-react';
+import {House, ChartPie, Settings, Building, Bell, User, Users, Clock, TreePalm} from 'lucide-react';
 import {Button} from "@/components/ui/button";
 import {UserContext} from "@/contexts/UserContext";
 import {Badge} from "@/components/ui/badge"
-import * as react from "react";
 
 const mainNavigation = [
     {name: 'Home', href: '/', icon: House},
@@ -15,22 +14,20 @@ const mainNavigation = [
 ];
 
 const managementNavigation = [
-    {name: 'Requests', href: '/requests', icon: Clock, length: 3},
+    {name: 'Requests', href: '/requests', icon: Clock},
     {name: 'Organization', href: '/organization', icon: Building},
-    {name: 'Policy', href: '/policy', icon: TreePalm},
+    {name: 'Leaves', href: '/leaves', icon: TreePalm},
     {name: 'Employees', href: '/employees', icon: User},
     {name: 'Teams', href: '/teams', icon: Users},
 ];
 
 export default function Sidebar() {
-    const [isSheetOpen, setSheetOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<string>('');
     const location = useLocation();
     const {user} = useContext(UserContext);
 
     const handleNavigation = (path: string) => {
         setSelectedOption(path);
-        setSheetOpen(false);
     };
 
     const isNavigationActive = (href: string) => {
@@ -62,23 +59,19 @@ export default function Sidebar() {
                                     href={item.href}
                                     title={item.name}
                                     isActive={isNavigationActive(item.href)}
-                                    badge={null}
                                     onClick={handleNavigation}
                                     Icon={item.icon}/>
                             )}
 
                             {isUserAdmin && (
                                 <>
-                                    <div
-                                        className="px-3 text-[10px] text-muted-foreground uppercase tracking-wide mt-4 mb-2">Management
-                                    </div>
+                                    <h1 className="px-3 text-[10px] text-muted-foreground uppercase tracking-wide mt-4 mb-2">Management</h1>
                                     {managementNavigation.map((item) =>
                                         <NavigationLink
                                             key={item.name}
                                             href={item.href}
                                             title={item.name}
                                             isActive={isNavigationActive(item.href)}
-                                            badge={item.length}
                                             onClick={handleNavigation}
                                             Icon={item.icon}/>
                                     )}
@@ -96,12 +89,11 @@ type NavigationLinkProps = {
     href: string;
     title: string;
     isActive: boolean;
-    badge: number | null,
     onClick: (page: string) => void;
     Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
-function NavigationLink({href, title, isActive, onClick, badge, Icon}: NavigationLinkProps) {
+function NavigationLink({href, title, isActive, onClick, Icon}: NavigationLinkProps) {
     const classes = {
         base: 'flex items-center gap-3 rounded-lg px-3 py-2 transition-all',
         active: 'bg-indigo-100 dark:bg-indigo-800 bg-opacity-75',
@@ -116,8 +108,6 @@ function NavigationLink({href, title, isActive, onClick, badge, Icon}: Navigatio
                 className={clsx(classes.base, isActive ? classes.active : classes.inactive)}>
                 <Icon className="h-4 w-4" aria-hidden="true"/>
                 {title}
-                {badge && (<Badge
-                    className="ml-auto flex h-6 w-6 shrink-0 items-center justify-center rounded-full">{badge}</Badge>)}
             </Link>
         </div>
     );
