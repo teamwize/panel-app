@@ -1,23 +1,19 @@
 import React, {useContext, useEffect, useState} from 'react'
-import {useForm} from "react-hook-form"
+import {useForm, UseFormReturn} from "react-hook-form"
 import {zodResolver} from "@hookform/resolvers/zod"
 import {z} from "zod"
-import {createAssets, getCurrentUser, updateUser} from "@/services/userService";
+import {getCurrentUser, updateUser} from "@/services/userService";
 import {getErrorMessage} from "~/utils/errorHandler.ts"
 import {PageTitle} from '../../../core/components'
-import AvatarEditor from 'react-avatar-editor'
-import {Dialog, DialogContent, DialogTitle} from "@/components/ui/dialog";
 import {AssetResponse, UserUpdateRequest} from '@/constants/types/userTypes'
 import {AlertDescription, Alert} from "@/components/ui/alert"
-import {Slider} from "@/components/ui/slider"
-import {Button} from "@/components/ui/button"
 import {Camera} from "lucide-react"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {toast} from "@/components/ui/use-toast"
 import {Card} from "@/components/ui/card";
 import {UserContext} from "@/contexts/UserContext";
-import {dataURLtoFile} from "@/lib/utils.ts";
+import {ChangePictureDialog} from "@/modules/Users/components/ChangePictureDialog.tsx";
 
 const FormSchema = z.object({
     firstName: z.string().min(2, {
@@ -151,132 +147,51 @@ export default function Profile() {
                         {selectedAvatar && (<ChangePictureDialog initialImageUrl={selectedAvatar} onChange={handleUpdateUserAvatar}/>)}
                     </div>
 
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                            <FormField
-                                control={form.control}
-                                name="firstName"
-                                render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>First Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="First Name" {...field} />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="lastName"
-                                render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>Last Name</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Last Name" {...field} />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type="submit" className="w-fit">{isProcessing ? "Waiting ..." : "Save"}</Button>
-                        </form>
-                    </Form>
+                    <FullNameField form={form} onSubmit={onSubmit} />
                 </Card>
             </main>
         </>
     )
 }
 
-type ChangePictureProps = {
-    initialImageUrl: string;
-    onChange: (profilePicture: AssetResponse) => void;
+
+type FieldProps = {
+    form: UseFormReturn;
+    onSubmit: (data: z.infer<typeof FormSchema>) => void;
 }
 
-function ChangePictureDialog({initialImageUrl,  onChange}: ChangePictureProps) {
-    let editor: AvatarEditor | null = null;
-    const [isProcessing, setIsProcessing] = useState(false);
-    let [zoom, setZoom] = useState(2);
-    const setEditorRef = (ed: AvatarEditor | null) => editor = ed;
-
-    const handleSlider = (value: number[]) => {
-        if (value.length > 0) {
-            setZoom(value[0]);
-        }
-    }
-
-    const handleCancel = () => {
-        onChange(null);
-    }
-
-    const handleSave = async () => {
-        if (!editor) return;
-
-        try {
-            setIsProcessing(true);
-            // Get the scaled canvas
-            const canvasScaled = editor.getImageScaledToCanvas();
-            // Convert canvas to base64 and then to a File
-            const base64Image = canvasScaled.toDataURL("image/jpeg");
-            const file = dataURLtoFile(base64Image, "profile-image.jpg");
-            const files: File[] = [file];
-
-            //Upload the image
-            const assetResponse: AssetResponse[] = await createAssets("PROFILE_IMAGE", files);
-
-            //Update the user with the uploaded asset ID
-            const payload: UserUpdateRequest = {
-                avatarAssetId: assetResponse[0].id,
-            };
-            const updatedUser = await updateUser(payload);
-            setIsProcessing(false);
-            onChange(updatedUser.avatar);
-            toast({
-                title: "Success",
-                description: "Profile picture updated successfully!",
-                variant: "default",
-            });
-        } catch (error) {
-            console.error("Error:", error);
-            setIsProcessing(false);
-            const errorMessage = getErrorMessage(error as Error | string);
-            toast({
-                title: "Error",
-                description: errorMessage,
-                variant: "destructive",
-            });
-        }
-    };
-
+function FullNameField({form, onSubmit}: FieldProps) {
     return (
-        <Dialog open={initialImageUrl != null} onOpenChange={handleCancel}>
-            <DialogContent>
-                <DialogTitle>Edit Picture</DialogTitle>
-                <AvatarEditor
-                    ref={setEditorRef}
-                    image={initialImageUrl}
-                    width={200}
-                    height={200}
-                    border={20}
-                    color={[255, 255, 255, 0.6]}
-                    className="mx-auto"
-                    rotate={0}
-                    scale={zoom}
-                />
-                <Slider
-                    onValueChange={handleSlider}
-                    defaultValue={[zoom]}
-                    min={1}
-                    max={10}
-                    step={0.1}
-                    className="w-full mx-auto my-4"
-                />
+        <Form {...form}>
+            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                <FormField
+                control={form.control}
+                name="firstName"
+                render={({field}) => (
+                    <FormItem>
+                        <FormLabel>First Name</FormLabel>
+                        <FormControl>
+                            <Input placeholder="First Name" {...field}/>
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}
+            />
 
-                <div className="flex justify-between mt-6">
-                    <Button variant="outline" onClick={handleCancel} className="w-1/2">{isProcessing ? "Waiting ..." : "Cancel"}</Button>
-                    <Button variant="default" onClick={handleSave} className="w-1/2 ml-4">{isProcessing ? "Waiting ..." : "Save"}</Button>
-                </div>
-            </DialogContent>
-        </Dialog>
+            <FormField
+                control={form.control}
+                name="lastName"
+                render={({field}) => (
+                    <FormItem>
+                        <FormLabel>Last Name</FormLabel>
+                        <FormControl>
+                            <Input placeholder="Last Name" {...field}/>
+                        </FormControl>
+                        <FormMessage/>
+                    </FormItem>
+                )}
+            />
+        </form>
+        </Form>
     )
 }
