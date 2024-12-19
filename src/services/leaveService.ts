@@ -21,8 +21,15 @@ async function updateLeavesStatus(payload: LeaveUpdateRequest, id: number): Prom
     return response.data;
 }
 
-async function createLeaves(payload: LeaveCreateRequest): Promise<LeaveResponse> {
+async function createLeave(payload: LeaveCreateRequest): Promise<LeaveResponse> {
     const response = await axiosInstance.post(baseURL, payload);
+    return response.data;
+}
+
+async function getMyLeaves(pageNumber: number, pageSize: number): Promise<PagedResponse<LeaveResponse>> {
+    const response = await axiosInstance.get(`${baseURL}/mine`, {
+        params: {pageNumber, pageSize}
+    });
     return response.data;
 }
 
@@ -31,14 +38,14 @@ async function getLeavesPolicies(): Promise<LeavePolicyResponse[]> {
     return response.data;
 }
 
-async function createLeavesPolicies(payload: LeavePolicyCreateRequest): Promise<LeavePolicyResponse> {
+async function createLeavesPolicy(payload: LeavePolicyCreateRequest): Promise<LeavePolicyResponse> {
     const response = await axiosInstance.post(`${baseURL}/policies`, payload);
     return response.data;
 }
 
-async  function deleteLeavePolicies(id: number) {
+async  function deleteLeavePolicy(id: number) {
     const response = await axiosInstance.delete(`${baseURL}/policies/${id}`);
     return response.data;
 }
 
-export  {getLeaves, getUserLeaves, updateLeavesStatus, createLeaves, getLeavesPolicies, createLeavesPolicies, deleteLeavePolicies}
+export  {getLeaves, getUserLeaves, updateLeavesStatus, createLeave, getMyLeaves, getLeavesPolicies, createLeavesPolicy, deleteLeavePolicy}

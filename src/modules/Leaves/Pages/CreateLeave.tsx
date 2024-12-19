@@ -5,7 +5,7 @@ import {z} from 'zod';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import {createLeaves, getLeavesPolicies} from "@/services/leaveService.ts";
+import {createLeave, getLeavesPolicies, getMyLeaves} from "@/services/leaveService.ts";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {PageTitle} from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
@@ -20,9 +20,25 @@ import {calculateDuration, calculateWeekends, getNextWorkingDay, isDateInHoliday
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
 import {UserContext} from "@/contexts/UserContext";
-import {LeaveCreateRequest, LeaveTypeResponse} from "@/constants/types/leaveTypes.ts";
 import {Week} from "@/constants/types/enums.ts";
 import {capitalizeFirstLetter} from "@/lib/utils.ts";
+import {LeaveCreateRequest, LeaveResponse} from "@/constants/types/leaveTypes.ts";
+
+/*
+1.Fetch LeavePolicyType name and id from leaves/policies
+2.Fetch duration
+3.Fetch post method for submit leave request form to /leaves
+4.Restrict leave duration to Company Policy by limiting the range to the maximum allowed vacation length
+5.Check for Overlapping Leaves by validating the selected range does not overlap with already approved or pending leave requests.
+
+-Calendar:
+6.Fetch Holidays from /holidays for disabling in calendar
+7.How to handle holidays if year changes
+8.Calculate weekends by getting weekDays in organization in UserContext and disable weekends in calendar
+9.Disable days before today for start (Start Date Cannot Be After End Date)
+10.Disable days before start day for end date (End Date Cannot Be Before Start Date)
+11.Start and end date is today date by default. if user changes start date, end date is as the same as start date by default.
+ */
 
 dayjs.extend(isBetween);
 
@@ -37,6 +53,7 @@ export default function CreateLeave() {
     const [holidays, setHolidays] = useState<Date[]>([]);
     const [leaveTypes, setLeaveTypes] = useState<{ id: number; name: string }[]>([]);
     const [weekendsDays, setWeekendsDays] = useState<string[]>([]);
+    const [userLeaves, setUserLeaves] = useState<LeaveResponse[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {user, organization} = useContext(UserContext);
     const navigate = useNavigate();
@@ -59,9 +76,15 @@ export default function CreateLeave() {
     const fetchLeavePolicies = async () => {
         try {
             const policies = await getLeavesPolicies();
-            const types = policies.flatMap((policy) => policy.types);
-            setLeaveTypes(types);
+            if (!user || !user.leavePolicy?.id) {
+                console.log("User or user.leavePolicy.id is not available");
+                return
+            }
+
+            const userPolicy = policies.find(policy => policy.id === user?.leavePolicy?.id);
+            setLeaveTypes(userPolicy.types);
         } catch (error) {
+            debugger
             const errorMessage = getErrorMessage(error as Error | string);
             setErrorMessage(errorMessage);
             toast({
@@ -75,8 +98,14 @@ export default function CreateLeave() {
     // Fetch holidays
     const fetchHolidays = async () => {
         try {
-            const holidaysResponse: HolidayResponse[] = await getHolidays(new Date().getFullYear(), user?.country);
-            const holidaysDates = holidaysResponse.map((holiday) => new Date(holiday.date));
+            const currentYear = new Date().getFullYear();
+            const nextYear = currentYear + 1;
+            const currentYearHolidays: HolidayResponse[] = await getHolidays(currentYear, user?.country);
+            const nextYearHolidays: HolidayResponse[] = await getHolidays(nextYear, user?.country);
+            const holidaysDates = [
+                ...currentYearHolidays.map((holiday) => new Date(holiday.date)),
+                ...nextYearHolidays.map((holiday) => new Date(holiday.date)),
+            ];
             setHolidays(holidaysDates);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error | string);
@@ -89,28 +118,62 @@ export default function CreateLeave() {
         }
     };
 
-    // Calculate leave duration
-    const calculateDistance = (): number => {
-        const duration = calculateDuration(startDate, endDate);
-        const filteredHolidays = holidays.filter((h) =>
-            dayjs(h).isBetween(dayjs(startDate), dayjs(endDate), 'days', '[]')
-        );
-        return duration - filteredHolidays.length;
+    // Fetch user's leaves
+    const fetchUserLeaves = async () => {
+        try {
+            const leavesList= await getMyLeaves(1, 1);
+            const filteredLeaves = leavesList.contents.filter(
+                leave => leave.status === "ACCEPTED" || leave.status === "PENDING"
+            );
+            setUserLeaves(filteredLeaves);
+        } catch (error) {
+            const errorMessage = getErrorMessage(error as Error | string);
+            setErrorMessage(errorMessage);
+            toast({
+                title: "Error",
+                description: "Failed to fetch user leaves.",
+                variant: "destructive",
+            });
+        }
+    };
+
+    // Check for overlapping leaves
+    const checkForOverlappingLeaves = (startAt: Date, endAt: Date): boolean => {
+        const requestStartAt = dayjs(startAt);
+        const requestEndAt = dayjs(endAt);
+        const overlappingLeaves = userLeaves.filter((leave) => {
+            const leaveStartAt = dayjs(leave.startAt);
+            const leaveEndAt = dayjs(leave.endAt);
+
+            return (
+                requestStartAt.isBetween(leaveStartAt, leaveEndAt, 'day', '[]') ||
+                requestEndAt.isBetween(leaveStartAt, leaveEndAt, 'day', '[]') ||
+                (requestStartAt.isBefore(leaveStartAt) && requestEndAt.isAfter(leaveEndAt))
+            );
+        });
+        return overlappingLeaves.length > 0;
     };
 
     //Submit leave request form
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
         try {
-            const selectedType = leaveTypes.find((type) => type.name === data.leaveCategory);
+            const selectedType = Number(data.leaveCategory);
+
+            // Validate overlapping leaves with same type
+            const hasOverlap = checkForOverlappingLeaves(data.startDate, data.endDate);
+            if (hasOverlap) {
+                setErrorMessage("You already have a leave request of this type for the selected date range.");
+                return;
+            }
 
             const payload: LeaveCreateRequest = {
-                typeId: selectedType.id,
+                typeId: selectedType,
                 start: dayjs(data.startDate).toISOString(),
                 end: dayjs(data.endDate).toISOString(),
                 reason: data.reason,
             };
 
-            await createLeaves(payload);
+            await createLeave(payload);
             navigate('/leave/pending');
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error | string);
@@ -119,16 +182,17 @@ export default function CreateLeave() {
         }
     };
 
-    // Fetch leave types and holidays on mount
+    // Fetch leave types, holidays, and user's leaves on mount
     useEffect(() => {
         fetchLeavePolicies();
         fetchHolidays();
+        fetchUserLeaves();
 
         if (organization?.workingDays) {
             const weekends = calculateWeekends(organization.workingDays as Week[]);
             setWeekendsDays(weekends.map(day => capitalizeFirstLetter(day.toLowerCase())));
         }
-    }, [organization]);
+    }, [organization?.workingDays]);
 
     // Adjust startDate if it's a weekend or holiday
     useEffect(() => {
@@ -144,7 +208,7 @@ export default function CreateLeave() {
         }
     }, [startDate, endDate]);
 
-    const duration = calculateDistance();
+    const duration = calculateDuration(startDate, endDate)
 
     return (
         <>
@@ -211,7 +275,7 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
                             </SelectTrigger>
                             <SelectContent>
                                 {leaveTypes?.map((type) => (
-                                    <SelectItem key={type.id} value={type.name}>{type.name}</SelectItem>
+                                    <SelectItem key={type.id} value={type.id.toString()}>{type.name}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>
