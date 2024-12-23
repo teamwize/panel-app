@@ -29,15 +29,14 @@ import {LeaveCreateRequest, LeaveResponse} from "@/constants/types/leaveTypes.ts
 2.Fetch duration
 3.Fetch post method for submit leave request form to /leaves
 4.Restrict leave duration to Company Policy by limiting the range to the maximum allowed vacation length
-5.Check for Overlapping Leaves by validating the selected range does not overlap with already approved or pending leave requests.
 
 -Calendar:
-6.Fetch Holidays from /holidays for disabling in calendar
-7.How to handle holidays if year changes
-8.Calculate weekends by getting weekDays in organization in UserContext and disable weekends in calendar
-9.Disable days before today for start (Start Date Cannot Be After End Date)
-10.Disable days before start day for end date (End Date Cannot Be Before Start Date)
-11.Start and end date is today date by default. if user changes start date, end date is as the same as start date by default.
+5.Fetch Holidays from /holidays for disabling in calendar
+6.How to handle holidays if year changes
+7.Calculate weekends by getting weekDays in organization in UserContext and disable weekends in calendar
+8.Disable days before today for start (Start Date Cannot Be After End Date)
+9.Disable days before start day for end date (End Date Cannot Be Before Start Date)
+10.Start and end date is today date by default. if user changes start date, end date is as the same as start date by default.
  */
 
 dayjs.extend(isBetween);
@@ -137,34 +136,10 @@ export default function CreateLeave() {
         }
     };
 
-    // Check for overlapping leaves
-    const checkForOverlappingLeaves = (startAt: Date, endAt: Date): boolean => {
-        const requestStartAt = dayjs(startAt);
-        const requestEndAt = dayjs(endAt);
-        const overlappingLeaves = userLeaves.filter((leave) => {
-            const leaveStartAt = dayjs(leave.startAt);
-            const leaveEndAt = dayjs(leave.endAt);
-
-            return (
-                requestStartAt.isBetween(leaveStartAt, leaveEndAt, 'day', '[]') ||
-                requestEndAt.isBetween(leaveStartAt, leaveEndAt, 'day', '[]') ||
-                (requestStartAt.isBefore(leaveStartAt) && requestEndAt.isAfter(leaveEndAt))
-            );
-        });
-        return overlappingLeaves.length > 0;
-    };
-
     //Submit leave request form
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
         try {
             const selectedType = Number(data.leaveCategory);
-
-            // Validate overlapping leaves with same type
-            const hasOverlap = checkForOverlappingLeaves(data.startDate, data.endDate);
-            if (hasOverlap) {
-                setErrorMessage("You already have a leave request of this type for the selected date range.");
-                return;
-            }
 
             const payload: LeaveCreateRequest = {
                 typeId: selectedType,

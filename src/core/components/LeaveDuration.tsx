@@ -1,6 +1,6 @@
 import React from "react";
 import {TableCell} from "@/components/ui/table";
-import { formatDurationRange } from '@/utils/dateUtils';
+import {calculateDuration, formatDurationRange} from '@/utils/dateUtils';
 import {LeaveResponse} from "@/constants/types/leaveTypes.ts";
 
 type LeaveDurationProps = {
@@ -8,12 +8,12 @@ type LeaveDurationProps = {
 }
 
 export default function LeaveDuration({request}: LeaveDurationProps) {
-    const durationText = formatDurationRange(request.duration, request.startAt, request.endAt);
+    const duration = calculateDuration(request.startAt, request.endAt);
 
     return (
         <>
-            <TableCell>{durationText}</TableCell>
-            <TableCell>{request.duration} {request.duration === 1 ? "Day" : "Days"}</TableCell>
+            <TableCell>{duration}</TableCell>
+            <TableCell>{duration} {duration === 1 ? 'Day' : 'Days'}</TableCell>
         </>
     )
 }
