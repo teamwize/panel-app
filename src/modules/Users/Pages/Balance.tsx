@@ -1,6 +1,6 @@
 import React, {useState, useEffect} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {getLeaves} from "@/services/leaveService.ts";
+import {getLeaves, getLeavesBalance} from "@/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {PageTitle, LeaveRequestTable, Pagination, BalanceGraph} from '../../../core/components';
@@ -8,51 +8,64 @@ import {Button} from "@/components/ui/button";
 import {Plus} from "lucide-react";
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card";
 import {Table, TableHead, TableHeader, TableRow, TableBody, TableCell} from "@/components/ui/table";
-import dayjs from "dayjs";
-import {Balance} from "@/constants/types/commonTypes";
-import {LeaveResponse} from "@/constants/types/leaveTypes.ts";
+import {LeaveResponse, UserLeaveBalanceResponse} from "@/constants/types/leaveTypes.ts";
+
+// 1.Fetch leave types, amount and used amount
+// 2.Fetch user leave history by detail
 
 export default function BalancePage() {
-    const [balanceValue, setBalanceValue] = useState<Balance[]>([]);
-    const [requestsList, setRequestsList] = useState<LeaveResponse[]>([]);
+    const [balanceData, setBalanceData] = useState<UserLeaveBalanceResponse[]>([]);
+    const [leaveRequests, setLeaveRequests] = useState<LeaveResponse[]>([]);
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const recordsPerPage: number = 5;
 
-    // Example balance data
-    const balanceExample: Balance[] = [
-        {label: 'Vacation', leaveQuantity: 18, leaveUsed: 3, leaveColor: '#088636'},
-        {label: 'Sick leave', leaveQuantity: 5, leaveUsed: 2, leaveColor: '#ef4444'},
-        {label: 'Paid time off', leaveQuantity: 5, leaveUsed: 1, leaveColor: '#3b87f7'},
-    ];
-
-    // Get list of requests
+    // Fetch Leave Requests
     useEffect(() => {
-        getLeaves()
-            .then((data) => {
-                console.log('Success:', data.contents);
-                setRequestsList(data.contents);
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-                const errorMessage = getErrorMessage(error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
-            });
+        const fetchLeaveRequests = async () => {
+            try {
+                const data = await getLeaves();
+                setLeaveRequests(data.contents);
+            } catch (error) {
+                handleError("Failed to fetch leave requests", error);
+            }
+        };
+        fetchLeaveRequests();
     }, []);
 
-    const sendRequest = () => {
-        navigate('/leave/create');
+    // Fetch Leave Balances
+    useEffect(() => {
+        const fetchLeaveBalance = async () => {
+            try {
+                const data = await getLeavesBalance();
+                setBalanceData(data);
+            } catch (error) {
+                handleError("Failed to fetch leave balances", error);
+            }
+        };
+        fetchLeaveBalance();
+    }, []);
+
+    const handleError = (title: string, error: unknown) => {
+        const errorMessage = getErrorMessage(error as Error | string);
+        console.error(`${title}:`, error);
+        toast({
+            title,
+            description: errorMessage,
+            variant: "destructive",
+        });
+    };
+
+    // Navigate to Create Leave Request
+    const handleCreateRequest = () => {
+        navigate("/leave/create");
     };
 
     return (
         <>
             <PageTitle title="Balance">
                 <div className="flex justify-center">
-                    <Button onClick={sendRequest}>
+                    <Button onClick={handleCreateRequest}>
                         <Plus className="h-5 w-5"/>
                         Request Leave
                     </Button>
@@ -60,22 +73,17 @@ export default function BalancePage() {
             </PageTitle>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card
-                    className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm"
-                    x-chunk="dashboard-02-chunk-1"
-                >
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1">
                     <div className="grid grid-cols-3 text-center gap-2 p-4 mx-auto">
-                        {balanceExample.map((i) => (
-                            <BalanceItem i={i} key={i.label}/>
+                        {balanceData.map((item) => (
+                            <BalanceItem item={item} key={item.type.id}/>
                         ))}
                     </div>
 
                     <div>
                         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
                             <CardHeader className="px-6 py-4">
-                                <CardTitle className="text-xl">
-                                    History ({requestsList.length})
-                                </CardTitle>
+                                <CardTitle className="text-xl">Leaves History ({leaveRequests.length})</CardTitle>
                             </CardHeader>
 
                             <CardContent>
@@ -89,33 +97,28 @@ export default function BalancePage() {
                                         </TableRow>
                                     </TableHeader>
                                     <TableBody>
-                                        {requestsList.length > 0 ? (
-                                            requestsList
+                                        {leaveRequests.length > 0 ? (
+                                            leaveRequests
                                                 .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
                                                 .map((request) => (
-                                                    <LeaveRequestTable
-                                                        request={request}
-                                                        key={request.id}
-                                                    />
+                                                    <LeaveRequestTable request={request} key={request.id}/>
                                                 ))
                                         ) : (
                                             <TableRow>
-                                                <TableCell colSpan={3} className="text-center">
-                                                    There is no pending request
-                                                </TableCell>
+                                                <TableCell colSpan={4} className="text-center">There is no pending request</TableCell>
                                             </TableRow>
                                         )}
                                     </TableBody>
                                 </Table>
                             </CardContent>
 
-                            {requestsList.length > recordsPerPage && (
+                            {leaveRequests.length > recordsPerPage && (
                                 <div className='mx-6'>
                                     <Pagination
                                         pageSize={recordsPerPage}
                                         pageNumber={currentPage}
                                         setPageNumber={setCurrentPage}
-                                        totalContents={requestsList.length}
+                                        totalContents={leaveRequests.length}
                                     />
                                 </div>
                             )}
@@ -128,18 +131,17 @@ export default function BalancePage() {
 }
 
 type BalanceItemProps = {
-    i: Balance;
+    item: UserLeaveBalanceResponse;
 };
 
-function BalanceItem({i}: BalanceItemProps) {
+function BalanceItem({item}: BalanceItemProps) {
     return (
         <div
             className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
-                title={i.label}
-                used={i.leaveUsed}
-                quantity={i.leaveQuantity}
-                color={i.leaveColor}
+                title={item.type.name}
+                used={item.usedAmount}
+                quantity={item.totalAmount}
             />
         </div>
     );

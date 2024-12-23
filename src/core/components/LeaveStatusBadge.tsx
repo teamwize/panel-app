@@ -2,7 +2,7 @@ import {Badge} from "@/components/ui/badge.tsx";
 import React from "react";
 import {LeaveStatus, LeaveStatusJson} from "@/constants/types/enums.ts";
 
-type BadgeVariant = "default" | "secondary" | "destructive";
+type BadgeVariant = "approved" | "pending" | "rejected";
 
 type LeaveStatusBadgeProps = {
     status: LeaveStatus
@@ -11,11 +11,11 @@ type LeaveStatusBadgeProps = {
 const toBadgeVariant = (status: LeaveStatus): BadgeVariant => {
     switch (status) {
         case 'ACCEPTED':
-            return 'default';
+            return 'approved';
         case 'PENDING':
-            return 'secondary';
+            return 'pending';
         case 'REJECTED':
-            return 'destructive'
+            return 'rejected';
     }
 }
 

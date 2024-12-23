@@ -1,5 +1,12 @@
 import axiosInstance from "@/services/httpService";
-import {LeaveResponse, LeaveUpdateRequest, LeaveCreateRequest, LeavePolicyResponse, LeavePolicyCreateRequest} from "@/constants/types/leaveTypes.ts";
+import {
+    LeaveResponse,
+    LeaveUpdateRequest,
+    LeaveCreateRequest,
+    LeavePolicyResponse,
+    LeavePolicyCreateRequest,
+    UserLeaveBalanceResponse
+} from "@/constants/types/leaveTypes.ts";
 import {PagedResponse} from "@/constants/types/commonTypes";
 
 const baseURL = '/leaves';
@@ -33,6 +40,11 @@ async function getMyLeaves(pageNumber: number, pageSize: number): Promise<PagedR
     return response.data;
 }
 
+async function getLeavesBalance(): Promise<UserLeaveBalanceResponse[]> {
+    const response = await axiosInstance.get(`${baseURL}/mine/balance`);
+    return response.data;
+}
+
 async function getLeavesPolicies(): Promise<LeavePolicyResponse[]> {
     const response = await axiosInstance.get(`${baseURL}/policies`);
     return response.data;
@@ -48,4 +60,4 @@ async  function deleteLeavePolicy(id: number) {
     return response.data;
 }
 
-export  {getLeaves, getUserLeaves, updateLeavesStatus, createLeave, getMyLeaves, getLeavesPolicies, createLeavesPolicy, deleteLeavePolicy}
+export  {getLeaves, getUserLeaves, updateLeavesStatus, createLeave, getMyLeaves, getLeavesPolicies, createLeavesPolicy, deleteLeavePolicy, getLeavesBalance}

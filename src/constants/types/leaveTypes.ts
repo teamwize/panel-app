@@ -57,3 +57,10 @@ export type LeavePolicyResponse = {
 export type LeavePolicyCompactResponse = {
     id: number;
 }
+
+export type UserLeaveBalanceResponse = {
+    type: LeaveTypeResponse;
+    usedAmount: number;
+    totalAmount: number;
+    startedAt: string;
+}

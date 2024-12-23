@@ -44,7 +44,7 @@ export default function LeaveModal({selectedRequest, teamRequests, toggleModal, 
                 <DialogHeader>
                     <DialogDescription className='py-1'>
                         <UserInfo user={user} onClick={() => navigateToBalance(user.team.name)}/>
-                        <LeaveDetails durationText={durationText} duration={duration} type={type} reason={reason}/>
+                        <LeaveDetails durationText={durationText} duration={duration} type={type.name} reason={reason}/>
                     </DialogDescription>
                 </DialogHeader>
 
@@ -79,7 +79,7 @@ function UserInfo({user, onClick}: UserInfoProps) {
 type LeaveDetailsProps = {
     durationText: string;
     duration: number;
-    type: LeaveType;
+    type: string;
     reason?: string;
 };
 
@@ -96,7 +96,7 @@ function LeaveDetails({durationText, duration, type, reason}: LeaveDetailsProps)
             </div>
             <div>
                 <h5 className='text-[10px] text-gray-600 mb-1'>Type</h5>
-                <div>{LeaveTypeJson[type]}</div>
+                <div>{type}</div>
             </div>
             {reason && (
                 <div>

@@ -12,7 +12,6 @@ export default function LeaveDuration({request}: LeaveDurationProps) {
 
     return (
         <>
-            <TableCell>{duration}</TableCell>
             <TableCell>{duration} {duration === 1 ? 'Day' : 'Days'}</TableCell>
         </>
     )

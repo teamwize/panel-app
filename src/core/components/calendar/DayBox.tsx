@@ -21,8 +21,8 @@ const LEAVE_TYPE_EMOJIS: Record<string, string> = {
 };
 
 const STATUS_BACKGROUND_COLORS: Partial<Record<LeaveStatus, string>> = {
-    [LeaveStatus.ACCEPTED]: "bg-green-100 border-green-200 border",
-    [LeaveStatus.PENDING]: "bg-blue-100 border-blue-200 border",
+    [LeaveStatus.ACCEPTED]: "bg-green-100 text-green-900",
+    [LeaveStatus.PENDING]: "bg-blue-100 text-blue-900",
 };
 
 const DEFAULT_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";

@@ -69,7 +69,7 @@ export default function EmployeeInformation() {
                       x-chunk="dashboard-02-chunk-1">
                     <div className="grid grid-cols-3 text-center gap-2 mx-auto">
                         {balanceExample.map((i) => (
-                            <BalanceItem i={i} key={i.label}/>
+                            <BalanceItem item={i} key={i.label}/>
                         ))}
                     </div>
 
@@ -128,18 +128,17 @@ export default function EmployeeInformation() {
 }
 
 type BalanceItemProps = {
-    i: Balance;
+    item: Balance;
 };
 
-function BalanceItem({i}: BalanceItemProps) {
+function BalanceItem({item}: BalanceItemProps) {
     return (
         <div
             className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
-                title={i.label}
-                used={i.leaveUsed}
-                quantity={i.leaveQuantity}
-                color={i.leaveColor}
+                title={item.label}
+                used={item.leaveUsed}
+                quantity={item.leaveQuantity}
             />
         </div>
     );
