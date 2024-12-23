@@ -14,6 +14,7 @@ import {toast} from "@/components/ui/use-toast"
 import {Card} from "@/components/ui/card";
 import {UserContext} from "@/contexts/UserContext";
 import {ChangePictureDialog} from "@/modules/Users/components/ChangePictureDialog.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 const FormSchema = z.object({
     firstName: z.string().min(2, {
@@ -147,7 +148,7 @@ export default function Profile() {
                         {selectedAvatar && (<ChangePictureDialog initialImageUrl={selectedAvatar} onChange={handleUpdateUserAvatar}/>)}
                     </div>
 
-                    <FullNameField form={form} onSubmit={onSubmit} />
+                    <FullNameField form={form} onSubmit={onSubmit} isProcessing={isProcessing} />
                 </Card>
             </main>
         </>
@@ -158,9 +159,10 @@ export default function Profile() {
 type FieldProps = {
     form: UseFormReturn;
     onSubmit: (data: z.infer<typeof FormSchema>) => void;
+    isProcessing: boolean;
 }
 
-function FullNameField({form, onSubmit}: FieldProps) {
+function FullNameField({form, onSubmit, isProcessing}: FieldProps) {
     return (
         <Form {...form}>
             <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
@@ -191,7 +193,8 @@ function FullNameField({form, onSubmit}: FieldProps) {
                     </FormItem>
                 )}
             />
-        </form>
+            <Button type="submit" className="w-fit">{isProcessing ? "Waiting ..." : "Submit"}</Button>
+            </form>
         </Form>
     )
 }
