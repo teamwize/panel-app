@@ -5,13 +5,13 @@ import {CalendarGrid} from "@/core/components/calendar/CalendarGrid.tsx";
 import {LeaveResponse} from "@/constants/types/leaveTypes.ts";
 
 interface CalendarProps {
-    vacations: LeaveResponse[];
+    leaves: LeaveResponse[];
     holidays?: Date[];
     weekends?: string[];
     onDateSelect?: (date: Date) => void;
 }
 
-export function CustomCalendar({vacations, holidays, weekends, onDateSelect}: CalendarProps) {
+export function CustomCalendar({leaves, holidays, weekends, onDateSelect}: CalendarProps) {
     const [currentMonth, setCurrentMonth] = useState(new Date());
     const [selectedDate, setSelectedDate] = useState<Date>();
 
@@ -28,7 +28,7 @@ export function CustomCalendar({vacations, holidays, weekends, onDateSelect}: Ca
             />
             <CalendarGrid
                 currentMonth={currentMonth}
-                vacations={vacations}
+                leaves={leaves}
                 holidays={holidays}
                 weekends={weekends}
                 selectedDate={selectedDate}

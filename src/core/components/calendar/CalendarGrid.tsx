@@ -4,7 +4,7 @@ import {LeaveResponse} from "@/constants/types/leaveTypes.ts";
 
 interface CalendarGridProps {
     currentMonth: Date;
-    vacations: LeaveResponse[];
+    leaves: LeaveResponse[];
     holidays?: Date[];
     weekends?: string[];
     selectedDate?: Date;
@@ -13,7 +13,7 @@ interface CalendarGridProps {
 
 const WEEKDAYS = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
 
-export function CalendarGrid({currentMonth, vacations, holidays = [], weekends = [], selectedDate, onDateSelect,}: CalendarGridProps) {
+export function CalendarGrid({currentMonth, leaves, holidays = [], weekends = [], selectedDate, onDateSelect,}: CalendarGridProps) {
     const monthStart = dayjs(currentMonth).startOf("month");
     const monthEnd = dayjs(currentMonth).endOf("month");
     const calendarStart = dayjs(monthStart).startOf("week");
@@ -37,8 +37,8 @@ export function CalendarGrid({currentMonth, vacations, holidays = [], weekends =
             {days.map((date) => {
                 const isHoliday = holidays.some((holiday) => dayjs(holiday).isSame(date, "day"));
                 const isWeekend = weekends.includes(dayjs(date).format("dddd"));
-                const dayVacations = vacations.filter((vacation) =>
-                    dayjs(date).isBetween(vacation.startAt, vacation.endAt, "day", "[]")
+                const dayLeaves = leaves.filter((leave) =>
+                    dayjs(date).isBetween(leave.startAt, leave.endAt, "day", "[]")
                 );
 
                 return (
@@ -47,7 +47,7 @@ export function CalendarGrid({currentMonth, vacations, holidays = [], weekends =
                         date={date}
                         isHoliday={isHoliday}
                         isWeekend={isWeekend}
-                        vacations={dayVacations}
+                        leaves={dayLeaves}
                         isSelected={dayjs(selectedDate).isSame(date, "day")}
                         onClick={() => onDateSelect?.(date)}
                     />

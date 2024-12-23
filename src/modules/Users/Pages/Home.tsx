@@ -114,7 +114,7 @@ export default function Home() {
 
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm px-5 w-full" x-chunk="dashboard-02-chunk-1">
-                    <CustomCalendar vacations={requestsList} holidays={holidays} weekends={weekendsDays} onDateSelect={handleDateSelect}/>
+                    <CustomCalendar leaves={requestsList} holidays={holidays} weekends={weekendsDays} onDateSelect={handleDateSelect}/>
                 </Card>
             </main>
         </>
