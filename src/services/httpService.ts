@@ -29,7 +29,8 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 403 && window.location.pathname !== '/signin') {
+        const UNAUTHORIZED_PATHS = ['/signin', '/signup'];
+        if (error.response?.status === 403 && !UNAUTHORIZED_PATHS.includes(window.location.pathname)) {
             localStorage.removeItem('ACCESS_TOKEN');
             window.location.href = '/signin';
         }
