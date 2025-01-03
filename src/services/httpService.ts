@@ -7,7 +7,7 @@ function getAccessToken(): string | null {
 
 // Create an Axios instance
 const axiosInstance = axios.create({
-    baseURL: 'https://api.teamwize.app',
+    baseURL: '/api',
     headers: {
         'Content-Type': 'application/json',
     },
@@ -29,7 +29,7 @@ axiosInstance.interceptors.request.use(
 axiosInstance.interceptors.response.use(
     (response) => response,
     (error) => {
-        if (error.response?.status === 403) {
+        if (error.response?.status === 403 && window.location.pathname !== '/signin') {
             localStorage.removeItem('ACCESS_TOKEN');
             window.location.href = '/signin';
         }

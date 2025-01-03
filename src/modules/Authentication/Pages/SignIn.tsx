@@ -12,7 +12,6 @@ import {Input} from "@/components/ui/input";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Eye, EyeOff} from 'lucide-react';
 
 const FormSchema = z.object({
@@ -25,7 +24,6 @@ export default function SignIn() {
     const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const currentURL = searchParams.get('redirect');
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -53,7 +51,6 @@ export default function SignIn() {
             .catch((error: string | null) => {
                 setIsProcessing(false);
                 const errorMessage = getErrorMessage(error);
-                setErrorMessage(errorMessage);
                 toast({
                     title: "Error",
                     description: errorMessage,
@@ -70,11 +67,6 @@ export default function SignIn() {
             </div>
 
             <div className="w-full max-w-sm p-6 bg-white shadow-lg rounded-lg">
-                {errorMessage && (
-                    <Alert className='text-red-500 border-none px-0 font-semibold'>
-                        <AlertDescription>{errorMessage}</AlertDescription>
-                    </Alert>
-                )}
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
                         <EmailField form={form}/>
