@@ -6,7 +6,6 @@ import {getCurrentUser, updateUser} from "@/services/userService";
 import {getErrorMessage} from "~/utils/errorHandler.ts"
 import {PageTitle} from '../../../core/components'
 import {AssetResponse, UserUpdateRequest} from '@/constants/types/userTypes'
-import {AlertDescription, Alert} from "@/components/ui/alert"
 import {Camera} from "lucide-react"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
@@ -32,7 +31,6 @@ const FormSchema = z.object({
 const DEFAULT_USER_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
 
 export default function Profile() {
-    const [errorMessage, setErrorMessage] = useState<string | null>(null)
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
     const {accessToken, user, setUser} = useContext(UserContext);
     const [selectedAvatar, setSelectedAvatar] = useState(null);
@@ -59,7 +57,6 @@ export default function Profile() {
                 });
             } catch (error) {
                 const errorMessage = getErrorMessage(error as Error | string);
-                setErrorMessage(errorMessage);
                 toast({
                     title: "Error",
                     description: errorMessage,
@@ -90,7 +87,6 @@ export default function Profile() {
             setIsProcessing(false);
             console.error("Error:", error);
             const errorMessage = getErrorMessage(error as Error | string);
-            setErrorMessage(errorMessage);
             toast({
                 title: "Error",
                 description: errorMessage,
@@ -118,13 +114,6 @@ export default function Profile() {
     return (
         <>
             <PageTitle title="Profile"></PageTitle>
-
-            {errorMessage && (
-                <Alert className='text-red-500 border-none px-0 font-semibold'>
-                    <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
-            )}
-
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4" x-chunk="dashboard-02-chunk-1">
                     <div>

@@ -11,7 +11,6 @@ import {PageTitle} from "../../../core/components";
 import {Plus} from "lucide-react";
 import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
-import {Alert, AlertDescription} from "@/components/ui/alert"
 import {calculateWeekends} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
@@ -32,7 +31,6 @@ export default function Home() {
     const [requestsList, setRequestsList] = useState<LeaveResponse[]>([]);
     const [holidays, setHolidays] = useState<Date[]>([]);
     const [weekendsDays, setWeekendsDays] = useState<string[]>([]);
-    const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const navigate = useNavigate();
     const {user, organization} = useContext(UserContext);
 
@@ -50,7 +48,6 @@ export default function Home() {
             setHolidays(holidaysDates);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error | string);
-            setErrorMessage(errorMessage);
             toast({
                 title: "Error",
                 description: errorMessage,
@@ -63,7 +60,6 @@ export default function Home() {
     useEffect(() => {
         getLeaves()
             .then((data) => {
-                console.log("Leaves List:", data.contents);
                 setRequestsList(data.contents);
             })
             .catch((error) => {
@@ -105,12 +101,6 @@ export default function Home() {
                     </Button>
                 </div>
             </PageTitle>
-
-            {errorMessage && (
-                <Alert className='text-red-500 border-none font-semibold px-4'>
-                    <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
-            )}
 
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm px-5 w-full" x-chunk="dashboard-02-chunk-1">

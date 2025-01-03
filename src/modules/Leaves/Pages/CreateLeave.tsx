@@ -81,9 +81,17 @@ export default function CreateLeave() {
             }
 
             const userPolicy = policies.find(policy => policy.id === user?.leavePolicy?.id);
-            setLeaveTypes(userPolicy.types);
+
+            if (userPolicy) {
+                const types = userPolicy.activatedTypes.map(activatedType => ({
+                    id: activatedType.type.id,
+                    name: activatedType.type.name,
+                }));
+                setLeaveTypes(types);
+            } else {
+                console.log("No matching policy found for the user.");
+            }
         } catch (error) {
-            debugger
             const errorMessage = getErrorMessage(error as Error | string);
             setErrorMessage(errorMessage);
             toast({
@@ -142,13 +150,14 @@ export default function CreateLeave() {
             const selectedType = Number(data.leaveCategory);
 
             const payload: LeaveCreateRequest = {
-                typeId: selectedType,
+                activatedTypeId: selectedType,
                 start: dayjs(data.startDate).toISOString(),
                 end: dayjs(data.endDate).toISOString(),
                 reason: data.reason,
             };
 
             await createLeave(payload);
+            console.log(payload);
             navigate('/leave/pending');
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error | string);

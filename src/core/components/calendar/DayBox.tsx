@@ -48,7 +48,7 @@ export const DayBox: React.FC<DayBoxProps> = ({ date, isHoliday, isWeekend, leav
                 <img className="h-6 w-6 rounded-full" src={getAvatarUrl(leave.user?.avatar?.url)} alt="User avatar"/>
                 <span className="text-sm">{leave.user.firstName}</span>
             </div>
-            <span className="text-sm">{LEAVE_TYPE_EMOJIS[leave.type?.name]}</span>
+            <span className="text-sm">{LEAVE_TYPE_EMOJIS[leave.type?.type.name]}</span>
         </div>
     );
 
