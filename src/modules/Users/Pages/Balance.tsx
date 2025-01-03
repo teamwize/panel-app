@@ -76,7 +76,7 @@ export default function BalancePage() {
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm" x-chunk="dashboard-02-chunk-1">
                     <div className="grid grid-cols-3 text-center gap-2 p-4 mx-auto">
                         {balanceData.map((item) => (
-                            <BalanceItem item={item} key={item.type.id}/>
+                            <BalanceItem item={item} />
                         ))}
                     </div>
 
@@ -101,7 +101,7 @@ export default function BalancePage() {
                                             leaveRequests
                                                 .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
                                                 .map((request) => (
-                                                    <LeaveRequestTable request={request} key={request.id}/>
+                                                    <LeaveRequestTable request={request} key={request?.id}/>
                                                 ))
                                         ) : (
                                             <TableRow>
@@ -136,10 +136,9 @@ type BalanceItemProps = {
 
 function BalanceItem({item}: BalanceItemProps) {
     return (
-        <div
-            className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
+        <div key={item.type?.id} className="border rounded-lg p-2 bg-[hsl(var(--muted)/0.4)]">
             <BalanceGraph
-                title={item.type.name}
+                title={item.type?.name}
                 used={item.usedAmount}
                 quantity={item.totalAmount}
             />
