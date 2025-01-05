@@ -1,26 +1,18 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {useNavigate} from 'react-router-dom';
-import {getCurrentUser} from "@/services/userService";
+import {useForm, UseFormReturn} from "react-hook-form";
+import {z} from "zod";
+import {zodResolver} from "@hookform/resolvers/zod";
 import {updateUserPassword} from "@/services/userService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {ChevronLeft} from 'lucide-react';
-import {AlertDescription, Alert} from "@/components/ui/alert";
 import {Button} from "@/components/ui/button";
-import {useForm} from "react-hook-form";
-import {z} from "zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
-import {zodResolver} from "@hookform/resolvers/zod";
-import {ChangePasswordRequest, UserResponse} from "@/constants/types/userTypes";
+import {Form, FormField, FormItem, FormLabel, FormControl, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Card} from "@/components/ui/card";
+import {ChangePasswordRequest} from "@/constants/types/userTypes";
+import {UserContext} from "@/contexts/UserContext.tsx";
 
 const FormSchema = z.object({
     password: z.string().min(8, {
@@ -31,14 +23,13 @@ const FormSchema = z.object({
     }),
     confirmNewPassword: z.string().min(8, {
         message: "Password must be at least 8 characters.",
-    })
+    }),
 });
 
 export default function ChangePassword() {
     const navigate = useNavigate();
-    const [errorMessage, setErrorMessage] = useState<string>("");
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const [employeeInfo, setEmployeeInfo] = useState<UserResponse | null>(null)
+    const {user} = useContext(UserContext);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -49,32 +40,20 @@ export default function ChangePassword() {
         },
     });
 
-    // Fetch employee information on mount
-    useEffect(() => {
-        getCurrentUser()
-            .then(data => {
-                setEmployeeInfo(data);
-            })
-            .catch(error => {
-                const errorMessage = getErrorMessage(error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
-            });
-    }, [])
+    const {handleSubmit} = form;
 
     const goBack = () => navigate('/settings');
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
         if (data.newPassword !== data.confirmNewPassword) {
-            setErrorMessage("Passwords don't match. Try again");
+            toast({
+                title: "Error",
+                description: "Passwords don't match. Try again",
+                variant: "destructive",
+            });
             return;
         }
-        if (errorMessage) {
-            setErrorMessage('');
-        }
+
         changePasswordInfo(data);
     };
 
@@ -85,12 +64,12 @@ export default function ChangePassword() {
         };
 
         setIsProcessing(true);
-        updateUserPassword(payload, employeeInfo.id)
+        updateUserPassword(payload, user.id)
             .then(() => {
                 setIsProcessing(false);
                 toast({
                     title: "Success",
-                    description: "Profile updated successfully!",
+                    description: "Password updated successfully!",
                     variant: "default",
                 });
                 navigate('/settings');
@@ -115,65 +94,43 @@ export default function ChangePassword() {
                 <h1 className="text-lg font-semibold md:text-2xl">Change Password</h1>
             </div>
 
-            {errorMessage && (
-                <Alert>
-                    <AlertDescription>{errorMessage}</AlertDescription>
-                </Alert>
-            )}
-
             <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card
-                    className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4"
-                    x-chunk="dashboard-02-chunk-1"
-                >
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4" x-chunk="dashboard-02-chunk-1">
                     <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                            <FormField
-                                control={form.control}
-                                name="password"
-                                render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>Password</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Password" {...field} />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="newPassword"
-                                render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>New Password</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="New Password" {...field} />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-                            <FormField
-                                control={form.control}
-                                name="confirmNewPassword"
-                                render={({field}) => (
-                                    <FormItem>
-                                        <FormLabel>Confirm New Password</FormLabel>
-                                        <FormControl>
-                                            <Input placeholder="Confirm New Password" {...field} />
-                                        </FormControl>
-                                        <FormMessage/>
-                                    </FormItem>
-                                )}
-                            />
-                            <Button type="submit" className="w-fit" disabled={isProcessing}>
-                                {isProcessing ? 'Processing...' : 'Save'}
-                            </Button>
+                        <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
+                            <PasswordInputField form={form} name="password" label="Current Password" placeholder="Enter current password" />
+                            <PasswordInputField form={form} name="newPassword" label="New Password" placeholder="Enter new password" />
+                            <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password" placeholder="Re-enter new password" />
+                            <Button type="submit" className="w-fit" disabled={isProcessing}>{isProcessing ? 'Processing...' : 'Save'}</Button>
                         </form>
                     </Form>
                 </Card>
             </main>
         </>
+    );
+}
+
+type PasswordInputFieldProps = {
+    form: UseFormReturn;
+    name: string;
+    label: string;
+    placeholder: string;
+};
+
+function PasswordInputField({form, name, label, placeholder}: PasswordInputFieldProps) {
+    return (
+        <FormField
+            control={form.control}
+            name={name}
+            render={({field}) => (
+                <FormItem>
+                    <FormLabel>{label}</FormLabel>
+                    <FormControl>
+                        <Input placeholder={placeholder} type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                </FormItem>
+            )}
+        />
     );
 }
