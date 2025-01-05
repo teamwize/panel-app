@@ -10,9 +10,9 @@ async function getHolidays(year: number, country: string): Promise<HolidayRespon
     return response.data;
 }
 
-async function fetchHolidays(year: number): Promise<FetchedPublicHoliday[]> {
+async function fetchHolidays(year: number, country: string): Promise<FetchedPublicHoliday[]> {
     const response = await axiosInstance.get(`${baseURL}/fetch`, {
-        params: {year}
+        params: {year, country}
     })
     return response.data;
 }

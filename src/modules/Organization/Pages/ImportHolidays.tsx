@@ -10,14 +10,7 @@ import { fetchHolidays, createHolidays } from "@/services/holidayService";
 import { FetchedPublicHoliday } from "@/constants/types/holidayTypes";
 import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
-import {
-    Select,
-    SelectContent,
-    SelectGroup,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from "@/components/ui/select";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
 
 export default function ImportHolidays() {
     const { user } = useContext(UserContext);
@@ -25,11 +18,12 @@ export default function ImportHolidays() {
     const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
     const [selectedCountry, setSelectedCountry] = useState<string>(user?.country || "AT");
     const [selectedHolidays, setSelectedHolidays] = useState<string[]>([]);
+    const [selectAll, setSelectAll] = useState(false);
     const navigate = useNavigate();
     const goBack = () => navigate('/settings/official-holidays');
 
     const fetchHolidaysList = () => {
-        fetchHolidays(selectedYear)
+        fetchHolidays(selectedYear, selectedCountry)
             .then((data: FetchedPublicHoliday[]) => {
                 setHolidays(data);
             })
@@ -47,6 +41,11 @@ export default function ImportHolidays() {
         setSelectedHolidays(prev =>
             prev.includes(date) ? prev.filter(d => d !== date) : [...prev, date]
         );
+    };
+
+    const toggleSelectAll = () => {
+        setSelectAll((prev) => !prev);
+        setSelectedHolidays(selectAll ? [] : holidays.map((holiday) => holiday.date));
     };
 
     const saveSelectedHolidays = () => {
@@ -85,39 +84,22 @@ export default function ImportHolidays() {
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <div className="flex justify-between items-center">
                         <div className="flex items-center gap-4">
-                            <Select onValueChange={(value) => setSelectedYear(Number(value))} value={String(selectedYear)}>
-                                <SelectTrigger className="w-fit">
-                                    <SelectValue placeholder="Select Year" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        <SelectItem value={String(new Date().getFullYear() - 1)}>
-                                            {String(new Date().getFullYear() - 1)}
-                                        </SelectItem>
-                                        <SelectItem value={String(new Date().getFullYear())}>
-                                            {String(new Date().getFullYear())}
-                                        </SelectItem>
-                                        <SelectItem value={String(new Date().getFullYear() + 1)}>
-                                            {String(new Date().getFullYear() + 1)}
-                                        </SelectItem>
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
-
-                            <Select onValueChange={setSelectedCountry} value={selectedCountry}>
-                                <SelectTrigger className="w-fit">
-                                    <SelectValue placeholder="Select Country" />
-                                </SelectTrigger>
-                                <SelectContent>
-                                    <SelectGroup>
-                                        {countries.map((country) => (
-                                            <SelectItem key={country.code} value={country.code}>
-                                                {country.name}
-                                            </SelectItem>
-                                        ))}
-                                    </SelectGroup>
-                                </SelectContent>
-                            </Select>
+                            <SelectField
+                                label="Year"
+                                value={String(selectedYear)}
+                                options={[
+                                    { label: String(new Date().getFullYear() - 1), value: String(new Date().getFullYear() - 1) },
+                                    { label: String(new Date().getFullYear()), value: String(new Date().getFullYear()) },
+                                    { label: String(new Date().getFullYear() + 1), value: String(new Date().getFullYear() + 1) },
+                                ]}
+                                onChange={(value) => setSelectedYear(Number(value))}
+                            />
+                            <SelectField
+                                label="Country"
+                                value={selectedCountry}
+                                options={countries.map((country) => ({label: country.name, value: country.code,}))}
+                                onChange={setSelectedCountry}
+                            />
                         </div>
 
                         <Button className="w-fit" onClick={fetchHolidaysList}>Fetch</Button>
@@ -125,30 +107,13 @@ export default function ImportHolidays() {
 
                     {holidays.length > 0 && (
                         <>
-                            <Table className="mt-4">
-                                <TableHeader>
-                                    <TableRow>
-                                        <TableHead className="w-8"></TableHead>
-                                        <TableHead>Date</TableHead>
-                                        <TableHead>Description</TableHead>
-                                    </TableRow>
-                                </TableHeader>
-                                <TableBody>
-                                    {holidays.map((holiday, index) => (
-                                        <TableRow key={holiday.date}>
-                                            <TableCell className="w-8">
-                                                <input
-                                                    type="checkbox"
-                                                    checked={selectedHolidays.includes(holiday.date)}
-                                                    onChange={() => toggleHolidaySelection(holiday.date)}
-                                                />
-                                            </TableCell>
-                                            <TableCell>{holiday.date}</TableCell>
-                                            <TableCell>{holiday.name}</TableCell>
-                                        </TableRow>
-                                    ))}
-                                </TableBody>
-                            </Table>
+                            <HolidayTable
+                                holidays={holidays}
+                                selectedHolidays={selectedHolidays}
+                                toggleHolidaySelection={toggleHolidaySelection}
+                                selectAll={selectAll}
+                                toggleSelectAll={toggleSelectAll}
+                            />
 
                             <div className="flex justify-end mt-4">
                                 <Button onClick={saveSelectedHolidays}>Save</Button>
@@ -158,5 +123,69 @@ export default function ImportHolidays() {
                 </Card>
             </main>
         </>
+    );
+}
+
+
+type SelectFieldProps = {
+    label: string;
+    value: string;
+    options: { label: string; value: string }[];
+    onChange: (value: string) => void;
+};
+
+export function SelectField({ label, value, options, onChange }: SelectFieldProps) {
+    return (
+        <Select onValueChange={onChange} value={value}>
+            <SelectTrigger className="w-fit">
+                <SelectValue placeholder={`Select ${label}`} />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    {options.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                    ))}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
+    );
+}
+
+type HolidayTableProps = {
+    holidays: FetchedPublicHoliday[];
+    selectedHolidays: string[];
+    toggleHolidaySelection: (date: string) => void;
+    selectAll: boolean;
+    toggleSelectAll: () => void;
+};
+
+export function HolidayTable({holidays, selectedHolidays, toggleHolidaySelection, selectAll, toggleSelectAll,}: HolidayTableProps) {
+    return (
+        <Table className="mt-4">
+            <TableHeader>
+                <TableRow>
+                    <TableHead className="w-8">
+                        <input type="checkbox" checked={selectAll} onChange={toggleSelectAll}/>
+                    </TableHead>
+                    <TableHead>Date</TableHead>
+                    <TableHead>Description</TableHead>
+                </TableRow>
+            </TableHeader>
+            <TableBody>
+                {holidays.map((holiday) => (
+                    <TableRow key={holiday.date}>
+                        <TableCell className="w-8">
+                            <input
+                                type="checkbox"
+                                checked={selectedHolidays.includes(holiday.date)}
+                                onChange={() => toggleHolidaySelection(holiday.date)}
+                            />
+                        </TableCell>
+                        <TableCell>{holiday.date}</TableCell>
+                        <TableCell>{holiday.name}</TableCell>
+                    </TableRow>
+                ))}
+            </TableBody>
+        </Table>
     );
 }

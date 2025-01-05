@@ -1,5 +1,5 @@
-import { useNavigate } from 'react-router-dom';
 import React, { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { ChevronLeft } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { HolidayResponse } from "@/constants/types/holidayTypes";
@@ -9,16 +9,7 @@ import { UserContext } from "@/contexts/UserContext";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import {
-    Table,
-    TableBody,
-    TableCaption,
-    TableCell,
-    TableFooter,
-    TableHead,
-    TableHeader,
-    TableRow,
-} from "@/components/ui/table";
+import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { countries } from "@/constants/countries";
 
 export default function OfficialHolidays() {
@@ -29,21 +20,16 @@ export default function OfficialHolidays() {
     const navigate = useNavigate();
     const goBack = () => navigate('/settings');
 
-    // Get holidays
     useEffect(() => {
         if (selectedCountry) {
             getHolidays(selectedYear, selectedCountry)
-                .then((data: HolidayResponse[]) => {
-                    console.log("Success:", data);
-                    setHolidays(data);
-                })
+                .then((data: HolidayResponse[]) => setHolidays(data))
                 .catch((error) => {
-                    console.error("Error:", error);
                     const errorMessage = getErrorMessage(error);
                     toast({
                         title: "Error",
                         description: errorMessage,
-                        variant: "destructive"
+                        variant: "destructive",
                     });
                 });
         }
@@ -68,39 +54,22 @@ export default function OfficialHolidays() {
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <div className="flex items-center gap-4 mb-4">
-                        <Select onValueChange={(value) => setSelectedYear(Number(value))} value={String(selectedYear)}>
-                            <SelectTrigger className="w-fit">
-                                <SelectValue placeholder="Select Year" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    <SelectItem value={String(new Date().getFullYear() - 1)}>
-                                        {String(new Date().getFullYear() - 1)}
-                                    </SelectItem>
-                                    <SelectItem value={String(new Date().getFullYear())}>
-                                        {String(new Date().getFullYear())}
-                                    </SelectItem>
-                                    <SelectItem value={String(new Date().getFullYear() + 1)}>
-                                        {String(new Date().getFullYear() + 1)}
-                                    </SelectItem>
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
-
-                        <Select onValueChange={(value) => setSelectedCountry(value)} value={selectedCountry}>
-                            <SelectTrigger className="w-fit">
-                                <SelectValue placeholder="Select Country" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                <SelectGroup>
-                                    {countries.map((country) => (
-                                        <SelectItem key={country.code} value={country.code}>
-                                            {country.name}
-                                        </SelectItem>
-                                    ))}
-                                </SelectGroup>
-                            </SelectContent>
-                        </Select>
+                        <SelectField
+                            label="Year"
+                            value={String(selectedYear)}
+                            options={[
+                                { label: String(new Date().getFullYear() - 1), value: String(new Date().getFullYear() - 1) },
+                                { label: String(new Date().getFullYear()), value: String(new Date().getFullYear()) },
+                                { label: String(new Date().getFullYear() + 1), value: String(new Date().getFullYear() + 1) },
+                            ]}
+                            onChange={(value) => setSelectedYear(Number(value))}
+                        />
+                        <SelectField
+                            label="Country"
+                            value={selectedCountry}
+                            options={countries.map((country) => ({label: country.name, value: country.code,}))}
+                            onChange={(value) => setSelectedCountry(value)}
+                        />
                     </div>
 
                     <Table>
@@ -131,5 +100,29 @@ export default function OfficialHolidays() {
                 </Card>
             </main>
         </>
+    );
+}
+
+type SelectFieldProps = {
+    label: string;
+    value: string;
+    options: { label: string; value: string }[];
+    onChange: (value: string) => void;
+};
+
+function SelectField({ label, value, options, onChange }: SelectFieldProps) {
+    return (
+        <Select onValueChange={onChange} value={value}>
+            <SelectTrigger className="w-fit">
+                <SelectValue placeholder={`Select ${label}`} />
+            </SelectTrigger>
+            <SelectContent>
+                <SelectGroup>
+                    {options.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                    ))}
+                </SelectGroup>
+            </SelectContent>
+        </Select>
     );
 }
