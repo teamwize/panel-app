@@ -1,24 +1,10 @@
-import {
-    DropdownMenu,
-    DropdownMenuContent,
-    DropdownMenuItem,
-    DropdownMenuLabel,
-    DropdownMenuSeparator,
-    DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
-import { CircleUser } from "lucide-react";
-import React, { useContext, useState } from "react";
-import {
-    Dialog,
-    DialogContent,
-    DialogFooter,
-    DialogHeader,
-    DialogTitle,
-    DialogDescription
-} from "@/components/ui/dialog";
-import { UserContext } from '~/contexts/UserContext.tsx';
+import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,} from "@/components/ui/dropdown-menu";
+import {useNavigate} from "react-router-dom";
+import {Button} from "@/components/ui/button";
+import {CircleUser} from "lucide-react";
+import React, {useContext, useState} from "react";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle, DialogDescription} from "@/components/ui/dialog";
+import {UserContext} from '~/contexts/UserContext.tsx';
 
 export default function Toolbar() {
     const [signOut, setSignOut] = useState<boolean>(false);
@@ -34,20 +20,20 @@ export default function Toolbar() {
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant="secondary" size="icon" className="rounded-full">
-                            <CircleUser className="h-5 w-5" />
+                            <CircleUser className="h-5 w-5"/>
                             <span className="sr-only">Toggle user menu</span>
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
                         <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator/>
                         <DropdownMenuItem onClick={viewProfile}>Profile</DropdownMenuItem>
-                        <DropdownMenuSeparator />
+                        <DropdownMenuSeparator/>
                         <DropdownMenuItem onClick={() => setSignOut(true)}>Sign Out</DropdownMenuItem>
                     </DropdownMenuContent>
                 </DropdownMenu>
 
-                {signOut && <SignOut signOut={signOut} setSignOut={setSignOut} />}
+                {signOut && <SignOut signOut={signOut} setSignOut={setSignOut}/>}
             </header>
         </div>
     );
@@ -58,9 +44,9 @@ type SignOutProps = {
     signOut: boolean;
 };
 
-function SignOut({ setSignOut, signOut }: SignOutProps) {
+function SignOut({setSignOut, signOut}: SignOutProps) {
     const navigate = useNavigate();
-    const { signout } = useContext(UserContext);
+    const {signout} = useContext(UserContext);
 
     const closeSignOut = () => setSignOut(false);
 
@@ -80,12 +66,8 @@ function SignOut({ setSignOut, signOut }: SignOutProps) {
                 </DialogHeader>
                 <DialogDescription>Are you sure you want to log out?</DialogDescription>
                 <DialogFooter>
-                    <Button variant="outline" className="w-full" onClick={() => handleRequest(false)}>
-                        No
-                    </Button>
-                    <Button variant="destructive" className="w-full ml-4" onClick={() => handleRequest(true)}>
-                        Yes
-                    </Button>
+                    <Button variant="outline" className="w-full" onClick={() => handleRequest(false)}>No</Button>
+                    <Button variant="destructive" className="w-full ml-4" onClick={() => handleRequest(true)}>Yes</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

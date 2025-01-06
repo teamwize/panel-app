@@ -1,5 +1,5 @@
 import {UserResponse} from "@/constants/types/userTypes";
-import {LeaveType, LeaveStatus, LeaveTypeCycle, LeaveTypeStatus} from "@/constants/types/enums";
+import {LeaveStatus, LeaveTypeCycle, LeaveTypeStatus} from "@/constants/types/enums";
 
 export type LeaveUpdateRequest = {
     status: LeaveStatus;
@@ -69,4 +69,10 @@ export type UserLeaveBalanceResponse = {
     usedAmount: number;
     totalAmount: number;
     startedAt: string;
+}
+
+export interface GetLeavesFilter {
+    teamId?: number;
+    userId?: number;
+    status?: LeaveStatus;
 }

@@ -5,7 +5,7 @@ import {z} from 'zod';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import {createLeave, getLeavesPolicies, getMyLeaves} from "@/services/leaveService.ts";
+import {createLeave, getLeaves, getLeavesPolicies} from "@/services/leaveService.ts";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import {PageTitle} from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
@@ -128,7 +128,7 @@ export default function CreateLeave() {
     // Fetch user's leaves
     const fetchUserLeaves = async () => {
         try {
-            const leavesList= await getMyLeaves(1, 1);
+            const leavesList= await getLeaves({userId: user.id});
             const filteredLeaves = leavesList.contents.filter(
                 leave => leave.status === "ACCEPTED" || leave.status === "PENDING"
             );

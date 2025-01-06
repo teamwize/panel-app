@@ -13,9 +13,8 @@ export default function BalanceGraph({title, used, quantity}: BalanceGraphProps)
     const data: ChartData<'doughnut'> = {
         labels: ['Used', 'Remaining'],
         datasets: [{
-            label: "Balance",
             data: [used, quantity - used],
-            backgroundColor: ["#64748b"],
+            backgroundColor: ["#86efac", '#93c5fd'],
             borderWidth: 2,
             borderRadius: 4,
         }]
@@ -33,8 +32,7 @@ export default function BalanceGraph({title, used, quantity}: BalanceGraphProps)
     return (
         <div className="balance-graph">
             <Doughnut data={data} options={options}></Doughnut>
-            <p>{title}</p>
-            <p>{used} / {quantity}</p>
+            <p>{title}: {used} / {quantity}</p>
         </div>
     );
 }
