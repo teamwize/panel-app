@@ -76,3 +76,8 @@ export interface GetLeavesFilter {
     userId?: number;
     status?: LeaveStatus;
 }
+
+export interface LeaveTypeUpdateRequest {
+    name: string;
+    cycle: LeaveTypeCycle;
+}

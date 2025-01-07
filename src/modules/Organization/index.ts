@@ -5,6 +5,6 @@ import Teams from './Pages/Teams'
 import CreateTeam from './Pages/CreateTeam'
 import UpdateTeam from './Pages/UpdateTeam'
 import ImportHolidays from './Pages/ImportHolidays'
-import Leaves from '../Leaves/Pages/Leaves.tsx'
+import LeavesPage from '../Leaves/Pages/LeavesPage.tsx'
 
-export {LeavePolicy, OrganizationPage, OfficialHolidays, Teams, CreateTeam, UpdateTeam, ImportHolidays, Leaves }
+export {LeavePolicy, OrganizationPage, OfficialHolidays, Teams, CreateTeam, UpdateTeam, ImportHolidays, LeavesPage }
