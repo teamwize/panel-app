@@ -1,7 +1,7 @@
 import { Route, Routes } from "react-router-dom";
 import { SignIn, SignUp } from './Authentication'
 import { CreateLeave, PendingLeave, LeaveRequests } from './Leaves'
-import {Organization, OfficialHolidays, Teams, CreateTeam, UpdateTeam, ImportHolidays, Leaves} from './Organization'
+import {OrganizationPage, OfficialHolidays, Teams, CreateTeam, UpdateTeam, ImportHolidays, Leaves} from './Organization'
 import { Balance, Home, ChangePassword, CreateEmployee, Employees, EmployeeInformation, Profile, Settings } from './Users'
 import { AuthenticatedRoute } from "../core/components"
 
@@ -24,7 +24,7 @@ export default function Root() {
         <Route path='/settings/official-holidays/import' element={<AuthenticatedRoute><ImportHolidays /></AuthenticatedRoute>}></Route>
         <Route path='/profile' element={<AuthenticatedRoute><Profile /></AuthenticatedRoute>}></Route>
         <Route path='/employee/create' element={<AuthenticatedRoute><CreateEmployee /></AuthenticatedRoute>}></Route>
-        <Route path='/organization' element={<AuthenticatedRoute><Organization /></AuthenticatedRoute>}></Route>
+        <Route path='/organization' element={<AuthenticatedRoute><OrganizationPage /></AuthenticatedRoute>}></Route>
         <Route path='/leaves' element={<AuthenticatedRoute><Leaves /></AuthenticatedRoute>}></Route>
         <Route path='/teams' element={<AuthenticatedRoute><Teams /></AuthenticatedRoute>}></Route>
         <Route path='/organization/team/create' element={<AuthenticatedRoute><CreateTeam /></AuthenticatedRoute>}></Route>
