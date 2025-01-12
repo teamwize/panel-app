@@ -10,7 +10,7 @@ import { toast } from "@/components/ui/use-toast";
 import {createLeavesType, deleteLeaveType, getLeavesTypes, updateLeaveType} from "@/services/leaveService";
 import {LeaveTypeCycleJson } from "@/constants/types/enums";
 import {UpdateLeaveType} from "@/modules/Leaves/Components/UpdateLeaveType.tsx";
-import {DeleteLeaveType} from "@/modules/Leaves/Components/DeleteLeaveType.tsx";
+import {DeleteDialog} from "@/modules/Leaves/Components/DeleteDialog.tsx";
 import {CreateLeaveType} from "@/modules/Leaves/Components/CreateLeaveType.tsx";
 
 export default function LeaveType() {
@@ -169,8 +169,9 @@ export default function LeaveType() {
                     )}
 
                     {isDeleteDialogOpen && selectedLeaveType && (
-                        <DeleteLeaveType
-                            leaveType={selectedLeaveType}
+                        <DeleteDialog
+                            name="Leave Type"
+                            label={selectedLeaveType.name}
                             handleReject={() => setIsDeleteDialogOpen(false)}
                             handleAccept={handleRemoveLeaveType}
                         />

@@ -41,8 +41,13 @@ export type LeaveTypeResponse = {
 
 export type LeavePolicyCreateRequest = {
     name: string;
-    types: LeaveTypeCreateRequest[];
-    isDefault: boolean;
+    activatedTypes: LeavePolicyActivatedTypeRequest[];
+}
+
+export type LeavePolicyActivatedTypeRequest = {
+    typeId: number;
+    amount: number;
+    requiresApproval: boolean;
 }
 
 export type LeavePolicyResponse = {

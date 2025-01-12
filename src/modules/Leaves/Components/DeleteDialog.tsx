@@ -5,19 +5,20 @@ import {Button} from "@/components/ui/button.tsx";
 import React from "react";
 
 type DeleteDialogProps = {
-    leaveType: LeaveTypeResponse;
+    name: string;
+    label: string;
     handleAccept: () => void;
     handleReject: () => void;
 };
 
-export function DeleteLeaveType({ leaveType, handleAccept, handleReject }: DeleteDialogProps) {
+export function DeleteDialog({ name, label, handleAccept, handleReject }: DeleteDialogProps) {
     return (
         <Dialog open={true} onOpenChange={handleReject}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Remove Leave Type</DialogTitle>
+                    <DialogTitle>Remove {name}</DialogTitle>
                 </DialogHeader>
-                <DialogDescription>Are you sure you want to remove the {leaveType.name} type?</DialogDescription>
+                <DialogDescription>Are you sure you want to remove {label}?</DialogDescription>
                 <DialogFooter>
                     <Button variant="outline" onClick={handleReject}>No</Button>
                     <Button variant="destructive" onClick={handleAccept}>Yes</Button>

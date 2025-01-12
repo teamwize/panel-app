@@ -4,6 +4,7 @@ import { CreateLeave, PendingLeave, LeaveRequests } from './Leaves'
 import {OrganizationPage, OfficialHolidays, Teams, CreateTeam, UpdateTeam, ImportHolidays, LeavesPage} from './Organization'
 import { Balance, Home, ChangePassword, CreateEmployee, Employees, EmployeeInformation, Profile, Settings } from './Users'
 import { AuthenticatedRoute } from "../core/components"
+import UpdateLeavePolicy from "@/modules/Leaves/Pages/UpdateLeavePolicy.tsx";
 
 export default function Root() {
   return (
@@ -29,6 +30,7 @@ export default function Root() {
         <Route path='/teams' element={<AuthenticatedRoute><Teams /></AuthenticatedRoute>}></Route>
         <Route path='/organization/team/create' element={<AuthenticatedRoute><CreateTeam /></AuthenticatedRoute>}></Route>
         <Route path='/organization/team/update/:name/:id' element={<AuthenticatedRoute><UpdateTeam /></AuthenticatedRoute>}></Route>
+        <Route path='/leaves/policy/update' element={<AuthenticatedRoute><UpdateLeavePolicy /></AuthenticatedRoute>}></Route>
       </Routes>
     </>
   )

@@ -15,7 +15,7 @@ const mainNavigation = [
 const managementNavigation = [
     {name: 'Requests', href: '/requests', icon: Clock},
     {name: 'Organization', href: '/organization', icon: Building},
-    {name: 'Leaves', href: '/leaves', icon: TreePalm},
+    {name: 'Leave Policy', href: '/leaves', icon: TreePalm},
     {name: 'Employees', href: '/employees', icon: User},
     {name: 'Teams', href: '/teams', icon: Users},
 ];
