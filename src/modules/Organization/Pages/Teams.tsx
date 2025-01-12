@@ -33,7 +33,7 @@ export default function Teams() {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const recordsPerPage: number = 5;
+    const recordsPerPage: number = 10;
 
     useEffect(() => {
         getTeam()
