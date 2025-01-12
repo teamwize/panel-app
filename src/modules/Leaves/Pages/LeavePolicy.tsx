@@ -21,7 +21,7 @@ export default function LeavePolicy() {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
-    const recordsPerPage = 5;
+    const recordsPerPage = 10;
 
     // Fetch leave policies
     useEffect(() => {
