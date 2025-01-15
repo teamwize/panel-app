@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom';
 import { toast } from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {TeamResponse} from "@/constants/types/teamTypes";
-import {getTeam, createTeam} from "@/services/teamService";
+import {getTeams, createTeam} from "@/services/teamService";
 import {Button} from "@/components/ui/button";
 import {ChevronLeft} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
@@ -47,7 +47,7 @@ export default function CreateTeam() {
     const goBack = () => navigate('/teams');
 
     useEffect(() => {
-        getTeam()
+        getTeams()
             .then((response: TeamResponse[]) => {
                 setTeamList(response);
             })

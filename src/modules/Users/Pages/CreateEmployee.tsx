@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useNavigate} from "react-router-dom";
 import {createUser} from "@/services/userService";
-import {getTeam} from "@/services/teamService";
+import {getTeams} from "@/services/teamService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Card} from "@/components/ui/card";
@@ -54,7 +54,7 @@ export default function CreateEmployee() {
     const goBack = () => navigate("/employees");
 
     useEffect(() => {
-        getTeam()
+        getTeams()
             .then((response: TeamResponse[]) => {
                 setTeamList(response);
             })

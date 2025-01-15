@@ -12,7 +12,7 @@ import { toast } from "@/components/ui/use-toast";
 import { getErrorMessage } from "~/utils/errorHandler.ts";
 import { TeamResponse } from "@/constants/types/teamTypes";
 import {deleteTeam, getTeam} from "@/services/teamService";
-import { Pencil, Trash } from "lucide-react";
+import {Pencil, Trash} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Card } from "@/components/ui/card";
@@ -25,6 +25,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { Pagination } from '../../../core/components';
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 export default function Teams() {
     const [teamList, setTeamList] = useState<TeamResponse[]>([]);
@@ -34,6 +35,14 @@ export default function Teams() {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const recordsPerPage: number = 10;
+    const { setTitle, setChildren } = usePageTitle();
+
+    useEffect(() => {
+        setTitle("Teams");
+        setChildren(
+            <Button className='px-2 h-9' onClick={() => navigate('/organization/team/create')}>Create</Button>
+        );
+    }, [setTitle, setChildren, navigate]);
 
     useEffect(() => {
         getTeam()
@@ -49,10 +58,6 @@ export default function Teams() {
                 });
             });
     }, []);
-
-    const viewCreateTeam = () => {
-        navigate('/organization/team/create');
-    };
 
     const updateTeam = (teamName: string, id: number) => {
         navigate(`/organization/team/update/${teamName}/${id}`);
@@ -91,13 +96,6 @@ export default function Teams() {
 
     return (
         <>
-            <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
-                <div className="flex flex-wrap items-center gap-2">
-                    <h1 className="text-lg font-semibold md:text-2xl">Teams</h1>
-                </div>
-                <Button onClick={viewCreateTeam}>Create</Button>
-            </div>
-
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>
