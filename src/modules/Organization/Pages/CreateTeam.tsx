@@ -20,6 +20,7 @@ import {
     FormMessage,
 } from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 const FormSchema = z.object({
     name: z.string().min(2, {
@@ -36,6 +37,24 @@ export default function CreateTeam() {
     const [teamList, setTeamList] = useState<TeamResponse[]>([]);
     const [errorMessage, setErrorMessage] = useState<string>("");
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const { setTitle, setChildren } = usePageTitle();
+
+    useEffect(() => {
+        setTitle(
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate("/teams")}
+                    className="w-fit justify-start p-0 hover:bg-transparent focus:ring-0"
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <span>Create Team</span>
+            </div>
+        );
+        setChildren(null);
+    }, [setTitle]);
 
     const form = useForm<CreateTeamInputs>({
         resolver: zodResolver(FormSchema),
@@ -43,8 +62,6 @@ export default function CreateTeam() {
             name: "",
         },
     });
-
-    const goBack = () => navigate('/teams');
 
     useEffect(() => {
         getTeams()
@@ -97,13 +114,6 @@ export default function CreateTeam() {
 
     return (
         <>
-            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <button onClick={goBack}>
-                    <ChevronLeft className="h-6 w-6"/>
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">Create Team</h1>
-            </div>
-
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>

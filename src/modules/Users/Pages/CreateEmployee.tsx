@@ -19,6 +19,7 @@ import {TeamResponse} from "@/constants/types/teamTypes";
 import {countries} from "@/constants/countries";
 import {UserContext} from "@/contexts/UserContext";
 import {UserRole} from "@/constants/types/enums.ts";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 
 const FormSchema = z.object({
@@ -37,6 +38,24 @@ export default function CreateEmployee() {
     const [teamList, setTeamList] = useState<TeamResponse[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const { setTitle, setChildren } = usePageTitle();
+
+    useEffect(() => {
+        setTitle(
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate("/employees")}
+                    className="w-fit justify-start p-0 hover:bg-transparent focus:ring-0"
+                >
+                    <ChevronLeft className="h-5 w-5" />
+                </Button>
+                <span>Add Employee</span>
+            </div>
+        );
+        setChildren(null);
+    }, [setTitle]);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -50,8 +69,6 @@ export default function CreateEmployee() {
             teamId: 0,
         },
     });
-
-    const goBack = () => navigate("/employees");
 
     useEffect(() => {
         getTeams()
@@ -105,13 +122,6 @@ export default function CreateEmployee() {
 
     return (
         <>
-            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <button onClick={goBack}>
-                    <ChevronLeft className="h-6 w-6" />
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">Add Employee</h1>
-            </div>
-
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>
