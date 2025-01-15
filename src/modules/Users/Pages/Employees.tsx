@@ -15,11 +15,12 @@ import {
 import {Card} from "@/components/ui/card";
 import {UserResponse} from '@/constants/types/userTypes';
 import {PagedResponse} from '@/constants/types/commonTypes';
-import {ChevronLeft, Trash, UserPen} from "lucide-react";
+import {Trash, UserPen} from "lucide-react";
 import {Button} from "@/components/ui/button";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {UserContext} from "@/contexts/UserContext";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 export default function Employees() {
     const [employeesList, setEmployeesList] = useState<PagedResponse<UserResponse> | null>(null);
@@ -29,11 +30,13 @@ export default function Employees() {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const recordsPerPage: number = 5;
+    const { setTitle, setChildren } = usePageTitle();
 
     useEffect(() => {
         getUsers(0, 30)
             .then((data: PagedResponse<UserResponse>) => {
                 setEmployeesList(data);
+                setTitle(`Employees (${data.contents.length})`);
             })
             .catch(error => {
                 const errorMessage = getErrorMessage(error);
@@ -44,7 +47,13 @@ export default function Employees() {
                     variant: "destructive",
                 });
             });
-    }, []);
+    }, [setTitle]);
+
+    useEffect(() => {
+        setChildren(
+            <Button className='px-2 h-9' onClick={() => navigate('/employee/create')}>Create</Button>
+        );
+    }, [setChildren, navigate]);
 
     const viewDetails = (id: number) => {
         navigate('/employee/' + id);
@@ -78,21 +87,8 @@ export default function Employees() {
         }
     };
 
-    const viewAddEmployee = () => {
-        navigate('/employee/create');
-    };
-
     return (
         <>
-            <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
-                <div className="flex flex-wrap items-center gap-2">
-                    <h1 className="text-lg font-semibold md:text-2xl">
-                        Employees ({employeesList ? employeesList.contents.length : 0})
-                    </h1>
-                </div>
-                <Button onClick={viewAddEmployee}>Create</Button>
-            </div>
-
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>
@@ -202,7 +198,7 @@ function EmployeeItem({
                           isProcessing,
                           viewDetails
                       }: EmployeeItemProps) {
-    const {user, accessToken} = useContext(UserContext)
+    const {accessToken} = useContext(UserContext)
 
     return (
         <>

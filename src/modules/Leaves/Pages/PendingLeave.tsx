@@ -1,12 +1,18 @@
 import {useNavigate} from 'react-router-dom';
-import {PageTitle} from '../../../core/components';
 import {Clock} from 'lucide-react';
 import {Button} from '@/components/ui/button';
-import React from "react";
+import React, {useEffect} from "react";
 import {Card} from "@/components/ui/card";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 export default function PendingLeave() {
     const navigate = useNavigate();
+    const { setTitle, setChildren } = usePageTitle();
+
+    useEffect(() => {
+        setTitle("Leave Request");
+        setChildren(null);
+    }, [setTitle, setChildren]);
 
     const goHome = () => {
         navigate('/');
@@ -14,7 +20,6 @@ export default function PendingLeave() {
 
     return (
         <>
-            <PageTitle title="Leave Request"/>
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card
                     className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm justify-center items-center"
