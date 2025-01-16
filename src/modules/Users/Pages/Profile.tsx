@@ -81,7 +81,7 @@ export default function Profile() {
                 lastName: data.lastName,
             };
             setIsProcessing(true);
-            const updateUserResponse = await updateUser(payload);
+            const updateUserResponse = await updateUser(null, payload);
             setIsProcessing(false);
             setUser(updateUserResponse);
             toast({

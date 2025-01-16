@@ -12,7 +12,8 @@ export type UserCreateRequest = {
     role: UserRole;
     timezone: string;
     country: string;
-    teamId: number
+    teamId: number;
+    leavePolicyId: number;
 }
 
 export type UserUpdateRequest = {
