@@ -5,6 +5,7 @@ import {Logo} from '.';
 import {House, ChartPie, Settings, Building, Bell, User, Users, Clock, TreePalm} from 'lucide-react';
 import {Button} from "@/components/ui/button";
 import {UserContext} from "@/contexts/UserContext";
+import AccountDropdown from "@/core/components/AccountDropdown.tsx";
 
 const mainNavigation = [
     {name: 'Home', href: '/', icon: House},
@@ -78,6 +79,12 @@ export default function Sidebar() {
                             )}
                         </nav>
                     </div>
+
+
+                    <AccountDropdown
+                        isActive={isNavigationActive('/profile')}
+                        onClick={handleNavigation}
+                    />
                 </div>
             </div>
         </div>
@@ -95,7 +102,7 @@ type NavigationLinkProps = {
 function NavigationLink({href, title, isActive, onClick, Icon}: NavigationLinkProps) {
     const classes = {
         base: 'flex items-center gap-3 rounded-lg px-3 py-2 transition-all',
-        active: 'bg-indigo-100 dark:bg-indigo-800 bg-opacity-75',
+        active: 'bg-indigo-100 bg-opacity-75',
         inactive: 'text-muted-foreground hover:text-primary',
     };
 
