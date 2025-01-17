@@ -13,9 +13,11 @@ import { usePageTitle } from "@/contexts/PageTitleContext.tsx";
 import UpdateEmployeeDialog from "@/modules/Users/components/UpdateEmployeeDialog.tsx";
 import {EmployeeTable} from "@/modules/Users/components/EmployeeTable.tsx";
 import DeleteEmployeeDialog from "@/modules/Users/components/DeleteEmployeeDialog.tsx";
+import FilterEmployeesForm from "@/modules/Users/components/FilterEmployeesForm.tsx";
 
 export default function EmployeesPage() {
     const [employeesList, setEmployeesList] = useState<PagedResponse<UserResponse> | null>(null);
+    const [filteredEmployees, setFilteredEmployees] = useState<UserResponse[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<UserResponse | null>(null);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
@@ -31,6 +33,7 @@ export default function EmployeesPage() {
             try {
                 const data = await getUsers(0, 30);
                 setEmployeesList(data);
+                setFilteredEmployees(data.contents);
                 setTitle(`Employees (${data.contents.length})`);
             } catch (error) {
                 toast({
@@ -51,6 +54,17 @@ export default function EmployeesPage() {
             </Button>
         );
     }, [setChildren, navigate]);
+
+    const handleFilter = (query: string, teamId: string) => {
+        const filtered = employeesList?.contents.filter((employee) => {
+            const matchesQuery =
+                query === "" || employee.email.includes(query) || employee.firstName.includes(query) || employee.lastName?.includes(query);
+            const matchesTeam = teamId === "" || employee.team.id.toString() === teamId;
+            return matchesQuery && matchesTeam;
+        });
+
+        setFilteredEmployees(filtered || []);
+    };
 
     const handleDeleteEmployee = async (id: number) => {
         try {
@@ -101,68 +115,72 @@ export default function EmployeesPage() {
         }
     };
 
-    const paginatedEmployees = employeesList?.contents.slice(
+    const paginatedEmployees = filteredEmployees.slice(
         (currentPage - 1) * recordsPerPage,
         currentPage * recordsPerPage
     );
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4">
-            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Employee</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Team</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
+        <>
+            <FilterEmployeesForm onFilter={handleFilter}/>
 
-                    {employeesList && employeesList.contents.length > 0 ? (
-                        <EmployeeTable
-                            employeesList={paginatedEmployees || []}
-                            setSelectedEmployee={setSelectedEmployee}
-                            setCurrentEmployee={setCurrentEmployee}
-                            setIsUpdateDialogOpen={setIsUpdateDialogOpen}
-                        />
-                    ) : (
-                        <TableBody>
+            <main className="flex flex-1 flex-col gap-4 p-4">
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
+                    <Table>
+                        <TableHeader>
                             <TableRow>
-                                <TableCell colSpan={4} className="p-2 text-center text-sm">
-                                    No employees found.
-                                </TableCell>
+                                <TableHead>Employee</TableHead>
+                                <TableHead>Email</TableHead>
+                                <TableHead>Team</TableHead>
+                                <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
-                        </TableBody>
+                        </TableHeader>
+
+                        {filteredEmployees.length > 0 ? (
+                            <EmployeeTable
+                                employeesList={paginatedEmployees || []}
+                                setSelectedEmployee={setSelectedEmployee}
+                                setCurrentEmployee={setCurrentEmployee}
+                                setIsUpdateDialogOpen={setIsUpdateDialogOpen}
+                            />
+                        ) : (
+                            <TableBody>
+                                <TableRow>
+                                    <TableCell colSpan={4} className="p-2 text-center text-sm">
+                                        No employees found.
+                                    </TableCell>
+                                </TableRow>
+                            </TableBody>
+                        )}
+                    </Table>
+
+                    {isUpdateDialogOpen && currentEmployee && (
+                        <UpdateEmployeeDialog
+                            employee={currentEmployee}
+                            handleUpdateEmployee={(updatedData) => handleUpdateEmployee(currentEmployee.id, updatedData)}
+                            handleClose={() => setIsUpdateDialogOpen(false)}
+                        />
                     )}
-                </Table>
 
-                {isUpdateDialogOpen && currentEmployee && (
-                    <UpdateEmployeeDialog
-                        employee={currentEmployee}
-                        handleUpdateEmployee={(updatedData) => handleUpdateEmployee(currentEmployee.id, updatedData)}
-                        handleClose={() => setIsUpdateDialogOpen(false)}
-                    />
-                )}
+                    {selectedEmployee && (
+                        <DeleteEmployeeDialog
+                            employee={selectedEmployee}
+                            handleDeleteEmployee={handleDeleteEmployee}
+                            setSelectedEmployeeId={() => setSelectedEmployee(null)}
+                            isProcessing={isProcessing}
+                        />
+                    )}
 
-                {selectedEmployee && (
-                    <DeleteEmployeeDialog
-                        employee={selectedEmployee}
-                        handleDeleteEmployee={handleDeleteEmployee}
-                        setSelectedEmployeeId={() => setSelectedEmployee(null)}
-                        isProcessing={isProcessing}
-                    />
-                )}
-
-                {employeesList && employeesList.contents.length > recordsPerPage && (
-                    <Pagination
-                        pageSize={recordsPerPage}
-                        pageNumber={currentPage}
-                        setPageNumber={setCurrentPage}
-                        totalContents={employeesList.totalContents}
-                    />
-                )}
-            </Card>
-        </main>
+                    {filteredEmployees.length > recordsPerPage && (
+                        <Pagination
+                            pageSize={recordsPerPage}
+                            pageNumber={currentPage}
+                            setPageNumber={setCurrentPage}
+                            totalContents={filteredEmployees.length}
+                        />
+                    )}
+                </Card>
+            </main>
+        </>
     );
 }
