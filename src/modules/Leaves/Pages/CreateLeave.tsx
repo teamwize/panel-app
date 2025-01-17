@@ -7,7 +7,6 @@ import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import {createLeave, getLeaves, getLeavesPolicies} from "@/services/leaveService.ts";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
-import {PageTitle} from '../../../core/components';
 import DatePicker from '../Components/DatePicker';
 import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
@@ -23,6 +22,7 @@ import {UserContext} from "@/contexts/UserContext";
 import {Week} from "@/constants/types/enums.ts";
 import {capitalizeFirstLetter} from "@/lib/utils.ts";
 import {LeaveCreateRequest, LeaveResponse} from "@/constants/types/leaveTypes.ts";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 /*
 1.Fetch LeavePolicyType name and id from leaves/policies
@@ -56,6 +56,12 @@ export default function CreateLeave() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {user, organization} = useContext(UserContext);
     const navigate = useNavigate();
+    const { setTitle, setChildren } = usePageTitle();
+
+    useEffect(() => {
+        setTitle("Leave Request");
+        setChildren(null);
+    }, [setTitle, setChildren]);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -196,7 +202,6 @@ export default function CreateLeave() {
 
     return (
         <>
-            <PageTitle title="Leave Request"></PageTitle>
             {errorMessage && (
                 <Alert className='text-red-500 border-none font-semibold px-4'>
                     <AlertDescription>{errorMessage}</AlertDescription>

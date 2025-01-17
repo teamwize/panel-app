@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { NavigateFunction, useLocation, useNavigate, useSearchParams } from "react-router-dom";
+import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
 import { z } from "zod";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -7,13 +7,14 @@ import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle } from "@/components/ui/card";
 import { Form } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Check, ChevronLeft, Pencil, PlusIcon } from "lucide-react";
+import {Check, ChevronLeft, Pencil, PlusIcon} from "lucide-react";
 import { toast } from "@/components/ui/use-toast";
 import { createLeavesPolicy, getLeavesTypes } from "@/services/leaveService";
 import ActivateLeaveTypeDialog from "@/modules/Leaves/Components/ActivateLeaveTypeDialog";
 import { LeavePolicyResponse, LeaveTypeResponse } from "@/constants/types/leaveTypes";
 import { getErrorMessage } from "@/utils/errorHandler";
 import {LeavePolicyTable} from "@/modules/Leaves/Components/LeavePolicyTable.tsx";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 export const LeaveTypeSchema = z.object({
     typeId: z.number({ required_error: "Leave type is required." }),
@@ -44,6 +45,7 @@ export default function UpdateLeavePolicy() {
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [isEditingName, setIsEditingName] = useState(false);
     const navigate = useNavigate();
+    const { setTitle, setChildren } = usePageTitle();
 
     const form = useForm<FormInputs>({
         resolver: zodResolver(FormSchema),
@@ -56,6 +58,28 @@ export default function UpdateLeavePolicy() {
             })) || [],
         },
     });
+
+    useEffect(() => {
+        setTitle(
+            <div className="flex items-center gap-2">
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => navigate("/leaves")}
+                    className="p-0 hover:bg-transparent focus:ring-0"
+                >
+                    <ChevronLeft className="h-6 w-6" />
+                </Button>
+                {isCreateMode ? `Update ${form.watch("policyName")} Leave Policy` : "Update Leave Policy"}
+            </div>
+        );
+
+        setChildren(
+            <Button className="flex items-center space-x-1" onClick={() => setIsDialogOpen(true)}>
+                <PlusIcon className="h-5 w-5" />
+            </Button>
+        );
+    }, [setTitle, setChildren, navigate, isCreateMode, form]);
 
     // Fetch leave types
     useEffect(() => {
@@ -126,13 +150,6 @@ export default function UpdateLeavePolicy() {
 
     return (
         <>
-            <LeavePolicyTitle
-                isCreateMode={isCreateMode}
-                policyName={form.watch("policyName")}
-                setIsDialogOpen={setIsDialogOpen}
-                navigate={navigate}
-            />
-
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <Form {...form}>
@@ -189,28 +206,5 @@ export default function UpdateLeavePolicy() {
                 schema={LeaveTypeSchema}
             />
         </>
-    );
-}
-
-type LeavePolicyTitleProps = {
-    isCreateMode: boolean;
-    navigate: NavigateFunction;
-    policyName: string;
-    setIsDialogOpen: (isOpen: boolean) => void;
-};
-
-function LeavePolicyTitle({ isCreateMode, navigate, policyName, setIsDialogOpen }: LeavePolicyTitleProps) {
-    return (
-        <div className="flex flex-wrap items-center justify-between font-medium px-4 pt-4 gap-2">
-            <div className="flex items-center gap-4">
-                <button onClick={() => navigate("/leaves")}>
-                    <ChevronLeft className="h-6 w-6" />
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">{isCreateMode ? `Update ${policyName} Leave Policy` : "Update Leave Policy"}</h1>
-            </div>
-            <Button className="flex items-center space-x-1" onClick={() => setIsDialogOpen(true)}>
-                <PlusIcon className="h-5 w-5" />
-            </Button>
-        </div>
     );
 }

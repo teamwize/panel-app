@@ -7,7 +7,6 @@ import {getLeaves} from "@/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import "@/index.css";
-import {PageTitle} from "../../../core/components";
 import {Plus} from "lucide-react";
 import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
@@ -19,6 +18,7 @@ import {UserContext} from "@/contexts/UserContext";
 import {Week} from "@/constants/types/enums.ts";
 import {capitalizeFirstLetter} from "@/lib/utils.ts";
 import {CustomCalendar} from "@/core/components/calendar/CustomCalendar.tsx";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 // 1.Show holidays on calendar
 // 2.Show weekends on calendar
@@ -33,6 +33,17 @@ export default function Home() {
     const [weekendsDays, setWeekendsDays] = useState<string[]>([]);
     const navigate = useNavigate();
     const {user, organization} = useContext(UserContext);
+    const { setTitle, setChildren } = usePageTitle();
+
+    useEffect(() => {
+        setTitle("Home");
+        setChildren(
+            <Button className='px-2 h-9' onClick={() => navigate("/leave/create")}>
+                <Plus className="h-4 w-4 mr-1" />
+                Request Leave
+            </Button>
+        );
+    }, [setTitle, setChildren, navigate]);
 
     // Fetch holidays for the current and next year.
     const fetchHolidays = async () => {
@@ -83,30 +94,15 @@ export default function Home() {
         }
     }, [organization?.workingDays]);
 
-    const sendRequest = () => {
-        navigate("/leave/create");
-    };
-
     const handleDateSelect = (date: Date) => {
         setSelectedDate(date);
     }
 
     return (
-        <>
-            <PageTitle title="Home">
-                <div className="flex justify-center">
-                    <Button onClick={sendRequest}>
-                        <Plus className="h-5 w-5"/>
-                        Request Leave
-                    </Button>
-                </div>
-            </PageTitle>
-
-            <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm px-5 w-full" x-chunk="dashboard-02-chunk-1">
-                    <CustomCalendar leaves={requestsList} holidays={holidays} weekends={weekendsDays} onDateSelect={handleDateSelect}/>
-                </Card>
-            </main>
-        </>
+        <main className="flex flex-1 flex-col gap-4 p-4">
+            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm px-5 w-full" x-chunk="dashboard-02-chunk-1">
+                <CustomCalendar leaves={requestsList} holidays={holidays} weekends={weekendsDays} onDateSelect={handleDateSelect}/>
+            </Card>
+        </main>
     );
 }

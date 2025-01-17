@@ -15,6 +15,7 @@ import {Button} from "@/components/ui/button";
 import {UserContext} from "@/contexts/UserContext";
 import {Badge} from "@/components/ui/badge.tsx";
 import {formatDurationRange} from "@/utils/dateUtils.ts";
+import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 
 export default function RequestsPage() {
     const [requestsList, setRequestsList] = useState<LeaveResponse[]>([]);
@@ -23,6 +24,12 @@ export default function RequestsPage() {
     const [currentPage, setCurrentPage] = useState<number>(1);
     const [teamRequests, setTeamRequests] = useState<LeaveResponse[]>([]);
     const recordsPerPage: number = 5;
+    const { setTitle, setChildren } = usePageTitle();
+
+    useEffect(() => {
+        setTitle("Requests");
+        setChildren(null);
+    }, [setTitle, setChildren]);
 
     // Fetch pending leave requests
     useEffect(() => {
@@ -82,58 +89,52 @@ export default function RequestsPage() {
     };
 
     return (
-        <>
-            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <h1 className="text-lg font-semibold md:text-2xl">Requests</h1>
-            </div>
+        <main className="flex flex-1 flex-col gap-4 p-4">
+            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>Employee</TableHead>
+                            <TableHead>Team</TableHead>
+                            <TableHead>Type</TableHead>
+                            <TableHead>Date</TableHead>
+                            <TableHead>Duration</TableHead>
+                            <TableHead>Actions</TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {requestsList
+                            .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
+                            .map((request) => (
+                                <RequestRowItem
+                                    key={request.id}
+                                    request={request}
+                                    handleRowClick={()=> handleRowClick(request)}
+                                />
+                            ))}
+                    </TableBody>
+                </Table>
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
-                    <Table>
-                        <TableHeader>
-                            <TableRow>
-                                <TableHead>Employee</TableHead>
-                                <TableHead>Team</TableHead>
-                                <TableHead>Type</TableHead>
-                                <TableHead>Date</TableHead>
-                                <TableHead>Duration</TableHead>
-                                <TableHead>Actions</TableHead>
-                            </TableRow>
-                        </TableHeader>
-                        <TableBody>
-                            {requestsList
-                                .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
-                                .map((request) => (
-                                    <RequestRowItem
-                                        key={request.id}
-                                        request={request}
-                                        handleRowClick={()=> handleRowClick(request)}
-                                    />
-                                ))}
-                        </TableBody>
-                    </Table>
-
-                    {requestsList.length > recordsPerPage && (
-                        <Pagination
-                            pageSize={recordsPerPage}
-                            pageNumber={currentPage}
-                            setPageNumber={setCurrentPage}
-                            totalContents={requestsList.length}
-                        />
-                    )}
-                </Card>
-
-                {selectedRequest && (
-                    <LeaveDialog
-                        teamRequests={teamRequests}
-                        selectedRequest={selectedRequest}
-                        toggleModal={() => setSelectedRequest(null)}
-                        handleRequest={handleRequest}
-                        isProcessing={isProcessing}
+                {requestsList.length > recordsPerPage && (
+                    <Pagination
+                        pageSize={recordsPerPage}
+                        pageNumber={currentPage}
+                        setPageNumber={setCurrentPage}
+                        totalContents={requestsList.length}
                     />
                 )}
-            </main>
-        </>
+            </Card>
+
+            {selectedRequest && (
+                <LeaveDialog
+                    teamRequests={teamRequests}
+                    selectedRequest={selectedRequest}
+                    toggleModal={() => setSelectedRequest(null)}
+                    handleRequest={handleRequest}
+                    isProcessing={isProcessing}
+                />
+            )}
+        </main>
     );
 }
 

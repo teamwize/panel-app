@@ -127,8 +127,8 @@ export default function LeaveType() {
     return (
         <>
             <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
-                <h1 className="text-lg font-semibold md:text-2xl">Leave Types</h1>
-                <Button onClick={() => setIsCreateDialogOpen(true)}>Create</Button>
+                <h1 className="text-base font-semibold md:text-xl">Leave Types</h1>
+                <Button className='px-2 h-9' onClick={() => setIsCreateDialogOpen(true)}>Create</Button>
             </div>
 
             <main className="flex flex-1 flex-col p-4">
