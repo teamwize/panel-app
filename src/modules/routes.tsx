@@ -2,7 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { SignIn, SignUp } from './Authentication'
 import { CreateLeave, PendingLeave, LeaveRequests } from './Leaves'
 import {OrganizationPage, OfficialHolidays, Teams, CreateTeam, UpdateTeam, ImportHolidays, LeavesPage} from './Organization'
-import { Balance, Home, ChangePassword, CreateEmployee, EmployeesPage, EmployeeInformation, Profile, Settings } from './Users'
+import { Balance, Home, ChangePassword, CreateEmployee, Employees, EmployeeInformation, Profile, Settings } from './Users'
 import { AuthenticatedRoute } from "../core/components"
 import UpdateLeavePolicy from "@/modules/Leaves/Pages/UpdateLeavePolicy.tsx";
 
@@ -17,7 +17,7 @@ export default function Root() {
         <Route path='/leave/pending' element={<AuthenticatedRoute><PendingLeave /></AuthenticatedRoute>}></Route>
         <Route path='/requests' element={<AuthenticatedRoute><LeaveRequests /></AuthenticatedRoute>}></Route>
         <Route path='/balance' element={<AuthenticatedRoute><Balance /></AuthenticatedRoute>}></Route>
-        <Route path='/employees' element={<AuthenticatedRoute><EmployeesPage /></AuthenticatedRoute>}></Route>
+        <Route path='/employees' element={<AuthenticatedRoute><Employees /></AuthenticatedRoute>}></Route>
         <Route path='/employee/:id/balance' element={<AuthenticatedRoute><EmployeeInformation /></AuthenticatedRoute>}></Route>
         <Route path='/settings' element={<AuthenticatedRoute><Settings /></AuthenticatedRoute>}></Route>
         <Route path='/settings/change-password' element={<AuthenticatedRoute><ChangePassword /></AuthenticatedRoute>}></Route>
