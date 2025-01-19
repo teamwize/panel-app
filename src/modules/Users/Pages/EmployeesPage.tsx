@@ -5,7 +5,7 @@ import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Pagination} from "../../../core/components";
 import {Card} from "@/components/ui/card";
-import {UserResponse} from "@/constants/types/userTypes";
+import {UserResponse, UserUpdateRequest} from "@/constants/types/userTypes";
 import {PagedResponse} from "@/constants/types/commonTypes";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -82,7 +82,7 @@ export default function EmployeesPage() {
         }
     };
 
-    const handleUpdateEmployee = async (id: number, updatedData: Partial<UserResponse>) => {
+    const handleUpdateEmployee = async (id: number, updatedData: Partial<UserUpdateRequest>) => {
         try {
             setIsProcessing(true);
             await updateUser(id, updatedData);

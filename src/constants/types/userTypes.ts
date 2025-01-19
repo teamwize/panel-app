@@ -1,5 +1,5 @@
 import {UserRole, UserStatus} from "@/constants/types/enums";
-import {OrganizationResponse, OrganizationCompactResponse} from "@/constants/types/organizationTypes";
+import {OrganizationCompactResponse} from "@/constants/types/organizationTypes";
 import {TeamCompactResponse} from "@/constants/types/teamTypes";
 import {LeavePolicyCompactResponse} from "@/constants/types/leaveTypes.ts";
 
@@ -21,7 +21,8 @@ export type UserUpdateRequest = {
     firstName?: string;
     lastName?: string;
     phone?: string | null;
-    avatarAssetId?: number
+    avatarAssetId?: number;
+    leavePolicyId?: number;
 }
 
 export type ChangePasswordRequest = {
