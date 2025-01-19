@@ -2,7 +2,6 @@ import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
-    DropdownMenuLabel,
     DropdownMenuSeparator,
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
@@ -56,8 +55,6 @@ export default function AccountDropdown({ isActive, onClick }: AccountDropdownPr
                     </div>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="rounded-lg">
-                    <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={viewProfile} className="cursor-pointer hover:bg-indigo-100 hover:text-primary dark:hover:bg-indigo-800">Profile
                     </DropdownMenuItem>
                     <DropdownMenuSeparator />
