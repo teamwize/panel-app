@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -12,11 +12,10 @@ import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
 import {PagedResponse} from '@/constants/types/commonTypes';
 import {Eye} from "lucide-react";
 import {Button} from "@/components/ui/button";
-import {UserContext} from "@/contexts/UserContext";
 import {Badge} from "@/components/ui/badge.tsx";
 import {formatDurationRange} from "@/utils/dateUtils.ts";
 import PageContent from "@/core/components/PageContent.tsx";
-import {PageHeader} from "@/core/components";
+import {Avatar, PageHeader} from "@/core/components";
 
 export default function RequestsPage() {
     const [requestsList, setRequestsList] = useState<LeaveResponse[]>([]);
@@ -141,10 +140,7 @@ type RequestItemProps = {
     handleRowClick: () => void;
 };
 
-const DEFAULT_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
-
 function RequestRowItem({request, handleRowClick}: RequestItemProps) {
-    const {accessToken} = useContext(UserContext)
     const navigate = useNavigate();
     const durationText = formatDurationRange(request.duration, request.startAt, request.endAt);
 
@@ -153,13 +149,10 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
         navigate(`/employee/${id}/balance`);
     };
 
-    // Retrieve avatar URL or default
-    const getAvatarUrl = (url?: string) => (url ? `${url}?token=${accessToken}` : DEFAULT_AVATAR);
-
     return (
         <TableRow>
             <TableCell className="flex items-center gap-2 font-medium">
-                <img className="h-8 w-8 rounded-full" src={getAvatarUrl(request.user?.avatar?.url)} alt="User avatar"/>
+                <Avatar avatar={request.user?.avatar} avatarSize={32}/>
                 <h2 className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
                     onClick={() => viewBalance(request.user.id)}
                 >

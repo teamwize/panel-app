@@ -20,8 +20,7 @@ import {
     DialogTitle
 } from "@/components/ui/dialog.tsx";
 import {clsx} from "clsx";
-
-const DEFAULT_USER_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
+import {Avatar} from "@/core/components/index.ts";
 
 type AccountDropdownProps = {
     isActive: boolean;
@@ -31,7 +30,7 @@ type AccountDropdownProps = {
 export default function AccountDropdown({ isActive, onClick }: AccountDropdownProps) {
     const [signOut, setSignOut] = useState<boolean>(false);
     const navigate = useNavigate();
-    const {user, accessToken} = useContext(UserContext);
+    const {user} = useContext(UserContext);
 
     const viewProfile = () => {
         navigate("/profile");
@@ -50,15 +49,7 @@ export default function AccountDropdown({ isActive, onClick }: AccountDropdownPr
                 <DropdownMenuTrigger asChild>
                     <div className="flex items-center justify-between gap-2 cursor-pointer rounded-lg transition-all text-muted-foreground hover:text-primary">
                         <div className="flex items-center gap-2">
-                            <img
-                                src={
-                                    user?.avatar?.url
-                                        ? `${user.avatar.url}?token=${accessToken}`
-                                        : DEFAULT_USER_AVATAR
-                                }
-                                alt="Profile Image"
-                                className="h-8 w-8 rounded-full"
-                            />
+                            <Avatar avatar={user?.avatar} avatarSize={32}/>
                             <div className={clsx("text-sm font-semibold", isActive ? "text-gray-700" : '')}>{user?.firstName} {user?.lastName}</div>
                         </div>
                         <Ellipsis className="w-4 h-4" />

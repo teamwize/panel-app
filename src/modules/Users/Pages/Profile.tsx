@@ -14,7 +14,7 @@ import {UserContext} from "@/contexts/UserContext";
 import {ChangePictureDialog} from "@/modules/Users/components/ChangePictureDialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import PageContent from "@/core/components/PageContent.tsx";
-import {PageHeader} from "@/core/components";
+import {Avatar, PageHeader} from "@/core/components";
 
 const FormSchema = z.object({
     firstName: z.string().min(2, {
@@ -29,11 +29,9 @@ const FormSchema = z.object({
     })
 });
 
-const DEFAULT_USER_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
-
 export default function Profile() {
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
-    const {accessToken, user, setUser} = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
     const [selectedAvatar, setSelectedAvatar] = useState(null);
 
     const form = useForm<z.infer<typeof FormSchema>>({
@@ -120,13 +118,7 @@ export default function Profile() {
                       x-chunk="dashboard-02-chunk-1">
                     <div>
                         <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
-                            <img
-                                src={
-                                    user?.avatar?.url
-                                        ? `${user.avatar.url}?token=${accessToken}`
-                                        : DEFAULT_USER_AVATAR
-                                }
-                                alt='Profile Image' className="h-40 w-40 rounded-full"/>
+                            <Avatar avatar={user?.avatar} avatarSize={160}/>
                             <div
                                 className='bg-indigo-500 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
                                 <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">

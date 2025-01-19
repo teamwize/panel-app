@@ -1,9 +1,9 @@
 import {UserResponse} from "@/constants/types/userTypes.ts";
-import React, {useContext} from "react";
-import {UserContext} from "@/contexts/UserContext.tsx";
+import React from "react";
 import {TableBody, TableCell, TableRow} from "@/components/ui/table.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Pencil, Trash} from "lucide-react";
+import {Avatar} from "@/core/components";
 
 type EmployeeTableProps = {
     employeesList: UserResponse[];
@@ -13,22 +13,12 @@ type EmployeeTableProps = {
 };
 
 export function EmployeeTable({employeesList, setSelectedEmployee, setCurrentEmployee, setIsUpdateDialogOpen,}: EmployeeTableProps) {
-    const { accessToken } = useContext(UserContext);
-
     return (
         <TableBody>
             {employeesList.map((employee) => (
                 <TableRow key={employee.id} className="items-center">
                     <TableCell>
-                        <img
-                            className="inline-block h-10 w-10 rounded-full"
-                            src={
-                                employee?.avatar
-                                    ? `${employee.avatar?.url}?token=${accessToken}`
-                                    : "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png"
-                            }
-                            alt={`${employee.firstName} ${employee.lastName}`}
-                        />
+                        <Avatar avatar={employee?.avatar} avatarSize={32}/>
                         <span className="text-sm font-medium ml-2">{employee.firstName} {employee.lastName}</span>
                     </TableCell>
                     <TableCell>{employee.email}</TableCell>
