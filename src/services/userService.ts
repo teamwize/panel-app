@@ -26,8 +26,8 @@ async function deleteUser(id: string) {
     return response.data;
 }
 
-async function updateUser(payload: UserUpdateRequest): Promise<UserResponse> {
-    const response = await axiosInstance.patch(`${baseURL}/mine`, payload);
+async function updateUser(userId: number | null = null, payload: UserUpdateRequest): Promise<UserResponse> {
+    const response = await axiosInstance.patch(`${baseURL}/${userId ? userId : 'mine'}`, payload);
     return response.data;
 }
 

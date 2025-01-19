@@ -15,7 +15,8 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {UserContext} from "@/contexts/UserContext";
-import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 const FormSchema = z.object({
     name: z.string().min(2, {message: "Organization name must be over 2 characters"}).max(20, {message: "Organization name must be under 20 characters"}),
@@ -32,12 +33,6 @@ export default function OrganizationPage() {
     const [organizationInfo, setOrganizationInfo] = useState<OrganizationResponse | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const {user} = useContext(UserContext);
-    const { setTitle, setChildren } = usePageTitle();
-
-    useEffect(() => {
-        setTitle("Organization");
-        setChildren(null);
-    }, [setTitle, setChildren]);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -108,33 +103,38 @@ export default function OrganizationPage() {
     };
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4">
-            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4" x-chunk="dashboard-02-chunk-1">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                        <NameField form={form}/>
+        <>
+            <PageHeader title='Organization'></PageHeader>
+            <PageContent>
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
+                      x-chunk="dashboard-02-chunk-1">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                            <NameField form={form}/>
 
-                        <SelectField
-                            label="Country"
-                            name="country"
-                            options={countries.map((country) => ({label: country.name, value: country.name}))}
-                            form={form}
-                        />
+                            <SelectField
+                                label="Country"
+                                name="country"
+                                options={countries.map((country) => ({label: country.name, value: country.name}))}
+                                form={form}
+                            />
 
-                        <SelectField
-                            label="Week Starting Day"
-                            name="weekFirstDay"
-                            options={Object.values(Week).map((day) => ({label: getWeekDayName(day), value: day}))}
-                            form={form}
-                        />
+                            <SelectField
+                                label="Week Starting Day"
+                                name="weekFirstDay"
+                                options={Object.values(Week).map((day) => ({label: getWeekDayName(day), value: day}))}
+                                form={form}
+                            />
 
-                        <CheckboxGroupField form={form}/>
+                            <CheckboxGroupField form={form}/>
 
-                        <Button type="submit" className="w-fit" disabled={isProcessing}>{isProcessing ? "Processing..." : "Save"}</Button>
-                    </form>
-                </Form>
-            </Card>
-        </main>
+                            <Button type="submit" className="w-fit"
+                                    disabled={isProcessing}>{isProcessing ? "Processing..." : "Save"}</Button>
+                        </form>
+                    </Form>
+                </Card>
+            </PageContent>
+        </>
     );
 }
 

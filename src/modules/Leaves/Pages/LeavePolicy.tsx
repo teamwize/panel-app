@@ -1,8 +1,8 @@
 import React, {useEffect, useState} from "react";
 import {Card} from "@/components/ui/card.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {Pagination} from "@/core/components";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {PageHeader, Pagination} from "@/core/components";
 import {deleteLeavePolicy, getLeavesPolicies} from "@/services/leaveService.ts";
 import {LeavePolicyResponse} from "@/constants/types/leaveTypes.ts";
 import {getErrorMessage} from "@/utils/errorHandler.ts";
@@ -12,7 +12,7 @@ import {Pencil, Trash} from "lucide-react";
 import {Badge} from "@/components/ui/badge"
 import {CreatePolicyDialog} from "@/modules/Leaves/Components/CreateLeavePolicy.tsx";
 import {NavigateFunction, useNavigate} from "react-router-dom";
-import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
 
 export default function LeavePolicy() {
     const [leavePolicyList, setLeavePolicyList] = useState<LeavePolicyResponse[]>([]);
@@ -23,16 +23,6 @@ export default function LeavePolicy() {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const recordsPerPage = 10;
-    const { setTitle, setChildren } = usePageTitle();
-
-    useEffect(() => {
-        setTitle("Leave Policy");
-        setChildren(
-            <Button className='px-2 h-9' onClick={() => setIsCreateDialogOpen(true)}>
-                Create
-            </Button>
-        );
-    }, [setTitle, setChildren]);
 
     // Fetch leave policies
     useEffect(() => {
@@ -83,7 +73,10 @@ export default function LeavePolicy() {
 
     return (
         <>
-            <main className="flex flex-1 flex-col p-4">
+            <PageHeader title='Leave Policy'>
+                <Button className='px-2 h-9' onClick={() => setIsCreateDialogOpen(true)}>Create</Button>
+            </PageHeader>
+            <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <Table>
                         <TableHeader>
@@ -135,7 +128,7 @@ export default function LeavePolicy() {
                         />
                     )}
                 </Card>
-            </main>
+            </PageContent>
         </>
     )
 }

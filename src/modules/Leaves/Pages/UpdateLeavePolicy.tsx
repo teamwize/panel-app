@@ -1,20 +1,21 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate, useSearchParams } from "react-router-dom";
-import { z } from "zod";
-import { useForm } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
-import { Button } from "@/components/ui/button";
-import { Card, CardHeader, CardTitle } from "@/components/ui/card";
-import { Form } from "@/components/ui/form";
-import { Input } from "@/components/ui/input";
-import {Check, ChevronLeft, Pencil, PlusIcon} from "lucide-react";
-import { toast } from "@/components/ui/use-toast";
-import { createLeavesPolicy, getLeavesTypes } from "@/services/leaveService";
+import React, {useEffect, useState} from "react";
+import {useLocation, useNavigate, useSearchParams} from "react-router-dom";
+import {z} from "zod";
+import {useForm} from "react-hook-form";
+import {zodResolver} from "@hookform/resolvers/zod";
+import {Button} from "@/components/ui/button";
+import {Card, CardHeader, CardTitle} from "@/components/ui/card";
+import {Form} from "@/components/ui/form";
+import {Input} from "@/components/ui/input";
+import {Check, Pencil, PlusIcon} from "lucide-react";
+import {toast} from "@/components/ui/use-toast";
+import {createLeavesPolicy, getLeavesTypes} from "@/services/leaveService";
 import ActivateLeaveTypeDialog from "@/modules/Leaves/Components/ActivateLeaveTypeDialog";
-import { LeavePolicyResponse, LeaveTypeResponse } from "@/constants/types/leaveTypes";
-import { getErrorMessage } from "@/utils/errorHandler";
+import {LeavePolicyResponse, LeaveTypeResponse} from "@/constants/types/leaveTypes";
+import {getErrorMessage} from "@/utils/errorHandler";
 import {LeavePolicyTable} from "@/modules/Leaves/Components/LeavePolicyTable.tsx";
-import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 export const LeaveTypeSchema = z.object({
     typeId: z.number({ required_error: "Leave type is required." }),
@@ -45,7 +46,6 @@ export default function UpdateLeavePolicy() {
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [isEditingName, setIsEditingName] = useState(false);
     const navigate = useNavigate();
-    const { setTitle, setChildren } = usePageTitle();
 
     const form = useForm<FormInputs>({
         resolver: zodResolver(FormSchema),
@@ -58,28 +58,6 @@ export default function UpdateLeavePolicy() {
             })) || [],
         },
     });
-
-    useEffect(() => {
-        setTitle(
-            <div className="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate("/leaves")}
-                    className="p-0 hover:bg-transparent focus:ring-0"
-                >
-                    <ChevronLeft className="h-6 w-6" />
-                </Button>
-                {isCreateMode ? `Update ${form.watch("policyName")} Leave Policy` : "Update Leave Policy"}
-            </div>
-        );
-
-        setChildren(
-            <Button className="flex items-center space-x-1" onClick={() => setIsDialogOpen(true)}>
-                <PlusIcon className="h-5 w-5" />
-            </Button>
-        );
-    }, [setTitle, setChildren, navigate, isCreateMode, form]);
 
     // Fetch leave types
     useEffect(() => {
@@ -150,7 +128,13 @@ export default function UpdateLeavePolicy() {
 
     return (
         <>
-            <main className="flex flex-1 flex-col gap-4 p-4">
+            <PageHeader title={`Update Leave Policy ${leavePolicyName}`} backButton={"/leaves"}>
+                <Button className="flex items-center space-x-1" onClick={() => setIsDialogOpen(true)}>
+                    <PlusIcon className="h-5 w-5"/>
+                </Button>
+            </PageHeader>
+
+            <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
@@ -192,7 +176,7 @@ export default function UpdateLeavePolicy() {
                         </form>
                     </Form>
                 </Card>
-            </main>
+            </PageContent>
 
             <ActivateLeaveTypeDialog
                 isOpen={isDialogOpen}

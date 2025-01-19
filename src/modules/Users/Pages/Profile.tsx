@@ -13,7 +13,8 @@ import {Card} from "@/components/ui/card";
 import {UserContext} from "@/contexts/UserContext";
 import {ChangePictureDialog} from "@/modules/Users/components/ChangePictureDialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
+import {Avatar, PageHeader} from "@/core/components";
 
 const FormSchema = z.object({
     firstName: z.string().min(2, {
@@ -28,18 +29,10 @@ const FormSchema = z.object({
     })
 });
 
-const DEFAULT_USER_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
-
 export default function Profile() {
     const [isProcessing, setIsProcessing] = useState<boolean>(false)
-    const {accessToken, user, setUser} = useContext(UserContext);
+    const {user, setUser} = useContext(UserContext);
     const [selectedAvatar, setSelectedAvatar] = useState(null);
-    const { setTitle, setChildren } = usePageTitle();
-
-    useEffect(() => {
-        setTitle("Profile");
-        setChildren(null);
-    }, [setTitle, setChildren]);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -81,7 +74,7 @@ export default function Profile() {
                 lastName: data.lastName,
             };
             setIsProcessing(true);
-            const updateUserResponse = await updateUser(payload);
+            const updateUserResponse = await updateUser(null, payload);
             setIsProcessing(false);
             setUser(updateUserResponse);
             toast({
@@ -118,32 +111,32 @@ export default function Profile() {
     };
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4">
-            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4" x-chunk="dashboard-02-chunk-1">
-                <div>
-                    <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
-                        <img
-                            src={
-                                user?.avatar?.url
-                                    ? `${user.avatar.url}?token=${accessToken}`
-                                    : DEFAULT_USER_AVATAR
-                            }
-                            alt='Profile Image' className="h-40 w-40 rounded-full"/>
-                        <div className='bg-indigo-500 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
-                            <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">
-                                <Camera className='w-7 h-7 text-white'></Camera>
-                            </label>
-                            <input id='upload-photo' type="file" accept="image/jpeg, image/png"
-                                   className='hidden' onChange={handleFileChange}/>
+        <>
+            <PageHeader title='Profile'></PageHeader>
+            <PageContent>
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4"
+                      x-chunk="dashboard-02-chunk-1">
+                    <div>
+                        <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
+                            <Avatar avatar={user?.avatar} avatarSize={160}/>
+                            <div
+                                className='bg-indigo-500 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
+                                <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">
+                                    <Camera className='w-7 h-7 text-white'></Camera>
+                                </label>
+                                <input id='upload-photo' type="file" accept="image/jpeg, image/png" className='hidden'
+                                       onChange={handleFileChange}/>
+                            </div>
                         </div>
+
+                        {selectedAvatar && (
+                            <ChangePictureDialog initialImageUrl={selectedAvatar} onChange={handleUpdateUserAvatar}/>)}
                     </div>
 
-                    {selectedAvatar && (<ChangePictureDialog initialImageUrl={selectedAvatar} onChange={handleUpdateUserAvatar}/>)}
-                </div>
-
-                <FullNameField form={form} onSubmit={onSubmit} isProcessing={isProcessing} />
-            </Card>
-        </main>
+                    <FullNameField form={form} onSubmit={onSubmit} isProcessing={isProcessing}/>
+                </Card>
+            </PageContent>
+        </>
     )
 }
 
