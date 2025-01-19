@@ -1,10 +1,24 @@
-import {DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger} from "@/components/ui/dropdown-menu.tsx";
+import {
+    DropdownMenu,
+    DropdownMenuContent,
+    DropdownMenuItem,
+    DropdownMenuLabel,
+    DropdownMenuSeparator,
+    DropdownMenuTrigger
+} from "@/components/ui/dropdown-menu.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Ellipsis} from "lucide-react";
 import React, {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {UserContext} from "@/contexts/UserContext.tsx";
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle
+} from "@/components/ui/dialog.tsx";
 import {clsx} from "clsx";
 
 const DEFAULT_USER_AVATAR = "https://upload.wikimedia.org/wikipedia/commons/0/09/Man_Silhouette.png";
@@ -88,9 +102,9 @@ function SignOut({setSignOut, signOut}: SignOutProps) {
         <Dialog open={signOut} onOpenChange={closeSignOut}>
             <DialogContent className="sm:max-w-md">
                 <DialogHeader>
-                    <DialogTitle>Log Out</DialogTitle>
+                    <DialogTitle>Sign out</DialogTitle>
                 </DialogHeader>
-                <DialogDescription>Are you sure you want to log out?</DialogDescription>
+                <DialogDescription>Are you sure you want to sign out?</DialogDescription>
                 <DialogFooter>
                     <Button variant="outline" className="w-full" onClick={() => handleRequest(false)}>No</Button>
                     <Button variant="destructive" className="w-full ml-4" onClick={() => handleRequest(true)}>Yes</Button>
