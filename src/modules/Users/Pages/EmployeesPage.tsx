@@ -1,19 +1,20 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import {getUsers, deleteUser, updateUser} from "@/services/userService";
-import { toast } from "@/components/ui/use-toast";
-import { getErrorMessage } from "~/utils/errorHandler.ts";
-import { Pagination } from "../../../core/components";
-import { Card } from "@/components/ui/card";
-import { UserResponse } from "@/constants/types/userTypes";
-import { PagedResponse } from "@/constants/types/commonTypes";
-import { Button } from "@/components/ui/button";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { usePageTitle } from "@/contexts/PageTitleContext.tsx";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
+import {deleteUser, getUsers, updateUser} from "@/services/userService";
+import {toast} from "@/components/ui/use-toast";
+import {getErrorMessage} from "~/utils/errorHandler.ts";
+import {Pagination} from "../../../core/components";
+import {Card} from "@/components/ui/card";
+import {UserResponse} from "@/constants/types/userTypes";
+import {PagedResponse} from "@/constants/types/commonTypes";
+import {Button} from "@/components/ui/button";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import UpdateEmployeeDialog from "@/modules/Users/components/UpdateEmployeeDialog.tsx";
 import {EmployeeTable} from "@/modules/Users/components/EmployeeTable.tsx";
 import DeleteEmployeeDialog from "@/modules/Users/components/DeleteEmployeeDialog.tsx";
 import FilterEmployeesForm from "@/modules/Users/components/FilterEmployeesForm.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 export default function EmployeesPage() {
     const [employeesList, setEmployeesList] = useState<PagedResponse<UserResponse> | null>(null);
@@ -26,7 +27,6 @@ export default function EmployeesPage() {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const recordsPerPage: number = 10;
-    const { setTitle, setChildren } = usePageTitle();
 
     useEffect(() => {
         const fetchUsers = async () => {
@@ -34,7 +34,6 @@ export default function EmployeesPage() {
                 const data = await getUsers(0, 30);
                 setEmployeesList(data);
                 setFilteredEmployees(data.contents);
-                setTitle(`Employees (${data.contents.length})`);
             } catch (error) {
                 toast({
                     title: "Error",
@@ -45,15 +44,7 @@ export default function EmployeesPage() {
         };
 
         fetchUsers();
-    }, [setTitle]);
-
-    useEffect(() => {
-        setChildren(
-            <Button className="px-2 h-9" onClick={() => navigate("/employee/create")}>
-                Create
-            </Button>
-        );
-    }, [setChildren, navigate]);
+    }, []);
 
     const handleFilter = (query: string, teamId: string) => {
         const filtered = employeesList?.contents.filter((employee) => {
@@ -122,9 +113,13 @@ export default function EmployeesPage() {
 
     return (
         <>
+            <PageHeader title={`Employees (${employeesList?.contents?.length ?? 0})`}>
+                <Button className="px-2 h-9" onClick={() => navigate("/employee/create")}>Create</Button>
+            </PageHeader>
+
             <FilterEmployeesForm onFilter={handleFilter}/>
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
+            <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
                     <Table>
                         <TableHeader>
@@ -180,7 +175,7 @@ export default function EmployeesPage() {
                         />
                     )}
                 </Card>
-            </main>
+            </PageContent>
         </>
     );
 }

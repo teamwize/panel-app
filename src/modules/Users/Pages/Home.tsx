@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useContext} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import "react-day-picker/dist/style.css";
 import dayjs from "dayjs";
@@ -18,7 +18,8 @@ import {UserContext} from "@/contexts/UserContext";
 import {Week} from "@/constants/types/enums.ts";
 import {capitalizeFirstLetter} from "@/lib/utils.ts";
 import {CustomCalendar} from "@/core/components/calendar/CustomCalendar.tsx";
-import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
+import {PageHeader} from "@/core/components";
+import PageContent from "@/core/components/PageContent.tsx";
 
 // 1.Show holidays on calendar
 // 2.Show weekends on calendar
@@ -33,17 +34,6 @@ export default function Home() {
     const [weekendsDays, setWeekendsDays] = useState<string[]>([]);
     const navigate = useNavigate();
     const {user, organization} = useContext(UserContext);
-    const { setTitle, setChildren } = usePageTitle();
-
-    useEffect(() => {
-        setTitle("Home");
-        setChildren(
-            <Button className='px-2 h-9' onClick={() => navigate("/leave/create")}>
-                <Plus className="h-4 w-4 mr-1" />
-                Request Leave
-            </Button>
-        );
-    }, [setTitle, setChildren, navigate]);
 
     // Fetch holidays for the current and next year.
     const fetchHolidays = async () => {
@@ -99,10 +89,20 @@ export default function Home() {
     }
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4">
-            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm px-5 w-full" x-chunk="dashboard-02-chunk-1">
-                <CustomCalendar leaves={requestsList} holidays={holidays} weekends={weekendsDays} onDateSelect={handleDateSelect}/>
-            </Card>
-        </main>
+        <>
+            <PageHeader title='Home'>
+                <Button className='px-2 h-9' onClick={() => navigate("/leave/create")}>
+                    <Plus className="h-4 w-4 mr-1"/>
+                    Request Leave
+                </Button>
+            </PageHeader>
+            <PageContent>
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm px-5 w-full"
+                      x-chunk="dashboard-02-chunk-1">
+                    <CustomCalendar leaves={requestsList} holidays={holidays} weekends={weekendsDays}
+                                    onDateSelect={handleDateSelect}/>
+                </Card>
+            </PageContent>
+        </>
     );
 }

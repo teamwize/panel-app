@@ -12,15 +12,15 @@ import {z} from "zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
-import {ChevronLeft} from "lucide-react";
 import {UserCreateRequest} from "@/constants/types/userTypes";
 import {TeamResponse} from "@/constants/types/teamTypes";
 import {countries} from "@/constants/countries";
 import {UserContext} from "@/contexts/UserContext";
 import {UserRole} from "@/constants/types/enums.ts";
-import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
 import {getLeavesPolicies} from "@/services/leaveService.ts";
 import {LeavePolicyResponse} from "@/constants/types/leaveTypes.ts";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 
 const FormSchema = z.object({
@@ -40,24 +40,6 @@ export default function CreateEmployee() {
     const [teams, setTeams] = useState<TeamResponse[]>([]);
     const [leavePolicies, setLeavePolicies] = useState<LeavePolicyResponse[]>([]);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const { setTitle, setChildren } = usePageTitle();
-
-    useEffect(() => {
-        setTitle(
-            <div className="flex items-center gap-2">
-                <Button
-                    variant="ghost"
-                    size="icon"
-                    onClick={() => navigate("/employees")}
-                    className="w-fit justify-start p-0 hover:bg-transparent focus:ring-0"
-                >
-                    <ChevronLeft className="h-5 w-5" />
-                </Button>
-                <span>Create Employee</span>
-            </div>
-        );
-        setChildren(null);
-    }, [setTitle]);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -123,23 +105,28 @@ export default function CreateEmployee() {
     };
 
     return (
-        <main className="flex flex-1 flex-col gap-4 p-4">
-            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4" x-chunk="dashboard-02-chunk-1">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                        <FirstnameField form={form}/>
-                        <LastNameField form={form}/>
-                        <EmailField form={form}/>
-                        <PasswordField form={form}/>
-                        <PhoneField form={form}/>
-                        <TeamField form={form} teams={teams} />
-                        <LeavePolicyField form={form} leavePolicies={leavePolicies} />
-                        <CountryField form={form}/>
-                        <Button type="submit" className="w-fit" disabled={isProcessing}>{isProcessing ? "Processing..." : "Create"}</Button>
-                    </form>
-                </Form>
-            </Card>
-        </main>
+        <>
+            <PageHeader title={"Create Employee"} backButton={"/employees"}></PageHeader>
+            <PageContent>
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
+                      x-chunk="dashboard-02-chunk-1">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
+                            <FirstnameField form={form}/>
+                            <LastNameField form={form}/>
+                            <EmailField form={form}/>
+                            <PasswordField form={form}/>
+                            <PhoneField form={form}/>
+                            <TeamField form={form} teams={teams}/>
+                            <LeavePolicyField form={form} leavePolicies={leavePolicies}/>
+                            <CountryField form={form}/>
+                            <Button type="submit" className="w-fit"
+                                    disabled={isProcessing}>{isProcessing ? "Processing..." : "Create"}</Button>
+                        </form>
+                    </Form>
+                </Card>
+            </PageContent>
+        </>
     );
 }
 
