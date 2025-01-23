@@ -45,7 +45,7 @@ export default function Root() {
                 <Route path='/teams' element={<AuthenticatedRoute><Teams/></AuthenticatedRoute>}></Route>
                 <Route path='/organization/team/create'
                        element={<AuthenticatedRoute><CreateTeam/></AuthenticatedRoute>}></Route>
-                <Route path='/leaves/policy/update'
+                <Route path='/leaves/policy/:id'
                        element={<AuthenticatedRoute><UpdateLeavePolicy/></AuthenticatedRoute>}></Route>
             </Routes>
         </>

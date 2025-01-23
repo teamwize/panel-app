@@ -41,7 +41,13 @@ export type LeaveTypeResponse = {
 
 export type LeavePolicyCreateRequest = {
     name: string;
+    status: LeavePolicyStatus;
     activatedTypes: LeavePolicyActivatedTypeRequest[];
+}
+
+export enum LeavePolicyStatus {
+    ACTIVE = "ACTIVE",
+    ARCHIVED = "ARCHIVED"
 }
 
 export type LeavePolicyActivatedTypeRequest = {
@@ -85,4 +91,10 @@ export interface GetLeavesFilter {
 export interface LeaveTypeUpdateRequest {
     name: string;
     cycle: LeaveTypeCycle;
+}
+
+export type LeavePolicyUpdateRequest = {
+    name: string;
+    status: LeavePolicyStatus;
+    activatedTypes: LeavePolicyActivatedTypeRequest[];
 }
