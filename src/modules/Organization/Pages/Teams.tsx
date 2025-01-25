@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { toast } from "@/components/ui/use-toast";
-import { getErrorMessage } from "~/utils/errorHandler.ts";
-import { TeamResponse } from "@/constants/types/teamTypes";
-import { deleteTeam, getTeams, updateTeam } from "@/services/teamService";
-import { Pencil, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pagination } from '../../../core/components';
-import { usePageTitle } from "@/contexts/PageTitleContext.tsx";
+import React, {useEffect, useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {toast} from "@/components/ui/use-toast";
+import {getErrorMessage} from "~/utils/errorHandler.ts";
+import {TeamResponse} from "@/constants/types/teamTypes";
+import {deleteTeam, getTeams, updateTeam} from "@/services/teamService";
+import {Pencil, Trash} from "lucide-react";
+import {Button} from "@/components/ui/button";
+import {Card} from "@/components/ui/card";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {Pagination} from '../../../core/components';
 import UpdateTeamDialog from "@/modules/Organization/Components/UpdateTeamDialog.tsx";
 import {DeleteModal} from "@/modules/Organization/Components/DeleteTeamDialog.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 export default function Teams() {
     const [teamList, setTeamList] = useState<TeamResponse[]>([]);
@@ -21,14 +22,6 @@ export default function Teams() {
     const navigate = useNavigate();
     const [currentPage, setCurrentPage] = useState<number>(1);
     const recordsPerPage: number = 10;
-    const { setTitle, setChildren } = usePageTitle();
-
-    useEffect(() => {
-        setTitle("Teams");
-        setChildren(
-            <Button className="px-2 h-9" onClick={() => navigate('/organization/team/create')}>Create</Button>
-        );
-    }, [setTitle, setChildren, navigate]);
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -92,56 +85,61 @@ export default function Teams() {
     );
 
     return (
-        <main className="flex flex-1 flex-col p-4">
-            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
-                <Table>
-                    <TableHeader>
-                        <TableRow>
-                            <TableHead>Name</TableHead>
-                            <TableHead className="text-right pr-8">Actions</TableHead>
-                        </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {paginatedTeamList.map((t) => (
-                            <TeamRowItem
-                                key={t.id}
-                                t={t}
-                                setSelectedTeamForUpdate={setSelectedTeamForUpdate}
-                                setSelectedTeamForDelete={setSelectedTeamForDelete}
-                                isProcessing={isProcessing}
-                            />
-                        ))}
-                    </TableBody>
-                </Table>
+        <>
+            <PageHeader title='Teams'>
+                <Button className="px-2 h-9" onClick={() => navigate('/organization/team/create')}>Create</Button>
+            </PageHeader>
+            <PageContent>
+                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
+                    <Table>
+                        <TableHeader>
+                            <TableRow>
+                                <TableHead>Name</TableHead>
+                                <TableHead className="text-right pr-8">Actions</TableHead>
+                            </TableRow>
+                        </TableHeader>
+                        <TableBody>
+                            {paginatedTeamList.map((t) => (
+                                <TeamRowItem
+                                    key={t.id}
+                                    t={t}
+                                    setSelectedTeamForUpdate={setSelectedTeamForUpdate}
+                                    setSelectedTeamForDelete={setSelectedTeamForDelete}
+                                    isProcessing={isProcessing}
+                                />
+                            ))}
+                        </TableBody>
+                    </Table>
 
-                {selectedTeamForUpdate && (
-                    <UpdateTeamDialog
-                        teamId={selectedTeamForUpdate.id}
-                        teamName={selectedTeamForUpdate.name}
-                        onClose={() => setSelectedTeamForUpdate(null)}
-                        onSuccess={handleUpdateSuccess}
-                        updateTeam={updateTeam}
-                    />
-                )}
+                    {selectedTeamForUpdate && (
+                        <UpdateTeamDialog
+                            teamId={selectedTeamForUpdate.id}
+                            teamName={selectedTeamForUpdate.name}
+                            onClose={() => setSelectedTeamForUpdate(null)}
+                            onSuccess={handleUpdateSuccess}
+                            updateTeam={updateTeam}
+                        />
+                    )}
 
-                {selectedTeamForDelete && (
-                    <DeleteModal
-                        team={selectedTeamForDelete}
-                        handleReject={() => setSelectedTeamForDelete(null)}
-                        handleAccept={handleRemoveTeam}
-                    />
-                )}
+                    {selectedTeamForDelete && (
+                        <DeleteModal
+                            team={selectedTeamForDelete}
+                            handleReject={() => setSelectedTeamForDelete(null)}
+                            handleAccept={handleRemoveTeam}
+                        />
+                    )}
 
-                {teamList.length > recordsPerPage && (
-                    <Pagination
-                        pageSize={recordsPerPage}
-                        pageNumber={currentPage}
-                        setPageNumber={setCurrentPage}
-                        totalContents={teamList.length}
-                    />
-                )}
-            </Card>
-        </main>
+                    {teamList.length > recordsPerPage && (
+                        <Pagination
+                            pageSize={recordsPerPage}
+                            pageNumber={currentPage}
+                            setPageNumber={setCurrentPage}
+                            totalContents={teamList.length}
+                        />
+                    )}
+                </Card>
+            </PageContent>
+        </>
     );
 }
 

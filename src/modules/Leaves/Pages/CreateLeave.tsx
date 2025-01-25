@@ -15,14 +15,21 @@ import {Card} from '@/components/ui/card';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
-import {calculateDuration, calculateWeekends, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/utils/dateUtils";
+import {
+    calculateDuration,
+    calculateWeekends,
+    getNextWorkingDay,
+    isDateInHoliday,
+    isDateInWeekend
+} from "@/utils/dateUtils";
 import {getHolidays} from "@/services/holidayService";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
 import {UserContext} from "@/contexts/UserContext";
 import {Week} from "@/constants/types/enums.ts";
 import {capitalizeFirstLetter} from "@/lib/utils.ts";
 import {LeaveCreateRequest, LeaveResponse} from "@/constants/types/leaveTypes.ts";
-import {usePageTitle} from "@/contexts/PageTitleContext.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 /*
 1.Fetch LeavePolicyType name and id from leaves/policies
@@ -56,12 +63,6 @@ export default function CreateLeave() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {user, organization} = useContext(UserContext);
     const navigate = useNavigate();
-    const { setTitle, setChildren } = usePageTitle();
-
-    useEffect(() => {
-        setTitle("Leave Request");
-        setChildren(null);
-    }, [setTitle, setChildren]);
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -208,7 +209,8 @@ export default function CreateLeave() {
                 </Alert>
             )}
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
+            <PageHeader title='Leave Request'></PageHeader>
+            <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
                     <Form {...form}>
                         <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
@@ -239,7 +241,7 @@ export default function CreateLeave() {
                         </form>
                     </Form>
                 </Card>
-            </main>
+            </PageContent>
         </>
     );
 }

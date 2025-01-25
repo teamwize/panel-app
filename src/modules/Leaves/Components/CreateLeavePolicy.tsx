@@ -2,7 +2,6 @@ import React, {useState} from "react";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
 import {Input} from "@/components/ui/input";
 import {Button} from "@/components/ui/button";
-import {useNavigate} from "react-router-dom";
 
 type CreatePolicyDialogProps = {
     onClose: () => void;
@@ -11,19 +10,9 @@ type CreatePolicyDialogProps = {
 
 export function CreatePolicyDialog({onClose, onSubmit}: CreatePolicyDialogProps) {
     const [name, setName] = useState("");
-    const navigate = useNavigate();
 
     const handleSubmit = () => {
-        if (name.trim()) {
-            navigate("/leaves/policy/update", { state: { policyName: name } });
-            onSubmit(name);
-        }
-    };
-
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        if (e.key === "Enter") {
-            handleSubmit();
-        }
+        onSubmit(name);
     };
 
     return (
@@ -37,7 +26,6 @@ export function CreatePolicyDialog({onClose, onSubmit}: CreatePolicyDialogProps)
                         placeholder="Enter leave policy name"
                         value={name}
                         onChange={(e) => setName(e.target.value)}
-                        onKeyDown={handleKeyDown}
                     />
                 </div>
                 <DialogFooter>
