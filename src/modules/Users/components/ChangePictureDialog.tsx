@@ -49,7 +49,7 @@ export function ChangePictureDialog({initialImageUrl,  onChange}: ChangePictureD
             const payload: UserUpdateRequest = {
                 avatarAssetId: assetResponse[0].id,
             };
-            const updatedUser = await updateUser(payload);
+            const updatedUser = await updateUser(null, payload);
             setIsProcessing(false);
             onChange(updatedUser.avatar);
             toast({

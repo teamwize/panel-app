@@ -3,7 +3,7 @@ import axiosInstance from "./httpService";
 
 const baseURL = '/teams';
 
-async function getTeam(): Promise<TeamResponse[]> {
+async function getTeams(): Promise<TeamResponse[]> {
     const response = await axiosInstance.get(baseURL);
     return response.data;
 }
@@ -23,4 +23,4 @@ async function updateTeam(payload: TeamCreateRequest, id: number): Promise<TeamR
     return response.data;
 }
 
-export {getTeam, createTeam, deleteTeam, updateTeam}
+export {getTeams, createTeam, deleteTeam, updateTeam}

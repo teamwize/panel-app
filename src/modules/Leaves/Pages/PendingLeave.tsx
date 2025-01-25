@@ -1,9 +1,10 @@
 import {useNavigate} from 'react-router-dom';
-import {PageTitle} from '../../../core/components';
 import {Clock} from 'lucide-react';
 import {Button} from '@/components/ui/button';
 import React from "react";
 import {Card} from "@/components/ui/card";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 export default function PendingLeave() {
     const navigate = useNavigate();
@@ -14,8 +15,8 @@ export default function PendingLeave() {
 
     return (
         <>
-            <PageTitle title="Leave Request"/>
-            <main className="flex flex-1 flex-col gap-4 p-4">
+            <PageHeader title='Leave Request'></PageHeader>
+            <PageContent>
                 <Card
                     className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm justify-center items-center"
                     x-chunk="dashboard-02-chunk-1"
@@ -26,7 +27,7 @@ export default function PendingLeave() {
                         <Button className="mt-4" onClick={goHome}>Home</Button>
                     </div>
                 </Card>
-            </main>
+            </PageContent>
         </>
     )
 }

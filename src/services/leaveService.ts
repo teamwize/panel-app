@@ -1,13 +1,16 @@
 import axiosInstance from "@/services/httpService";
 import {
-    LeaveResponse,
-    LeaveUpdateRequest,
-    LeaveCreateRequest,
-    LeavePolicyResponse,
-    LeavePolicyCreateRequest,
-    UserLeaveBalanceResponse,
     GetLeavesFilter,
-    LeaveTypeResponse, LeaveTypeUpdateRequest, LeaveTypeCreateRequest
+    LeaveCreateRequest,
+    LeavePolicyCreateRequest,
+    LeavePolicyResponse,
+    LeavePolicyUpdateRequest,
+    LeaveResponse,
+    LeaveTypeCreateRequest,
+    LeaveTypeResponse,
+    LeaveTypeUpdateRequest,
+    LeaveUpdateRequest,
+    UserLeaveBalanceResponse
 } from "@/constants/types/leaveTypes.ts";
 import {PagedResponse} from "@/constants/types/commonTypes";
 
@@ -50,6 +53,11 @@ async function deleteLeavePolicy(id: number) {
     return response.data;
 }
 
+async function updateLeavePolicy(payload: LeavePolicyUpdateRequest, id: number): Promise<LeavePolicyResponse> {
+    const response = await axiosInstance.put(`${baseURL}/policies/${id}`, payload);
+    return response.data;
+}
+
 async function getLeavesTypes(): Promise<LeaveTypeResponse[]> {
     const response = await axiosInstance.get(`${baseURL}/types`);
     return response.data;
@@ -70,4 +78,17 @@ async function createLeavesType(payload: LeaveTypeCreateRequest): Promise<LeaveT
     return response.data;
 }
 
-export {getLeaves, updateLeavesStatus, createLeave, getLeavesPolicies, createLeavesPolicy, deleteLeavePolicy, getLeavesBalance, getLeavesTypes, deleteLeaveType, updateLeaveType, createLeavesType}
+export {
+    getLeaves,
+    updateLeavesStatus,
+    createLeave,
+    getLeavesPolicies,
+    createLeavesPolicy,
+    updateLeavePolicy,
+    deleteLeavePolicy,
+    getLeavesBalance,
+    getLeavesTypes,
+    deleteLeaveType,
+    updateLeaveType,
+    createLeavesType
+}

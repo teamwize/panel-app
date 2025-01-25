@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Card } from "@/components/ui/card";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Pagination } from "@/core/components";
-import { Pencil, Trash } from "lucide-react";
+import React, {useEffect, useState} from "react";
+import {Button} from "@/components/ui/button";
+import {Card} from "@/components/ui/card";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {PageHeader, Pagination} from "@/core/components";
+import {Pencil, Trash} from "lucide-react";
 import {LeaveTypeCreateRequest, LeaveTypeResponse} from "@/constants/types/leaveTypes";
-import { getErrorMessage } from "@/utils/errorHandler";
-import { toast } from "@/components/ui/use-toast";
+import {getErrorMessage} from "@/utils/errorHandler";
+import {toast} from "@/components/ui/use-toast";
 import {createLeavesType, deleteLeaveType, getLeavesTypes, updateLeaveType} from "@/services/leaveService";
-import {LeaveTypeCycleJson } from "@/constants/types/enums";
+import {LeaveTypeCycleJson} from "@/constants/types/enums";
 import {UpdateLeaveType} from "@/modules/Leaves/Components/UpdateLeaveType.tsx";
 import {DeleteDialog} from "@/modules/Leaves/Components/DeleteDialog.tsx";
 import {CreateLeaveType} from "@/modules/Leaves/Components/CreateLeaveType.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
 
 export default function LeaveType() {
     const [leaveTypeList, setLeaveTypeList] = useState<LeaveTypeResponse[]>([]);
@@ -126,12 +127,11 @@ export default function LeaveType() {
 
     return (
         <>
-            <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
-                <h1 className="text-lg font-semibold md:text-2xl">Leave Types</h1>
-                <Button onClick={() => setIsCreateDialogOpen(true)}>Create</Button>
-            </div>
+            <PageHeader title='Leave Types'>
+                <Button className='px-2 h-9' onClick={() => setIsCreateDialogOpen(true)}>Create</Button>
+            </PageHeader>
 
-            <main className="flex flex-1 flex-col p-4">
+            <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <Table>
                         <TableHeader>
@@ -194,7 +194,7 @@ export default function LeaveType() {
                         />
                     )}
                 </Card>
-            </main>
+            </PageContent>
         </>
     );
 }

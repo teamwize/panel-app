@@ -1,25 +1,19 @@
 import React, {useEffect, useState} from "react";
 import {useForm} from "react-hook-form";
 import {useNavigate} from 'react-router-dom';
-import { toast } from "@/components/ui/use-toast";
+import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {TeamResponse} from "@/constants/types/teamTypes";
-import {getTeam, createTeam} from "@/services/teamService";
+import {createTeam, getTeams} from "@/services/teamService";
 import {Button} from "@/components/ui/button";
-import {ChevronLeft} from "lucide-react";
 import {Alert, AlertDescription} from "@/components/ui/alert";
 import {Card} from "@/components/ui/card";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 
 const FormSchema = z.object({
     name: z.string().min(2, {
@@ -44,10 +38,8 @@ export default function CreateTeam() {
         },
     });
 
-    const goBack = () => navigate('/teams');
-
     useEffect(() => {
-        getTeam()
+        getTeams()
             .then((response: TeamResponse[]) => {
                 setTeamList(response);
             })
@@ -97,20 +89,15 @@ export default function CreateTeam() {
 
     return (
         <>
-            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <button onClick={goBack}>
-                    <ChevronLeft className="h-6 w-6"/>
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">Create Team</h1>
-            </div>
-
             {errorMessage && (
                 <Alert>
                     <AlertDescription>{errorMessage}</AlertDescription>
                 </Alert>
             )}
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
+            <PageHeader title={"Create Team"} backButton={"/teams"}></PageHeader>
+
+            <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <Form {...form}>
                         <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
@@ -133,7 +120,7 @@ export default function CreateTeam() {
                         </form>
                     </Form>
                 </Card>
-            </main>
+            </PageContent>
         </>
     );
 }
