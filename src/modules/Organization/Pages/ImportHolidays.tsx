@@ -1,4 +1,3 @@
-import {ChevronLeft} from "lucide-react";
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Card} from "@/components/ui/card";
@@ -10,6 +9,7 @@ import {FetchedPublicHoliday} from "@/constants/types/holidayTypes";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
+import {PageHeader} from "@/core/components";
 
 export default function ImportHolidays() {
     const [holidays, setHolidays] = useState<FetchedPublicHoliday[]>([]);
@@ -18,7 +18,6 @@ export default function ImportHolidays() {
     const [selectedHolidays, setSelectedHolidays] = useState<string[]>([]);
     const [selectAll, setSelectAll] = useState(false);
     const navigate = useNavigate();
-    const goBack = () => navigate('/settings/official-holidays');
 
     const fetchHolidaysList = async () => {
         if (!selectedCountry) {
@@ -80,12 +79,7 @@ export default function ImportHolidays() {
 
     return (
         <>
-            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <button onClick={goBack}>
-                    <ChevronLeft className="h-6 w-6" />
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">Import Holidays</h1>
-            </div>
+            <PageHeader backButton='/settings/official-holidays' title='Import Holidays'></PageHeader>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">

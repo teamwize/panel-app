@@ -1,6 +1,5 @@
 import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
-import {ChevronLeft} from "lucide-react";
 import {Card} from "@/components/ui/card";
 import {HolidayResponse} from "@/constants/types/holidayTypes";
 import {getHolidays, getHolidaysOverview} from "@/services/holidayService";
@@ -11,6 +10,7 @@ import {Button} from "@/components/ui/button";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {countries} from "@/constants/countries";
+import {PageHeader} from "@/core/components";
 
 export default function OfficialHolidays() {
     const { user } = useContext(UserContext);
@@ -20,8 +20,6 @@ export default function OfficialHolidays() {
     const [yearOptions, setYearOptions] = useState<{ label: string; value: string }[]>([]);
     const [countryOptions, setCountryOptions] = useState<{ label: string; value: string }[]>([]);
     const navigate = useNavigate();
-
-    const goBack = () => navigate('/settings');
 
     // Fetch holidays overview for dropdowns
     useEffect(() => {
@@ -78,21 +76,12 @@ export default function OfficialHolidays() {
         fetchHolidays();
     }, [selectedYear, selectedCountry]);
 
-    const importHolidays = () => {
-        navigate('/settings/official-holidays/import');
-    };
-
     return (
         <>
-            <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
-                <div className="flex flex-wrap items-center gap-2">
-                    <button onClick={goBack}>
-                        <ChevronLeft className="h-6 w-6" />
-                    </button>
-                    <h1 className="text-lg font-semibold md:text-2xl">Official Holidays</h1>
-                </div>
-                <Button onClick={importHolidays}>Import</Button>
-            </div>
+            <PageHeader backButton='/settings' title='Official Holidays'>
+                <Button className="px-2 h-9"
+                        onClick={() => navigate('/settings/official-holidays/import')}>Import</Button>
+            </PageHeader>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
