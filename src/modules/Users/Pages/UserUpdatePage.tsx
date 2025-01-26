@@ -28,7 +28,7 @@ const FormSchema = z.object({
     leavePolicyId: z.number().positive({message: "Leave Policy selection is required"}),
 });
 
-export default function UpdateEmployee() {
+export default function UserUpdatePage() {
     const {id} = useParams();
     const navigate = useNavigate();
     const [employee, setEmployee] = useState<UserResponse | null>(null);
@@ -101,7 +101,7 @@ export default function UpdateEmployee() {
             lastName: data.lastName,
             email: data.email,
             phone: data.phone || null,
-            // teamId: data.teamId,
+            teamId: data.teamId,
             leavePolicyId: data.leavePolicyId,
         };
 
