@@ -14,12 +14,6 @@ interface DayBoxProps {
     onClick: () => void;
 }
 
-const LEAVE_TYPE_EMOJIS: Record<string, string> = {
-    'Vacation': "🌴",
-    'PTO': "💼",
-    "Sick-Leave": "❤️",
-};
-
 const STATUS_BACKGROUND_COLORS: Partial<Record<LeaveStatus, string>> = {
     [LeaveStatus.ACCEPTED]: "bg-green-100 text-green-900",
     [LeaveStatus.PENDING]: "bg-blue-100 text-blue-900",
@@ -47,7 +41,7 @@ export const DayBox: React.FC<DayBoxProps> = ({ date, isHoliday, isWeekend, leav
                     <Avatar avatar={leave.user?.avatar} avatarSize={32}/>
                     <span className="text-sm">{leave.user.firstName}</span>
                 </div>
-                <span className="text-sm">{LEAVE_TYPE_EMOJIS[leave.type?.type.name]}</span>
+                <span className="text-sm">{leave.activatedType.symbol}</span>
             </div>
         );
     };

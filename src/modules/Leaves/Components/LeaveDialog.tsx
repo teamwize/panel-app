@@ -1,13 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import dayjs, { Dayjs } from 'dayjs';
-import {Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog";
-import { LeaveResponse } from '@/constants/types/leaveTypes.ts';
-import { LeaveStatus } from '@/constants/types/enums';
-import { Button } from '@/components/ui/button';
-import { CircleAlert } from 'lucide-react';
-import { formatDurationRange } from '@/utils/dateUtils';
-import { Avatar } from '@/core/components';
+import React, {useState} from 'react';
+import {useNavigate} from 'react-router-dom';
+import {
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from "@/components/ui/dialog";
+import {LeaveResponse} from '@/constants/types/leaveTypes.ts';
+import {LeaveStatus} from '@/constants/types/enums';
+import {Button} from '@/components/ui/button';
+import {formatDurationRange} from '@/utils/dateUtils';
+import {Avatar} from '@/core/components';
 
 type LeaveModalProps = {
     selectedRequest: LeaveResponse | null;
@@ -20,7 +25,7 @@ type LeaveModalProps = {
 export default function LeaveModal({selectedRequest, teamRequests, toggleModal, handleRequest, isProcessing,}: LeaveModalProps) {
     const [dayOverlap, setDayOverlap] = useState<LeaveResponse[]>([]);
     const navigate = useNavigate();
-    const { id, startAt, endAt, user, type, reason, duration } = selectedRequest;
+    const {id, startAt, endAt, user, activatedType, reason, duration} = selectedRequest;
     const durationText = formatDurationRange(duration, startAt, endAt);
 
     //Navigate to the balance page for the specific user.
@@ -50,7 +55,7 @@ export default function LeaveModal({selectedRequest, teamRequests, toggleModal, 
                         <LeaveDetails
                             durationText={durationText}
                             duration={duration}
-                            type={type.type.name}
+                            type={activatedType.name}
                             reason={reason}
                         />
                     </DialogDescription>

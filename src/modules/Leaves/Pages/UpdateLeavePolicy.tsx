@@ -9,7 +9,7 @@ import {Form} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Check, Pencil, PlusIcon} from "lucide-react";
 import {toast} from "@/components/ui/use-toast";
-import {getLeavesPolicies, getLeavesTypes, updateLeavePolicy,} from "@/services/leaveService";
+import {getLeavesPolicy, getLeavesTypes, updateLeavePolicy,} from "@/services/leaveService";
 import ActivateLeaveTypeDialog from "@/modules/Leaves/Components/ActivateLeaveTypeDialog";
 import {LeavePolicyResponse, LeavePolicyStatus, LeaveTypeResponse} from "@/constants/types/leaveTypes";
 import {getErrorMessage} from "@/utils/errorHandler";
@@ -18,13 +18,13 @@ import PageContent from "@/core/components/PageContent.tsx";
 import {PageHeader} from "@/core/components";
 
 export const LeaveTypeSchema = z.object({
-    typeId: z.number({ required_error: "Leave type is required." }),
-    amount: z.number().min(1, { message: "Amount must be at least 1." }),
+    typeId: z.number({required_error: "Leave type is required."}),
+    amount: z.number().min(1, {message: "Amount must be at least 1."}),
     requiresApproval: z.boolean(),
 });
 
 const FormSchema = z.object({
-    policyName: z.string().min(1, { message: "Policy name is required" }),
+    policyName: z.string().min(1, {message: "Policy name is required"}),
     activatedTypes: z.array(
         z.object({
             typeId: z.number(),
@@ -59,20 +59,16 @@ export default function UpdateLeavePolicy() {
     useEffect(() => {
         const fetchLeavePolicy = async () => {
             try {
-                const fetchLeavePolicies = await getLeavesPolicies();
-                const existingLeavePolicy = fetchLeavePolicies.find((policy) => policy.id === Number(id));
-
-                if (existingLeavePolicy) {
-                    setLeavePolicy(existingLeavePolicy);
-                    reset({
-                        policyName: existingLeavePolicy.name,
-                        activatedTypes: existingLeavePolicy.activatedTypes.map((type) => ({
-                            typeId: type.type.id,
-                            amount: type.amount,
-                            requiresApproval: type.requiresApproval,
-                        })),
-                    });
-                }
+                const existingLeavePolicy = await getLeavesPolicy(Number(id));
+                setLeavePolicy(existingLeavePolicy);
+                reset({
+                    policyName: existingLeavePolicy.name,
+                    activatedTypes: existingLeavePolicy.activatedTypes.map((type) => ({
+                        typeId: type.typeId,
+                        amount: type.amount,
+                        requiresApproval: type.requiresApproval,
+                    })),
+                });
             } catch (error) {
                 toast({
                     title: "Error",
