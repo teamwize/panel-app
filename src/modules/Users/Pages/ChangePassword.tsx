@@ -6,13 +6,13 @@ import {zodResolver} from "@hookform/resolvers/zod";
 import {updateUserPassword} from "@/services/userService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
-import {ChevronLeft} from 'lucide-react';
 import {Button} from "@/components/ui/button";
-import {Form, FormField, FormItem, FormLabel, FormControl, FormMessage} from "@/components/ui/form";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Card} from "@/components/ui/card";
 import {ChangePasswordRequest} from "@/constants/types/userTypes";
 import {UserContext} from "@/contexts/UserContext.tsx";
+import {PageHeader} from "@/core/components";
 
 const FormSchema = z.object({
     password: z.string().min(8, {
@@ -41,8 +41,6 @@ export default function ChangePassword() {
     });
 
     const {handleSubmit} = form;
-
-    const goBack = () => navigate('/settings');
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
         if (data.newPassword !== data.confirmNewPassword) {
@@ -87,12 +85,7 @@ export default function ChangePassword() {
 
     return (
         <>
-            <div className="flex flex-wrap text-lg font-medium px-4 pt-4 gap-2">
-                <button onClick={goBack}>
-                    <ChevronLeft className="h-6 w-6"/>
-                </button>
-                <h1 className="text-lg font-semibold md:text-2xl">Change Password</h1>
-            </div>
+            <PageHeader backButton='/settings' title='Change Password'></PageHeader>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4" x-chunk="dashboard-02-chunk-1">
