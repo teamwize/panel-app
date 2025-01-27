@@ -6,7 +6,7 @@ export type LeaveUpdateRequest = {
 }
 
 export type LeaveCreateRequest = {
-    activatedTypeId: number;
+    typeId: number;
     start: string;
     end: string;
     reason?: string | null
@@ -20,7 +20,8 @@ export type LeaveResponse = {
     endAt: string;
     status: LeaveStatus;
     duration: number;
-    type: LeavePolicyActivatedTypeResponse;
+    activatedType: LeavePolicyActivatedTypeResponse;
+    policy: LeavePolicyCompactResponse;
     reason: string;
     user: UserResponse
 }
@@ -64,8 +65,11 @@ export type LeavePolicyResponse = {
 }
 
 export type LeavePolicyActivatedTypeResponse = {
-    id: number;
-    type: LeaveTypeResponse;
+    policyId: number;
+    typeId: number;
+    name: string;
+    symbol: string;
+    cycle: LeaveTypeCycle;
     amount: number;
     requiresApproval: boolean;
     status: LeaveTypeStatus;

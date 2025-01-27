@@ -21,7 +21,7 @@ export default function LeaveRequestTable({request}: LeaveRequestTableProps) {
                 <LeaveStatusBadge status={request.status}/>
             </TableCell>
             <TableCell>
-                <Badge variant="outline">{request.type.type.name}</Badge>
+                <Badge variant="outline">{request.activatedType.name}</Badge>
             </TableCell>
         </TableRow>
     );
