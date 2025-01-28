@@ -1,15 +1,14 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {deleteUser, getUsers, updateUser} from "@/services/userService";
+import {deleteUser, getUsers} from "@/services/userService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Pagination} from "../../../core/components";
 import {Card} from "@/components/ui/card";
-import {UserResponse, UserUpdateRequest} from "@/constants/types/userTypes";
+import {UserResponse} from "@/constants/types/userTypes";
 import {PagedResponse} from "@/constants/types/commonTypes";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
-import UpdateEmployeeDialog from "@/modules/Users/components/UpdateEmployeeDialog.tsx";
 import {EmployeeTable} from "@/modules/Users/components/EmployeeTable.tsx";
 import DeleteEmployeeDialog from "@/modules/Users/components/DeleteEmployeeDialog.tsx";
 import FilterEmployeesForm from "@/modules/Users/components/FilterEmployeesForm.tsx";
@@ -21,7 +20,6 @@ export default function EmployeesPage() {
     const [filteredEmployees, setFilteredEmployees] = useState<UserResponse[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<UserResponse | null>(null);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
-    const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
     const [currentEmployee, setCurrentEmployee] = useState<UserResponse | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const navigate = useNavigate();
@@ -82,29 +80,10 @@ export default function EmployeesPage() {
         }
     };
 
-    const handleUpdateEmployee = async (id: number, updatedData: Partial<UserUpdateRequest>) => {
-        try {
-            setIsProcessing(true);
-            await updateUser(id, updatedData);
-            toast({
-                title: "Success",
-                description: "Employee updated successfully!",
-                variant: "default",
-            });
-            setIsUpdateDialogOpen(false);
-            setCurrentEmployee(null);
-            const updatedList = await getUsers(0, 30);
-            setEmployeesList(updatedList);
-        } catch (error) {
-            toast({
-                title: "Error",
-                description: getErrorMessage(error as Error),
-                variant: "destructive",
-            });
-        } finally {
-            setIsProcessing(false);
-        }
-    };
+    const handleEditEmployee = (employee: UserResponse) => {
+        setCurrentEmployee(employee);
+        navigate(`/employee/${employee.id}/update`);
+    }
 
     const paginatedEmployees = filteredEmployees.slice(
         (currentPage - 1) * recordsPerPage,
@@ -135,8 +114,7 @@ export default function EmployeesPage() {
                             <EmployeeTable
                                 employeesList={paginatedEmployees || []}
                                 setSelectedEmployee={setSelectedEmployee}
-                                setCurrentEmployee={setCurrentEmployee}
-                                setIsUpdateDialogOpen={setIsUpdateDialogOpen}
+                                handleEditEmployee={handleEditEmployee}
                             />
                         ) : (
                             <TableBody>
@@ -148,14 +126,6 @@ export default function EmployeesPage() {
                             </TableBody>
                         )}
                     </Table>
-
-                    {isUpdateDialogOpen && currentEmployee && (
-                        <UpdateEmployeeDialog
-                            employee={currentEmployee}
-                            handleUpdateEmployee={(updatedData) => handleUpdateEmployee(currentEmployee.id, updatedData)}
-                            handleClose={() => setIsUpdateDialogOpen(false)}
-                        />
-                    )}
 
                     {selectedEmployee && (
                         <DeleteEmployeeDialog
