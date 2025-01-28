@@ -80,6 +80,11 @@ export default function EmployeesPage() {
         }
     };
 
+    const handleEditEmployee = (employee: UserResponse) => {
+        setCurrentEmployee(employee);
+        navigate(`/employee/${employee.id}/update`);
+    }
+
     const paginatedEmployees = filteredEmployees.slice(
         (currentPage - 1) * recordsPerPage,
         currentPage * recordsPerPage
@@ -109,7 +114,7 @@ export default function EmployeesPage() {
                             <EmployeeTable
                                 employeesList={paginatedEmployees || []}
                                 setSelectedEmployee={setSelectedEmployee}
-                                setCurrentEmployee={setCurrentEmployee}
+                                handleEditEmployee={handleEditEmployee}
                             />
                         ) : (
                             <TableBody>

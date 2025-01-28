@@ -4,17 +4,14 @@ import {TableBody, TableCell, TableRow} from "@/components/ui/table.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Pencil, Trash} from "lucide-react";
 import {Avatar} from "@/core/components";
-import {useNavigate} from "react-router-dom";
 
 type EmployeeTableProps = {
     employeesList: UserResponse[];
     setSelectedEmployee: (employee: UserResponse | null) => void;
-    setCurrentEmployee: (employee: UserResponse) => void;
+    handleEditEmployee: (employee: UserResponse) => void;
 };
 
-export function EmployeeTable({employeesList, setSelectedEmployee, setCurrentEmployee}: EmployeeTableProps) {
-    const navigate = useNavigate();
-
+export function EmployeeTable({employeesList, setSelectedEmployee, handleEditEmployee}: EmployeeTableProps) {
     return (
         <TableBody>
             {employeesList.map((employee) => (
@@ -32,8 +29,7 @@ export function EmployeeTable({employeesList, setSelectedEmployee, setCurrentEmp
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                    setCurrentEmployee(employee);
-                                    navigate(`/employee/update/${employee.id}`);
+                                    handleEditEmployee(employee);
                                 }}
                             >
                                 <Pencil className="h-4" />

@@ -40,7 +40,7 @@ export default function Root() {
                 <Route path='/profile' element={<AuthenticatedRoute><Profile/></AuthenticatedRoute>}></Route>
                 <Route path='/employee/create'
                        element={<AuthenticatedRoute><CreateEmployee/></AuthenticatedRoute>}></Route>
-                <Route path='/employee/update/:id'
+                <Route path='/employee/:id/update'
                        element={<AuthenticatedRoute><UserUpdatePage/></AuthenticatedRoute>}></Route>
                 <Route path='/organization'
                        element={<AuthenticatedRoute><OrganizationPage/></AuthenticatedRoute>}></Route>

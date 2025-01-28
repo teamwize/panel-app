@@ -153,13 +153,7 @@ export default function UserUpdatePage() {
     );
 }
 
-type FieldProps = {
-    form: UseFormReturn;
-    teams?: TeamResponse[];
-    leavePolicies?: LeavePolicyResponse[];
-};
-
-function FirstnameField({form}: FieldProps) {
+function FirstnameField({form}: { form: UseFormReturn }) {
     return (
         <FormField
             control={form.control}
@@ -177,7 +171,7 @@ function FirstnameField({form}: FieldProps) {
     );
 }
 
-function LastNameField({form}: FieldProps) {
+function LastNameField({form}: { form: UseFormReturn }) {
     return (
         <FormField
             control={form.control}
@@ -195,7 +189,7 @@ function LastNameField({form}: FieldProps) {
     );
 }
 
-function EmailField({form}: FieldProps) {
+function EmailField({form}: { form: UseFormReturn }) {
     return (
         <FormField
             control={form.control}
@@ -213,7 +207,7 @@ function EmailField({form}: FieldProps) {
     );
 }
 
-function PhoneField({form}: FieldProps) {
+function PhoneField({form}: { form: UseFormReturn }) {
     return (
         <FormField
             control={form.control}
@@ -231,7 +225,7 @@ function PhoneField({form}: FieldProps) {
     );
 }
 
-function TeamField({form, teams}: FieldProps) {
+function TeamField({form, teams}: { form: UseFormReturn, teams?: TeamResponse[] }) {
     return (
         <FormField
             control={form.control}
@@ -263,7 +257,7 @@ function TeamField({form, teams}: FieldProps) {
     );
 }
 
-function LeavePolicyField({form, leavePolicies}: FieldProps) {
+function LeavePolicyField({form, leavePolicies}: { form: UseFormReturn, leavePolicies?: LeavePolicyResponse[] }) {
     return (
         <FormField
             control={form.control}
