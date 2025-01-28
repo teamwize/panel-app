@@ -5,7 +5,7 @@ import {z} from 'zod';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import {createLeave, getLeaves, getLeavesPolicies} from "@/services/leaveService.ts";
+import {createLeave, getLeaves, getLeavesPolicy} from "@/services/leaveService.ts";
 import {getErrorMessage} from '~/utils/errorHandler.ts';
 import DatePicker from '../Components/DatePicker';
 import {Alert, AlertDescription} from '@/components/ui/alert';
@@ -81,24 +81,22 @@ export default function CreateLeave() {
     // Fetch leave policies
     const fetchLeavePolicies = async () => {
         try {
-            const policies = await getLeavesPolicies();
             if (!user || !user.leavePolicy?.id) {
                 console.log("User or user.leavePolicy.id is not available");
                 return
             }
-
-            const userPolicy = policies.find(policy => policy.id === user?.leavePolicy?.id);
-
+            const userPolicy = await getLeavesPolicy(user?.leavePolicy?.id);
             if (userPolicy) {
                 const types = userPolicy.activatedTypes.map(activatedType => ({
-                    id: activatedType.type.id,
-                    name: activatedType.type.name,
+                    id: activatedType.typeId,
+                    name: activatedType.name,
                 }));
                 setLeaveTypes(types);
             } else {
                 console.log("No matching policy found for the user.");
             }
         } catch (error) {
+            console.log("Fetching Leave Policy", error);
             const errorMessage = getErrorMessage(error as Error | string);
             setErrorMessage(errorMessage);
             toast({
@@ -122,6 +120,7 @@ export default function CreateLeave() {
             ];
             setHolidays(holidaysDates);
         } catch (error) {
+            console.log("Fetching holidays", error);
             const errorMessage = getErrorMessage(error as Error | string);
             setErrorMessage(errorMessage);
             toast({
@@ -135,12 +134,14 @@ export default function CreateLeave() {
     // Fetch user's leaves
     const fetchUserLeaves = async () => {
         try {
-            const leavesList= await getLeaves({userId: user.id});
+            if (!user) return;
+            const leavesList = await getLeaves({userId: user.id});
             const filteredLeaves = leavesList.contents.filter(
                 leave => leave.status === "ACCEPTED" || leave.status === "PENDING"
             );
             setUserLeaves(filteredLeaves);
         } catch (error) {
+            console.log("Fetching user leaves", error);
             const errorMessage = getErrorMessage(error as Error | string);
             setErrorMessage(errorMessage);
             toast({
@@ -157,7 +158,7 @@ export default function CreateLeave() {
             const selectedType = Number(data.leaveCategory);
 
             const payload: LeaveCreateRequest = {
-                activatedTypeId: selectedType,
+                typeId: selectedType,
                 start: dayjs(data.startDate).toISOString(),
                 end: dayjs(data.endDate).toISOString(),
                 reason: data.reason,
