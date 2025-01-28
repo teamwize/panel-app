@@ -76,11 +76,15 @@ export default function OfficialHolidays() {
         fetchHolidays();
     }, [selectedYear, selectedCountry]);
 
+    const NavigateToImportHolidays = () => {
+        navigate('/settings/official-holidays/import')
+    }
+
     return (
         <>
             <PageHeader backButton='/settings' title='Official Holidays'>
                 <Button className="px-2 h-9"
-                        onClick={() => navigate('/settings/official-holidays/import')}>Import</Button>
+                        onClick={NavigateToImportHolidays}>Import</Button>
             </PageHeader>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
