@@ -161,7 +161,7 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
-                <Badge variant="outline">{request.type.type.name}</Badge>
+                <Badge variant="outline">{request.activatedType.name}</Badge>
             </TableCell>
             <TableCell>{durationText}</TableCell>
             <LeaveDuration request={request}/>

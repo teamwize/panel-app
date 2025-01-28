@@ -43,6 +43,11 @@ async function getLeavesPolicies(): Promise<LeavePolicyResponse[]> {
     return response.data;
 }
 
+async function getLeavesPolicy(id: number): Promise<LeavePolicyResponse> {
+    const response = await axiosInstance.get(`${baseURL}/policies/${id}`);
+    return response.data;
+}
+
 async function createLeavesPolicy(payload: LeavePolicyCreateRequest): Promise<LeavePolicyResponse> {
     const response = await axiosInstance.post(`${baseURL}/policies`, payload);
     return response.data;
@@ -90,5 +95,6 @@ export {
     getLeavesTypes,
     deleteLeaveType,
     updateLeaveType,
-    createLeavesType
+    createLeavesType,
+    getLeavesPolicy
 }

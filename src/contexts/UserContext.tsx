@@ -8,13 +8,13 @@ import useLocalStorage from "../hooks/useLocalStorage";
 import {toast} from "@/components/ui/use-toast";
 
 type UserContextType = {
-  user: UserResponse | null;
-  setUser: (user: UserResponse | null) => void;
-  organization: OrganizationResponse | null;
-  accessToken: string | null;
-  authenticate: (accessToken: string | null) => void;
-  signout: () => void;
-  isAuthenticated: () => boolean;
+    user: UserResponse | null;
+    setUser: (user: UserResponse | null) => void;
+    organization: OrganizationResponse | null;
+    accessToken: string | null;
+    authenticate: (accessToken: string | null) => void;
+    signout: () => void;
+    isAuthenticated: () => boolean;
 }
 
 export const UserContext = createContext<UserContextType>({
