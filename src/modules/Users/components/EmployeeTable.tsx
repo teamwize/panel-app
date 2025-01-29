@@ -8,16 +8,22 @@ import {Avatar} from "@/core/components";
 type EmployeeTableProps = {
     employeesList: UserResponse[];
     setSelectedEmployee: (employee: UserResponse | null) => void;
-    setCurrentEmployee: (employee: UserResponse) => void;
-    setIsUpdateDialogOpen: (open: boolean) => void;
+    handleEditEmployee: (employee: UserResponse) => void;
+    navigateToEmployeeDetails: (id: number) => void;
 };
 
-export function EmployeeTable({employeesList, setSelectedEmployee, setCurrentEmployee, setIsUpdateDialogOpen,}: EmployeeTableProps) {
+export function EmployeeTable({
+                                  employeesList,
+                                  setSelectedEmployee,
+                                  handleEditEmployee,
+                                  navigateToEmployeeDetails
+                              }: EmployeeTableProps) {
     return (
         <TableBody>
             {employeesList.map((employee) => (
                 <TableRow key={employee.id} className="items-center">
-                    <TableCell>
+                    <TableCell onClick={() => navigateToEmployeeDetails(employee.id)}
+                               className='flex items-center cursor-pointer text-blue-600 hover:text-blue-800'>
                         <Avatar avatar={employee?.avatar} avatarSize={32}/>
                         <span className="text-sm font-medium ml-2">{employee.firstName} {employee.lastName}</span>
                     </TableCell>
@@ -30,8 +36,7 @@ export function EmployeeTable({employeesList, setSelectedEmployee, setCurrentEmp
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                    setCurrentEmployee(employee);
-                                    setIsUpdateDialogOpen(true);
+                                    handleEditEmployee(employee);
                                 }}
                             >
                                 <Pencil className="h-4" />

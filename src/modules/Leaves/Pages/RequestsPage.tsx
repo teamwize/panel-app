@@ -146,7 +146,7 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
 
     // Navigate to user balance
     const viewBalance = (id: number) => {
-        navigate(`/employee/${id}/balance`);
+        navigate(`/employee/${id}/`, {state: {from: "/requests"}});
     };
 
     return (
