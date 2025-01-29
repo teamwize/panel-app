@@ -30,7 +30,7 @@ export default function LeaveModal({selectedRequest, teamRequests, toggleModal, 
 
     //Navigate to the balance page for the specific user.
     const viewBalance = (id: number) => {
-        navigate(`/employee/${id}/balance`);
+        navigate(`/employee/${id}/`);
     };
 
      //Identify overlapping leave requests in the same team.
