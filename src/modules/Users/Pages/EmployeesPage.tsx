@@ -82,7 +82,7 @@ export default function EmployeesPage() {
 
     const handleEditEmployee = (employee: UserResponse) => {
         setCurrentEmployee(employee);
-        navigate(`/employee/${employee.id}/update`);
+        navigate(`/employee/${employee.id}/update`, {state: {from: `/employees/`}});
     }
 
     const paginatedEmployees = filteredEmployees.slice(

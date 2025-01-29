@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import {useForm, UseFormReturn} from "react-hook-form";
-import {useNavigate, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {toast} from "@/components/ui/use-toast";
@@ -35,6 +35,7 @@ export default function UserUpdatePage() {
     const [teams, setTeams] = useState<TeamResponse[]>([]);
     const [leavePolicies, setLeavePolicies] = useState<LeavePolicyResponse[]>([]);
     const [isProcessing, setIsProcessing] = useState(false);
+    const location = useLocation();
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
@@ -129,9 +130,11 @@ export default function UserUpdatePage() {
         return <div>Loading...</div>;
     }
 
+    const backButtonPath = location.state?.from || "/employees";
+
     return (
         <>
-            <PageHeader title="Update Employee" backButton="/employees"/>
+            <PageHeader title="Update Employee" backButton={backButtonPath}/>
             <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                     <Form {...form}>

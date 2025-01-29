@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import {useLocation, useParams} from "react-router-dom";
+import {useLocation, useNavigate, useParams} from "react-router-dom";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "~/utils/errorHandler.ts";
 import {Card} from "@/components/ui/card";
@@ -11,6 +11,7 @@ import LeaveRequestList from "@/core/components/LeaveRequestList.tsx";
 import BalanceItem from "@/core/components/BalanceItem.tsx";
 import {PageHeader} from "@/core/components";
 import EmployeeDetailsCard from "@/modules/Users/components/EmployeeDetailsCard.tsx";
+import {Button} from "@/components/ui/button.tsx";
 
 export default function EmployeeDetailsPage() {
     const {id} = useParams();
@@ -19,6 +20,7 @@ export default function EmployeeDetailsPage() {
     const [leaveRequests, setLeaveRequests] = useState<LeaveResponse[]>([]);
     const [leavePolicy, setLeavePolicy] = useState<LeavePolicyResponse | null>(null);
     const location = useLocation();
+    const navigate = useNavigate();
 
     // Unified data fetching
     const fetchEmployeeData = async () => {
@@ -54,7 +56,10 @@ export default function EmployeeDetailsPage() {
 
     return (
         <>
-            <PageHeader backButton={backButtonPath} title="Employee Details"/>
+            <PageHeader backButton={backButtonPath} title="Employee Details">
+                <Button className="px-2 h-9"
+                        onClick={() => navigate(`/employee/${id}/update`, {state: {from: `/employee/${id}/`}})}>Update</Button>
+            </PageHeader>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-6">
