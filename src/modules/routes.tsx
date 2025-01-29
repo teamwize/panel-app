@@ -6,7 +6,7 @@ import {
     Balance,
     ChangePassword,
     CreateEmployee,
-    EmployeeInformation,
+    EmployeeDetailsPage,
     EmployeesPage,
     Home,
     Profile,
@@ -28,8 +28,8 @@ export default function Root() {
                 <Route path='/requests' element={<AuthenticatedRoute><LeaveRequests/></AuthenticatedRoute>}></Route>
                 <Route path='/balance' element={<AuthenticatedRoute><Balance/></AuthenticatedRoute>}></Route>
                 <Route path='/employees' element={<AuthenticatedRoute><EmployeesPage/></AuthenticatedRoute>}></Route>
-                <Route path='/employee/:id/balance'
-                       element={<AuthenticatedRoute><EmployeeInformation/></AuthenticatedRoute>}></Route>
+                <Route path='/employee/:id/'
+                       element={<AuthenticatedRoute><EmployeeDetailsPage/></AuthenticatedRoute>}></Route>
                 <Route path='/settings' element={<AuthenticatedRoute><Settings/></AuthenticatedRoute>}></Route>
                 <Route path='/settings/change-password'
                        element={<AuthenticatedRoute><ChangePassword/></AuthenticatedRoute>}></Route>
