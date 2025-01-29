@@ -9,14 +9,21 @@ type EmployeeTableProps = {
     employeesList: UserResponse[];
     setSelectedEmployee: (employee: UserResponse | null) => void;
     handleEditEmployee: (employee: UserResponse) => void;
+    navigateToEmployeeDetails: (id: number) => void;
 };
 
-export function EmployeeTable({employeesList, setSelectedEmployee, handleEditEmployee}: EmployeeTableProps) {
+export function EmployeeTable({
+                                  employeesList,
+                                  setSelectedEmployee,
+                                  handleEditEmployee,
+                                  navigateToEmployeeDetails
+                              }: EmployeeTableProps) {
     return (
         <TableBody>
             {employeesList.map((employee) => (
                 <TableRow key={employee.id} className="items-center">
-                    <TableCell className='flex items-center'>
+                    <TableCell onClick={() => navigateToEmployeeDetails(employee.id)}
+                               className='flex items-center cursor-pointer text-blue-600 hover:text-blue-800'>
                         <Avatar avatar={employee?.avatar} avatarSize={32}/>
                         <span className="text-sm font-medium ml-2">{employee.firstName} {employee.lastName}</span>
                     </TableCell>

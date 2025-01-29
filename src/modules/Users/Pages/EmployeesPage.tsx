@@ -90,6 +90,11 @@ export default function EmployeesPage() {
         currentPage * recordsPerPage
     );
 
+
+    const navigateToEmployeeDetails = (id: number) => {
+        navigate(`/employee/${id}/`, {state: {from: "/employees"}});
+    };
+
     return (
         <>
             <PageHeader title={`Employees (${employeesList?.contents?.length ?? 0})`}>
@@ -115,6 +120,7 @@ export default function EmployeesPage() {
                                 employeesList={paginatedEmployees || []}
                                 setSelectedEmployee={setSelectedEmployee}
                                 handleEditEmployee={handleEditEmployee}
+                                navigateToEmployeeDetails={navigateToEmployeeDetails}
                             />
                         ) : (
                             <TableBody>

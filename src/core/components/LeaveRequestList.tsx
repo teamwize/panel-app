@@ -15,11 +15,11 @@ export default function LeaveRequestList({leaveRequests}: LeaveRequestListProps)
 
     return (
         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
-            <CardHeader className="px-6 py-4">
-                <CardTitle className="text-xl">History ({leaveRequests.length})</CardTitle>
+            <CardHeader className="py-4 px-0">
+                <CardTitle className="text-xl">Leave Requests History ({leaveRequests.length})</CardTitle>
             </CardHeader>
 
-            <CardContent>
+            <CardContent className='p-0'>
                 <Table>
                     <TableHeader>
                         <TableRow>
