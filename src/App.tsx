@@ -1,4 +1,4 @@
-import Root from './modules/Routes.tsx';
+import Root from './Routes.tsx';
 import {useContext} from "react";
 import {UserContext, UserContextProvider} from './contexts/UserContext';
 import {ThemeContextProvider} from './contexts/ThemeContext';
