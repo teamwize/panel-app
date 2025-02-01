@@ -1,9 +1,9 @@
 import {createContext, ReactNode, useCallback, useEffect, useState} from "react";
-import {UserResponse} from "@/constants/types/userTypes";
-import {OrganizationResponse} from "@/constants/types/organizationTypes";
-import {getUser} from "@/services/userService";
-import {getOrganization} from "@/services/organizationService";
-import {getErrorMessage} from "~/utils/errorHandler.ts";
+import {UserResponse} from "@/core/types/user.ts";
+import {OrganizationResponse} from "@/core/types/organization.ts";
+import {getUser} from "@/core/services/userService";
+import {getOrganization} from "@/core/services/organizationService";
+import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import useLocalStorage from "../hooks/useLocalStorage";
 import {toast} from "@/components/ui/use-toast";
 
