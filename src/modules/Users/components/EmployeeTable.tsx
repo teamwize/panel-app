@@ -22,8 +22,7 @@ export function EmployeeTable({
         <TableBody>
             {employeesList.map((employee) => (
                 <TableRow key={employee.id} className="items-center">
-                    <TableCell onClick={() => navigateToEmployeeDetails(employee.id)}
-                               className='flex items-center cursor-pointer text-blue-600 hover:text-blue-800'>
+                    <TableCell>
                         <Avatar avatar={employee?.avatar} avatarSize={32}/>
                         <span className="text-sm font-medium ml-2">{employee.firstName} {employee.lastName}</span>
                     </TableCell>
