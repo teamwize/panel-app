@@ -51,14 +51,17 @@ export default function EmployeeDetailsPage() {
             fetchEmployeeData();
         }
     }, [id]);
-
     const backButtonPath = location.state?.from || "/requests";
+
+    const handleEmployeeUpdateClick = () => {
+        navigate(`/employee/${id}/update`, {state: {from: `/employee/${id}/`}})
+    };
 
     return (
         <>
             <PageHeader backButton={backButtonPath} title="Employee Details">
                 <Button className="px-2 h-9"
-                        onClick={() => navigate(`/employee/${id}/update`, {state: {from: `/employee/${id}/`}})}>Update</Button>
+                        onClick={handleEmployeeUpdateClick}>Update</Button>
             </PageHeader>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
