@@ -128,7 +128,10 @@ export default function LeaveTypeList() {
     return (
         <>
             <PageSection title='Leave Types' description={"Create and manage leave types"}>
-                <Button onClick={() => setIsCreateDialogOpen(true)} className='px-2 h-9'><Plus/></Button>
+                <Button onClick={() => setIsCreateDialogOpen(true)} className='px-2 h-9'>
+                    <Plus className="h-4 w-4 mr-1"/>
+                    Create
+                </Button>
             </PageSection>
             <Card className="flex flex-1 flex-col   p-4">
                 <Table>
