@@ -1,5 +1,5 @@
 import {Route} from "react-router-dom";
-import AuthenticatedRoute from "@/modules/authentication/components/AuthenticatedRoute.tsx";
+import AuthenticatedRoute from "@/modules/auth/components/AuthenticatedRoute.tsx";
 import HolidaysImportPage from "@/modules/organization/pages/HolidaysImportPage.tsx";
 import HolidaysPage from "@/modules/organization/pages/HolidaysPage.tsx";
 import OrganizationPage from "@/modules/organization/pages/OrganizationPage.tsx";

@@ -1,11 +1,11 @@
 import {Route} from "react-router-dom";
-import AuthenticatedRoute from "@/modules/authentication/components/AuthenticatedRoute.tsx";
-import UserPage from "@/modules/user/Pages/UserPage.tsx";
-import UserDetailsPage from "@/modules/user/Pages/UserDetailsPage.tsx";
-import ChangePasswordPage from "@/modules/user/Pages/ChangePasswordPage.tsx";
-import ProfilePage from "@/modules/user/Pages/ProfilePage.tsx";
-import UserCreatePage from "@/modules/user/Pages/UserCreatePage.tsx";
-import UserUpdatePage from "@/modules/user/Pages/UserUpdatePage.tsx";
+import AuthenticatedRoute from "@/modules/auth/components/AuthenticatedRoute.tsx";
+import UserPage from "@/modules/user/pages/UserPage.tsx";
+import UserDetailsPage from "@/modules/user/pages/UserDetailsPage.tsx";
+import ChangePasswordPage from "@/modules/user/pages/ChangePasswordPage.tsx";
+import ProfilePage from "@/modules/user/pages/ProfilePage.tsx";
+import UserCreatePage from "@/modules/user/pages/UserCreatePage.tsx";
+import UserUpdatePage from "@/modules/user/pages/UserUpdatePage.tsx";
 
 export default function UserRoutes() {
     return (

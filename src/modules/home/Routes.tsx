@@ -1,5 +1,5 @@
 import {Route} from "react-router-dom";
-import AuthenticatedRoute from "@/modules/authentication/components/AuthenticatedRoute.tsx";
+import AuthenticatedRoute from "@/modules/auth/components/AuthenticatedRoute.tsx";
 import HomePage from "@/modules/home/pages/HomePage.tsx";
 
 export default function HomeRoutes() {

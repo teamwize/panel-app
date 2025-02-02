@@ -8,7 +8,7 @@ import {UserResponse} from "@/core/types/user.ts";
 import {getLeaves, getLeavesBalance, getLeavesPolicy} from "@/core/services/leaveService.ts";
 import {getUser} from "@/core/services/userService.ts";
 import LeaveList from "@/modules/leave/components/LeaveList.tsx";
-import BalanceItem from "@/modules/home/components/BalanceItem.tsx";
+import UserLeaveBalanceItem from "@/modules/home/components/UserLeaveBalanceItem.tsx";
 import UserDetailsCard from "@/modules/user/components/UserDetailsCard.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import PageHeader from "@/components/layout/PageHeader";
@@ -54,11 +54,15 @@ export default function UserDetailsPage() {
 
     const backButtonPath = location.state?.from || "/requests";
 
+    const handleEmployeeUpdateClick = () => {
+        navigate(`/user/${id}/update`, {state: {from: `/user/${id}/`}})
+    };
+
     return (
         <>
             <PageHeader backButton={backButtonPath} title="Employee Details">
                 <Button className="px-2 h-9"
-                        onClick={() => navigate(`/users/${id}/update`, {state: {from: `/users/${id}/`}})}>Update</Button>
+                        onClick={handleEmployeeUpdateClick}>Update</Button>
             </PageHeader>
 
             <main className="flex flex-1 flex-col gap-4 p-4">
@@ -70,7 +74,7 @@ export default function UserDetailsPage() {
                         {balanceData.length > 0 ? (
                             <div className="grid grid-cols-3 text-center gap-2 mx-auto">
                                 {balanceData.map((item) => (
-                                    <BalanceItem key={item?.type?.id} item={item}/>
+                                    <UserLeaveBalanceItem key={item?.activatedType?.typeId} item={item}/>
                                 ))}
                             </div>
                         ) : (

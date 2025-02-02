@@ -12,7 +12,7 @@ type EmployeeTableProps = {
     onUserView: (id: number) => void;
 };
 
-export function EmployeeTable({
+export function UserList({
                                   employeesList,
                                   setSelectedEmployee,
                                   onUserUpdate,
@@ -24,7 +24,7 @@ export function EmployeeTable({
                 <TableRow key={employee.id} className="items-center">
                     <TableCell onClick={() => onUserView(employee.id)}
                                className='flex items-center cursor-pointer text-blue-600 hover:text-blue-800'>
-                        <Avatar avatar={employee?.avatar} avatarSize={32}/>
+                        <UserAvatar avatar={employee?.avatar} avatarSize={32}/>
                         <span className="text-sm font-medium ml-2">{employee.firstName} {employee.lastName}</span>
                     </TableCell>
                     <TableCell>{employee.email}</TableCell>

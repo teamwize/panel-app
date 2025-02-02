@@ -8,7 +8,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Input} from "@/components/ui/input.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {LeaveTypeSchema} from "@/modules/leave/pages/UpdateLeavePolicyPage.tsx";
+import {LeaveTypeSchema} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
 import {LeaveTypeResponse} from "@/core/types/leave.ts";
 
 type ActivateLeaveTypeDialogProps = {

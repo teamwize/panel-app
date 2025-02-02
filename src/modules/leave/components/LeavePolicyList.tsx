@@ -116,7 +116,8 @@ export default function LeavePolicyList() {
     return (
         <>
             <PageSection title='Leave Policies' description={"Create and manage leave policies"}>
-                <Button className='px-2 h-9'><Plus size={"16"}/> Create</Button>
+                <Button onClick={() => setIsCreateDialogOpen(true)} className='px-2 h-9'><Plus
+                    size={"16"}/> Create</Button>
             </PageSection>
             <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
                 <Table>

@@ -7,7 +7,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {Plus} from "lucide-react";
 import {Card} from "@/components/ui/card.tsx";
 import {LeaveResponse, UserLeaveBalanceResponse} from "@/core/types/leave.ts";
-import BalanceItem from "@/modules/home/components/BalanceItem.tsx";
+import UserLeaveBalanceItem from "@/modules/home/components/UserLeaveBalanceItem.tsx";
 import LeaveList from "@/modules/leave/components/LeaveList.tsx";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
@@ -60,7 +60,7 @@ export default function HomePage() {
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm"
                       x-chunk="dashboard-02-chunk-1">
                     <div className="grid grid-cols-3 text-center gap-2 p-4 mx-auto">
-                        {balanceData.map((item) => (<BalanceItem key={item.activatedType.typeId} item={item}/>))}
+                        {balanceData.map((item) => (<UserLeaveBalanceItem key={item.activatedType.typeId} item={item}/>))}
                     </div>
                     <LeaveList leaveRequests={leaveRequests}/>
                 </Card>

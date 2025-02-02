@@ -36,7 +36,7 @@ const FormSchema = z.object({
 
 export type FormInputs = z.infer<typeof FormSchema>;
 
-export default function UpdateLeavePolicyPage() {
+export default function LeavePolicyUpdatePage() {
     const {id} = useParams();
     const [leavePolicy, setLeavePolicy] = useState<LeavePolicyResponse | null>(null);
     const [leaveTypes, setLeaveTypes] = useState<LeaveTypeResponse[]>([]);
@@ -149,7 +149,7 @@ export default function UpdateLeavePolicyPage() {
                 variant: "default",
             });
 
-            navigate("/leave");
+            navigate("/leaves/policies");
         } catch (error) {
             toast({
                 title: "Error",
@@ -161,7 +161,7 @@ export default function UpdateLeavePolicyPage() {
 
     return (
         <>
-            <PageHeader title={`Update Leave Policy`} backButton="/leave">
+            <PageHeader title={`Update Leave Policy`} backButton="/leaves/policies">
                 <Button className="flex items-center space-x-1" onClick={() => setIsDialogOpen(true)}>
                     <PlusIcon className="h-5 w-5"/>
                 </Button>

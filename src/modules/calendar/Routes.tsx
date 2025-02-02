@@ -1,5 +1,5 @@
 import {Route} from "react-router-dom";
-import AuthenticatedRoute from "@/modules/authentication/components/AuthenticatedRoute.tsx";
+import AuthenticatedRoute from "@/modules/auth/components/AuthenticatedRoute.tsx";
 import CalendarPage from "@/modules/calendar/pages/CalendarPage.tsx";
 
 export default function CalendarRoutes() {

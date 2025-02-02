@@ -1,10 +1,10 @@
 import {Route} from "react-router-dom";
-import AuthenticatedRoute from "@/modules/authentication/components/AuthenticatedRoute.tsx";
+import AuthenticatedRoute from "@/modules/auth/components/AuthenticatedRoute.tsx";
 import LeaveCreatePage from "@/modules/leave/pages/LeaveCreatePage.tsx";
 import LeavePendingPage from "@/modules/leave/pages/LeavePendingPage.tsx";
 import LeavePage from "@/modules/leave/pages/LeavePage.tsx";
 import LeavePolicyPage from "@/modules/leave/pages/LeavePolicyPage.tsx";
-import UpdateLeavePolicyPage from "@/modules/leave/pages/UpdateLeavePolicyPage.tsx";
+import LeavePolicyUpdatePage from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
 
 export default function LeaveRoutes() {
     return (
@@ -16,7 +16,7 @@ export default function LeaveRoutes() {
             <Route path='/leaves/policies'
                    element={<AuthenticatedRoute><LeavePolicyPage/></AuthenticatedRoute>}></Route>
             <Route path='/leaves/policies/:id'
-                   element={<AuthenticatedRoute><UpdateLeavePolicyPage/></AuthenticatedRoute>}></Route>
+                   element={<AuthenticatedRoute><LeavePolicyUpdatePage/></AuthenticatedRoute>}></Route>
         </>
     );
 }

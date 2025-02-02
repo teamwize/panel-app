@@ -1,6 +1,6 @@
 import {Route} from "react-router-dom";
-import SignUpPage from "@/modules/authentication/pages/SignUpPage.tsx";
-import SignInPage from "@/modules/authentication/pages/SignInPage.tsx";
+import SignUpPage from "@/modules/auth/pages/SignUpPage.tsx";
+import SignInPage from "@/modules/auth/pages/SignInPage.tsx";
 
 export default function AuthentiactionRoutes() {
     return (

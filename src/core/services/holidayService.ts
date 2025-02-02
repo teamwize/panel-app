@@ -1,10 +1,10 @@
+import axiosInstance from "./httpService";
 import {
     FetchedPublicHoliday,
     HolidayOverviewResponse,
     HolidayResponse,
     HolidaysCreateRequest
-} from "@/constants/types/holidayTypes";
-import axiosInstance from "./httpService";
+} from "@/core/types/holiday.ts";
 
 const baseURL = '/holidays';
 

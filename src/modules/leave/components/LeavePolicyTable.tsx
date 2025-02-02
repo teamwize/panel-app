@@ -4,7 +4,7 @@ import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableR
 import {Button} from "@/components/ui/button.tsx";
 import {Pencil, Trash} from "lucide-react";
 import React from "react";
-import {FormInputs} from "@/modules/leave/pages/UpdateLeavePolicyPage.tsx";
+import {FormInputs} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
 
 type LeavePolicyTableProps = {
     leaveTypes: LeaveTypeResponse[];

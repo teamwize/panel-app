@@ -1,5 +1,5 @@
 import {Routes} from "react-router-dom";
-import AuthenticationRoutes from "@/modules/authentication/Routes.tsx";
+import AuthenticationRoutes from "@/modules/auth/Routes.tsx";
 import CalendarRoutes from "@/modules/calendar/Routes.tsx";
 import HomeRoutes from "@/modules/home/Routes.tsx";
 import LeaveRoutes from "@/modules/leave/Routes.tsx";

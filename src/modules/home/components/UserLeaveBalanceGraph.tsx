@@ -9,7 +9,7 @@ type BalanceGraphProps = {
     quantity: number;
 }
 
-export default function BalanceGraph({title, used, quantity}: BalanceGraphProps) {
+export default function UserLeaveBalanceGraph({title, used, quantity}: BalanceGraphProps) {
     const data: ChartData<'doughnut'> = {
         labels: ['Used', 'Remaining'],
         datasets: [{
