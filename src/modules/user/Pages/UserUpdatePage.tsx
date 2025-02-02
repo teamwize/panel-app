@@ -24,8 +24,8 @@ const FormSchema = z.object({
     lastName: z.string().min(1, {message: "Last Name is required"}),
     email: z.string().email({message: "Invalid email address"}),
     phone: z.string().optional(),
-    teamId: z.number().positive({message: "team selection is required"}),
-    leavePolicyId: z.number().positive({message: "leave Policy selection is required"}),
+    teamId: z.number().positive({message: "Team selection is required"}),
+    leavePolicyId: z.number().positive({message: "Leave Policy selection is required"}),
 });
 
 export default function UserUpdatePage() {

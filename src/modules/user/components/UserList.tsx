@@ -8,23 +8,23 @@ import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
 type EmployeeTableProps = {
     employeesList: UserResponse[];
     setSelectedEmployee: (employee: UserResponse | null) => void;
-    handleEditEmployee: (employee: UserResponse) => void;
-    navigateToEmployeeDetails: (id: number) => void;
+    onUserUpdate: (employee: UserResponse) => void;
+    onUserView: (id: number) => void;
 };
 
-export function UserList({
+export function EmployeeTable({
                                   employeesList,
                                   setSelectedEmployee,
-                                  handleEditEmployee,
-                                  navigateToEmployeeDetails
+                                  onUserUpdate,
+                                  onUserView
                               }: EmployeeTableProps) {
     return (
         <TableBody>
             {employeesList.map((employee) => (
                 <TableRow key={employee.id} className="items-center">
-                    <TableCell onClick={() => navigateToEmployeeDetails(employee.id)}
+                    <TableCell onClick={() => onUserView(employee.id)}
                                className='flex items-center cursor-pointer text-blue-600 hover:text-blue-800'>
-                        <UserAvatar avatar={employee?.avatar} avatarSize={32}/>
+                        <Avatar avatar={employee?.avatar} avatarSize={32}/>
                         <span className="text-sm font-medium ml-2">{employee.firstName} {employee.lastName}</span>
                     </TableCell>
                     <TableCell>{employee.email}</TableCell>
@@ -36,7 +36,7 @@ export function UserList({
                                 variant="outline"
                                 size="sm"
                                 onClick={() => {
-                                    handleEditEmployee(employee);
+                                    onUserUpdate(employee);
                                 }}
                             >
                                 <Pencil className="h-4" />

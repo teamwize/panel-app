@@ -20,7 +20,7 @@ export default function LeaveList({leaveRequests}: LeaveRequestListProps) {
     return (
         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
             <CardHeader className="py-4 px-0">
-                <CardTitle className="text-xl">My Leaves ({leaveRequests.length})</CardTitle>
+                <CardTitle className="text-xl">Leave Requests History ({leaveRequests.length})</CardTitle>
             </CardHeader>
 
             <CardContent className='p-0'>

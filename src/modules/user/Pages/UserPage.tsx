@@ -1,13 +1,21 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate} from "react-router-dom";
+import {deleteUser, getUsers} from "@/services/userService";
 import {deleteUser, getUsers} from "@/core/services/userService";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {Card} from "@/components/ui/card";
+import {UserResponse} from "@/constants/types/userTypes";
+import {PagedResponse} from "@/constants/types/commonTypes";
 import {UserResponse} from "@/core/types/user.ts";
 import {PagedResponse} from "@/core/types/common.ts";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {EmployeeTable} from "@/modules/Users/components/EmployeeTable.tsx";
+import DeleteEmployeeDialog from "@/modules/Users/components/DeleteEmployeeDialog.tsx";
+import FilterEmployeesForm from "@/modules/Users/components/FilterEmployeesForm.tsx";
+import PageContent from "@/core/components/PageContent.tsx";
+import {PageHeader} from "@/core/components";
 import {UserList} from "@/modules/user/components/UserList.tsx";
 import UserDeleteDialog from "@/modules/user/components/UserDeleteDialog.tsx";
 import UserFilterForm from "@/modules/user/components/UserFilterForm.tsx";
@@ -44,7 +52,7 @@ export default function UserPage() {
         fetchUsers();
     }, []);
 
-    const handleFilter = (query: string, teamId: string) => {
+    const handleUsersFilter = (query: string, teamId: string) => {
         const filtered = employeesList?.contents.filter((employee) => {
             const matchesQuery =
                 query === "" || employee.email.includes(query) || employee.firstName.includes(query) || employee.lastName?.includes(query);
@@ -55,7 +63,7 @@ export default function UserPage() {
         setFilteredEmployees(filtered || []);
     };
 
-    const handleDeleteEmployee = async (id: number) => {
+    const handleUserDelete = async (id: number) => {
         try {
             setIsProcessing(true);
             await deleteUser(String(id));
@@ -80,7 +88,7 @@ export default function UserPage() {
         }
     };
 
-    const handleEditEmployee = (employee: UserResponse) => {
+    const handleUserUpdateClick = (employee: UserResponse) => {
         setCurrentEmployee(employee);
         navigate(`/users/${employee.id}/update`, {state: {from: `/users/`}});
     }
@@ -91,7 +99,7 @@ export default function UserPage() {
     );
 
 
-    const navigateToEmployeeDetails = (id: number) => {
+    const handleUserViewClick = (id: number) => {
         navigate(`/users/${id}/`, {state: {from: "/users"}});
     };
 
@@ -100,6 +108,9 @@ export default function UserPage() {
             <PageHeader title={`Users (${employeesList?.contents?.length ?? 0})`}>
                 <Button className="px-2 h-9" onClick={() => navigate("/users/create")}>Create</Button>
             </PageHeader>
+
+            <FilterEmployeesForm onFilter={handleUsersFilter}/>
+
             <PageContent>
                 <UserFilterForm onFilter={handleFilter}/>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
@@ -117,8 +128,8 @@ export default function UserPage() {
                             <UserList
                                 employeesList={paginatedEmployees || []}
                                 setSelectedEmployee={setSelectedEmployee}
-                                handleEditEmployee={handleEditEmployee}
-                                navigateToEmployeeDetails={navigateToEmployeeDetails}
+                                onUserUpdate={handleUserUpdateClick}
+                                onUserView={handleUserViewClick}
                             />
                         ) : (
                             <TableBody>
@@ -134,7 +145,7 @@ export default function UserPage() {
                     {selectedEmployee && (
                         <UserDeleteDialog
                             employee={selectedEmployee}
-                            handleDeleteEmployee={handleDeleteEmployee}
+                            handleDeleteEmployee={handleUserDelete}
                             setSelectedEmployeeId={() => setSelectedEmployee(null)}
                             isProcessing={isProcessing}
                         />
