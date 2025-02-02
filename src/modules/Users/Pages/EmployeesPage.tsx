@@ -44,7 +44,7 @@ export default function EmployeesPage() {
         fetchUsers();
     }, []);
 
-    const handleFilter = (query: string, teamId: string) => {
+    const handleUsersFilter = (query: string, teamId: string) => {
         const filtered = employeesList?.contents.filter((employee) => {
             const matchesQuery =
                 query === "" || employee.email.includes(query) || employee.firstName.includes(query) || employee.lastName?.includes(query);
@@ -55,7 +55,7 @@ export default function EmployeesPage() {
         setFilteredEmployees(filtered || []);
     };
 
-    const handleDeleteEmployee = async (id: number) => {
+    const handleUserDelete = async (id: number) => {
         try {
             setIsProcessing(true);
             await deleteUser(String(id));
@@ -80,9 +80,9 @@ export default function EmployeesPage() {
         }
     };
 
-    const handleEditEmployee = (employee: UserResponse) => {
+    const handleUserUpdateClick = (employee: UserResponse) => {
         setCurrentEmployee(employee);
-        navigate(`/employee/${employee.id}/update`);
+        navigate(`/employee/${employee.id}/update`, {state: {from: `/employees/`}});
     }
 
     const paginatedEmployees = filteredEmployees.slice(
@@ -90,13 +90,18 @@ export default function EmployeesPage() {
         currentPage * recordsPerPage
     );
 
+
+    const handleUserViewClick = (id: number) => {
+        navigate(`/employee/${id}/`, {state: {from: "/employees"}});
+    };
+
     return (
         <>
             <PageHeader title={`Employees (${employeesList?.contents?.length ?? 0})`}>
                 <Button className="px-2 h-9" onClick={() => navigate("/employee/create")}>Create</Button>
             </PageHeader>
 
-            <FilterEmployeesForm onFilter={handleFilter}/>
+            <FilterEmployeesForm onFilter={handleUsersFilter}/>
 
             <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
@@ -114,7 +119,8 @@ export default function EmployeesPage() {
                             <EmployeeTable
                                 employeesList={paginatedEmployees || []}
                                 setSelectedEmployee={setSelectedEmployee}
-                                handleEditEmployee={handleEditEmployee}
+                                onUserUpdate={handleUserUpdateClick}
+                                onUserView={handleUserViewClick}
                             />
                         ) : (
                             <TableBody>
@@ -130,7 +136,7 @@ export default function EmployeesPage() {
                     {selectedEmployee && (
                         <DeleteEmployeeDialog
                             employee={selectedEmployee}
-                            handleDeleteEmployee={handleDeleteEmployee}
+                            handleDeleteEmployee={handleUserDelete}
                             setSelectedEmployeeId={() => setSelectedEmployee(null)}
                             isProcessing={isProcessing}
                         />
