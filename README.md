@@ -11,7 +11,8 @@ Teamwize is an open-source **vacation tracker web application** built for small 
 - **Leave Request Management** (Admin Only): Admins can review and manage employee time-off requests by approving or rejecting them.
 - **Calendar View**: Employees can view their own and other employees’ leave requests on a calendar, and submit new requests with the "Request Leave" button.
 - **Leave Balance View**: Employees can check their available leave balance (e.g., vacation, sick leave) and review their leave history.
-- **Settings Management**: Employees can update their password and view a list of official holidays set by the admin.
+- **SettingsPage Management**: Employees can update their password and view a list of official holidays set by the
+  admin.
 - **Official Holidays Management** (Admin Only): Admins can set official holidays based on the year and country.
 - **Activity Logs** (Admin Only): Admins can track all actions in the system, including leave requests, approvals, and leave balance changes.
 
@@ -28,12 +29,13 @@ Teamwize is an open-source **vacation tracker web application** built for small 
 - [Lucide Icons](https://lucide.dev/)
 
 ## Screenshots
-| ![Teamwize Screenshot](./screenshots/home.png)         | ![Teamwize Screenshot](./screenshots/balance.png) |
-|-------------------------------------------------------------|--------------------------------------------------|
-| ![Teamwize Screenshot](./screenshots/leave-request.png)           | ![Teamwize Screenshot](./screenshots/official-holidays.png) |
-| ![Teamwize Screenshot](./screenshots/requests.png) | ![Teamwize Screenshot](./screenshots/organization.png) |
-| ![Teamwize Screenshot](./screenshots/employees.png)      | ![Teamwize Screenshot](./screenshots/teams.png) |
-| ![Teamwize Screenshot](./screenshots/signup.png)                |                                                      |
+
+| ![Teamwize Screenshot](public/screenshots/home.png)          | ![Teamwize Screenshot](public/screenshots/balance.png)           |
+|--------------------------------------------------------------|------------------------------------------------------------------|
+| ![Teamwize Screenshot](public/screenshots/leave-request.png) | ![Teamwize Screenshot](public/screenshots/official-holidays.png) |
+| ![Teamwize Screenshot](public/screenshots/requests.png)      | ![Teamwize Screenshot](public/screenshots/organization.png)      |
+| ![Teamwize Screenshot](public/screenshots/employees.png)     | ![Teamwize Screenshot](public/screenshots/teams.png)             |
+| ![Teamwize Screenshot](public/screenshots/signup.png)        |                                                                  |
 
 ## Quick Start
 To run the project:
