@@ -191,31 +191,37 @@ type LeaveTypeRowItemProps = {
 };
 
 function LeaveTypeRowItem({leaveType, openDeleteDialog, openUpdateDialog, isProcessing}: LeaveTypeRowItemProps) {
+    const isArchived = leaveType.status === 'ARCHIVED';
+
     return (
-        <TableRow>
+        <TableRow className={isArchived ? 'opacity-50' : ''}>
             <TableCell>{leaveType.name}</TableCell>
             <TableCell>{LeaveTypeCycleJson[leaveType.cycle]}</TableCell>
             <TableCell className="text-right">
-                <div className="flex gap-4 justify-end">
-                    <Button
-                        className="px-1"
-                        variant="outline"
-                        size="sm"
-                        onClick={openUpdateDialog}
-                        disabled={isProcessing}
-                    >
-                        <Pencil className="h-4"/>
-                    </Button>
-                    <Button
-                        className="px-1"
-                        variant="outline"
-                        size="sm"
-                        onClick={openDeleteDialog}
-                        disabled={isProcessing}
-                    >
-                        <Trash className="h-4 text-[#ef4444]"/>
-                    </Button>
-                </div>
+                {!isArchived ? (
+                    <div className="flex gap-4 justify-end">
+                        <Button
+                            className="px-1"
+                            variant="outline"
+                            size="sm"
+                            onClick={openUpdateDialog}
+                            disabled={isProcessing}
+                        >
+                            <Pencil className="h-4"/>
+                        </Button>
+                        <Button
+                            className="px-1"
+                            variant="outline"
+                            size="sm"
+                            onClick={openDeleteDialog}
+                            disabled={isProcessing}
+                        >
+                            <Trash className="h-4 text-[#ef4444]"/>
+                        </Button>
+                    </div>
+                ) : (
+                    <span className="text-sm text-gray-500">Archived</span>
+                )}
             </TableCell>
         </TableRow>
     );
