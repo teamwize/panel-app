@@ -73,7 +73,7 @@ function LeaveListItem({request}: LeaveRequestTableProps) {
     return (
         <TableRow>
             <TableCell>{durationText}</TableCell>
-            <LeaveDuration request={request}/>
+            <LeaveDuration duration={request.duration}/>
             <TableCell>
                 <LeaveStatusBadge status={request.status}/>
             </TableCell>

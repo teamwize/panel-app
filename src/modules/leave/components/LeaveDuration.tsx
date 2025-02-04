@@ -1,18 +1,16 @@
 import React from "react";
 import {TableCell} from "@/components/ui/table.tsx";
-import {calculateDuration} from '@/core/utils/date.ts';
-import {LeaveResponse} from "@/core/types/leave.ts";
+import {clsx} from "clsx";
 
 type LeaveDurationProps = {
-    request: LeaveResponse;
+    duration: number | 0;
+    className?: string;
 }
 
-export default function LeaveDuration({request}: LeaveDurationProps) {
-    const duration = calculateDuration(request.startAt, request.endAt);
-
+export default function LeaveDuration({duration, className}: LeaveDurationProps) {
     return (
-        <>
-            <TableCell>{duration} {duration === 1 ? 'Day' : 'Days'}</TableCell>
-        </>
+        <TableCell className={clsx(className)}>
+            {duration ? `${duration} ${duration === 1 ? 'Day' : 'Days'}` : "0 Day"}
+        </TableCell>
     )
 }

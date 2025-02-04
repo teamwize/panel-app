@@ -5,7 +5,7 @@ import {z} from 'zod';
 import {useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
-import {createLeave, getLeaves, getLeavesPolicy} from "@/core/services/leaveService.ts";
+import {createLeave, createLeavesCheck, getLeaves, getLeavesPolicy} from "@/core/services/leaveService.ts";
 import {getErrorMessage} from '@/core/utils/errorHandler.ts';
 import DatePicker from '@/modules/leave/components/DatePicker';
 import {Alert, AlertDescription} from '@/components/ui/alert';
@@ -15,13 +15,7 @@ import {Card} from '@/components/ui/card';
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
-import {
-    calculateDuration,
-    calculateWeekends,
-    getNextWorkingDay,
-    isDateInHoliday,
-    isDateInWeekend
-} from "@/core/utils/date.ts";
+import {calculateWeekends, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/core/utils/date.ts";
 import {getHolidays} from "@/core/services/holidayService";
 import {HolidayResponse} from "@/core/types/holiday.ts";
 import {UserContext} from "@/contexts/UserContext";
@@ -30,6 +24,7 @@ import {capitalizeFirstLetter} from "@/core/utils/string.ts";
 import {LeaveCreateRequest, LeaveResponse} from "@/core/types/leave.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
+import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
 
 /*
 1.Fetch LeavePolicyType name and id from leaves/policies
@@ -60,6 +55,7 @@ export default function LeaveCreatePage() {
     const [leaveTypes, setLeaveTypes] = useState<{ id: number; name: string }[]>([]);
     const [weekendsDays, setWeekendsDays] = useState<string[]>([]);
     const [userLeaves, setUserLeaves] = useState<LeaveResponse[]>([]);
+    const [duration, setDuration] = useState<number>(0);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {user, organization} = useContext(UserContext);
     const navigate = useNavigate();
@@ -77,6 +73,7 @@ export default function LeaveCreatePage() {
     const {handleSubmit, watch, setValue} = form;
     const startDate = watch('startDate');
     const endDate = watch('endDate');
+    const leaveCategory = watch("leaveCategory");
 
     // Fetch leave policies
     const fetchLeavePolicies = async () => {
@@ -130,6 +127,32 @@ export default function LeaveCreatePage() {
             });
         }
     };
+
+    useEffect(() => {
+        if (!leaveCategory || !startDate) return;
+
+        const fetchDuration = async () => {
+            try {
+                const response = await createLeavesCheck({
+                    typeId: Number(leaveCategory),
+                    start: dayjs(startDate).toISOString(),
+                    end: dayjs(endDate).toISOString(),
+                });
+                setDuration(response.duration);
+            } catch (error) {
+                setDuration(null);
+                const errorMessage = getErrorMessage(error as Error | string);
+                setErrorMessage(errorMessage);
+                toast({
+                    title: "Error",
+                    description: "Failed to fetch duration.",
+                    variant: "destructive",
+                });
+            }
+        };
+
+        fetchDuration();
+    }, [startDate, endDate, leaveCategory]);
 
     // Fetch user's leaves
     const fetchUserLeaves = async () => {
@@ -200,8 +223,6 @@ export default function LeaveCreatePage() {
         }
     }, [startDate, endDate]);
 
-    const duration = calculateDuration(startDate, endDate)
-
     return (
         <>
             {errorMessage && (
@@ -234,9 +255,9 @@ export default function LeaveCreatePage() {
                                     weekendsDays={weekendsDays}
                                 />
                             </section>
-                            <p className="p-2 text-center text-sm border rounded-md font-semibold">
-                                Duration: {duration} {duration === 1 ? 'Day' : 'Days'}
-                            </p>
+                            <LeaveDuration
+                                className='text-sm border rounded-md font-semibold text-center py-[10px] block'
+                                duration={duration}/>
                             <ReasonField form={form}/>
                             <Button type="submit" className="w-fit">Submit</Button>
                         </form>
