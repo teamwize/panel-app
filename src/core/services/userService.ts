@@ -15,9 +15,9 @@ async function createUser(payload: UserCreateRequest): Promise<UserResponse> {
     return response.data;
 }
 
-async function getUsers(pageNumber: number, pageSize: number): Promise<PagedResponse<UserResponse>> {
+async function getUsers(pageNumber: number): Promise<PagedResponse<UserResponse>> {
     const response = await axiosInstance.get(baseURL, {
-        params: {pageNumber, pageSize}
+        params: {pageNumber}
     })
     return response.data;
 }

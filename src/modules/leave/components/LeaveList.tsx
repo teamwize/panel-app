@@ -1,26 +1,24 @@
 import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
-import React, {useState} from "react";
+import React from "react";
 import {LeaveResponse} from "@/core/types/leave.ts";
 import PaginationComponent from "@/components/Pagination.tsx";
 import {formatDurationRange} from "@/core/utils/date.ts";
 import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
 import LeaveStatusBadge from "@/modules/leave/components/LeaveStatusBadge.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
+import {PagedResponse} from "@/core/types/common.ts";
 
 type LeaveRequestListProps = {
-    leaveRequests: LeaveResponse[];
-
+    leaveRequests: PagedResponse<LeaveResponse>;
+    setCurrentPage: (page: number) => void;
 }
 
-export default function LeaveList({leaveRequests}: LeaveRequestListProps) {
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const recordsPerPage: number = 5;
-
+export default function LeaveList({leaveRequests, setCurrentPage}: LeaveRequestListProps) {
     return (
         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
             <CardHeader className="py-4 px-0">
-                <CardTitle className="text-xl">Leave Requests History ({leaveRequests.length})</CardTitle>
+                <CardTitle className="text-xl">Leave Requests History ({leaveRequests.totalContents})</CardTitle>
             </CardHeader>
 
             <CardContent className='p-0'>
@@ -34,12 +32,10 @@ export default function LeaveList({leaveRequests}: LeaveRequestListProps) {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {leaveRequests.length > 0 ? (
-                            leaveRequests
-                                .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
-                                .map((request) => (
-                                    <LeaveListItem request={request} key={request?.id}/>
-                                ))
+                        {leaveRequests.totalContents > 0 ? (
+                            leaveRequests.contents.map((request) => (
+                                <LeaveListItem request={request} key={request?.id}/>
+                            ))
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={4} className="text-center">There is no pending request</TableCell>
@@ -49,13 +45,12 @@ export default function LeaveList({leaveRequests}: LeaveRequestListProps) {
                 </Table>
             </CardContent>
 
-            {leaveRequests.length > recordsPerPage && (
+            {leaveRequests && leaveRequests.totalPages > 1 && (
                 <div className='mx-6'>
                     <PaginationComponent
-                        pageSize={recordsPerPage}
-                        pageNumber={currentPage}
+                        pageNumber={leaveRequests.pageNumber + 1}
                         setPageNumber={setCurrentPage}
-                        totalContents={leaveRequests.length}
+                        totalPages={leaveRequests.totalPages}
                     />
                 </div>
             )}

@@ -11,18 +11,15 @@ import {PageSection} from "@/components/layout/PageSection.tsx";
 import {createLeavesType, deleteLeaveType, getLeavesTypes, updateLeaveType} from "@/core/services/leaveService";
 import {LeaveTypeCreateRequest, LeaveTypeResponse} from "@/core/types/leave.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
-import PaginationComponent from "@/components/Pagination.tsx";
 import {LeaveTypeCycleJson} from "@/core/types/enum.ts";
 
 export default function LeaveTypeList() {
     const [leaveTypeList, setLeaveTypeList] = useState<LeaveTypeResponse[]>([]);
     const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveTypeResponse | null>(null);
-    const [currentPage, setCurrentPage] = useState<number>(1);
     const [isProcessing, setIsProcessing] = useState(false);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
-    const recordsPerPage = 5;
 
     // Fetch leave types
     useEffect(() => {
@@ -120,11 +117,6 @@ export default function LeaveTypeList() {
             });
     };
 
-    const paginatedLeaveTypeList = leaveTypeList.slice(
-        (currentPage - 1) * recordsPerPage,
-        currentPage * recordsPerPage
-    );
-
     return (
         <>
             <PageSection title='Leave Types' description={"Create and manage leave types"}>
@@ -143,7 +135,7 @@ export default function LeaveTypeList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedLeaveTypeList.map((leaveType) => (
+                        {leaveTypeList.map((leaveType) => (
                             <LeaveTypeRowItem
                                 key={leaveType.id}
                                 leaveType={leaveType}
@@ -183,15 +175,6 @@ export default function LeaveTypeList() {
                         leaveType={selectedLeaveType}
                         handleUpdate={handleUpdateLeaveType}
                         handleClose={() => setIsUpdateDialogOpen(false)}
-                    />
-                )}
-
-                {leaveTypeList.length > recordsPerPage && (
-                    <PaginationComponent
-                        pageSize={recordsPerPage}
-                        pageNumber={currentPage}
-                        setPageNumber={setCurrentPage}
-                        totalContents={leaveTypeList.length}
                     />
                 )}
             </Card>

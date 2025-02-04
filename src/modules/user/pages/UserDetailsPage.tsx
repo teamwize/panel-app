@@ -12,28 +12,30 @@ import UserLeaveBalanceItem from "@/modules/home/components/UserLeaveBalanceItem
 import UserDetailsCard from "@/modules/user/components/UserDetailsCard.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import PageHeader from "@/components/layout/PageHeader";
+import {PagedResponse} from "@/core/types/common.ts";
 
 export default function UserDetailsPage() {
     const {id} = useParams();
     const [employeeDetails, setEmployeeDetails] = useState<UserResponse | null>(null);
     const [balanceData, setBalanceData] = useState<UserLeaveBalanceResponse[]>([]);
-    const [leaveRequests, setLeaveRequests] = useState<LeaveResponse[]>([]);
+    const [leaveRequests, setLeaveRequests] = useState<PagedResponse<LeaveResponse> | null>(null);
     const [leavePolicy, setLeavePolicy] = useState<LeavePolicyResponse | null>(null);
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const location = useLocation();
     const navigate = useNavigate();
 
     // Unified data fetching
-    const fetchEmployeeData = async () => {
+    const fetchEmployeeData = async (page = 0) => {
         try {
             const [userDetails, userLeaves, userBalance, userPolicy] = await Promise.all([
                 getUser(id!),
-                getLeaves({userId: Number(id)}),
+                getLeaves({userId: Number(id)}, page),
                 getLeavesBalance(Number(id)),
                 getLeavesPolicy(Number(id)),
             ]);
 
             setEmployeeDetails(userDetails);
-            setLeaveRequests(userLeaves.contents || []);
+            setLeaveRequests(userLeaves);
             setBalanceData(userBalance);
             setLeavePolicy(userPolicy || null);
         } catch (error) {
@@ -50,7 +52,7 @@ export default function UserDetailsPage() {
         if (id) {
             fetchEmployeeData();
         }
-    }, [id]);
+    }, [id, currentPage]);
 
     const backButtonPath = location.state?.from || "/requests";
 
@@ -83,8 +85,8 @@ export default function UserDetailsPage() {
                     </section>
 
                     <section>
-                        {leaveRequests.length > 0 ? (
-                            <LeaveList leaveRequests={leaveRequests}/>
+                        {leaveRequests ? (
+                            <LeaveList leaveRequests={leaveRequests} setCurrentPage={setCurrentPage}/>
                         ) : (
                             <p className="text-center text-muted-foreground">No leave requests available.</p>
                         )}
