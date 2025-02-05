@@ -1,8 +1,8 @@
-import Root from './modules/routes';
+import Root from './Routes.tsx';
 import {useContext} from "react";
-import {Sidebar} from './core/components';
 import {UserContext, UserContextProvider} from './contexts/UserContext';
 import {ThemeContextProvider} from './contexts/ThemeContext';
+import Sidebar from './components/sidebar/Sidebar';
 
 export default function App() {
     return (
