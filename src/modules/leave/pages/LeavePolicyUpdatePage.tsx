@@ -227,7 +227,6 @@ export default function LeavePolicyUpdatePage() {
                     setIsDialogOpen(false);
                     setEditingIndex(null);
                 }}
-                leaveTypes={leaveTypes}
                 onSave={(newType) => saveActivatedTypes(newType, editingIndex)}
                 defaultValues={editingIndex !== null ? watch("activatedTypes")[editingIndex] : undefined}
                 schema={LeaveTypeSchema}
