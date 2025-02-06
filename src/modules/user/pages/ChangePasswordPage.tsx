@@ -17,7 +17,7 @@ import PageHeader from "@/components/layout/PageHeader.tsx";
 const FormSchema = z
     .object({
         password: z.string().min(8, {
-            message: "Current Password is incorrect, please try again",
+            message: "Current Password is must be over 8 characters, please try again",
         }),
         newPassword: z.string().min(8, {
             message: "Password must be at least 8 characters.",
