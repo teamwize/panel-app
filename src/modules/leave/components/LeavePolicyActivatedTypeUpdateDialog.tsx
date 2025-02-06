@@ -14,7 +14,6 @@ import {LeaveTypeResponse} from "@/core/types/leave.ts";
 type ActivateLeaveTypeDialogProps = {
     isOpen: boolean;
     onClose: () => void;
-    leaveTypes: LeaveTypeResponse[];
     onSave: (data: z.infer<typeof LeaveTypeSchema>) => void;
     schema: typeof LeaveTypeSchema;
     defaultValues?: z.infer<typeof LeaveTypeSchema>;
@@ -23,7 +22,6 @@ type ActivateLeaveTypeDialogProps = {
 export default function LeavePolicyActivatedTypeUpdateDialog({
                                                                  isOpen,
                                                                  onClose,
-                                                                 leaveTypes,
                                                                  onSave,
                                                                  schema,
                                                                  defaultValues,
@@ -62,7 +60,6 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
                 </DialogHeader>
                 <Form {...dialogForm}>
                     <form onSubmit={dialogForm.handleSubmit(handleSave)} className="space-y-4">
-                        <TypeIdField leaveTypes={leaveTypes} dialogForm={dialogForm} />
                         <AmountField dialogForm={dialogForm} />
                         <RequiresApprovalField dialogForm={dialogForm} />
                         <DialogFooter>
@@ -77,39 +74,8 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
 }
 
 type FieldProps = {
-    leaveTypes?: LeaveTypeResponse[];
     dialogForm: UseFormReturn<z.infer<typeof LeaveTypeSchema>>;
 };
-
-function TypeIdField({ leaveTypes, dialogForm }: FieldProps) {
-    return (
-        <FormField
-            control={dialogForm.control}
-            name="typeId"
-            render={({ field, fieldState }) => (
-                <FormItem>
-                    <FormLabel>Leave Type</FormLabel>
-                    <FormControl>
-                        <Select
-                            onValueChange={(value) => field.onChange(Number(value))}
-                            value={field.value?.toString() || ""}
-                        >
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select a leave type" />
-                            </SelectTrigger>
-                            <SelectContent>
-                                {leaveTypes?.map((type) => (
-                                    <SelectItem key={type.id} value={type.id.toString()}>{type.name}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
-                    </FormControl>
-                    <FormMessage>{fieldState.error?.message}</FormMessage>
-                </FormItem>
-            )}
-        />
-    );
-}
 
 function AmountField({ dialogForm }: FieldProps) {
     return (
