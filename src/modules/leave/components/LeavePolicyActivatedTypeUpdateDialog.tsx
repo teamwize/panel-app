@@ -60,8 +60,8 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
                 </DialogHeader>
                 <Form {...dialogForm}>
                     <form onSubmit={dialogForm.handleSubmit(handleSave)} className="space-y-4">
-                        <AmountField dialogForm={dialogForm}/>
-                        <RequiresApprovalField dialogForm={dialogForm}/>
+                        <AmountField dialogForm={dialogForm} />
+                        <RequiresApprovalField dialogForm={dialogForm} />
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
                             <Button type="submit">Save</Button>
@@ -78,7 +78,7 @@ type FieldProps = {
     form?: UseFormReturn<FormInputs>;
 };
 
-function AmountField({dialogForm}: FieldProps) {
+function AmountField({ dialogForm }: FieldProps) {
     return (
         <FormField
             control={dialogForm.control}
