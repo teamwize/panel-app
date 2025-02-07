@@ -14,17 +14,22 @@ import {ChangePasswordRequest} from "@/core/types/user.ts";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 
-const FormSchema = z.object({
-    password: z.string().min(8, {
-        message: "Current Password is incorrect, please try again",
-    }),
-    newPassword: z.string().min(8, {
-        message: "Password must be at least 8 characters.",
-    }),
-    confirmNewPassword: z.string().min(8, {
-        message: "Password must be at least 8 characters.",
-    }),
-});
+const FormSchema = z
+    .object({
+        password: z.string().min(8, {
+            message: "Current Password is must be over 8 characters, please try again",
+        }),
+        newPassword: z.string().min(8, {
+            message: "Password must be at least 8 characters.",
+        }),
+        confirmNewPassword: z.string().min(8, {
+            message: "Password must be at least 8 characters.",
+        })
+    })
+    .refine((data) => data.newPassword === data.confirmNewPassword, {
+        message: "Passwords do not match.",
+        path: ["confirmNewPassword"],
+    });
 
 export default function ChangePasswordPage() {
     const navigate = useNavigate();
@@ -43,19 +48,6 @@ export default function ChangePasswordPage() {
     const {handleSubmit} = form;
 
     const onSubmit = (data: z.infer<typeof FormSchema>) => {
-        if (data.newPassword !== data.confirmNewPassword) {
-            toast({
-                title: "Error",
-                description: "Passwords don't match. Try again",
-                variant: "destructive",
-            });
-            return;
-        }
-
-        changePasswordInfo(data);
-    };
-
-    const changePasswordInfo = (data: z.infer<typeof FormSchema>) => {
         const payload: ChangePasswordRequest = {
             currentPassword: data.password,
             newPassword: data.newPassword,
@@ -119,7 +111,16 @@ function PasswordInputField({form, name, label, placeholder}: PasswordInputField
                 <FormItem>
                     <FormLabel>{label}</FormLabel>
                     <FormControl>
-                        <Input placeholder={placeholder} type="password" {...field} />
+                        <Input
+                            placeholder={placeholder}
+                            type="password"
+                            {...field}
+                            onBlur={() => {
+                                if (name === "confirmNewPassword") {
+                                    form.trigger("confirmNewPassword")
+                                }
+                            }}
+                        />
                     </FormControl>
                     <FormMessage />
                 </FormItem>

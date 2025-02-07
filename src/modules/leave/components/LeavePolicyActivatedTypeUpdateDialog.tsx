@@ -4,10 +4,12 @@ import {useForm, UseFormReturn} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {LeaveTypeSchema} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
+import {LeaveTypeResponse} from "@/core/types/leave.ts";
 
 type ActivateLeaveTypeDialogProps = {
     isOpen: boolean;
