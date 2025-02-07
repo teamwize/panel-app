@@ -1,5 +1,6 @@
 import {UserResponse} from "@/core/types/user.ts";
 import {LeaveStatus, LeaveTypeCycle, LeaveTypeStatus} from "@/core/types/enum.ts";
+import {HolidayResponse} from "@/core/types/holiday.ts";
 
 export type LeaveUpdateRequest = {
     status: LeaveStatus;
@@ -101,4 +102,19 @@ export type LeavePolicyUpdateRequest = {
     name: string;
     status: LeavePolicyStatus;
     activatedTypes: LeavePolicyActivatedTypeRequest[];
+}
+
+export type LeaveCheckRequest = {
+    typeId: number;
+    start: string;
+    end: string;
+}
+
+export type LeaveCheckResponse = {
+    isAllowed: boolean;
+    message: string;
+    duration: number;
+    yourConflicts: LeaveResponse[];
+    teamConflicts: LeaveResponse[];
+    holidays: HolidayResponse[];
 }

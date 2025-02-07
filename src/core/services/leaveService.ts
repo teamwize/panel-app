@@ -1,6 +1,8 @@
 import axiosInstance from "@/core/services/httpService.ts";
 import {
     GetLeavesFilter,
+    LeaveCheckRequest,
+    LeaveCheckResponse,
     LeaveCreateRequest,
     LeavePolicyCreateRequest,
     LeavePolicyResponse,
@@ -80,6 +82,11 @@ async function updateLeaveType(payload: LeaveTypeUpdateRequest, id: number): Pro
 
 async function createLeavesType(payload: LeaveTypeCreateRequest): Promise<LeaveTypeResponse> {
     const response = await axiosInstance.post(`${baseURL}/types`, payload);
+    return response.data;
+}
+
+export async function createLeavesCheck(payload: LeaveCheckRequest): Promise<LeaveCheckResponse> {
+    const response = await axiosInstance.post(`${baseURL}/check`, payload);
     return response.data;
 }
 

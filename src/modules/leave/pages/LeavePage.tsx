@@ -125,7 +125,6 @@ export default function LeavePage() {
 
                 {selectedRequest && (
                     <LeaveStatusUpdateDialog
-                        teamRequests={teamRequests}
                         selectedRequest={selectedRequest}
                         toggleModal={() => setSelectedRequest(null)}
                         handleRequest={handleRequest}
@@ -166,7 +165,7 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
                 <Badge variant="outline">{request.activatedType.name}</Badge>
             </TableCell>
             <TableCell>{durationText}</TableCell>
-            <LeaveDuration request={request}/>
+            <LeaveDuration duration={request.duration}/>
             <TableCell>
                 <Button className={"px-1"} variant="outline" size="sm">
                     <Eye onClick={handleRowClick} className="h-4 text-[#3b87f7]"/>

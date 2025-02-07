@@ -1,4 +1,3 @@
-import React, {useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {
     Dialog,
@@ -16,7 +15,6 @@ import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
 
 type LeaveDialogProps = {
     selectedRequest: LeaveResponse | null;
-    teamRequests: LeaveResponse[];
     toggleModal: () => void;
     handleRequest: (status: LeaveStatus, id: number) => void;
     isProcessing: boolean;
@@ -24,12 +22,10 @@ type LeaveDialogProps = {
 
 export default function LeaveStatusUpdateDialog({
                                                     selectedRequest,
-                                                    teamRequests,
                                                     toggleModal,
                                                     handleRequest,
                                                     isProcessing,
                                                 }: LeaveDialogProps) {
-    const [dayOverlap, setDayOverlap] = useState<LeaveResponse[]>([]);
     const navigate = useNavigate();
     const {id, startAt, endAt, user, activatedType, reason, duration} = selectedRequest;
     const durationText = formatDurationRange(duration, startAt, endAt);
@@ -38,18 +34,6 @@ export default function LeaveStatusUpdateDialog({
     const viewBalance = (id: number) => {
         navigate(`/users/${id}/`);
     };
-
-     //Identify overlapping leave requests in the same team.
-    // useEffect(() => {
-    //     const startLeave: Dayjs = dayjs(startAt);
-    //     const endLeave: Dayjs = dayjs(endAt);
-    //     const overlap: LeaveResponse[] = teamRequests.filter((r) =>
-    //         r.id !== id &&
-    //         dayjs(r.startAt).isBefore(endLeave, 'day') &&
-    //         dayjs(r.endAt).isAfter(startLeave, 'day')
-    //     );
-    //     setDayOverlap(overlap);
-    // }, [id, teamRequests, startAt, endAt]);
 
     return (
         <Dialog open={true} onOpenChange={toggleModal}>
@@ -66,9 +50,6 @@ export default function LeaveStatusUpdateDialog({
                         />
                     </DialogDescription>
                 </DialogHeader>
-
-                {/*{dayOverlap.length > 0 && <OverlappingRequests overlap={dayOverlap} />}*/}
-
                 <FooterButtons
                     handleRequest={handleRequest}
                     id={id}
@@ -126,37 +107,6 @@ function LeaveDetails({ durationText, duration, type, reason }: LeaveDetailsProp
                     <span>{reason}</span>
                 </div>
             )}
-        </div>
-    );
-}
-
-// type OverlappingRequestsProps = {
-//     overlap: LeaveResponse[];
-// };
-//
-// function OverlappingRequests({ overlap }: OverlappingRequestsProps) {
-//     return (
-//         <div className="rounded-lg mb-4">
-//             <div className="text-red-500 text-xs mb-1 flex items-center">
-//                 <CircleAlert className="w-4 h-4 mr-1" />
-//                 {overlap.length} Other teammates also on leave
-//             </div>
-//             {overlap.map((r) => (<RequestItem response={r} key={r.id} />))}
-//         </div>
-//     );
-// }
-
-type RequestItemProps = {
-    response: LeaveResponse;
-};
-
-function RequestItem({ response }: RequestItemProps) {
-    const durationText = formatDurationRange(response.duration, response.startAt, response.endAt);
-
-    return (
-        <div className="mb-2">
-            <h2 className="font-medium">{response.user.firstName} {response.user.lastName}</h2>
-            <p>{durationText}</p>
         </div>
     );
 }
