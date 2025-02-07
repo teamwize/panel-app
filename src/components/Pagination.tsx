@@ -9,18 +9,15 @@ import {
 } from "@/components/ui/pagination.tsx"
 
 type PaginationProps = {
-    totalContents: number;
     pageNumber: number;
+    totalPages: number;
     setPageNumber: (page: number) => void;
-    pageSize: number;
 }
 
-export default function PaginationComponent({totalContents, pageNumber, setPageNumber, pageSize}: PaginationProps) {
-    const totalPages: number = Math.ceil(totalContents / pageSize);
-
+export default function PaginationComponent({pageNumber, totalPages, setPageNumber}: PaginationProps) {
     const handlePageChange = (page: number) => {
         if (page >= 1 && page <= totalPages) {
-            setPageNumber(page);
+            setPageNumber(page - 1);
         }
     }
 

@@ -12,7 +12,6 @@ import {PageSection} from "@/components/layout/PageSection.tsx";
 import {LeavePolicyResponse, LeavePolicyStatus} from "@/core/types/leave.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {createLeavesPolicy, deleteLeavePolicy, getLeavesPolicies} from "@/core/services/leaveService.ts";
-import PaginationComponent from "@/components/Pagination.tsx";
 
 export default function LeavePolicyList() {
     const [leavePolicyList, setLeavePolicyList] = useState<LeavePolicyResponse[]>([]);
@@ -20,8 +19,6 @@ export default function LeavePolicyList() {
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const recordsPerPage = 10;
     const navigate = useNavigate();
 
     // Fetch leave policies
@@ -108,11 +105,6 @@ export default function LeavePolicyList() {
         }
     };
 
-    const paginatedLeavePolicyList = leavePolicyList.slice(
-        (currentPage - 1) * recordsPerPage,
-        currentPage * recordsPerPage
-    );
-
     return (
         <>
             <PageSection title='Leave Policies' description={"Create and manage leave policies"}>
@@ -130,7 +122,7 @@ export default function LeavePolicyList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {paginatedLeavePolicyList.map((leavePolicy) => (
+                        {leavePolicyList.map((leavePolicy) => (
                             <LeavePolicyRowItem
                                 key={leavePolicy.id}
                                 leavePolicy={leavePolicy}
@@ -156,15 +148,6 @@ export default function LeavePolicyList() {
                         label={selectedLeavePolicy.name}
                         handleReject={() => setIsDeleteDialogOpen(false)}
                         handleAccept={handleRemoveLeavePolicy}
-                    />
-                )}
-
-                {leavePolicyList.length > recordsPerPage && (
-                    <PaginationComponent
-                        pageSize={recordsPerPage}
-                        pageNumber={currentPage}
-                        setPageNumber={setCurrentPage}
-                        totalContents={leavePolicyList.length}
                     />
                 )}
             </Card>

@@ -18,9 +18,9 @@ import {PagedResponse} from "@/core/types/common.ts";
 
 const baseURL = '/leaves';
 
-async function getLeaves(filter: GetLeavesFilter = {}, page: number = 1, limit: number = 20): Promise<PagedResponse<LeaveResponse>> {
+async function getLeaves(filter: GetLeavesFilter = {}, pageNumber: number = 0): Promise<PagedResponse<LeaveResponse>> {
     const response = await axiosInstance.get(baseURL, {
-        params: {...filter, page, limit}
+        params: {...filter, pageNumber}
     });
     return response.data;
 }

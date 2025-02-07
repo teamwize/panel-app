@@ -12,41 +12,49 @@ import LeaveList from "@/modules/leave/components/LeaveList.tsx";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
+import {PagedResponse} from "@/core/types/common.ts";
 
 // 1.Fetch leave types, amount and used amount
 // 2.Fetch user leave history by detail
 
 export default function HomePage() {
     const [balanceData, setBalanceData] = useState<UserLeaveBalanceResponse[]>([]);
-    const [leaveRequests, setLeaveRequests] = useState<LeaveResponse[]>([]);
+    const [leaveRequests, setLeaveRequests] = useState<PagedResponse<LeaveResponse> | null>(null);
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const navigate = useNavigate();
     const {user} = useContext(UserContext);
 
-    // Fetch leave Requests and User Balance
-    useEffect(() => {
-        if(!user) return;
-        const fetchLeaveRequests = async () => {
-            try {
-                const userLeaves = await getLeaves({userId: user?.id});
-                const userBalance = await getLeavesBalance();
-                setLeaveRequests(userLeaves.contents);
-                setBalanceData(userBalance);
-            } catch (error) {
-                handleError("Failed to fetch leave requests", error);
-            }
-        };
-        fetchLeaveRequests();
-    }, [user]);
+    const fetchLeaveRequests = async (page = 0) => {
+        try {
+            const userLeaves = await getLeaves({userId: user?.id}, page);
+            setLeaveRequests(userLeaves);
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: getErrorMessage(error as Error),
+                variant: "destructive",
+            });
+        }
+    }
 
-    const handleError = (title: string, error: unknown) => {
-        const errorMessage = getErrorMessage(error as Error | string);
-        console.error(`${title}:`, error);
-        toast({
-            title,
-            description: errorMessage,
-            variant: "destructive",
-        });
-    };
+    const fetchLeaveBalance = async () => {
+        try {
+            const userBalance = await getLeavesBalance();
+            setBalanceData(userBalance);
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: getErrorMessage(error as Error),
+                variant: "destructive",
+            });
+        }
+    }
+
+    useEffect(() => {
+        if (!user) return;
+        fetchLeaveRequests(currentPage);
+        fetchLeaveBalance();
+    }, [user, currentPage]);
 
     return (
         <>
@@ -62,7 +70,9 @@ export default function HomePage() {
                     <div className="grid grid-cols-3 text-center gap-2 p-4 mx-auto">
                         {balanceData.map((item) => (<UserLeaveBalanceItem key={item.activatedType.typeId} item={item}/>))}
                     </div>
-                    <LeaveList leaveRequests={leaveRequests}/>
+                    {leaveRequests && (
+                        <LeaveList leaveRequests={leaveRequests} setCurrentPage={setCurrentPage}/>
+                    )}
                 </Card>
             </PageContent>
         </>

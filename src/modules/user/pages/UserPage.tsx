@@ -21,28 +21,27 @@ export default function UserPage() {
     const [selectedEmployee, setSelectedEmployee] = useState<UserResponse | null>(null);
     const [selectedEmployeeId, setSelectedEmployeeId] = useState<number | null>(null);
     const [currentEmployee, setCurrentEmployee] = useState<UserResponse | null>(null);
+    const [currentPage, setCurrentPage] = useState<number>(0);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const navigate = useNavigate();
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const recordsPerPage: number = 10;
+
+    const fetchUsers = async (page = 0) => {
+        try {
+            const data = await getUsers(page);
+            setEmployeesList(data);
+            setFilteredEmployees(data.contents);
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: getErrorMessage(error as Error),
+                variant: "destructive",
+            });
+        }
+    };
 
     useEffect(() => {
-        const fetchUsers = async () => {
-            try {
-                const data = await getUsers(0, 30);
-                setEmployeesList(data);
-                setFilteredEmployees(data.contents);
-            } catch (error) {
-                toast({
-                    title: "Error",
-                    description: getErrorMessage(error as Error),
-                    variant: "destructive",
-                });
-            }
-        };
-
-        fetchUsers();
-    }, []);
+        fetchUsers(currentPage);
+    }, [currentPage]);
 
     const handleUsersFilter = (query: string, teamId: string) => {
         const filtered = employeesList?.contents.filter((employee) => {
@@ -59,10 +58,11 @@ export default function UserPage() {
         try {
             setIsProcessing(true);
             await deleteUser(String(id));
-            setEmployeesList((prevState) => ({
-                ...prevState,
-                contents: prevState?.contents.filter((employee) => employee.id !== id),
-            }));
+            fetchUsers();
+            // setEmployeesList((prevState) => ({
+            //     ...prevState,
+            //     contents: prevState?.contents.filter((employee) => employee.id !== id),
+            // }));
             toast({
                 title: "Success",
                 description: "Employee removed successfully!",
@@ -85,19 +85,13 @@ export default function UserPage() {
         navigate(`/users/${employee.id}/update`, {state: {from: `/users/`}});
     }
 
-    const paginatedEmployees = filteredEmployees.slice(
-        (currentPage - 1) * recordsPerPage,
-        currentPage * recordsPerPage
-    );
-
-
     const handleUserViewClick = (id: number) => {
         navigate(`/users/${id}/`, {state: {from: "/users"}});
     };
 
     return (
         <>
-            <PageHeader title={`Users (${employeesList?.contents?.length ?? 0})`}>
+            <PageHeader title={`Users (${employeesList?.totalContents ?? 0})`}>
                 <Button className="px-2 h-9" onClick={() => navigate("/users/create")}>Create</Button>
             </PageHeader>
 
@@ -116,7 +110,7 @@ export default function UserPage() {
 
                         {filteredEmployees.length > 0 ? (
                             <UserList
-                                employeesList={paginatedEmployees || []}
+                                employeesList={filteredEmployees}
                                 setSelectedEmployee={setSelectedEmployee}
                                 onUserUpdate={handleUserUpdateClick}
                                 onUserView={handleUserViewClick}
@@ -141,12 +135,11 @@ export default function UserPage() {
                         />
                     )}
 
-                    {filteredEmployees.length > recordsPerPage && (
+                    {employeesList && employeesList.totalPages > 1 && (
                         <PaginationComponent
-                            pageSize={recordsPerPage}
-                            pageNumber={currentPage}
                             setPageNumber={setCurrentPage}
-                            totalContents={filteredEmployees.length}
+                            pageNumber={employeesList.pageNumber + 1}
+                            totalPages={employeesList.totalPages}
                         />
                     )}
                 </Card>

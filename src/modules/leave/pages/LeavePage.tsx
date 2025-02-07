@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -18,20 +18,22 @@ import PageHeader from "@/components/layout/PageHeader.tsx";
 import PaginationComponent from "@/components/Pagination.tsx";
 import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
 import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
+import {UserContext} from "@/contexts/UserContext.tsx";
 
 export default function LeavePage() {
-    const [requestsList, setRequestsList] = useState<LeaveResponse[]>([]);
+    const [requestsList, setRequestsList] = useState<PagedResponse<LeaveResponse> | null>(null);
+    const [pendingRequests, setPendingRequests] = useState<LeaveResponse[]>([]);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [selectedRequest, setSelectedRequest] = useState<LeaveResponse | null>(null);
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const [teamRequests, setTeamRequests] = useState<LeaveResponse[]>([]);
-    const recordsPerPage: number = 5;
+    const [currentPage, setCurrentPage] = useState<number>(0);
+    const {user} = useContext(UserContext);
 
     // Fetch pending leave requests
     useEffect(() => {
-        getLeaves()
+        getLeaves({userId: user?.id}, currentPage)
             .then((response: PagedResponse<LeaveResponse>) => {
-                setRequestsList(response.contents.filter((item: LeaveResponse) => item.status === "PENDING"));
+                setRequestsList(response)
+                setPendingRequests(response.contents.filter((item: LeaveResponse) => item.status === "PENDING"));
             })
             .catch((error) => {
                 console.error("Error:", error);
@@ -42,16 +44,7 @@ export default function LeavePage() {
                     variant: "destructive"
                 });
             });
-    }, []);
-
-    // Filter team-specific requests when a request is selected
-    useEffect(() => {
-        if (selectedRequest) {
-            const teamName: string = selectedRequest.user.team.name;
-            const filteredRequest = requestsList.filter(r => r.user.team.name === teamName);
-            setTeamRequests(filteredRequest)
-        }
-    }, [selectedRequest, requestsList])
+    }, [currentPage]);
 
     //View request details
     const handleRowClick = (request: LeaveResponse) => {
@@ -65,7 +58,7 @@ export default function LeavePage() {
         updateLeavesStatus({status}, id)
             .then(() => {
                 setIsProcessing(false);
-                setRequestsList(prevState => prevState.filter(r => r.id !== id));
+                setPendingRequests(prevState => prevState.filter(r => r.id !== id));
                 setSelectedRequest(null);
                 toast({
                     title: "Success",
@@ -101,9 +94,7 @@ export default function LeavePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {requestsList
-                                .slice((currentPage - 1) * recordsPerPage, currentPage * recordsPerPage)
-                                .map((request) => (
+                            {requestsList?.contents.map((request) => (
                                     <RequestRowItem
                                         key={request.id}
                                         request={request}
@@ -113,12 +104,11 @@ export default function LeavePage() {
                         </TableBody>
                     </Table>
 
-                    {requestsList.length > recordsPerPage && (
+                    {requestsList && requestsList.totalPages > 1 && (
                         <PaginationComponent
-                            pageSize={recordsPerPage}
-                            pageNumber={currentPage}
+                            pageNumber={requestsList.pageNumber + 1}
                             setPageNumber={setCurrentPage}
-                            totalContents={requestsList.length}
+                            totalPages={requestsList.totalPages}
                         />
                     )}
                 </Card>

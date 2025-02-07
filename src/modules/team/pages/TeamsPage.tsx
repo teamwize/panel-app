@@ -12,7 +12,6 @@ import TeamUpdateDialog from "@/modules/team/components/TeamUpdateDialog.tsx";
 import {DeleteModal} from "@/modules/team/components/TeamDeleteDialog.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
-import PaginationComponent from "@/components/Pagination.tsx";
 
 export default function TeamsPage() {
     const [teamList, setTeamList] = useState<TeamResponse[]>([]);
@@ -20,8 +19,6 @@ export default function TeamsPage() {
     const [selectedTeamForDelete, setSelectedTeamForDelete] = useState<TeamResponse | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const navigate = useNavigate();
-    const [currentPage, setCurrentPage] = useState<number>(1);
-    const recordsPerPage: number = 10;
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -79,11 +76,6 @@ export default function TeamsPage() {
         }
     };
 
-    const paginatedTeamList = teamList.slice(
-        (currentPage - 1) * recordsPerPage,
-        currentPage * recordsPerPage
-    );
-
     return (
         <>
             <PageHeader title='TeamsPage'>
@@ -99,7 +91,7 @@ export default function TeamsPage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {paginatedTeamList.map((t) => (
+                            {teamList.map((t) => (
                                 <TeamRowItem
                                     key={t.id}
                                     t={t}
@@ -126,15 +118,6 @@ export default function TeamsPage() {
                             team={selectedTeamForDelete}
                             handleReject={() => setSelectedTeamForDelete(null)}
                             handleAccept={handleRemoveTeam}
-                        />
-                    )}
-
-                    {teamList.length > recordsPerPage && (
-                        <PaginationComponent
-                            pageSize={recordsPerPage}
-                            pageNumber={currentPage}
-                            setPageNumber={setCurrentPage}
-                            totalContents={teamList.length}
                         />
                     )}
                 </Card>
