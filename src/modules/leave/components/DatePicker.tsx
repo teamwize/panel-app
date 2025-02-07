@@ -50,6 +50,7 @@ export default function DatePicker({title, handleDateSelected, selectedDate, day
             </PopoverTrigger>
             <PopoverContent className="w-auto p-0" align="start">
                 <Calendar
+                    defaultMonth={selectedDate}
                     modifiers={{notWorkingDay: isDateDisabled}}
                     modifiersStyles={{notWorkingDay: {color: '#ef4444'}}}
                     modifiersClassNames={{today: 'my-today', selected: 'my-selected'}}
