@@ -26,7 +26,6 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
                                                                  defaultValues,
                                                                  form,
                                                              }: ActivateLeaveTypeDialogProps) {
-
     const dialogForm = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
