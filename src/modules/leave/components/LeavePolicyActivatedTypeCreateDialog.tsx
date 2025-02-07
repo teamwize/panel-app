@@ -4,28 +4,33 @@ import {useForm, UseFormReturn} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select.tsx";
 import {Input} from "@/components/ui/input.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {FormInputs, LeaveTypeSchema} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
+import {LeaveTypeResponse} from "@/core/types/leave.ts";
 
 type ActivateLeaveTypeDialogProps = {
     isOpen: boolean;
     onClose: () => void;
+    leaveTypes: LeaveTypeResponse[];
     onSave: (data: z.infer<typeof LeaveTypeSchema>) => void;
     schema: typeof LeaveTypeSchema;
     defaultValues?: z.infer<typeof LeaveTypeSchema>;
     form: UseFormReturn<FormInputs>;
 };
 
-export default function LeavePolicyActivatedTypeUpdateDialog({
+export default function LeavePolicyActivatedTypeCreateDialog({
                                                                  isOpen,
                                                                  onClose,
+                                                                 leaveTypes,
                                                                  onSave,
                                                                  schema,
                                                                  defaultValues,
                                                                  form,
                                                              }: ActivateLeaveTypeDialogProps) {
+
     const dialogForm = useForm<z.infer<typeof schema>>({
         resolver: zodResolver(schema),
         defaultValues: {
@@ -60,8 +65,9 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
                 </DialogHeader>
                 <Form {...dialogForm}>
                     <form onSubmit={dialogForm.handleSubmit(handleSave)} className="space-y-4">
-                        <AmountField dialogForm={dialogForm} />
-                        <RequiresApprovalField dialogForm={dialogForm} />
+                        <TypeIdField form={form} leaveTypes={leaveTypes} dialogForm={dialogForm}/>
+                        <AmountField dialogForm={dialogForm}/>
+                        <RequiresApprovalField dialogForm={dialogForm}/>
                         <DialogFooter>
                             <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
                             <Button type="submit">Save</Button>
@@ -74,11 +80,51 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
 }
 
 type FieldProps = {
+    leaveTypes?: LeaveTypeResponse[];
     dialogForm: UseFormReturn<z.infer<typeof LeaveTypeSchema>>;
     form?: UseFormReturn<FormInputs>;
 };
 
-function AmountField({ dialogForm }: FieldProps) {
+function TypeIdField({leaveTypes, dialogForm, form}: FieldProps) {
+    const activatedTypes = form.watch("activatedTypes");
+
+    return (
+        <FormField
+            control={dialogForm.control}
+            name="typeId"
+            render={({field, fieldState}) => (
+                <FormItem>
+                    <FormLabel>Leave Type</FormLabel>
+                    <FormControl>
+                        <Select
+                            onValueChange={(value) => field.onChange(Number(value))}
+                            value={field.value?.toString() || ""}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a leave type"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {leaveTypes
+                                    ?.filter(type =>
+                                        type.status !== 'ARCHIVED' &&
+                                        !activatedTypes.some(
+                                            activatedType => activatedType.typeId === type.id
+                                        )
+                                    )
+                                    .map((type) => (
+                                        <SelectItem key={type.id} value={type.id.toString()}>{type.name}</SelectItem>
+                                    ))}
+                            </SelectContent>
+                        </Select>
+                    </FormControl>
+                    <FormMessage>{fieldState.error?.message}</FormMessage>
+                </FormItem>
+            )}
+        />
+    );
+}
+
+function AmountField({dialogForm}: FieldProps) {
     return (
         <FormField
             control={dialogForm.control}

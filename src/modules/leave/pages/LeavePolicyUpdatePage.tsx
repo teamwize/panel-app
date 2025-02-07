@@ -16,6 +16,7 @@ import {getErrorMessage} from "@/core/utils/errorHandler";
 import {LeavePolicyTable} from "@/modules/leave/components/LeavePolicyTable.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
+import LeavePolicyActivatedTypeCreateDialog from "@/modules/leave/components/LeavePolicyActivatedTypeCreateDialog.tsx";
 
 export const LeaveTypeSchema = z.object({
     typeId: z.number({required_error: "leave type is required."}),
@@ -40,7 +41,8 @@ export default function LeavePolicyUpdatePage() {
     const {id} = useParams();
     const [leavePolicy, setLeavePolicy] = useState<LeavePolicyResponse | null>(null);
     const [leaveTypes, setLeaveTypes] = useState<LeaveTypeResponse[]>([]);
-    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
+    const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
     const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [isEditingName, setIsEditingName] = useState(false);
     const navigate = useNavigate();
@@ -120,7 +122,7 @@ export default function LeavePolicyUpdatePage() {
             types.push(newType);
         }
         setValue("activatedTypes", types);
-        setIsDialogOpen(false);
+        setIsUpdateDialogOpen(false);
         setEditingIndex(null);
     };
 
@@ -162,7 +164,7 @@ export default function LeavePolicyUpdatePage() {
     return (
         <>
             <PageHeader title={`Update Leave Policy`} backButton="/leaves/policies">
-                <Button className="flex items-center space-x-1" onClick={() => setIsDialogOpen(true)}>
+                <Button className="flex items-center space-x-1" onClick={() => setIsCreateDialogOpen(true)}>
                     <PlusIcon className="h-5 w-5"/>
                 </Button>
             </PageHeader>
@@ -208,7 +210,7 @@ export default function LeavePolicyUpdatePage() {
                                 form={form}
                                 leaveTypes={leaveTypes}
                                 setEditingIndex={setEditingIndex}
-                                setIsDialogOpen={setIsDialogOpen}
+                                setIsDialogOpen={setIsUpdateDialogOpen}
                             />
 
                             {watch("activatedTypes").length > 0 && (
@@ -221,15 +223,29 @@ export default function LeavePolicyUpdatePage() {
                 </Card>
             </PageContent>
 
-            <LeavePolicyActivatedTypeUpdateDialog
-                isOpen={isDialogOpen}
+            <LeavePolicyActivatedTypeCreateDialog
+                isOpen={isCreateDialogOpen}
                 onClose={() => {
-                    setIsDialogOpen(false);
+                    setIsCreateDialogOpen(false);
                     setEditingIndex(null);
                 }}
                 onSave={(newType) => saveActivatedTypes(newType, editingIndex)}
                 defaultValues={editingIndex !== null ? watch("activatedTypes")[editingIndex] : undefined}
                 schema={LeaveTypeSchema}
+                form={form}
+                leaveTypes={leaveTypes}
+            />
+
+            <LeavePolicyActivatedTypeUpdateDialog
+                isOpen={isUpdateDialogOpen}
+                onClose={() => {
+                    setIsUpdateDialogOpen(false);
+                    setEditingIndex(null);
+                }}
+                onSave={(newType) => saveActivatedTypes(newType, editingIndex)}
+                defaultValues={editingIndex !== null ? watch("activatedTypes")[editingIndex] : undefined}
+                schema={LeaveTypeSchema}
+                form={form}
             />
         </>
     );
