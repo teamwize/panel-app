@@ -22,7 +22,6 @@ import {UserContext} from "@/contexts/UserContext.tsx";
 
 export default function LeavePage() {
     const [requestsList, setRequestsList] = useState<PagedResponse<LeaveResponse> | null>(null);
-    const [pendingRequests, setPendingRequests] = useState<LeaveResponse[]>([]);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [selectedRequest, setSelectedRequest] = useState<LeaveResponse | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(0);
@@ -30,56 +29,61 @@ export default function LeavePage() {
 
     // Fetch pending leave requests
     useEffect(() => {
-        getLeaves({userId: user?.id}, currentPage)
-            .then((response: PagedResponse<LeaveResponse>) => {
-                setRequestsList(response)
-                setPendingRequests(response.contents.filter((item: LeaveResponse) => item.status === "PENDING"));
-            })
-            .catch((error) => {
-                console.error("Error:", error);
-                const errorMessage = getErrorMessage(error);
+        const fetchLeaves = async () => {
+            try {
+                const response = await getLeaves({status: LeaveStatus.PENDING}, currentPage);
+                setRequestsList(response);
+            } catch (error) {
+                const errorMessage = getErrorMessage(error as Error);
                 toast({
                     title: "Error",
                     description: errorMessage,
                     variant: "destructive"
                 });
-            });
+            }
+        };
+
+        fetchLeaves();
     }, [currentPage]);
 
-    //View request details
+    // View request details
     const handleRowClick = (request: LeaveResponse) => {
         setSelectedRequest(request);
     };
 
     // Handle leave request approval or rejection
-    const handleRequest = (status: LeaveStatus, id: number) => {
-        setIsProcessing(true);
+    const handleRequest = async (status: LeaveStatus, id: number) => {
+        try {
+            setIsProcessing(true);
+            await updateLeavesStatus({status}, id);
 
-        updateLeavesStatus({status}, id)
-            .then(() => {
-                setIsProcessing(false);
-                setPendingRequests(prevState => prevState.filter(r => r.id !== id));
-                setSelectedRequest(null);
-                toast({
-                    title: "Success",
-                    description: "Request accepted.",
-                    variant: "default",
-                });
-            })
-            .catch((error: string | null) => {
-                setIsProcessing(false);
-                const errorMessage = getErrorMessage(error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
-            })
+            setRequestsList(prevState => ({
+                ...prevState,
+                contents: prevState?.contents.filter(r => r.id !== id) || []
+            }));
+
+            toast({
+                title: "Success",
+                description: `Request ${status.toLowerCase()} successfully.`,
+                variant: "default",
+            });
+
+        } catch (error) {
+            const errorMessage = getErrorMessage(error as Error);
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive",
+            });
+        } finally {
+            setIsProcessing(false);
+            setSelectedRequest(null);
+        }
     };
 
     return (
         <>
-            <PageHeader title='Leaves'></PageHeader>
+            <PageHeader title='Pending Leave Requests'/>
             <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
                     <Table>
@@ -94,13 +98,21 @@ export default function LeavePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {pendingRequests?.map((request) => (
+                            {requestsList?.contents.length ? (
+                                requestsList.contents.map((request) => (
                                     <RequestRowItem
                                         key={request.id}
                                         request={request}
                                         handleRowClick={() => handleRowClick(request)}
                                     />
-                                ))}
+                                ))
+                            ) : (
+                                <TableRow>
+                                    <TableCell colSpan={6} className="text-center text-gray-500">
+                                        No pending requests found.
+                                    </TableCell>
+                                </TableRow>
+                            )}
                         </TableBody>
                     </Table>
 
@@ -126,6 +138,7 @@ export default function LeavePage() {
     );
 }
 
+// Request Row Component
 type RequestItemProps = {
     request: LeaveResponse;
     handleRowClick: () => void;
@@ -135,8 +148,7 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
     const navigate = useNavigate();
     const durationText = formatDurationRange(request.duration, request.startAt, request.endAt);
 
-    // Navigate to user balance
-    const viewBalance = (id: number) => {
+    const viewEmployeeProfile = (id: number) => {
         navigate(`/users/${id}/`, {state: {from: "/requests"}});
     };
 
@@ -144,11 +156,12 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
         <TableRow>
             <TableCell className="flex items-center gap-2 font-medium">
                 <UserAvatar avatar={request.user?.avatar} avatarSize={32}/>
-                <h2 className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
-                    onClick={() => viewBalance(request.user.id)}
+                <span
+                    className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
+                    onClick={() => viewEmployeeProfile(request.user.id)}
                 >
                     {request.user.firstName} {request.user.lastName}
-                </h2>
+                </span>
             </TableCell>
             <TableCell>{request.user.team.name}</TableCell>
             <TableCell>
@@ -157,8 +170,8 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
             <TableCell>{durationText}</TableCell>
             <LeaveDuration duration={request.duration}/>
             <TableCell>
-                <Button className={"px-1"} variant="outline" size="sm">
-                    <Eye onClick={handleRowClick} className="h-4 text-[#3b87f7]"/>
+                <Button className="px-1" variant="outline" size="sm" onClick={handleRowClick}>
+                    <Eye className="h-4 text-[#3b87f7]"/>
                 </Button>
             </TableCell>
         </TableRow>
