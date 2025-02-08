@@ -83,9 +83,9 @@ export default function LeavePage() {
 
     return (
         <>
-            <PageHeader title='Pending Leave Requests'/>
+            <PageHeader title='Leaves'/>
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
+                <Card className="flex flex-1 flex-col rounded-lg border shadow-sm p-4 gap-4">
                     <Table>
                         <TableHeader>
                             <TableRow>
