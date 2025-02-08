@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from 'react';
+import React, {useEffect, useState} from 'react';
 import {useNavigate} from 'react-router-dom';
 import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
@@ -18,37 +18,35 @@ import PageHeader from "@/components/layout/PageHeader.tsx";
 import PaginationComponent from "@/components/Pagination.tsx";
 import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
 import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
-import {UserContext} from "@/contexts/UserContext.tsx";
 
-export default function LeavePage() {
-    const [requestsList, setRequestsList] = useState<PagedResponse<LeaveResponse> | null>(null);
+export default function LeavesPage() {
+    const [leaves, setLeaves] = useState<PagedResponse<LeaveResponse> | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
-    const [selectedRequest, setSelectedRequest] = useState<LeaveResponse | null>(null);
+    const [selectedLeave, setSelectedLeave] = useState<LeaveResponse | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(0);
-    const {user} = useContext(UserContext);
+
+    const fetchLeaves = async () => {
+        try {
+            const response = await getLeaves({status: LeaveStatus.PENDING}, currentPage);
+            setLeaves(response);
+        } catch (error) {
+            const errorMessage = getErrorMessage(error as Error);
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive"
+            });
+        }
+    };
 
     // Fetch pending leave requests
     useEffect(() => {
-        const fetchLeaves = async () => {
-            try {
-                const response = await getLeaves({status: LeaveStatus.PENDING}, currentPage);
-                setRequestsList(response);
-            } catch (error) {
-                const errorMessage = getErrorMessage(error as Error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive"
-                });
-            }
-        };
-
         fetchLeaves();
     }, [currentPage]);
 
     // View request details
     const handleRowClick = (request: LeaveResponse) => {
-        setSelectedRequest(request);
+        setSelectedLeave(request);
     };
 
     // Handle leave request approval or rejection
@@ -56,18 +54,12 @@ export default function LeavePage() {
         try {
             setIsProcessing(true);
             await updateLeavesStatus({status}, id);
-
-            setRequestsList(prevState => ({
-                ...prevState,
-                contents: prevState?.contents.filter(r => r.id !== id) || []
-            }));
-
             toast({
                 title: "Success",
                 description: `Request ${status.toLowerCase()} successfully.`,
                 variant: "default",
             });
-
+            fetchLeaves();
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error);
             toast({
@@ -77,15 +69,15 @@ export default function LeavePage() {
             });
         } finally {
             setIsProcessing(false);
-            setSelectedRequest(null);
+            setSelectedLeave(null);
         }
     };
 
     return (
         <>
-            <PageHeader title='Pending Leave Requests'/>
+            <PageHeader title='Leaves'/>
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
+                <Card className="flex flex-1 flex-col rounded-lg border shadow-sm p-4 gap-4">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -98,11 +90,11 @@ export default function LeavePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {requestsList?.contents.length ? (
-                                requestsList.contents.map((request) => (
-                                    <RequestRowItem
+                            {leaves?.contents.length ? (
+                                leaves.contents.map((request) => (
+                                    <LeaveRow
                                         key={request.id}
-                                        request={request}
+                                        leave={request}
                                         handleRowClick={() => handleRowClick(request)}
                                     />
                                 ))
@@ -116,19 +108,19 @@ export default function LeavePage() {
                         </TableBody>
                     </Table>
 
-                    {requestsList && requestsList.totalPages > 1 && (
+                    {leaves && leaves.totalPages > 1 && (
                         <PaginationComponent
-                            pageNumber={requestsList.pageNumber + 1}
+                            pageNumber={leaves.pageNumber + 1}
                             setPageNumber={setCurrentPage}
-                            totalPages={requestsList.totalPages}
+                            totalPages={leaves.totalPages}
                         />
                     )}
                 </Card>
 
-                {selectedRequest && (
+                {selectedLeave && (
                     <LeaveStatusUpdateDialog
-                        selectedRequest={selectedRequest}
-                        toggleModal={() => setSelectedRequest(null)}
+                        selectedRequest={selectedLeave}
+                        toggleModal={() => setSelectedLeave(null)}
                         handleRequest={handleRequest}
                         isProcessing={isProcessing}
                     />
@@ -139,14 +131,14 @@ export default function LeavePage() {
 }
 
 // Request Row Component
-type RequestItemProps = {
-    request: LeaveResponse;
+type LeaveRowProps = {
+    leave: LeaveResponse;
     handleRowClick: () => void;
 };
 
-function RequestRowItem({request, handleRowClick}: RequestItemProps) {
+function LeaveRow({leave, handleRowClick}: LeaveRowProps) {
     const navigate = useNavigate();
-    const durationText = formatDurationRange(request.duration, request.startAt, request.endAt);
+    const durationText = formatDurationRange(leave.duration, leave.startAt, leave.endAt);
 
     const viewEmployeeProfile = (id: number) => {
         navigate(`/users/${id}/`, {state: {from: "/requests"}});
@@ -155,20 +147,20 @@ function RequestRowItem({request, handleRowClick}: RequestItemProps) {
     return (
         <TableRow>
             <TableCell className="flex items-center gap-2 font-medium">
-                <UserAvatar avatar={request.user?.avatar} avatarSize={32}/>
+                <UserAvatar avatar={leave.user?.avatar} avatarSize={32}/>
                 <span
                     className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
-                    onClick={() => viewEmployeeProfile(request.user.id)}
+                    onClick={() => viewEmployeeProfile(leave.user.id)}
                 >
-                    {request.user.firstName} {request.user.lastName}
+                    {leave.user.firstName} {leave.user.lastName}
                 </span>
             </TableCell>
-            <TableCell>{request.user.team.name}</TableCell>
+            <TableCell>{leave.user.team.name}</TableCell>
             <TableCell>
-                <Badge variant="outline">{request.activatedType.name}</Badge>
+                <Badge variant="outline">{leave.activatedType.name}</Badge>
             </TableCell>
             <TableCell>{durationText}</TableCell>
-            <LeaveDuration duration={request.duration}/>
+            <LeaveDuration duration={leave.duration}/>
             <TableCell>
                 <Button className="px-1" variant="outline" size="sm" onClick={handleRowClick}>
                     <Eye className="h-4 text-[#3b87f7]"/>
