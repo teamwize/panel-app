@@ -128,9 +128,18 @@ export default function LeaveCreatePage() {
         }
     };
 
+    // Adjust endDate if it’s before startDate
+    useEffect(() => {
+        if (dayjs(endDate).isBefore(dayjs(startDate))) {
+            setValue('endDate', startDate);
+        }
+    }, [startDate, endDate]);
+
     useEffect(() => {
         if (!leaveCategory || !startDate) return;
-
+        if (dayjs(endDate).isBefore(dayjs(startDate))) {
+            return;
+        }
         const fetchDuration = async () => {
             try {
                 const response = await createLeavesCheck({
@@ -215,13 +224,6 @@ export default function LeaveCreatePage() {
             setValue("startDate", getNextWorkingDay(startDate, holidays, weekendsDays));
         }
     }, [holidays, startDate, weekendsDays]);
-
-    // Adjust endDate if it’s before startDate
-    useEffect(() => {
-        if (dayjs(endDate).isBefore(dayjs(startDate))) {
-            setValue('endDate', startDate);
-        }
-    }, [startDate, endDate]);
 
     return (
         <>
