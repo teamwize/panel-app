@@ -94,7 +94,7 @@ export default function LeavePage() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {requestsList?.contents.map((request) => (
+                            {pendingRequests?.map((request) => (
                                     <RequestRowItem
                                         key={request.id}
                                         request={request}
