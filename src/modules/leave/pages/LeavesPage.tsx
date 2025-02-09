@@ -30,14 +30,14 @@ export default function LeavesPage() {
     const [selectedLeave, setSelectedLeave] = useState<LeaveResponse | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [filters, setFilters] = useState<GetLeavesFilter>({status: LeaveStatus.PENDING});
-    const [usersList, setUsersList] = useState<PagedResponse<UserResponse> | null>(null);
-    const [teamList, setTeamList] = useState<TeamResponse[]>([]);
+    const [users, setUsers] = useState<PagedResponse<UserResponse> | null>(null);
+    const [teams, setTeams] = useState<TeamResponse[]>([]);
     const [leaves, setLeaves] = useState<PagedResponse<LeaveResponse> | null>(null);
 
     const fetchUsers = async () => {
         try {
             const response = await getUsers(currentPage);
-            setUsersList(response);
+            setUsers(response);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error);
             toast({
@@ -51,7 +51,7 @@ export default function LeavesPage() {
     const fetchTeams = async () => {
         try {
             const response = await getTeams();
-            setTeamList(response);
+            setTeams(response);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error);
             toast({
@@ -121,7 +121,7 @@ export default function LeavesPage() {
         <>
             <PageHeader title='Leaves'/>
             <PageContent>
-                <LeaveFilterForm usersList={usersList} teamList={teamList} onFilter={handleLeavesFilter}/>
+                <LeaveFilterForm users={users} teams={teams} onFilter={handleLeavesFilter}/>
                 <Card className="flex flex-1 flex-col rounded-lg border shadow-sm p-4 gap-4">
                     <Table>
                         <TableHeader>

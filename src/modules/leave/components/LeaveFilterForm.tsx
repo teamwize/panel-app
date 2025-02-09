@@ -10,11 +10,11 @@ import {GetLeavesFilter} from "@/core/types/leave.ts";
 
 type FilterEmployeesFormProps = {
     onFilter: (filters: GetLeavesFilter) => void;
-    usersList: PagedResponse<UserResponse>;
-    teamList: TeamResponse[];
+    users: PagedResponse<UserResponse>;
+    teams: TeamResponse[];
 };
 
-export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterEmployeesFormProps) {
+export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployeesFormProps) {
     const [filters, setFilters] = useState<GetLeavesFilter>({
         teamId: undefined,
         userId: undefined,
@@ -75,7 +75,7 @@ export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterE
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem key='all' value="ALL">All Teams</SelectItem>
-                    {teamList.map((team) => (
+                    {teams.map((team) => (
                         <SelectItem key={team.id} value={team.id.toString()}>
                             {team.name}
                         </SelectItem>
@@ -92,7 +92,7 @@ export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterE
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem key='all' value="ALL">All Users</SelectItem>
-                    {usersList?.contents.map((user) => (
+                    {users?.contents.map((user) => (
                         <SelectItem key={user.id} value={user.id.toString()}>
                             {user.firstName} {user.lastName}
                         </SelectItem>
