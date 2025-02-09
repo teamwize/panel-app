@@ -71,10 +71,10 @@ export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterE
                 onValueChange={onTeamChange}
             >
                 <SelectTrigger className="">
-                    <SelectValue placeholder="Select a team"/>
+                    <SelectValue placeholder="All Teams"/>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem key='all' value="ALL">All</SelectItem>
+                    <SelectItem key='all' value="ALL">All Teams</SelectItem>
                     {teamList.map((team) => (
                         <SelectItem key={team.id} value={team.id.toString()}>
                             {team.name}
@@ -88,10 +88,10 @@ export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterE
                 onValueChange={onUserChange}
             >
                 <SelectTrigger className="">
-                    <SelectValue placeholder="Select a User"/>
+                    <SelectValue placeholder="All Users"/>
                 </SelectTrigger>
                 <SelectContent>
-                    <SelectItem key='all' value="ALL">All</SelectItem>
+                    <SelectItem key='all' value="ALL">All Users</SelectItem>
                     {usersList?.contents.map((user) => (
                         <SelectItem key={user.id} value={user.id.toString()}>
                             {user.firstName} {user.lastName}
