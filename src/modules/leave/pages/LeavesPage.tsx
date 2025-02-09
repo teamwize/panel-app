@@ -6,7 +6,7 @@ import {getLeaves, updateLeavesStatus} from "@/core/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {LeaveStatus} from '@/core/types/enum.ts';
-import {LeaveResponse} from '@/core/types/leave.ts';
+import {GetLeavesFilter, LeaveResponse} from '@/core/types/leave.ts';
 import {PagedResponse} from '@/core/types/common.ts';
 import {Eye} from "lucide-react";
 import {Button} from "@/components/ui/button";
@@ -18,16 +18,52 @@ import PageHeader from "@/components/layout/PageHeader.tsx";
 import PaginationComponent from "@/components/Pagination.tsx";
 import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
 import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
+import LeaveFilterForm from "@/modules/leave/components/LeaveFilterForm.tsx";
+import {UserResponse} from "@/core/types/user.ts";
+import {getUsers} from "@/core/services/userService.ts";
+import {getTeams} from "@/core/services/teamService.ts";
+import {TeamResponse} from "@/core/types/team.ts";
 
 export default function LeavesPage() {
-    const [leaves, setLeaves] = useState<PagedResponse<LeaveResponse> | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const [selectedLeave, setSelectedLeave] = useState<LeaveResponse | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(0);
+    const [filters, setFilters] = useState<GetLeavesFilter>({status: LeaveStatus.PENDING});
+    const [usersList, setUsersList] = useState<PagedResponse<UserResponse> | null>(null);
+    const [teamList, setTeamList] = useState<TeamResponse[]>([]);
+    const [leaves, setLeaves] = useState<PagedResponse<LeaveResponse> | null>(null);
+
+    const fetchUsers = async () => {
+        try {
+            const response = await getUsers(currentPage);
+            setUsersList(response);
+        } catch (error) {
+            const errorMessage = getErrorMessage(error as Error);
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive"
+            });
+        }
+    }
+
+    const fetchTeams = async () => {
+        try {
+            const response = await getTeams();
+            setTeamList(response);
+        } catch (error) {
+            const errorMessage = getErrorMessage(error as Error);
+            toast({
+                title: "Error",
+                description: errorMessage,
+                variant: "destructive",
+            });
+        }
+    };
 
     const fetchLeaves = async () => {
         try {
-            const response = await getLeaves({status: LeaveStatus.PENDING}, currentPage);
+            const response = await getLeaves(filters, currentPage);
             setLeaves(response);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error);
@@ -37,12 +73,19 @@ export default function LeavesPage() {
                 variant: "destructive"
             });
         }
+    }
+
+    const handleLeavesFilter = (newFilters: GetLeavesFilter) => {
+        setFilters(prevFilters => ({...prevFilters, ...newFilters}));
+        setCurrentPage(0);
     };
 
     // Fetch pending leave requests
     useEffect(() => {
+        fetchUsers();
         fetchLeaves();
-    }, [currentPage]);
+        fetchTeams();
+    }, [currentPage, filters]);
 
     // View request details
     const handleRowClick = (request: LeaveResponse) => {
@@ -77,6 +120,7 @@ export default function LeavesPage() {
         <>
             <PageHeader title='Leaves'/>
             <PageContent>
+                <LeaveFilterForm usersList={usersList} teamList={teamList} onFilter={handleLeavesFilter}/>
                 <Card className="flex flex-1 flex-col rounded-lg border shadow-sm p-4 gap-4">
                     <Table>
                         <TableHeader>
