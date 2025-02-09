@@ -30,14 +30,14 @@ export default function LeavesPage() {
     const [selectedLeave, setSelectedLeave] = useState<LeaveResponse | null>(null);
     const [currentPage, setCurrentPage] = useState<number>(0);
     const [filters, setFilters] = useState<GetLeavesFilter>({status: LeaveStatus.PENDING});
-    const [users, setUsers] = useState<PagedResponse<UserResponse> | null>(null);
+    const [users, setUsers] = useState<UserResponse[] | null>(null);
     const [teams, setTeams] = useState<TeamResponse[]>([]);
     const [leaves, setLeaves] = useState<PagedResponse<LeaveResponse> | null>(null);
 
     const fetchUsers = async () => {
         try {
-            const response = await getUsers(currentPage);
-            setUsers(response);
+            const response = await getUsers(0, 100);
+            setUsers(response.contents);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error);
             toast({

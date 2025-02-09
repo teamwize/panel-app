@@ -3,14 +3,13 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Button} from "@/components/ui/button";
 import {Search} from "lucide-react";
 import {LeaveStatus} from "@/core/types/enum.ts";
-import {PagedResponse} from "@/core/types/common.ts";
 import {UserResponse} from "@/core/types/user.ts";
 import {TeamResponse} from "@/core/types/team.ts";
 import {GetLeavesFilter} from "@/core/types/leave.ts";
 
 type FilterEmployeesFormProps = {
     onFilter: (filters: GetLeavesFilter) => void;
-    users: PagedResponse<UserResponse>;
+    users: UserResponse[];
     teams: TeamResponse[];
 };
 
@@ -92,7 +91,7 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
                 </SelectTrigger>
                 <SelectContent>
                     <SelectItem key='all' value="ALL">All Users</SelectItem>
-                    {users?.contents.map((user) => (
+                    {users?.map((user) => (
                         <SelectItem key={user.id} value={user.id.toString()}>
                             {user.firstName} {user.lastName}
                         </SelectItem>
