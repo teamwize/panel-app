@@ -25,17 +25,39 @@ export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterE
         onFilter(filters);
     };
 
+    const onStatusChange = (value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            status: value === "ALL" ? undefined : value as LeaveStatus
+        }));
+    };
+
+    const onTeamChange = (value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            teamId: value === "ALL" ? undefined : Number(value)
+        }));
+    }
+
+    const onUserChange = (value: string) => {
+        setFilters((prev) => ({
+            ...prev,
+            userId: value === "ALL" ? undefined : Number(value)
+        }));
+    }
+
     return (
         <div className="flex gap-4 items-center p-4 m-4 border rounded-lg">
 
             <Select
                 value={filters.status}
-                onValueChange={(value) => setFilters((prev) => ({...prev, status: value as LeaveStatus}))}
+                onValueChange={onStatusChange}
             >
                 <SelectTrigger className="">
-                    <SelectValue placeholder="Select a status"/>
+                    <SelectValue placeholder='All'/>
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem key='all' value="ALL">All</SelectItem>
                     {Object.values(LeaveStatus).map((status) => (
                         <SelectItem key={status} value={status}>
                             {status.charAt(0) + status.slice(1).toLowerCase()}
@@ -46,14 +68,13 @@ export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterE
 
             <Select
                 value={filters.teamId?.toString() || ""}
-                onValueChange={(value) =>
-                    setFilters((prev) => ({...prev, teamId: value ? Number(value) : undefined}))
-                }
+                onValueChange={onTeamChange}
             >
                 <SelectTrigger className="">
                     <SelectValue placeholder="Select a team"/>
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem key='all' value="ALL">All</SelectItem>
                     {teamList.map((team) => (
                         <SelectItem key={team.id} value={team.id.toString()}>
                             {team.name}
@@ -64,14 +85,13 @@ export default function LeaveFilterForm({onFilter, teamList, usersList}: FilterE
 
             <Select
                 value={filters.userId?.toString() || ""}
-                onValueChange={(value) =>
-                    setFilters((prev) => ({...prev, userId: value ? Number(value) : undefined}))
-                }
+                onValueChange={onUserChange}
             >
                 <SelectTrigger className="">
                     <SelectValue placeholder="Select a User"/>
                 </SelectTrigger>
                 <SelectContent>
+                    <SelectItem key='all' value="ALL">All</SelectItem>
                     {usersList?.contents.map((user) => (
                         <SelectItem key={user.id} value={user.id.toString()}>
                             {user.firstName} {user.lastName}

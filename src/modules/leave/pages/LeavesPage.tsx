@@ -23,6 +23,7 @@ import {UserResponse} from "@/core/types/user.ts";
 import {getUsers} from "@/core/services/userService.ts";
 import {getTeams} from "@/core/services/teamService.ts";
 import {TeamResponse} from "@/core/types/team.ts";
+import LeaveStatusBadge from "@/modules/leave/components/LeaveStatusBadge.tsx";
 
 export default function LeavesPage() {
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
@@ -130,6 +131,7 @@ export default function LeavesPage() {
                                 <TableHead>Type</TableHead>
                                 <TableHead>Date</TableHead>
                                 <TableHead>Duration</TableHead>
+                                <TableHead>Status</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -205,6 +207,9 @@ function LeaveRow({leave, handleRowClick}: LeaveRowProps) {
             </TableCell>
             <TableCell>{durationText}</TableCell>
             <LeaveDuration duration={leave.duration}/>
+            <TableCell>
+                <LeaveStatusBadge status={leave.status}/>
+            </TableCell>
             <TableCell>
                 <Button className="px-1" variant="outline" size="sm" onClick={handleRowClick}>
                     <Eye className="h-4 text-[#3b87f7]"/>
