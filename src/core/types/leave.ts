@@ -31,7 +31,8 @@ export type LeaveTypeCreateRequest = {
     name: string;
     cycle: LeaveTypeCycle;
     amount: number;
-    requiresApproval: boolean
+    requiresApproval: boolean;
+    symbol: string;
 }
 
 export type LeaveTypeResponse = {
@@ -99,6 +100,9 @@ export interface GetLeavesFilter {
 export interface LeaveTypeUpdateRequest {
     name: string;
     cycle: LeaveTypeCycle;
+    symbol: string;
+    amount: number;
+    requiresApproval: boolean;
 }
 
 export type LeavePolicyUpdateRequest = {

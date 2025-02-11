@@ -4,22 +4,18 @@ import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {Pencil, Plus, Trash} from "lucide-react";
 import {toast} from "@/components/ui/use-toast";
-import {LeaveTypeUpdateDialog} from "@/modules/leave/components/LeaveTypeUpdateDialog.tsx";
-import {DeleteDialog} from "@/modules/leave/components/DeleteDialog.tsx";
-import {LeaveTypeCreateDialog} from "@/modules/leave/components/LeaveTypeCreateDialog.tsx";
-import {PageSection} from "@/components/layout/PageSection.tsx";
+import {PageSection} from "@/components/layout/PageSection";
 import {createLeavesType, deleteLeaveType, getLeavesTypes, updateLeaveType} from "@/core/services/leaveService";
-import {LeaveTypeCreateRequest, LeaveTypeResponse} from "@/core/types/leave.ts";
-import {getErrorMessage} from "@/core/utils/errorHandler.ts";
-import {LeaveTypeCycleJson} from "@/core/types/enum.ts";
+import {LeaveTypeCreateRequest, LeaveTypeResponse, LeaveTypeUpdateRequest} from "@/core/types/leave";
+import {getErrorMessage} from "@/core/utils/errorHandler";
+import {LeaveTypeCycleJson} from "@/core/types/enum";
+import {LeaveTypeDialog} from "@/modules/leave/components/LeaveTypeDialog.tsx";
 
 export default function LeaveTypeList() {
     const [leaveTypeList, setLeaveTypeList] = useState<LeaveTypeResponse[]>([]);
     const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveTypeResponse | null>(null);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
-    const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isDialogOpen, setIsDialogOpen] = useState(false);
+    const [isUpdateMode, setIsUpdateMode] = useState(false);
 
     // Fetch leave types
     useEffect(() => {
@@ -27,105 +23,74 @@ export default function LeaveTypeList() {
             .then((response: LeaveTypeResponse[]) => setLeaveTypeList(response))
             .catch((error) => {
                 const errorMessage = getErrorMessage(error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
+                toast({title: "Error", description: errorMessage, variant: "destructive",});
             });
     }, []);
 
-    //Handles creating a leave type.
-    const handleCreateLeaveType = (data: LeaveTypeCreateRequest) => {
-        setIsProcessing(true);
-        createLeavesType(data)
+    const handleUpdateLeaveType = (data: LeaveTypeUpdateRequest, id: number) => {
+        updateLeaveType(data, id)
             .then((response) => {
-                setLeaveTypeList((prevList) => [...prevList, response]);
-                toast({
-                    title: "Success",
-                    description: "leave type created successfully!",
-                    variant: "default",
-                });
+                setLeaveTypeList((prevList) =>
+                    prevList.map((type) => (type.id === id ? response : type))
+                );
+                toast({title: "Success", description: "Leave type updated successfully!"});
             })
             .catch((error) => {
-                const errorMessage = getErrorMessage(error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
+                toast({title: "Error", description: getErrorMessage(error), variant: "destructive"});
             })
             .finally(() => {
-                setIsProcessing(false);
-                setIsCreateDialogOpen(false);
+                setIsDialogOpen(false);
             });
     };
 
-    //Handles removing a leave type.
+    const handleCreateLeaveType = (data: LeaveTypeCreateRequest) => {
+        createLeavesType(data)
+            .then((response) => {
+                setLeaveTypeList((prevList) => [...prevList, response]);
+                toast({title: "Success", description: "Leave type created successfully!"});
+            })
+            .catch((error) => {
+                toast({title: "Error", description: getErrorMessage(error), variant: "destructive"});
+            })
+            .finally(() => {
+                setIsDialogOpen(false);
+            });
+    };
+
     const handleRemoveLeaveType = () => {
         if (selectedLeaveType) {
-            setIsProcessing(true);
             deleteLeaveType(selectedLeaveType.id)
                 .then(() => {
                     setLeaveTypeList((prev) => prev.filter((type) => type.id !== selectedLeaveType.id));
-                    toast({
-                        title: "Success",
-                        description: "leave type removed successfully!",
-                        variant: "default",
-                    });
+                    toast({title: "Success", description: "Leave type removed successfully!", variant: "default",});
                 })
                 .catch((error) => {
                     const errorMessage = getErrorMessage(error);
-                    toast({
-                        title: "Error",
-                        description: errorMessage,
-                        variant: "destructive",
-                    });
+                    toast({title: "Error", description: errorMessage, variant: "destructive",});
                 })
                 .finally(() => {
-                    setIsProcessing(false);
                     setSelectedLeaveType(null);
-                    setIsDeleteDialogOpen(false);
+                    setIsDialogOpen(false);
                 });
         }
     };
 
-    //Handles updating a leave type.
-    const handleUpdateLeaveType = (updatedLeaveType: LeaveTypeResponse) => {
-        setIsProcessing(true);
-        updateLeaveType({name: updatedLeaveType.name, cycle: updatedLeaveType.cycle}, updatedLeaveType.id)
-            .then((response) => {
-                setLeaveTypeList((prev) => prev.map((type) => (type.id === response.id ? response : type)));
-                toast({
-                    title: "Success",
-                    description: "leave type updated successfully!",
-                    variant: "default",
-                });
-            })
-            .catch((error) => {
-                const errorMessage = getErrorMessage(error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
-            })
-            .finally(() => {
-                setIsProcessing(false);
-                setIsUpdateDialogOpen(false);
-                setSelectedLeaveType(null);
-            });
-    };
-
     return (
         <>
-            <PageSection title='Leave Types' description={"Create and manage leave types"}>
-                <Button onClick={() => setIsCreateDialogOpen(true)} className='px-2 h-9'>
+            <PageSection title='Leave Types' description={'Create and manage leave types'}>
+                <Button onClick={() => {
+                    setIsUpdateMode(false);
+                    setSelectedLeaveType(null);
+                    setIsDialogOpen(true);
+                }}
+                        className='px-2 h-9'
+                >
                     <Plus className="h-4 w-4 mr-1"/>
                     Create
                 </Button>
             </PageSection>
-            <Card className="flex flex-1 flex-col   p-4">
+
+            <Card className="flex flex-1 flex-col p-4">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -141,42 +106,36 @@ export default function LeaveTypeList() {
                             <LeaveTypeRowItem
                                 key={leaveType.id}
                                 leaveType={leaveType}
-                                openDeleteDialog={() => {
+                                openDialog={() => {
                                     setSelectedLeaveType(leaveType);
-                                    setIsDeleteDialogOpen(true);
+                                    setIsUpdateMode(true);
+                                    setIsDialogOpen(true);
                                 }}
-                                openUpdateDialog={() => {
+                                handleDelete={() => {
                                     setSelectedLeaveType(leaveType);
-                                    setIsUpdateDialogOpen(true);
+                                    handleRemoveLeaveType();
                                 }}
-                                isProcessing={isProcessing}
                             />
                         ))}
                     </TableBody>
                 </Table>
 
-                {isCreateDialogOpen && (
-                    <LeaveTypeCreateDialog
-                        isOpen={isCreateDialogOpen}
-                        onClose={() => setIsCreateDialogOpen(false)}
-                        onSubmit={handleCreateLeaveType}
-                    />
-                )}
-
-                {isDeleteDialogOpen && selectedLeaveType && (
-                    <DeleteDialog
-                        name="Leave Type"
-                        label={selectedLeaveType.name}
-                        handleReject={() => setIsDeleteDialogOpen(false)}
-                        handleAccept={handleRemoveLeaveType}
-                    />
-                )}
-
-                {isUpdateDialogOpen && selectedLeaveType && (
-                    <LeaveTypeUpdateDialog
-                        leaveType={selectedLeaveType}
-                        handleUpdate={handleUpdateLeaveType}
-                        handleClose={() => setIsUpdateDialogOpen(false)}
+                {isDialogOpen && (
+                    <LeaveTypeDialog
+                        isOpen={isDialogOpen}
+                        onClose={() => {
+                            setIsDialogOpen(false);
+                            setSelectedLeaveType(null);
+                        }}
+                        isUpdateMode={isUpdateMode}
+                        initialData={isUpdateMode ? selectedLeaveType : null}
+                        onSubmit={(data) => {
+                            if (isUpdateMode && selectedLeaveType?.id) {
+                                handleUpdateLeaveType(data as LeaveTypeUpdateRequest, selectedLeaveType.id);
+                            } else {
+                                handleCreateLeaveType(data as LeaveTypeCreateRequest);
+                            }
+                        }}
                     />
                 )}
             </Card>
@@ -184,15 +143,13 @@ export default function LeaveTypeList() {
     );
 }
 
-// Row Item Component for leave Types
 type LeaveTypeRowItemProps = {
     leaveType: LeaveTypeResponse;
-    openDeleteDialog: () => void;
-    openUpdateDialog: () => void;
-    isProcessing: boolean;
+    openDialog: () => void;
+    handleDelete: () => void;
 };
 
-function LeaveTypeRowItem({leaveType, openDeleteDialog, openUpdateDialog, isProcessing}: LeaveTypeRowItemProps) {
+function LeaveTypeRowItem({leaveType, openDialog, handleDelete}: LeaveTypeRowItemProps) {
     const isArchived = leaveType.status === 'ARCHIVED';
 
     return (
@@ -208,8 +165,7 @@ function LeaveTypeRowItem({leaveType, openDeleteDialog, openUpdateDialog, isProc
                             className="px-1"
                             variant="outline"
                             size="sm"
-                            onClick={openUpdateDialog}
-                            disabled={isProcessing}
+                            onClick={openDialog}
                         >
                             <Pencil className="h-4"/>
                         </Button>
@@ -217,8 +173,7 @@ function LeaveTypeRowItem({leaveType, openDeleteDialog, openUpdateDialog, isProc
                             className="px-1"
                             variant="outline"
                             size="sm"
-                            onClick={openDeleteDialog}
-                            disabled={isProcessing}
+                            onClick={handleDelete}
                         >
                             <Trash className="h-4 text-[#ef4444]"/>
                         </Button>
