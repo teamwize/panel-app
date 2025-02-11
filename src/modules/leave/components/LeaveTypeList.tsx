@@ -75,6 +75,8 @@ export default function LeaveTypeList() {
         }
     };
 
+    const sortedLeaveTypes = leaveTypeList.sort((a) => a.status === 'ARCHIVED' ? 1 : -1);
+
     return (
         <>
             <PageSection title='Leave Types' description={'Create and manage leave types'}>
@@ -102,7 +104,7 @@ export default function LeaveTypeList() {
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {leaveTypeList.map((leaveType) => (
+                        {sortedLeaveTypes.map((leaveType) => (
                             <LeaveTypeRowItem
                                 key={leaveType.id}
                                 leaveType={leaveType}
