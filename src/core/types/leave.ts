@@ -39,6 +39,9 @@ export type LeaveTypeResponse = {
     name: string;
     cycle: LeaveTypeCycle;
     status: LeaveTypeStatus;
+    symbol: string;
+    amount: number;
+    requiresApproval: boolean;
 }
 
 export type LeavePolicyCreateRequest = {

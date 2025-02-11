@@ -33,7 +33,7 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
 
                     return (
                         <TableRow key={index}>
-                            <TableCell>{leaveType?.name || "Unknown"}</TableCell>
+                            <TableCell>{leaveType?.name || "Unknown"} {leaveType.symbol}</TableCell>
                             <TableCell>{activatedType.amount}</TableCell>
                             <TableCell>{activatedType.requiresApproval ? "Yes" : "No"}</TableCell>
                             <TableCell className="text-right">

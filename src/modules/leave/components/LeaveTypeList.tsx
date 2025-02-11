@@ -130,7 +130,9 @@ export default function LeaveTypeList() {
                     <TableHeader>
                         <TableRow>
                             <TableHead>Name</TableHead>
+                            <TableHead>Amount</TableHead>
                             <TableHead>Cycle</TableHead>
+                            <TableHead>Requires Approval</TableHead>
                             <TableHead className="text-right">Actions</TableHead>
                         </TableRow>
                     </TableHeader>
@@ -195,8 +197,10 @@ function LeaveTypeRowItem({leaveType, openDeleteDialog, openUpdateDialog, isProc
 
     return (
         <TableRow className={isArchived ? 'opacity-50' : ''}>
-            <TableCell>{leaveType.name}</TableCell>
+            <TableCell>{leaveType.name} {leaveType.symbol}</TableCell>
+            <TableCell>{leaveType.amount}</TableCell>
             <TableCell>{LeaveTypeCycleJson[leaveType.cycle]}</TableCell>
+            <TableCell>{leaveType.requiresApproval ? "Yes" : "No"}</TableCell>
             <TableCell className="text-right">
                 {!isArchived ? (
                     <div className="flex gap-4 justify-end">

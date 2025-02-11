@@ -10,12 +10,18 @@ import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {LeaveTypeCycle} from "@/core/types/enum.ts";
 import {LeaveTypeCreateRequest} from "@/core/types/leave.ts";
+import EmojiPicker from "@/components/EmojiPicker.tsx";
 
 const FormSchema = z.object({
     name: z.string().min(2, {message: "leave type name must be over 2 characters"}).max(50, {message: "leave type name must be under 50 characters"}),
     cycle: z.nativeEnum(LeaveTypeCycle, { errorMap: () => ({ message: "Cycle is required" }) }),
     amount: z.number().min(1, { message: "Amount must be greater than 0" }),
     requiresApproval: z.boolean(),
+    symbol: z.object({
+        symbol: z.string(),
+        name: z.string(),
+        keywords: z.array(z.string())
+    }).nullable(),
 });
 
 type CreateLeaveTypeInputs = z.infer<typeof FormSchema>;
@@ -31,6 +37,7 @@ export function LeaveTypeCreateDialog({isOpen, onClose, onSubmit}: LeaveTypeCrea
         resolver: zodResolver(FormSchema),
         defaultValues: {
             name: "",
+            symbol: null,
             cycle: LeaveTypeCycle.PER_YEAR,
             amount: 1,
             requiresApproval: false,
@@ -38,7 +45,11 @@ export function LeaveTypeCreateDialog({isOpen, onClose, onSubmit}: LeaveTypeCrea
     });
 
     const handleSubmit = (data: CreateLeaveTypeInputs) => {
-        onSubmit(data as LeaveTypeCreateRequest);
+        const submitData = {
+            ...data,
+            symbol: data.symbol?.symbol || null,
+        };
+        onSubmit(submitData as LeaveTypeCreateRequest);
         onClose();
     };
 
@@ -51,6 +62,7 @@ export function LeaveTypeCreateDialog({isOpen, onClose, onSubmit}: LeaveTypeCrea
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                         <NameField form={form} />
+                        <SymbolField form={form}/>
                         <CycleField form={form} />
                         <AmountField form={form} />
                         <RequiresApprovalField form={form} />
@@ -86,6 +98,27 @@ function NameField({form}: FieldProps) {
             )}
         />
     )
+}
+
+function SymbolField({form}: FieldProps) {
+    return (
+        <FormField
+            control={form.control}
+            name="symbol"
+            render={({field}) => (
+                <FormItem className='flex flex-col gap-1 items-start'>
+                    <FormLabel>Symbol</FormLabel>
+                    <FormControl>
+                        <EmojiPicker
+                            onEmojiSelect={(emoji) => field.onChange(emoji)}
+                            defaultEmoji={field.value}
+                        />
+                    </FormControl>
+                    <FormMessage/>
+                </FormItem>
+            )}
+        />
+    );
 }
 
 function CycleField({form}: FieldProps) {

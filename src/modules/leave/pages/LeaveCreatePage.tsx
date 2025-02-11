@@ -21,7 +21,7 @@ import {HolidayResponse} from "@/core/types/holiday.ts";
 import {UserContext} from "@/contexts/UserContext";
 import {Week} from "@/core/types/enum.ts";
 import {capitalizeFirstLetter} from "@/core/utils/string.ts";
-import {LeaveCreateRequest, LeaveResponse} from "@/core/types/leave.ts";
+import {LeaveCreateRequest, LeavePolicyActivatedTypeResponse, LeaveResponse} from "@/core/types/leave.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
@@ -52,7 +52,7 @@ const FormSchema = z.object({
 
 export default function LeaveCreatePage() {
     const [holidays, setHolidays] = useState<Date[]>([]);
-    const [leaveTypes, setLeaveTypes] = useState<{ id: number; name: string }[]>([]);
+    const [leaveTypes, setLeaveTypes] = useState<LeavePolicyActivatedTypeResponse[]>([]);
     const [weekendsDays, setWeekendsDays] = useState<string[]>([]);
     const [userLeaves, setUserLeaves] = useState<LeaveResponse[]>([]);
     const [duration, setDuration] = useState<number>(0);
@@ -84,10 +84,7 @@ export default function LeaveCreatePage() {
             }
             const userPolicy = await getLeavesPolicy(user?.leavePolicy?.id);
             if (userPolicy) {
-                const types = userPolicy.activatedTypes.map(activatedType => ({
-                    id: activatedType.typeId,
-                    name: activatedType.name,
-                }));
+                const types = userPolicy.activatedTypes;
                 setLeaveTypes(types);
             } else {
                 console.log("No matching policy found for the user.");
@@ -272,7 +269,7 @@ export default function LeaveCreatePage() {
 
 type FieldProps = {
     form: UseFormReturn;
-    leaveTypes?: { id: number; name: string }[];
+    leaveTypes?: LeavePolicyActivatedTypeResponse[];
 }
 
 function LeaveTypeField({form, leaveTypes}: FieldProps) {
@@ -290,7 +287,8 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
                             </SelectTrigger>
                             <SelectContent>
                                 {leaveTypes?.map((type) => (
-                                    <SelectItem key={type.id} value={type.id.toString()}>{type.name}</SelectItem>
+                                    <SelectItem key={type.typeId}
+                                                value={type.typeId.toString()}>{type.name} {type.symbol}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

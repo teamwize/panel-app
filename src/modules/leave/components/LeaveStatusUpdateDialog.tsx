@@ -47,6 +47,7 @@ export default function LeaveStatusUpdateDialog({
                             duration={duration}
                             type={activatedType.name}
                             reason={reason}
+                            symbol={activatedType.symbol}
                         />
                     </DialogDescription>
                 </DialogHeader>
@@ -84,9 +85,10 @@ type LeaveDetailsProps = {
     duration: number;
     type: string;
     reason?: string;
+    symbol: string;
 };
 
-function LeaveDetails({ durationText, duration, type, reason }: LeaveDetailsProps) {
+function LeaveDetails({durationText, duration, type, reason, symbol}: LeaveDetailsProps) {
     return (
         <div className="grid grid-cols-4 gap-4 mb-4 text-black text-xs">
             <div className="col-span-2">
@@ -99,7 +101,7 @@ function LeaveDetails({ durationText, duration, type, reason }: LeaveDetailsProp
             </div>
             <div>
                 <h5 className="text-[10px] text-gray-600 mb-1">Type</h5>
-                <span>{type}</span>
+                <span>{type} {symbol}</span>
             </div>
             {reason && (
                 <div className="col-span-4">
