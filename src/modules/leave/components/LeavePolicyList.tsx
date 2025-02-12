@@ -178,7 +178,7 @@ function LeavePolicyRowItem({
                 <div className="flex flex-wrap gap-2">
                     {leavePolicy.activatedTypes.map((activatedType) => (
                         <Badge key={activatedType.typeId} variant="outline">
-                            {activatedType.name}: {activatedType.amount}
+                            {activatedType.name} {activatedType.symbol}: {activatedType.amount}
                         </Badge>
                     ))}
                 </div>

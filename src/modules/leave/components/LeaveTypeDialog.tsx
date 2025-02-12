@@ -9,36 +9,59 @@ import {Checkbox} from "@/components/ui/checkbox";
 import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {LeaveTypeCycle} from "@/core/types/enum.ts";
-import {LeaveTypeCreateRequest} from "@/core/types/leave.ts";
+import {LeaveTypeCreateRequest, LeaveTypeResponse, LeaveTypeUpdateRequest} from "@/core/types/leave.ts";
+import EmojiPicker from "@/components/EmojiPicker.tsx";
 
 const FormSchema = z.object({
-    name: z.string().min(2, {message: "leave type name must be over 2 characters"}).max(50, {message: "leave type name must be under 50 characters"}),
+    name: z.string().min(2, {message: "Leave type name must be over 2 characters"}).max(50, {message: "Leave type name must be under 50 characters"}),
     cycle: z.nativeEnum(LeaveTypeCycle, { errorMap: () => ({ message: "Cycle is required" }) }),
     amount: z.number().min(1, { message: "Amount must be greater than 0" }),
     requiresApproval: z.boolean(),
+    symbol: z.string().optional()
 });
 
-type CreateLeaveTypeInputs = z.infer<typeof FormSchema>;
+type LeaveTypeInputs = z.infer<typeof FormSchema>;
 
-interface LeaveTypeCreateModalProps {
+interface LeaveTypeDialogProps {
     isOpen: boolean;
     onClose: () => void;
     onSubmit: (data: LeaveTypeCreateRequest) => void;
+    initialData?: LeaveTypeResponse | null;
+    isUpdateMode?: boolean;
 }
 
-export function LeaveTypeCreateDialog({isOpen, onClose, onSubmit}: LeaveTypeCreateModalProps) {
-    const form = useForm<CreateLeaveTypeInputs>({
+export function LeaveTypeDialog({isOpen, onClose, onSubmit, initialData, isUpdateMode}: LeaveTypeDialogProps) {
+    const form = useForm<LeaveTypeInputs>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            name: "",
-            cycle: LeaveTypeCycle.PER_YEAR,
-            amount: 1,
-            requiresApproval: false,
+            name: initialData?.name || "",
+            symbol: initialData?.symbol || "",
+            cycle: initialData?.cycle || LeaveTypeCycle.PER_YEAR,
+            amount: initialData?.amount || 1,
+            requiresApproval: initialData?.requiresApproval || false,
         },
     });
 
-    const handleSubmit = (data: CreateLeaveTypeInputs) => {
-        onSubmit(data as LeaveTypeCreateRequest);
+    const handleSubmit = (data: LeaveTypeInputs) => {
+        if (isUpdateMode && initialData?.id) {
+            const updateData: LeaveTypeUpdateRequest = {
+                name: data.name,
+                cycle: data.cycle,
+                amount: data.amount,
+                requiresApproval: data.requiresApproval,
+                symbol: data.symbol || "",
+            };
+            onSubmit({...updateData, id: initialData.id} as any);
+        } else {
+            const createData: LeaveTypeCreateRequest = {
+                name: data.name,
+                cycle: data.cycle,
+                amount: data.amount,
+                requiresApproval: data.requiresApproval,
+                symbol: data.symbol || "",
+            };
+            onSubmit(createData);
+        }
         onClose();
     };
 
@@ -46,18 +69,19 @@ export function LeaveTypeCreateDialog({isOpen, onClose, onSubmit}: LeaveTypeCrea
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Create Leave Type</DialogTitle>
+                    <DialogTitle>{initialData ? 'Update Leave Type' : 'Create Leave Type'}</DialogTitle>
                 </DialogHeader>
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                         <NameField form={form} />
+                        <SymbolField form={form}/>
                         <CycleField form={form} />
                         <AmountField form={form} />
                         <RequiresApprovalField form={form} />
 
                         <DialogFooter>
                             <Button variant="secondary" onClick={onClose}>Cancel</Button>
-                            <Button type="submit">Create</Button>
+                            <Button type="submit">{initialData ? 'Update' : 'Create'}</Button>
                         </DialogFooter>
                     </form>
                 </Form>
@@ -67,8 +91,8 @@ export function LeaveTypeCreateDialog({isOpen, onClose, onSubmit}: LeaveTypeCrea
 }
 
 type FieldProps = {
-    form: UseFormReturn
-}
+    form: UseFormReturn;
+};
 
 function NameField({form}: FieldProps) {
     return (
@@ -85,7 +109,28 @@ function NameField({form}: FieldProps) {
                 </FormItem>
             )}
         />
-    )
+    );
+}
+
+function SymbolField({form}: FieldProps) {
+    return (
+        <FormField
+            control={form.control}
+            name="symbol"
+            render={({field}) => (
+                <FormItem className='flex flex-col gap-1 items-start'>
+                    <FormLabel>Symbol</FormLabel>
+                    <FormControl>
+                        <EmojiPicker
+                            onEmojiSelect={(emoji) => field.onChange(emoji)}
+                            defaultEmoji={field.value}
+                        />
+                    </FormControl>
+                    <FormMessage/>
+                </FormItem>
+            )}
+        />
+    );
 }
 
 function CycleField({form}: FieldProps) {
@@ -112,7 +157,7 @@ function CycleField({form}: FieldProps) {
                 </FormItem>
             )}
         />
-    )
+    );
 }
 
 function AmountField({form}: FieldProps) {
@@ -135,7 +180,7 @@ function AmountField({form}: FieldProps) {
                 </FormItem>
             )}
         />
-    )
+    );
 }
 
 function RequiresApprovalField({form}: FieldProps) {
@@ -159,5 +204,5 @@ function RequiresApprovalField({form}: FieldProps) {
                 </FormItem>
             )}
         />
-    )
+    );
 }

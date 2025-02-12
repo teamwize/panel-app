@@ -18,7 +18,7 @@ export default function LeaveList({leaveRequests, setCurrentPage}: LeaveRequestL
     return (
         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
             <CardHeader className="py-4 px-0">
-                <CardTitle className="text-xl">Leave Requests History ({leaveRequests.totalContents})</CardTitle>
+                <CardTitle className="text-xl">Leaves History ({leaveRequests.totalContents})</CardTitle>
             </CardHeader>
 
             <CardContent className='p-0'>
@@ -73,7 +73,7 @@ function LeaveListItem({request}: LeaveRequestTableProps) {
                 <LeaveStatusBadge status={request.status}/>
             </TableCell>
             <TableCell>
-                <Badge variant="outline">{request.activatedType.name}</Badge>
+                <Badge variant="outline">{request.activatedType.name} {request.activatedType.symbol}</Badge>
             </TableCell>
         </TableRow>
     );
