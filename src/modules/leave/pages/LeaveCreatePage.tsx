@@ -25,6 +25,7 @@ import {LeaveCreateRequest, LeavePolicyActivatedTypeResponse, LeaveResponse} fro
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
+import LeaveConflicts from "@/modules/leave/components/LeaveConflicts.tsx";
 
 /*
 1.Fetch LeavePolicyType name and id from leaves/policies
@@ -56,6 +57,7 @@ export default function LeaveCreatePage() {
     const [weekendsDays, setWeekendsDays] = useState<string[]>([]);
     const [userLeaves, setUserLeaves] = useState<LeaveResponse[]>([]);
     const [duration, setDuration] = useState<number>(0);
+    const [conflicts, setConflicts] = useState<LeaveResponse[]>([]);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {user, organization} = useContext(UserContext);
     const navigate = useNavigate();
@@ -134,9 +136,8 @@ export default function LeaveCreatePage() {
 
     useEffect(() => {
         if (!leaveCategory || !startDate) return;
-        if (dayjs(endDate).isBefore(dayjs(startDate))) {
-            return;
-        }
+        if (dayjs(endDate).isBefore(dayjs(startDate))) return;
+
         const fetchDuration = async () => {
             try {
                 const response = await createLeavesCheck({
@@ -145,6 +146,7 @@ export default function LeaveCreatePage() {
                     end: dayjs(endDate).toISOString(),
                 });
                 setDuration(response.duration);
+                setConflicts([...response.yourConflicts, ...response.teamConflicts]);
             } catch (error) {
                 setDuration(null);
                 const errorMessage = getErrorMessage(error as Error | string);
@@ -230,7 +232,7 @@ export default function LeaveCreatePage() {
                 </Alert>
             )}
 
-            <PageHeader title='Create Leave Request'></PageHeader>
+            <PageHeader title='Create Leave'></PageHeader>
             <PageContent>
                 <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
                     <Form {...form}>
@@ -238,7 +240,7 @@ export default function LeaveCreatePage() {
                             <LeaveTypeField form={form} leaveTypes={leaveTypes}/>
                             <section className="grid grid-cols-2 gap-4">
                                 <DatePicker
-                                    title="Start"
+                                    title="Start Date"
                                     handleDateSelected={(date: Date) => setValue('startDate', date)}
                                     selectedDate={startDate}
                                     daysBefore={new Date()}
@@ -246,7 +248,7 @@ export default function LeaveCreatePage() {
                                     weekendsDays={weekendsDays}
                                 />
                                 <DatePicker
-                                    title="End"
+                                    title="End Date"
                                     handleDateSelected={(date: Date) => setValue('endDate', date)}
                                     selectedDate={endDate}
                                     daysBefore={startDate}
@@ -255,8 +257,9 @@ export default function LeaveCreatePage() {
                                 />
                             </section>
                             <LeaveDuration
-                                className='text-sm border rounded-md font-semibold text-center py-[10px] block'
+                                className='flex justify-center items-center gap-2 text-sm border rounded-md font-semibold text-center py-[10px]'
                                 duration={duration}/>
+                            {conflicts?.length > 0 && <LeaveConflicts conflicts={conflicts}/>}
                             <ReasonField form={form}/>
                             <Button type="submit" className="w-fit">Submit</Button>
                         </form>
@@ -279,11 +282,11 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
             name="leaveCategory"
             render={({field}) => (
                 <FormItem>
-                    <FormLabel>Type</FormLabel>
+                    <FormLabel>Leave Type</FormLabel>
                     <FormControl>
                         <Select value={field.value} onValueChange={field.onChange}>
                             <SelectTrigger>
-                                <SelectValue placeholder="Select a type"/>
+                                <SelectValue placeholder="Select leave type"/>
                             </SelectTrigger>
                             <SelectContent>
                                 {leaveTypes?.map((type) => (
@@ -309,7 +312,7 @@ function ReasonField({form}: FieldProps) {
                 <FormItem>
                     <FormLabel>Reason</FormLabel>
                     <FormControl>
-                        <Textarea {...field} className="min-h-32"/>
+                        <Textarea placeholder="Enter your leave reason" {...field} className="min-h-24"/>
                     </FormControl>
                     <FormMessage/>
                 </FormItem>
