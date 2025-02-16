@@ -12,6 +12,7 @@ import {LeaveStatus} from '@/core/types/enum.ts';
 import {Button} from '@/components/ui/button';
 import {formatDurationRange} from '@/core/utils/date.ts';
 import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
+import {Calendar, CalendarRange, Check, Clock, MessageSquare, X} from 'lucide-react';
 
 type LeaveDialogProps = {
     selectedRequest: LeaveResponse | null;
@@ -37,105 +38,97 @@ export default function LeaveStatusUpdateDialog({
 
     return (
         <Dialog open={true} onOpenChange={toggleModal}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Leave Status Update</DialogTitle>
-                    <DialogDescription className="py-1">
-                        <UserInfo user={user} onClick={() => viewBalance(user.id)} />
-                        <LeaveDetails
-                            durationText={durationText}
-                            duration={duration}
-                            type={activatedType.name}
-                            reason={reason}
-                            symbol={activatedType.symbol}
-                        />
+            <DialogContent className="max-w-md">
+                <DialogHeader className="pb-6">
+                    <DialogTitle className="flex flex-col items-center gap-6">
+                        {/* User Info Section */}
+                        <button
+                            onClick={() => viewBalance(user.id)}
+                            className="group w-full"
+                        >
+                            <div className="flex flex-col items-center gap-3">
+                                <UserAvatar
+                                    avatar={user.avatar}
+                                    avatarSize={64}
+                                    className="border-4 border-primary/10 group-hover:border-primary/20 transition-colors"
+                                />
+                                <div className="text-center">
+                                    <div className="text-lg font-medium group-hover:text-primary transition-colors">
+                                        {user.firstName} {user.lastName}
+                                    </div>
+                                </div>
+                            </div>
+                        </button>
+                    </DialogTitle>
+
+                    <DialogDescription>
+                        <div className="space-y-6">
+                            {/* Leave Details Section */}
+                            <div className="space-y-3 px-1">
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Calendar className="w-4 h-4 text-muted-foreground"/>
+                                        <span className="text-sm text-muted-foreground">Type</span>
+                                    </div>
+                                    <div className="flex items-center gap-2">
+                                        <span className="text-sm font-medium">{activatedType.name}</span>
+                                        <span className="text-xs text-muted-foreground">{activatedType.symbol}</span>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Clock className="w-4 h-4 text-muted-foreground"/>
+                                        <span className="text-sm text-muted-foreground">Duration</span>
+                                    </div>
+                                    <span className="text-sm font-medium">
+                                        {duration} {duration === 1 ? "Day" : "Days"}
+                                    </span>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <CalendarRange className="w-4 h-4 text-muted-foreground"/>
+                                        <span className="text-sm text-muted-foreground">Date Range</span>
+                                    </div>
+                                    <span className="text-sm font-medium">{durationText}</span>
+                                </div>
+
+                                {reason && (
+                                    <div className="pt-2 mt-2 border-t">
+                                        <div className="flex items-center gap-2 mb-1">
+                                            <MessageSquare className="w-4 h-4 text-muted-foreground"/>
+                                            <span className="text-sm text-muted-foreground">Description</span>
+                                        </div>
+                                        <div className="text-sm pl-6">{reason}</div>
+                                    </div>
+                                )}
+                            </div>
+                        </div>
                     </DialogDescription>
                 </DialogHeader>
-                <FooterButtons
-                    handleRequest={handleRequest}
-                    id={id}
-                    isProcessing={isProcessing}
-                />
+
+                {/* Action Buttons */}
+                <DialogFooter className="flex gap-3 sm:gap-0">
+                    <Button
+                        onClick={() => handleRequest(LeaveStatus.REJECTED, id)}
+                        variant="outline"
+                        disabled={isProcessing}
+                        className="flex-1 border-destructive/30 hover:border-destructive hover:bg-destructive/10 hover:text-destructive text-destructive"
+                    >
+                        <X className="w-4 h-4 mr-2"/>
+                        {isProcessing ? "Processing..." : "Reject"}
+                    </Button>
+                    <Button
+                        onClick={() => handleRequest(LeaveStatus.ACCEPTED, id)}
+                        disabled={isProcessing}
+                        className="flex-1 bg-primary hover:bg-primary/90"
+                    >
+                        <Check className="w-4 h-4 mr-2"/>
+                        {isProcessing ? "Processing..." : "Accept"}
+                    </Button>
+                </DialogFooter>
             </DialogContent>
         </Dialog>
-    );
-}
-
-type UserInfoProps = {
-    user: LeaveResponse['user'];
-    onClick: () => void;
-};
-
-function UserInfo({ user, onClick }: UserInfoProps) {
-    return (
-        <div className="flex items-center mb-4">
-            <UserAvatar avatar={user.avatar} avatarSize={32}/>
-            <button
-                onClick={onClick}
-                className="cursor-pointer text-sm ml-2 font-medium text-blue-600 hover:text-blue-800"
-            >
-                {user.firstName} {user.lastName}
-            </button>
-        </div>
-    );
-}
-
-type LeaveDetailsProps = {
-    durationText: string;
-    duration: number;
-    type: string;
-    reason?: string;
-    symbol: string;
-};
-
-function LeaveDetails({durationText, duration, type, reason, symbol}: LeaveDetailsProps) {
-    return (
-        <div className="grid grid-cols-4 gap-4 mb-4 text-black text-xs">
-            <div className="col-span-2">
-                <h5 className="text-[10px] text-gray-600 mb-1">Date</h5>
-                <span>{durationText}</span>
-            </div>
-            <div>
-                <h5 className="text-[10px] text-gray-600 mb-1">Duration</h5>
-                <span>{duration} {duration === 1 ? "Day" : "Days"}</span>
-            </div>
-            <div>
-                <h5 className="text-[10px] text-gray-600 mb-1">Type</h5>
-                <span>{type} {symbol}</span>
-            </div>
-            {reason && (
-                <div className="col-span-4">
-                    <h5 className="text-[10px] text-gray-600 mb-1">Description</h5>
-                    <span>{reason}</span>
-                </div>
-            )}
-        </div>
-    );
-}
-
-type FooterButtonsProps = {
-    handleRequest: (status: LeaveStatus, id: number) => void;
-    id: number;
-    isProcessing: boolean;
-};
-
-function FooterButtons({ handleRequest, id, isProcessing }: FooterButtonsProps) {
-    return (
-        <DialogFooter className="flex justify-center">
-            <Button
-                onClick={() => handleRequest(LeaveStatus.REJECTED, id)}
-                variant="outline"
-                disabled={isProcessing}
-            >
-                {isProcessing ? "Waiting ..." : "Reject"}
-            </Button>
-            <Button
-                onClick={() => handleRequest(LeaveStatus.ACCEPTED, id)}
-                className="ml-4 bg-[#088636]"
-                disabled={isProcessing}
-            >
-                {isProcessing ? "Waiting ..." : "Accept"}
-            </Button>
-        </DialogFooter>
     );
 }

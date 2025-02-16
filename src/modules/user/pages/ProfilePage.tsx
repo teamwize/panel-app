@@ -113,28 +113,42 @@ export default function ProfilePage() {
 
     return (
         <>
-            <PageHeader title='ProfilePage'></PageHeader>
+            <PageHeader title='Profile'/>
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4"
-                      x-chunk="dashboard-02-chunk-1">
-                    <div>
-                        <div className='w-40 flex flex-col right-0 left-0 mx-auto'>
-                            <UserAvatar avatar={user?.avatar} avatarSize={160}/>
-                            <div
-                                className='bg-indigo-500 w-12 h-12 flex flex-row items-center rounded-full relative bottom-10 left-24'>
-                                <label className='right-0 left-0 mx-auto z-10 cursor-pointer' htmlFor="upload-photo">
-                                    <Camera className='w-7 h-7 text-white'></Camera>
-                                </label>
-                                <input id='upload-photo' type="file" accept="image/jpeg, image/png" className='hidden'
-                                       onChange={handleFileChange}/>
+                <Card className="mx-auto p-8 ">
+                    <div className="space-y-8">
+                        {/* Avatar Section */}
+                        <div className="flex flex-col items-center">
+                            <div className="relative">
+                                <UserAvatar avatar={user?.avatar} avatarSize={160}/>
+                                <div
+                                    className="absolute bottom-0 right-0 bg-indigo-600 hover:bg-indigo-700 transition-colors p-3 rounded-full shadow-lg">
+                                    <label className="cursor-pointer" htmlFor="upload-photo">
+                                        <Camera className="w-5 h-5 text-white"/>
+                                    </label>
+                                    <input
+                                        id="upload-photo"
+                                        type="file"
+                                        accept="image/jpeg, image/png"
+                                        className="hidden"
+                                        onChange={handleFileChange}
+                                    />
+                                </div>
                             </div>
+
+                            {selectedAvatar && (
+                                <AvatarUpdateDialog
+                                    initialImageUrl={selectedAvatar}
+                                    onChange={handleUpdateUserAvatar}
+                                />
+                            )}
                         </div>
 
-                        {selectedAvatar && (
-                            <AvatarUpdateDialog initialImageUrl={selectedAvatar} onChange={handleUpdateUserAvatar}/>)}
+                        {/* Form Section */}
+                        <div className="mt-8">
+                            <FullNameField form={form} onSubmit={onSubmit} isProcessing={isProcessing}/>
+                        </div>
                     </div>
-
-                    <FullNameField form={form} onSubmit={onSubmit} isProcessing={isProcessing}/>
                 </Card>
             </PageContent>
         </>
@@ -151,35 +165,50 @@ type FieldProps = {
 function FullNameField({form, onSubmit, isProcessing}: FieldProps) {
     return (
         <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                <FormField
-                    control={form.control}
-                    name="firstName"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>First Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="First Name" {...field}/>
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
+            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                <div className="grid gap-6 sm:grid-cols-2">
+                    <FormField
+                        control={form.control}
+                        name="firstName"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="text-sm font-medium text-gray-700">First Name</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="First Name"
+                                        {...field}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-sm text-red-500"/>
+                            </FormItem>
+                        )}
+                    />
 
-                <FormField
-                    control={form.control}
-                    name="lastName"
-                    render={({field}) => (
-                        <FormItem>
-                            <FormLabel>Last Name</FormLabel>
-                            <FormControl>
-                                <Input placeholder="Last Name" {...field}/>
-                            </FormControl>
-                            <FormMessage/>
-                        </FormItem>
-                    )}
-                />
-                <Button type="submit" className="w-fit">{isProcessing ? "Waiting ..." : "Submit"}</Button>
+                    <FormField
+                        control={form.control}
+                        name="lastName"
+                        render={({field}) => (
+                            <FormItem>
+                                <FormLabel className="text-sm font-medium text-gray-700">Last Name</FormLabel>
+                                <FormControl>
+                                    <Input
+                                        placeholder="Last Name"
+                                        {...field}
+                                        className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                    />
+                                </FormControl>
+                                <FormMessage className="text-sm text-red-500"/>
+                            </FormItem>
+                        )}
+                    />
+                </div>
+                <Button
+                    type="submit"
+                    className="w-full sm:w-auto px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm transition-colors"
+                >
+                    {isProcessing ? "Updating..." : "Update Profile"}
+                </Button>
             </form>
         </Form>
     )

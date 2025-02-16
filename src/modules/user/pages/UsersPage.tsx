@@ -15,7 +15,7 @@ import PageHeader from "@/components/layout/PageHeader.tsx";
 import PaginationComponent from "@/components/Pagination.tsx";
 import {UserList} from "@/modules/user/components/UserList.tsx";
 
-export default function UserPage() {
+export default function UsersPage() {
     const [employeesList, setEmployeesList] = useState<PagedResponse<UserResponse> | null>(null);
     const [filteredEmployees, setFilteredEmployees] = useState<UserResponse[]>([]);
     const [selectedEmployee, setSelectedEmployee] = useState<UserResponse | null>(null);
@@ -97,13 +97,15 @@ export default function UserPage() {
 
             <PageContent>
                 <UserFilterForm onFilter={handleUsersFilter}/>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
+                <Card className="mt-5 flex flex-1 flex-col rounded-lg border  shadow-sm p-4 gap-4">
                     <Table>
                         <TableHeader>
                             <TableRow>
                                 <TableHead>Employee</TableHead>
-                                <TableHead>Email</TableHead>
+                                <TableHead>Country</TableHead>
                                 <TableHead>Team</TableHead>
+                                <TableHead>Role</TableHead>
+                                <TableHead>Status</TableHead>
                                 <TableHead className="text-right">Actions</TableHead>
                             </TableRow>
                         </TableHeader>

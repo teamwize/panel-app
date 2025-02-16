@@ -155,33 +155,43 @@ function LeaveTypeRowItem({leaveType, openDialog, handleDelete}: LeaveTypeRowIte
     const isArchived = leaveType.status === 'ARCHIVED';
 
     return (
-        <TableRow className={isArchived ? 'opacity-50' : ''}>
-            <TableCell>{leaveType.name} {leaveType.symbol}</TableCell>
+        <TableRow className={`${isArchived ? 'opacity-50' : ''} hover:bg-muted/50 transition-colors`}>
+            <TableCell className="font-medium">{leaveType.name}
+                <span className="ml-1 text-muted-foreground">{leaveType.symbol}</span>
+            </TableCell>
             <TableCell>{leaveType.amount}</TableCell>
             <TableCell>{LeaveTypeCycleJson[leaveType.cycle]}</TableCell>
-            <TableCell>{leaveType.requiresApproval ? "Yes" : "No"}</TableCell>
+            <TableCell>
+                <span className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                    leaveType.requiresApproval
+                        ? 'bg-green-50 text-green-700 ring-green-600/20'
+                        : 'bg-yellow-50 text-yellow-700 ring-yellow-600/20'
+                }`}>
+                    {leaveType.requiresApproval ? "Yes" : "No"}
+                </span>
+            </TableCell>
             <TableCell className="text-right">
                 {!isArchived ? (
-                    <div className="flex gap-4 justify-end">
+                    <div className="flex gap-2 justify-end">
                         <Button
-                            className="px-1"
-                            variant="outline"
+                            className="px-2 hover:bg-muted/80 transition-colors"
+                            variant="ghost"
                             size="sm"
                             onClick={openDialog}
                         >
-                            <Pencil className="h-4"/>
+                            <Pencil className="h-4 text-muted-foreground"/>
                         </Button>
                         <Button
-                            className="px-1"
-                            variant="outline"
+                            className="px-2 hover:bg-red-50 transition-colors"
+                            variant="ghost"
                             size="sm"
                             onClick={handleDelete}
                         >
-                            <Trash className="h-4 text-[#ef4444]"/>
+                            <Trash className="h-4 text-red-500"/>
                         </Button>
                     </div>
                 ) : (
-                    <span className="text-sm text-gray-500">Archived</span>
+                    <span className="text-sm text-muted-foreground italic">Archived</span>
                 )}
             </TableCell>
         </TableRow>

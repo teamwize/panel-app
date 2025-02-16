@@ -1,9 +1,12 @@
+import {Eye, Globe, Pencil, Trash2} from "lucide-react";
 import {UserResponse} from "@/core/types/user.ts";
 import React from "react";
 import {TableBody, TableCell, TableRow} from "@/components/ui/table.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {Pencil, Trash} from "lucide-react";
+import {Badge} from "@/components/ui/badge.tsx";
 import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
+import {UserRoleBadge} from "@/modules/user/components/UserRoleBadge.tsx";
+import {UserStatusBadge} from "@/modules/user/components/UserStatusBadge.tsx";
 
 type EmployeeTableProps = {
     employeesList: UserResponse[];
@@ -13,42 +16,85 @@ type EmployeeTableProps = {
 };
 
 export function UserList({
-                                  employeesList,
-                                  setSelectedEmployee,
-                                  onUserUpdate,
-                                  onUserView
-                              }: EmployeeTableProps) {
+                             employeesList,
+                             setSelectedEmployee,
+                             onUserUpdate,
+                             onUserView
+                         }: EmployeeTableProps) {
+
     return (
         <TableBody>
             {employeesList.map((employee) => (
-                <TableRow key={employee.id} className="items-center">
-                    <TableCell onClick={() => onUserView(employee.id)}
-                               className='flex items-center cursor-pointer text-blue-600 hover:text-blue-800'>
-                        <UserAvatar avatar={employee?.avatar} avatarSize={32}/>
-                        <span className="text-sm font-medium ml-2">{employee.firstName} {employee.lastName}</span>
+                <TableRow
+                    key={employee.id}
+                    className="hover:bg-muted/50 transition-colors"
+                >
+                    <TableCell className="py-4">
+                        <div
+                            onClick={() => onUserView(employee.id)}
+                            className="flex items-center space-x-4 cursor-pointer hover:text-primary transition-colors"
+                        >
+                            <UserAvatar
+                                avatar={employee?.avatar}
+                                avatarSize={40}
+                                className="border-2 border-muted"
+                            />
+                            <div className="flex flex-col">
+                                <span className="font-medium">
+                                    {employee.firstName} {employee.lastName}
+                                </span>
+                                <span className="text-sm text-muted-foreground">
+                                    {employee.email}
+                                </span>
+                            </div>
+                        </div>
                     </TableCell>
-                    <TableCell>{employee.email}</TableCell>
-                    <TableCell>{employee.team.name}</TableCell>
-                    <TableCell className="text-right">
-                        <div className="flex gap-4 justify-end">
-                            <Button
-                                className="px-1"
-                                variant="outline"
-                                size="sm"
-                                onClick={() => {
-                                    onUserUpdate(employee);
-                                }}
-                            >
-                                <Pencil className="h-4" />
-                            </Button>
+                    <TableCell>
+                        <div className="flex items-center space-x-2">
+                            <Globe className="h-4 w-4 text-muted-foreground"/>
+                            <span className="text-sm">{employee.country}</span>
+                        </div>
+                    </TableCell>
+                    <TableCell>
+                        <Badge variant="outline">
+                            {employee.team.name}
+                        </Badge>
+                    </TableCell>
+                    <TableCell>
+                        <UserRoleBadge role={employee.role}/>
+                    </TableCell>
+                    <TableCell>
+                        <UserStatusBadge status={employee.status}/>
 
+                    </TableCell>
+                    <TableCell className="text-right">
+                        <div className="flex items-center justify-end space-x-2">
                             <Button
-                                className="px-1"
-                                variant="outline"
+                                variant="ghost"
                                 size="sm"
-                                onClick={() => setSelectedEmployee(employee)}
+                                className="h-8 w-8 p-0"
+                                onClick={() => onUserView(employee.id)}
+                                title="View details"
                             >
-                                <Trash className="h-4 text-[#ef4444]" />
+                                <Eye className="h-4 w-4"/>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0"
+                                onClick={() => onUserUpdate(employee)}
+                                title="Edit employee"
+                            >
+                                <Pencil className="h-4 w-4"/>
+                            </Button>
+                            <Button
+                                variant="ghost"
+                                size="sm"
+                                className="h-8 w-8 p-0 text-destructive hover:text-destructive hover:bg-destructive/10"
+                                onClick={() => setSelectedEmployee(employee)}
+                                title="Delete employee"
+                            >
+                                <Trash2 className="h-4 w-4"/>
                             </Button>
                         </div>
                     </TableCell>

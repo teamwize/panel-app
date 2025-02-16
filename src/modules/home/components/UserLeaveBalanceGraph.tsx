@@ -32,7 +32,6 @@ export default function UserLeaveBalanceGraph({title, used, quantity}: BalanceGr
     return (
         <div className="balance-graph">
             <Doughnut data={data} options={options}></Doughnut>
-            <p>{title}: {used} / {quantity}</p>
         </div>
     );
 }

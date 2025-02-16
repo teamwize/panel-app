@@ -40,25 +40,29 @@ export default function SidebarAccountDropdown({isActive, onClick}: AccountDropd
     };
 
     return (
-        <div
-            className={clsx("m-4", isActive ? "bg-indigo-100 bg-opacity-75 rounded-lg px-2 py-1" : '')}
-            onClick={handleDropdownClick}
-            >
+        <div className={'border-t border-gray-200 p-4'}
+             onClick={handleDropdownClick}
+        >
             <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                    <div className="flex items-center justify-between gap-2 cursor-pointer rounded-lg transition-all text-muted-foreground hover:text-primary">
-                        <div className="flex items-center gap-2">
+                <DropdownMenuTrigger className="w-full">
+                    <div
+                        className={clsx("flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50 transition-colors", isActive ? "bg-indigo-100 bg-opacity-75 rounded-lg p-2" : '')}>
+                        <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
                             <UserAvatar avatar={user?.avatar} avatarSize={32}/>
-                            <div className={clsx("text-sm font-semibold", isActive ? "text-gray-700" : '')}>{user?.firstName} {user?.lastName}</div>
                         </div>
-                        <Ellipsis className="w-4 h-4" />
+                        <div className={clsx("flex-1 text-left", isActive ? "text-gray-700" : '')}>
+                            <p className="text-sm font-medium text-gray-900">{user?.firstName} {user?.lastName}</p>
+                            <p className="text-xs text-gray-500">{user?.email}</p>
+                        </div>
+                        <Ellipsis className="h-4 w-4 text-gray-400"/>
                     </div>
                 </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="rounded-lg">
-                    <DropdownMenuItem onClick={viewProfile} className="cursor-pointer hover:bg-indigo-100 hover:text-primary dark:hover:bg-indigo-800">Profile
+                <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuItem onClick={viewProfile} className="text-sm">Profile
                     </DropdownMenuItem>
-                    <DropdownMenuSeparator />
-                    <DropdownMenuItem onClick={() => setSignOut(true)} className="cursor-pointer hover:bg-indigo-100 hover:text-primary dark:hover:bg-indigo-800">Sign Out</DropdownMenuItem>
+                    <DropdownMenuSeparator/>
+                    <DropdownMenuItem onClick={() => setSignOut(true)} className="text-sm text-red-600">Sign
+                        Out</DropdownMenuItem>
                 </DropdownMenuContent>
             </DropdownMenu>
 
@@ -95,7 +99,8 @@ function SignOut({setSignOut, signOut}: SignOutProps) {
                 <DialogDescription>Are you sure you want to sign out?</DialogDescription>
                 <DialogFooter>
                     <Button variant="outline" className="w-full" onClick={() => handleRequest(false)}>No</Button>
-                    <Button variant="destructive" className="w-full ml-4" onClick={() => handleRequest(true)}>Yes</Button>
+                    <Button variant="destructive" className="w-full ml-4"
+                            onClick={() => handleRequest(true)}>Yes</Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -12,7 +12,6 @@ import {Alert, AlertDescription} from '@/components/ui/alert';
 import {Button} from '@/components/ui/button';
 import {Textarea} from '@/components/ui/textarea';
 import {Card} from '@/components/ui/card';
-import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from '@/components/ui/form';
 import {toast} from "@/components/ui/use-toast";
 import {calculateWeekends, getNextWorkingDay, isDateInHoliday, isDateInWeekend} from "@/core/utils/date.ts";
@@ -24,8 +23,8 @@ import {capitalizeFirstLetter} from "@/core/utils/string.ts";
 import {LeaveCreateRequest, LeavePolicyActivatedTypeResponse, LeaveResponse} from "@/core/types/leave.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
-import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
 import LeaveConflicts from "@/modules/leave/components/LeaveConflicts.tsx";
+import {Send, X} from "lucide-react";
 
 /*
 1.Fetch LeavePolicyType name and id from leaves/policies
@@ -127,7 +126,7 @@ export default function LeaveCreatePage() {
         }
     };
 
-    // Adjust endDate if it’s before startDate
+    // Adjust endDate if it's before startDate
     useEffect(() => {
         if (dayjs(endDate).isBefore(dayjs(startDate))) {
             setValue('endDate', startDate);
@@ -227,43 +226,79 @@ export default function LeaveCreatePage() {
     return (
         <>
             {errorMessage && (
-                <Alert className='text-red-500 border-none font-semibold px-4'>
+                <Alert variant="destructive" className="mb-4">
                     <AlertDescription>{errorMessage}</AlertDescription>
                 </Alert>
             )}
 
-            <PageHeader title='Create Leave'></PageHeader>
+            <PageHeader title='Create Leave'/>
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4">
-                    <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4">
-                            <LeaveTypeField form={form} leaveTypes={leaveTypes}/>
-                            <section className="grid grid-cols-2 gap-4">
-                                <DatePicker
-                                    title="Start Date"
-                                    handleDateSelected={(date: Date) => setValue('startDate', date)}
-                                    selectedDate={startDate}
-                                    daysBefore={new Date()}
-                                    holidays={holidays}
-                                    weekendsDays={weekendsDays}
-                                />
-                                <DatePicker
-                                    title="End Date"
-                                    handleDateSelected={(date: Date) => setValue('endDate', date)}
-                                    selectedDate={endDate}
-                                    daysBefore={startDate}
-                                    holidays={holidays}
-                                    weekendsDays={weekendsDays}
-                                />
-                            </section>
-                            <LeaveDuration
-                                className='flex justify-center items-center gap-2 text-sm border rounded-md font-semibold text-center py-[10px]'
-                                duration={duration}/>
-                            {conflicts?.length > 0 && <LeaveConflicts conflicts={conflicts}/>}
-                            <ReasonField form={form}/>
-                            <Button type="submit" className="w-fit">Submit</Button>
-                        </form>
-                    </Form>
+                <Card className="mx-auto">
+                    <div className="p-6">
+                        <Form {...form}>
+                            <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
+                                <LeaveTypeField form={form} leaveTypes={leaveTypes}/>
+
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium">Leave Duration</h3>
+                                    <div className="grid md:grid-cols-2 gap-6">
+                                        <DatePicker
+                                            title="Start Date"
+                                            handleDateSelected={(date: Date) => setValue('startDate', date)}
+                                            selectedDate={startDate}
+                                            daysBefore={new Date()}
+                                            holidays={holidays}
+                                            weekendsDays={weekendsDays}
+                                        />
+                                        <DatePicker
+                                            title="End Date"
+                                            handleDateSelected={(date: Date) => setValue('endDate', date)}
+                                            selectedDate={endDate}
+                                            daysBefore={startDate}
+                                            holidays={holidays}
+                                            weekendsDays={weekendsDays}
+                                        />
+                                    </div>
+
+                                    <div className="grid grid-cols-3 gap-4 border p-4 rounded-lg">
+                                        <div className="text-center">
+                                            <div className="text-sm text-muted-foreground mb-1">Total Days</div>
+                                            <div className="text-2xl font-semibold">{duration}</div>
+                                        </div>
+                                        <div className="text-center border-x">
+                                            <div className="text-sm text-muted-foreground mb-1">Working Days</div>
+                                            <div className="text-2xl font-semibold">{duration}</div>
+                                        </div>
+                                        <div className="text-center">
+                                            <div className="text-sm text-muted-foreground mb-1">Non-Working Days</div>
+                                            <div className="text-2xl font-semibold">
+                                                {dayjs(endDate).diff(dayjs(startDate), 'days') + 1 - duration}
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                {conflicts?.length > 0 && (
+                                    <div className="">
+                                        <LeaveConflicts conflicts={conflicts}/>
+                                    </div>
+                                )}
+
+                                <ReasonField form={form}/>
+
+                                <div className="flex justify-end pt-4 border-t">
+                                    <Button type="button" variant="outline" className="mr-2">
+                                        <X className="w-4 h-4 mr-2"/>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit">
+                                        <Send className="w-4 h-4 mr-2"/>
+                                        Submit
+                                    </Button>
+                                </div>
+                            </form>
+                        </Form>
+                    </div>
                 </Card>
             </PageContent>
         </>
@@ -281,22 +316,35 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
             control={form.control}
             name="leaveCategory"
             render={({field}) => (
-                <FormItem>
-                    <FormLabel>Leave Type</FormLabel>
+                <FormItem className="space-y-3">
+                    <FormLabel className="text-base font-medium">Type</FormLabel>
                     <FormControl>
-                        <Select value={field.value} onValueChange={field.onChange}>
-                            <SelectTrigger>
-                                <SelectValue placeholder="Select leave type"/>
-                            </SelectTrigger>
-                            <SelectContent>
-                                {leaveTypes?.map((type) => (
-                                    <SelectItem key={type.typeId}
-                                                value={type.typeId.toString()}>{type.name} {type.symbol}</SelectItem>
-                                ))}
-                            </SelectContent>
-                        </Select>
+                        <div className="flex flex-wrap gap-2">
+                            {leaveTypes?.map((type) => (
+                                <Button
+                                    key={type.typeId}
+                                    type="button"
+                                    variant={field.value === type.typeId.toString() ? "secondary" : "outline"}
+                                    className={`
+                                        h-11 px-4 flex flex-col items-center gap-1
+                                        ${field.value === type.typeId.toString()
+                                        ? ''
+                                        : 'hover:bg-background hover:border-input'
+                                    }
+                                    `}
+                                    onClick={() => field.onChange(type.typeId.toString())}
+                                >
+                                    {type.symbol && (
+                                        <span className="text-xs text-muted-foreground">
+                                            {type.symbol}
+                                        </span>
+                                    )}
+                                    <span>{type.name}</span>
+                                </Button>
+                            ))}
+                        </div>
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage className="text-sm"/>
                 </FormItem>
             )}
         />
@@ -309,12 +357,16 @@ function ReasonField({form}: FieldProps) {
             control={form.control}
             name="reason"
             render={({field}) => (
-                <FormItem>
-                    <FormLabel>Reason</FormLabel>
+                <FormItem className="space-y-1">
+                    <FormLabel className="text-base font-medium">Reason</FormLabel>
                     <FormControl>
-                        <Textarea placeholder="Enter your leave reason" {...field} className="min-h-24"/>
+                        <Textarea
+                            placeholder="Please provide a reason for your leave request..."
+                            {...field}
+                            className="min-h-[120px] resize-none"
+                        />
                     </FormControl>
-                    <FormMessage/>
+                    <FormMessage className="text-sm"/>
                 </FormItem>
             )}
         />

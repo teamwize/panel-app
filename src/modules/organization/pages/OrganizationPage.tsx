@@ -104,34 +104,56 @@ export default function OrganizationPage() {
 
     return (
         <>
-            <PageHeader title='Organization'></PageHeader>
+            <PageHeader title='Organization'>
+                <p className="text-sm text-muted-foreground">
+                    Manage your organization settings and preferences
+                </p>
+            </PageHeader>
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
-                      x-chunk="dashboard-02-chunk-1">
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                            <NameField form={form}/>
+                <Card className=" mx-auto">
+                    <div className="p-6 space-y-6">
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                                <div className="space-y-4">
+                                    <NameField form={form}/>
 
-                            <SelectField
-                                label="Country"
-                                name="country"
-                                options={country.map((country) => ({label: country.name, value: country.name}))}
-                                form={form}
-                            />
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <SelectField
+                                            label="Country"
+                                            name="country"
+                                            options={country.map((country) => ({
+                                                label: country.name,
+                                                value: country.name
+                                            }))}
+                                            form={form}
+                                        />
 
-                            <SelectField
-                                label="Week Starting Day"
-                                name="weekFirstDay"
-                                options={Object.values(Week).map((day) => ({label: getWeekDayName(day), value: day}))}
-                                form={form}
-                            />
+                                        <SelectField
+                                            label="Week Starting Day"
+                                            name="weekFirstDay"
+                                            options={Object.values(Week).map((day) => ({
+                                                label: getWeekDayName(day),
+                                                value: day
+                                            }))}
+                                            form={form}
+                                        />
+                                    </div>
 
-                            <CheckboxGroupField form={form}/>
+                                    <CheckboxGroupField form={form}/>
+                                </div>
 
-                            <Button type="submit" className="w-fit"
-                                    disabled={isProcessing}>{isProcessing ? "Processing..." : "Save"}</Button>
-                        </form>
-                    </Form>
+                                <div className="flex justify-end pt-4">
+                                    <Button
+                                        type="submit"
+                                        className="min-w-[120px]"
+                                        disabled={isProcessing}
+                                    >
+                                        {isProcessing ? "Processing..." : "Save"}
+                                    </Button>
+                                </div>
+                            </form>
+                        </Form>
+                    </div>
                 </Card>
             </PageContent>
         </>
@@ -149,7 +171,7 @@ function NameField({form}: FieldProps) {
             control={form.control}
             name="name"
             render={({field}) => (
-                <FormItem>
+                <FormItem className="max-w-sm">
                     <FormLabel>Name</FormLabel>
                     <FormControl>
                         <Input placeholder="Organization Name" {...field} />
@@ -193,12 +215,13 @@ function CheckboxGroupField({form}: FieldProps) {
             control={form.control}
             name="workingDays"
             render={({field}) => (
-                <FormItem>
+                <FormItem className="space-y-2">
                     <FormLabel>Working Days</FormLabel>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                         {Object.values(Week).map(day => (
-                            <div key={day} className="flex items-center">
+                            <div key={day} className="flex items-center space-x-2">
                                 <Checkbox
+                                    id={day}
                                     value={day}
                                     checked={field.value.includes(day)}
                                     onCheckedChange={(isChecked) => {
@@ -209,7 +232,12 @@ function CheckboxGroupField({form}: FieldProps) {
                                         }
                                     }}
                                 />
-                                <label htmlFor={day} className="ml-2">{getWeekDayName(day)}</label>
+                                <label
+                                    htmlFor={day}
+                                    className="text-sm font-medium leading-none"
+                                >
+                                    {getWeekDayName(day)}
+                                </label>
                             </div>
                         ))}
                     </div>

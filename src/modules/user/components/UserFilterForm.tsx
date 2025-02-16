@@ -33,31 +33,46 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
     };
 
     return (
-        <div className="flex gap-4 items-center p-4 m-4 border rounded-lg">
-            {/* Search Input */}
-            <Input
-                placeholder="Search by name, email..."
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                className="flex-1"
-            />
+        <div className="bg-card rounded-lg border shadow-sm">
+            <div className="p-6 space-y-4">
+                <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="relative flex-1">
+                        <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground"/>
+                        <Input
+                            placeholder="Search by name, email..."
+                            value={searchQuery}
+                            onChange={(e) => setSearchQuery(e.target.value)}
+                            className="pl-9 bg-muted/50 border-muted-foreground/20"
+                        />
+                    </div>
 
-            {/* team Select */}
-            <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value)}>
-                <SelectTrigger className="w-48">
-                    <SelectValue placeholder="Select a team" />
-                </SelectTrigger>
-                <SelectContent>
-                    {teams.map((team) => (
-                        <SelectItem key={team.id} value={team.id.toString()}>{team.name}</SelectItem>
-                    ))}
-                </SelectContent>
-            </Select>
+                    <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value)}>
+                        <SelectTrigger className="w-full sm:w-[200px] bg-muted/50 border-muted-foreground/20">
+                            <SelectValue placeholder="Select a team"/>
+                        </SelectTrigger>
+                        <SelectContent>
+                            <SelectItem value="ALL">All Teams</SelectItem>
+                            {teams.map((team) => (
+                                <SelectItem
+                                    key={team.id}
+                                    value={team.id.toString()}
+                                    className="cursor-pointer"
+                                >
+                                    {team.name}
+                                </SelectItem>
+                            ))}
+                        </SelectContent>
+                    </Select>
 
-            {/* Search Button */}
-            <Button className='px-2 h-9 w-10' onClick={handleSearch}>
-                <Search className='w-4 h-4'/>
-            </Button>
+                    <Button
+                        onClick={handleSearch}
+                        className="sm:w-[100px] bg-primary hover:bg-primary/90 text-primary-foreground shadow transition-colors"
+                    >
+                        <Search className="h-4 w-4 mr-2"/>
+                        Search
+                    </Button>
+                </div>
+            </div>
         </div>
     );
 }

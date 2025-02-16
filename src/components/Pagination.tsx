@@ -22,7 +22,7 @@ export default function PaginationComponent({pageNumber, totalPages, setPageNumb
     }
 
     return (
-        <Pagination className='flex flex-wrap justify-start'>
+        <Pagination className='flex flex-wrap justify-start mb-4 mt-2'>
             <PaginationContent>
                 <PaginationItem>
                     <PaginationPrevious onClick={() => handlePageChange(pageNumber - 1)}/>

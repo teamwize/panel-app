@@ -15,7 +15,7 @@ import {HolidayResponse} from "@/core/types/holiday.ts";
 import {LeaveResponse} from "@/core/types/leave.ts";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import {Week} from "@/core/types/enum.ts";
-import {CustomCalendar} from "@/components/calendar/CustomCalendar.tsx";
+import {CustomCalendar} from "@/modules/calendar/components/CustomCalendar.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import {capitalizeFirstLetter} from "@/core/utils/string.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";

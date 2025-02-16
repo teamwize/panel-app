@@ -1,5 +1,5 @@
 import dayjs from "dayjs";
-import {CalendarDayBox} from "@/components/calendar/CalendarDayBox.tsx";
+import {CalendarDayBox} from "@/modules/calendar/components/CalendarDayBox.tsx";
 import {LeaveResponse} from "@/core/types/leave.ts";
 
 interface CalendarGridProps {
@@ -30,7 +30,12 @@ export function CalendarGrid({currentMonth, leaves, holidays = [], weekends = []
         <div className="grid grid-cols-7">
             {/* Render weekday headers */}
             {WEEKDAYS.map((weekday) => (
-                <div key={weekday} className="text-center content-center font-semibold p-2 bg-gray-50 min-h-[50px]">{weekday.slice(0, 3)}</div>
+                <div
+                    key={weekday}
+                    className="text-center py-3 text-sm font-medium text-muted-foreground border-b bg-muted/30 first:rounded-tl-lg last:rounded-tr-lg"
+                >
+                    {weekday.slice(0, 3)}
+                </div>
             ))}
 
             {/* Render calendar days */}

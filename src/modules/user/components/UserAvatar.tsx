@@ -1,39 +1,49 @@
 import React, {useContext} from "react";
 import {AssetResponse} from "@/core/types/user.ts";
 import {UserContext} from "@/contexts/UserContext.tsx";
-import {CircleUser} from "lucide-react";
+import {User} from "lucide-react";
 
 type AvatarProps = {
     avatar: AssetResponse | null;
     avatarSize: number;
+    className?: string;
 };
 
-export default function UserAvatar({avatar, avatarSize}: AvatarProps) {
+export default function UserAvatar({avatar, avatarSize, className}: AvatarProps) {
     const { accessToken } = useContext(UserContext);
-
     const avatarSrc = avatar ? `${avatar.url}?token=${accessToken}` : null;
+
+    const commonStyles = {
+        height: `${avatarSize}px`,
+        width: `${avatarSize}px`,
+        objectFit: 'cover' as const,
+        transition: 'all 0.2s ease-in-out'
+    };
 
     if (!avatarSrc) {
         return (
-            <CircleUser
-                className='text-gray-500'
-                style={{
-                    height: `${avatarSize}px`,
-                    width: `${avatarSize}px`,
-                }}
-            />
+            <div className="relative inline-block border-2 border-gray-200 rounded-full p-1">
+                <User
+                    className="text-gray-400 hover:text-blue-500 transition-colors duration-200"
+                    size={24}
+                />
+            </div>
         );
     }
 
     return (
-        <img
-            src={avatarSrc}
-            alt="ProfilePage Image"
-            className="rounded-full"
-            style={{
-                height: `${avatarSize}px`,
-                width: `${avatarSize}px`,
-            }}
-        />
+        <div className="relative inline-block">
+            <img
+                src={avatarSrc}
+                alt="User Avatar"
+                className={`rounded-full hover:opacity-90 ${className ?? ''}`}
+                style={commonStyles}
+                loading="lazy"
+                onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'fallback-avatar-url.jpg'; // Add your fallback image URL
+                }}
+            />
+        </div>
     );
 }

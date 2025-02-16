@@ -1,6 +1,6 @@
 import {Route} from "react-router-dom";
 import AuthenticatedRoute from "@/modules/auth/components/AuthenticatedRoute.tsx";
-import UserPage from "@/modules/user/pages/UserPage.tsx";
+import UsersPage from "@/modules/user/pages/UsersPage.tsx";
 import UserDetailsPage from "@/modules/user/pages/UserDetailsPage.tsx";
 import ChangePasswordPage from "@/modules/user/pages/ChangePasswordPage.tsx";
 import ProfilePage from "@/modules/user/pages/ProfilePage.tsx";
@@ -10,7 +10,7 @@ import UserUpdatePage from "@/modules/user/pages/UserUpdatePage.tsx";
 export default function UserRoutes() {
     return (
         <>
-            <Route path='/users' element={<AuthenticatedRoute><UserPage/></AuthenticatedRoute>}></Route>
+            <Route path='/users' element={<AuthenticatedRoute><UsersPage/></AuthenticatedRoute>}></Route>
             <Route path='/users/:id/' element={<AuthenticatedRoute><UserDetailsPage/></AuthenticatedRoute>}></Route>
             <Route path='/settings/change-password'
                    element={<AuthenticatedRoute><ChangePasswordPage/></AuthenticatedRoute>}></Route>

@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Card} from '@/components/ui/card.tsx';
-import {CalendarHeader} from "@/components/calendar/CalendarHeader.tsx";
-import {CalendarGrid} from "@/components/calendar/CalendarGrid.tsx";
+import {CalendarHeader} from "@/modules/calendar/components/CalendarHeader.tsx";
+import {CalendarGrid} from "@/modules/calendar/components/CalendarGrid.tsx";
 import {LeaveResponse} from "@/core/types/leave.ts";
 
 interface CalendarProps {

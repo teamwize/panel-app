@@ -77,28 +77,65 @@ export default function SignUpPage() {
     };
 
     return (
-        <div className="relative min-h-screen bg-gray-100 flex flex-col gap-6 items-center justify-center px-4">
-            <div className="flex flex-col justify-center">
-                <Logo className="h-14 border-2 rounded mb-2 mx-auto"/>
-                <h1 className="text-xl font-semibold text-gray-700">Teamwize</h1>
-            </div>
+        <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 py-12 px-4 sm:px-6 lg:px-8">
+            <div className="max-w-2xl mx-auto">
+                {/* Header Section */}
+                <div className="text-center mb-10">
+                    <Logo className="h-14 mx-auto mb-8 opacity-90"/>
+                    <h1 className="text-2xl font-semibold text-gray-800">
+                        Create your account
+                    </h1>
+                    <p className="mt-3 text-gray-500">
+                        Join Teamwize and start collaborating with your team
+                    </p>
+                </div>
 
-            <div className="w-full max-w-md p-6 bg-white shadow-lg rounded-lg">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <OrganizationField form={form}/>
-                        <FullNameField form={form}/>
-                        <EmailField form={form}/>
-                        <PhoneField form={form}/>
-                        <PasswordField form={form}/>
-                        <CountryField form={form}/>
-                        <Button type="submit" className="w-full mt-4">{isProcessing ? "Waiting..." : "Sign Up"}</Button>
-                        <div className="mt-4 text-center text-sm">
-                            Already have an account?
-                            <Link to="/signin" className="underline ml-1">Sign in</Link>
-                        </div>
-                    </form>
-                </Form>
+                {/* Form Card */}
+                <div className="bg-white shadow-xl rounded-lg p-8">
+                    <Form {...form}>
+                        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
+                            {/* Organization Section */}
+                            <div className="space-y-6 pb-6 border-b border-gray-200">
+                                <h2 className="text-lg font-semibold text-gray-900">Organization Details</h2>
+                                <OrganizationField form={form}/>
+                                <CountryField form={form}/>
+                            </div>
+
+                            {/* Personal Details Section */}
+                            <div className="space-y-6 pb-6 border-b border-gray-200">
+                                <h2 className="text-lg font-semibold text-gray-900">Personal Information</h2>
+                                <FullNameField form={form}/>
+                                <PhoneField form={form}/>
+                            </div>
+
+                            {/* Account Security Section */}
+                            <div className="space-y-6">
+                                <h2 className="text-lg font-semibold text-gray-900">Account</h2>
+                                <EmailField form={form}/>
+
+                                <PasswordField form={form}/>
+                            </div>
+
+                            {/* Submit Button */}
+                            <div className="pt-6">
+                                <Button
+                                    type="submit"
+                                    className="w-full flex justify-center py-2.5"
+                                    disabled={isProcessing}
+                                >
+                                    {isProcessing ? "Creating Account..." : "Create Account"}
+                                </Button>
+
+                                <p className="mt-4 text-center text-sm text-gray-600">
+                                    Already have an account?{' '}
+                                    <Link to="/signin" className="font-medium text-blue-600 hover:text-blue-500">
+                                        Sign in
+                                    </Link>
+                                </p>
+                            </div>
+                        </form>
+                    </Form>
+                </div>
             </div>
         </div>
     );
@@ -209,13 +246,19 @@ function PasswordField({form}: FieldProps) {
                     <FormLabel>Password</FormLabel>
                     <FormControl>
                         <div className="relative">
-                            <Input id="password" placeholder="Password" type={showPassword ? "text" : "password"}{...field}/>
+                            <Input
+                                id="password"
+                                placeholder="Create a secure password"
+                                type={showPassword ? "text" : "password"}
+                                className="pr-10"
+                                {...field}
+                            />
                             <button
                                 type="button"
                                 onClick={() => setShowPassword(!showPassword)}
-                                className="absolute inset-y-0 right-0 flex items-center px-2"
+                                className="absolute inset-y-0 right-0 flex items-center px-3 text-gray-500 hover:text-gray-700"
                             >
-                                {showPassword ? (<EyeOff className="h-5 w-5"/>) : (<Eye className="h-5 w-5"/>)}
+                                {showPassword ? <EyeOff className="h-4 w-4"/> : <Eye className="h-4 w-4"/>}
                             </button>
                         </div>
                     </FormControl>
@@ -223,7 +266,7 @@ function PasswordField({form}: FieldProps) {
                 </FormItem>
             )}
         />
-    )
+    );
 }
 
 function CountryField({form}: FieldProps) {

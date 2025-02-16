@@ -13,6 +13,7 @@ import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Eye, EyeOff} from 'lucide-react';
 import Logo from "@/components/icon/Logo.tsx";
+import {Card, CardContent} from "@/components/ui/card";
 
 const FormSchema = z.object({
     email: z.string().email({message: "Email format is not correct"}),
@@ -60,25 +61,76 @@ export default function SignInPage() {
     };
 
     return (
-        <div className="relative min-h-screen bg-gray-100 flex flex-col gap-6 items-center justify-center px-4">
-            <div className="flex flex-col justify-center">
-                <Logo className="h-14 border-2 rounded mb-2 mx-auto"/>
-                <h1 className="text-xl font-semibold text-gray-700">Teamwize</h1>
-            </div>
+        <div
+            className="min-h-[100dvh] w-full bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/20 overflow-auto">
+            <div className="container flex items-center justify-center min-h-[100dvh] lg:max-w-none lg:px-0">
+                {/* Decorative Elements */}
+                <div className="fixed -left-4 top-0 h-72 w-72 bg-primary/10 rounded-full blur-3xl"/>
+                <div className="fixed -right-4 bottom-0 h-72 w-72 bg-secondary/10 rounded-full blur-3xl"/>
 
-            <div className="w-full max-w-sm p-6 bg-white shadow-lg rounded-lg">
-                <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-                        <EmailField form={form}/>
-                        <PasswordField form={form}/>
-                        <a href="#" className="text-sm text-indigo-600 hover:text-indigo-500 block">Forgot your password?</a>
-                        <Button type="submit" className="w-full mt-4">{isProcessing ? "Waiting ..." : "Sign in"}</Button>
-                        <div className="mt-4 text-center text-sm">
-                            Don't have an account?
-                            <Link to="/signup" className="underline ml-1">Sign up</Link>
+                {/* Main Content */}
+                <div className="relative w-full py-6 lg:py-8">
+                    <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[420px]">
+                        {/* Logo and Header */}
+                        <div className="flex flex-col space-y-2 text-center">
+                            <Logo className="h-12 w-12 mx-auto"/>
+                            <h1 className="text-2xl font-semibold tracking-tight">
+                                Welcome back
+                            </h1>
+                            <p className="text-sm text-muted-foreground">
+                                Enter your credentials to access your account
+                            </p>
                         </div>
-                    </form>
-                </Form>
+
+                        {/* Main Card */}
+                        <Card className="sm:border bg-card/50 backdrop-blur-sm">
+                            <CardContent className="p-6">
+                                <Form {...form}>
+                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                        <EmailField form={form}/>
+                                        <PasswordField form={form}/>
+
+                                        <div className="flex items-center justify-between">
+                                            <Button
+                                                variant="link"
+                                                className="px-0 font-medium text-sm"
+                                            >
+                                                Forgot password?
+                                            </Button>
+                                        </div>
+
+                                        <Button
+                                            type="submit"
+                                            className="w-full"
+                                            disabled={isProcessing}
+                                        >
+                                            {isProcessing ? (
+                                                <>
+                                                    <div
+                                                        className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-foreground"/>
+                                                    Signing in...
+                                                </>
+                                            ) : (
+                                                "Sign in"
+                                            )}
+                                        </Button>
+                                    </form>
+                                </Form>
+                            </CardContent>
+                        </Card>
+
+                        {/* Footer */}
+                        <p className="px-8 text-center text-sm text-muted-foreground">
+                            Don't have an account?{' '}
+                            <Link
+                                to="/signup"
+                                className="underline underline-offset-4 hover:text-primary"
+                            >
+                                Create an account
+                            </Link>
+                        </p>
+                    </div>
+                </div>
             </div>
         </div>
     );
