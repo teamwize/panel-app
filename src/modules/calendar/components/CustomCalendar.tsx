@@ -21,7 +21,7 @@ export function CustomCalendar({leaves, holidays, weekends, onDateSelect}: Calen
     };
 
     return (
-        <Card className="w-full my-4 flex flex-col overflow-hidden h-fit">
+        <Card className="w-full flex flex-col overflow-hidden h-fit">
             <CalendarHeader
                 currentMonth={currentMonth}
                 onMonthChange={setCurrentMonth}

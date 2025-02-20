@@ -22,7 +22,7 @@ export default function UserAvatar({avatar, avatarSize, className}: AvatarProps)
 
     if (!avatarSrc) {
         return (
-            <div className="relative inline-block border-2 border-gray-200 rounded-full p-1">
+            <div className="relative inline-block border-2 border-gray-200 bg-white rounded-full">
                 <User
                     className="text-gray-400 hover:text-blue-500 transition-colors duration-200"
                     size={24}

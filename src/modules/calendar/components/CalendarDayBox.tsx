@@ -24,7 +24,7 @@ export const CalendarDayBox: React.FC<DayBoxProps> = ({date, isHoliday, isWeeken
 
 
     return (
-        <div onClick={onClick} className={`p-2 min-h-[150px] min-w-[100px] border-[0.5px] cursor-pointer
+        <div onClick={onClick} className={`p-2 min-h-[150px] min-w-[100px] border-[0.5px]
           ${isSelected ? "bg-gray-100" : ""} ${isHoliday || isWeekend ? "bg-red-50" : ""}`}>
             <span
                 className={`flex items-center justify-center w-7 h-7 rounded-full text-sm font-medium
