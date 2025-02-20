@@ -93,7 +93,7 @@ export default function ChangePasswordPage() {
                                                 placeholder="Enter new password"/>
                             <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password"
                                                 placeholder="Re-enter new password"/>
-                            <div className="flex justify-end pt-4 border-t">
+                            <div className="flex justify-end pt-4">
                                 <Button onClick={goBack} type="button" variant="outline" className="mr-2">
                                     <X className="w-4 h-4 mr-2"/>
                                     Cancel
