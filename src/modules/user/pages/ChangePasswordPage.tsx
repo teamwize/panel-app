@@ -13,6 +13,8 @@ import {Card} from "@/components/ui/card";
 import {ChangePasswordRequest} from "@/core/types/user.ts";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
+import PageContent from "@/components/layout/PageContent.tsx";
+import {Check, X} from "lucide-react";
 
 const FormSchema = z
     .object({
@@ -35,7 +37,9 @@ export default function ChangePasswordPage() {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const {user} = useContext(UserContext);
-
+    const goBack = () => {
+        navigate("/settings");
+    };
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -79,18 +83,30 @@ export default function ChangePasswordPage() {
         <>
             <PageHeader backButton='/settings' title='Change Password'></PageHeader>
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4" x-chunk="dashboard-02-chunk-1">
+            <PageContent>
+                <Card className="mx-auto p-6">
                     <Form {...form}>
                         <form onSubmit={handleSubmit(onSubmit)} className="grid gap-4">
-                            <PasswordInputField form={form} name="password" label="Current Password" placeholder="Enter current password" />
-                            <PasswordInputField form={form} name="newPassword" label="New Password" placeholder="Enter new password" />
-                            <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password" placeholder="Re-enter new password" />
-                            <Button type="submit" className="w-fit" disabled={isProcessing}>{isProcessing ? 'Processing...' : 'Save'}</Button>
+                            <PasswordInputField form={form} name="password" label="Current Password"
+                                                placeholder="Enter current password"/>
+                            <PasswordInputField form={form} name="newPassword" label="New Password"
+                                                placeholder="Enter new password"/>
+                            <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password"
+                                                placeholder="Re-enter new password"/>
+                            <div className="flex justify-end pt-4 border-t">
+                                <Button onClick={goBack} type="button" variant="outline" className="mr-2">
+                                    <X className="w-4 h-4 mr-2"/>
+                                    Cancel
+                                </Button>
+                                <Button type="submit" disabled={isProcessing}>
+                                    <Check className="w-4 h-4 mr-2"/>
+                                    {isProcessing ? 'Processing...' : 'Save'}
+                                </Button>
+                            </div>
                         </form>
                     </Form>
                 </Card>
-            </main>
+            </PageContent>
         </>
     );
 }
@@ -122,7 +138,7 @@ function PasswordInputField({form, name, label, placeholder}: PasswordInputField
                             }}
                         />
                     </FormControl>
-                    <FormMessage />
+                    <FormMessage/>
                 </FormItem>
             )}
         />
