@@ -21,6 +21,8 @@ export default function UserLeaveBalanceGraph({title, used, quantity}: BalanceGr
     }
 
     const options: ChartOptions<'doughnut'> = {
+        responsive: true,
+        maintainAspectRatio: true,
         cutout: "60%",
         plugins: {
             legend: {
@@ -30,8 +32,8 @@ export default function UserLeaveBalanceGraph({title, used, quantity}: BalanceGr
     }
 
     return (
-        <div className="balance-graph">
-            <Doughnut data={data} options={options}></Doughnut>
+        <div className="w-full max-w-[200px] aspect-square mx-auto">
+            <Doughnut data={data} options={options}/>
         </div>
     );
 }
