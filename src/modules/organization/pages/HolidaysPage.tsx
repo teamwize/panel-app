@@ -14,7 +14,7 @@ import {CloudDownload} from "lucide-react";
 import {PageSection} from "@/components/layout/PageSection.tsx";
 
 export default function OfficialHolidays() {
-    const { user } = useContext(UserContext);
+    const {user} = useContext(UserContext);
     const navigate = useNavigate();
 
     // Set initial country based on user context
@@ -124,7 +124,7 @@ export default function OfficialHolidays() {
                             </Button>
                         ))}
                     </div>
-                    </div>
+                </div>
 
                 <PageSection
                     title="Holidays"

@@ -64,6 +64,7 @@ export default function LeaveCreatePage() {
     const goBack = () => {
         navigate(location.state?.from || "/");
     };
+
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
