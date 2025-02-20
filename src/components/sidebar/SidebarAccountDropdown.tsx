@@ -40,9 +40,7 @@ export default function SidebarAccountDropdown({isActive, onClick}: AccountDropd
     };
 
     return (
-        <div className={'border-t border-gray-200 p-4'}
-             onClick={handleDropdownClick}
-        >
+        <div className='p-4' onClick={handleDropdownClick}>
             <DropdownMenu>
                 <DropdownMenuTrigger className="w-full">
                     <div

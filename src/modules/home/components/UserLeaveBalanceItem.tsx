@@ -13,7 +13,7 @@ export default function UserLeaveBalanceItem({item}: BalanceItemProps) {
             className="border rounded-lg p-4 bg-[hsl(var(--muted)/0.4)] hover:bg-[hsl(var(--muted)/0.5)] transition-colors"
         >
             <div className="flex flex-col items-center space-y-2">
-                <h3 className="font-medium text-sm text-muted-foreground">
+                <h3 className="font-medium text-sm ">
                     {item.activatedType?.name}
                 </h3>
                 <UserLeaveBalanceGraph

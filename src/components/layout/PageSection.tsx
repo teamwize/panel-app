@@ -8,7 +8,7 @@ type SectionHeaderProps = {
 
 export function PageSection({title, description, children}: SectionHeaderProps) {
     return (
-        <header className="flex flex-row-reverse items-center gap-4 py-8">
+        <header className="flex flex-row-reverse items-center gap-4 py-6">
             <div className="flex flex-1 justify-between items-center">
                 <h1 className="text-base">
                     <div className={"flex items-center gap-2"}>
