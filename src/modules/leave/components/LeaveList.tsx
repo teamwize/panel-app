@@ -17,7 +17,7 @@ type LeaveRequestListProps = {
 export default function LeaveList({leaveRequests, setCurrentPage}: LeaveRequestListProps) {
     return (
         <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
-            <CardContent className='p-0'>
+            <CardContent className='px-3'>
                 <Table>
                     <TableHeader>
                         <TableRow>

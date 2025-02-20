@@ -25,12 +25,13 @@ export default function PaginationComponent({pageNumber, totalPages, setPageNumb
         <Pagination className='flex flex-wrap justify-start mb-4 mt-2'>
             <PaginationContent>
                 <PaginationItem>
-                    <PaginationPrevious onClick={() => handlePageChange(pageNumber - 1)}/>
+                    <PaginationPrevious className='cursor-pointer' onClick={() => handlePageChange(pageNumber - 1)}/>
                 </PaginationItem>
 
                 {Array.from({length: totalPages}, (_, i) => (
                     <PaginationItem key={i + 1}>
                         <PaginationLink
+                            className='cursor-pointer'
                             onClick={() => handlePageChange(i + 1)}
                             isActive={i + 1 === pageNumber}
                         >
@@ -42,7 +43,7 @@ export default function PaginationComponent({pageNumber, totalPages, setPageNumb
                 {totalPages > 3 && <PaginationEllipsis/>}
 
                 <PaginationItem>
-                    <PaginationNext onClick={() => handlePageChange(pageNumber + 1)}/>
+                    <PaginationNext className='cursor-pointer' onClick={() => handlePageChange(pageNumber + 1)}/>
                 </PaginationItem>
             </PaginationContent>
         </Pagination>
