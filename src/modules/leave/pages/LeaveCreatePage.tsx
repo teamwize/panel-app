@@ -2,7 +2,7 @@ import React, {useContext, useEffect, useState} from 'react';
 import {useForm, UseFormReturn} from 'react-hook-form';
 import {zodResolver} from '@hookform/resolvers/zod';
 import {z} from 'zod';
-import {useNavigate} from 'react-router-dom';
+import {useLocation, useNavigate} from 'react-router-dom';
 import dayjs from 'dayjs';
 import isBetween from 'dayjs/plugin/isBetween';
 import {createLeave, createLeavesCheck, getLeaves, getLeavesPolicy} from "@/core/services/leaveService.ts";
@@ -60,7 +60,10 @@ export default function LeaveCreatePage() {
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
     const {user, organization} = useContext(UserContext);
     const navigate = useNavigate();
-
+    const location = useLocation();
+    const goBack = () => {
+        navigate(location.state?.from || "/");
+    };
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -287,7 +290,7 @@ export default function LeaveCreatePage() {
                                 <ReasonField form={form}/>
 
                                 <div className="flex justify-end pt-4 border-t">
-                                    <Button type="button" variant="outline" className="mr-2">
+                                    <Button onClick={goBack} type="button" variant="outline" className="mr-2">
                                         <X className="w-4 h-4 mr-2"/>
                                         Cancel
                                     </Button>
@@ -317,7 +320,7 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
             name="leaveCategory"
             render={({field}) => (
                 <FormItem className="space-y-3">
-                    <FormLabel className="text-base font-medium">Type</FormLabel>
+                    <FormLabel className="text-lg font-medium">Type</FormLabel>
                     <FormControl>
                         <div className="flex flex-wrap gap-2">
                             {leaveTypes?.map((type) => (
@@ -326,7 +329,7 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
                                     type="button"
                                     variant={field.value === type.typeId.toString() ? "secondary" : "outline"}
                                     className={`
-                                        h-11 px-4 flex flex-col items-center gap-1
+                                        h-10 px-3 flex flex-col items-center gap-1
                                         ${field.value === type.typeId.toString()
                                         ? ''
                                         : 'hover:bg-background hover:border-input'
@@ -358,7 +361,7 @@ function ReasonField({form}: FieldProps) {
             name="reason"
             render={({field}) => (
                 <FormItem className="space-y-1">
-                    <FormLabel className="text-base font-medium">Reason</FormLabel>
+                    <FormLabel className="text-lg font-medium">Reason</FormLabel>
                     <FormControl>
                         <Textarea
                             placeholder="Please provide a reason for your leave request..."

@@ -60,7 +60,8 @@ export default function HomePage() {
     return (
         <>
             <PageHeader title='Home'>
-                <Button className='px-2 h-9' onClick={() => navigate("/leaves/create")}>
+                <Button className='px-2 h-9'
+                        onClick={() => navigate("/leaves/create", {state: {from: location.pathname}})}>
                     <Plus className="h-4 w-4 mr-1"/>
                     Request Leave
                 </Button>

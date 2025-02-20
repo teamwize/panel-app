@@ -5,7 +5,7 @@ import {LeaveResponse} from "@/core/types/leave.ts";
 import {Card, CardContent} from "@/components/ui/card.tsx";
 import {formatDurationRange} from "@/core/utils/date.ts";
 import LeaveDuration from "@/modules/leave/components/LeaveDuration.tsx";
-import {AlertTriangle, Calendar, Clock, Users} from "lucide-react";
+import {AlertTriangle, Calendar, Users} from "lucide-react";
 
 type LeaveConflictProps = {
     conflicts: LeaveResponse[];
@@ -30,28 +30,28 @@ export default function LeaveConflicts({conflicts}: LeaveConflictProps) {
                         key={leave.id}
                         className="flex items-center justify-between bg-white border border-red-200 rounded-lg px-4 py-2 shadow-sm gap-4"
                     >
-                        <div className="flex items-center gap-3">
+                        <div className="flex items-center gap-2">
                             <UserAvatar
                                 avatar={leave.user?.avatar}
                                 avatarSize={40}
                             />
-                            <span className="font-medium">{leave.user.firstName} {leave.user.lastName}</span>
+                            <span className="text-sm font-medium">{leave.user.firstName} {leave.user.lastName}</span>
                         </div>
-                        <div className="flex items-center gap-2 text-gray-600">
+                        <div className="flex items-center gap-1 text-gray-600 text-sm font-medium">
                             <Users className="w-4 h-4"/>
                             {leave.user.team.name}
                         </div>
-                        <Badge variant="outline" className="px-3 flex items-center gap-2">
-                            <Calendar className="w-4 h-4"/>
+                        <Badge variant="outline" className="px-3 flex text-gray-600 items-center gap-2">
+                            {leave.activatedType.symbol}
                             {leave.activatedType.name}
                         </Badge>
-                        <div className="flex items-center gap-2 text-gray-700">
-                            <Clock className="w-4 h-4"/>
+                        <div className="flex items-center gap-2 text-gray-600 text-sm font-medium">
+                            <Calendar className="w-4 h-4"/>
                             {formatDurationRange(leave.duration, leave.startAt, leave.endAt)}
                         </div>
                         <LeaveDuration
                             duration={leave.duration}
-                            className="min-w-[100px] justify-center text-gray-600"
+                            className="p-0 justify-center text-gray-600"
                         />
                         <LeaveStatusBadge status={leave.status}/>
                     </div>
