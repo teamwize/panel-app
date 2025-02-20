@@ -10,7 +10,7 @@ export default function SettingsPage() {
 
     return (
         <>
-            <PageHeader title='SettingsPage'></PageHeader>
+            <PageHeader title='Settings'></PageHeader>
             <PageContent>
                 <div className="flex flex-1 flex-col gap-4">
                     <button onClick={navigateTo('/settings/change-password')}
