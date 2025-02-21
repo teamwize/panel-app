@@ -1,106 +1,97 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {Card} from "@/components/ui/card";
-import {toast} from "@/components/ui/use-toast";
-import {UserContext} from "@/contexts/UserContext";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
+import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {toast} from "@/components/ui/use-toast";
 import {HolidayResponse} from "@/core/types/holiday.ts";
 import {country} from "@/core/types/country.ts";
 import {getHolidays, getHolidaysOverview} from "@/core/services/holidayService.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
+import PageContent from "@/components/layout/PageContent.tsx";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {CloudDownload} from "lucide-react";
-import {PageSection} from "@/components/layout/PageSection.tsx";
 
 export default function OfficialHolidays() {
-    const {user} = useContext(UserContext);
     const navigate = useNavigate();
-
-    // Set initial country based on user context
-    const initialCountry = user?.country && country.find(c => c.code === user.country)?.code || "";
-
     const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
-    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-    const [selectedCountry, setSelectedCountry] = useState<string>(initialCountry);
+    const [selectedYear, setSelectedYear] = useState<number | null>(null);
+    const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
     const [yearOptions, setYearOptions] = useState<number[]>([]);
-    const [countryOptions, setCountryOptions] = useState<{ label: string; value: string }[]>([]);
+    const [yearToCountries, setYearToCountries] = useState<Record<number, string[]>>({});
 
-    // Fetch holiday overview to populate year and country buttons
+    // Fetch holiday overview to populate year and country filters
     useEffect(() => {
         const fetchHolidaysOverview = async () => {
             try {
                 const overview = await getHolidaysOverview();
 
-                // Populate Year Options
-                const years = [...new Set(overview.map(o => o.year))].sort((a, b) => b - a);
-
-                // Populate Country Options using the imported `country` list
-                const countries = [...new Set(overview.map(o => o.countryCode))]
-                    .map(code => {
-                        const countryData = country.find(c => c.code === code);
-                        return countryData ? {label: countryData.name, value: code} : null;
-                    })
-                    .filter(Boolean) as { label: string; value: string }[];
-
-                setYearOptions(years);
-                setCountryOptions(countries);
-            } catch (error) {
-                toast({
-                    title: "Error",
-                    description: getErrorMessage(error as Error),
-                    variant: "destructive",
+                // Create mapping of available years to countries
+                const yearMap: Record<number, string[]> = {};
+                overview.forEach(({year, countryCode}) => {
+                    if (!yearMap[year]) yearMap[year] = [];
+                    yearMap[year].push(countryCode);
                 });
+
+                const sortedYears = Object.keys(yearMap).map(Number).sort((a, b) => b - a);
+
+                setYearToCountries(yearMap);
+                setYearOptions(sortedYears);
+
+                // Set default values
+                if (sortedYears.length > 0) {
+                    const defaultYear = sortedYears[0];
+                    setSelectedYear(defaultYear);
+                    setSelectedCountry(yearMap[defaultYear]?.[0] || null);
+                }
+            } catch (error) {
+                toast({title: "Error", description: getErrorMessage(error as Error), variant: "destructive"});
             }
         };
 
         fetchHolidaysOverview();
     }, []);
 
-    // Fetch holidays whenever selectedYear or selectedCountry changes
+    // Fetch holidays when year or country changes
     useEffect(() => {
-        const fetchHolidays = async () => {
-            if (!selectedYear || !selectedCountry) return; // Ensure valid selections
+        if (!selectedYear || !selectedCountry) return;
 
+        const fetchHolidays = async () => {
             try {
                 setHolidays([]);
                 const fetchedHolidays = await getHolidays(selectedYear, selectedCountry);
                 setHolidays(fetchedHolidays);
             } catch (error) {
-                toast({
-                    title: "Error",
-                    description: getErrorMessage(error as Error),
-                    variant: "destructive",
-                });
+                toast({title: "Error", description: getErrorMessage(error as Error), variant: "destructive"});
             }
         };
 
         fetchHolidays();
     }, [selectedYear, selectedCountry]);
 
-    const navigateToImportHolidays = () => {
-        navigate('/settings/official-holidays/import');
-    };
+    const navigateToImportHolidays = () => navigate("/settings/official-holidays/import");
 
     return (
         <>
-            <PageHeader backButton='/settings' title='Official Holidays'>
+            <PageHeader backButton="/settings" title="Official Holidays">
                 <Button className="px-2 h-9" onClick={navigateToImportHolidays}>
                     <CloudDownload className="h-4 w-4 mr-1"/>
-                    Import Holidays
+                    Import
                 </Button>
             </PageHeader>
 
-            <main className="flex flex-1 flex-col p-4">
+            <PageContent>
                 <div className="mb-4">
                     <h3 className="text-lg font-medium mb-2">Select Year</h3>
                     <div className="flex flex-wrap gap-2">
                         {yearOptions.map((year) => (
                             <Button
                                 key={year}
-                                type="button"
                                 variant={selectedYear === year ? "secondary" : "outline"}
-                                onClick={() => setSelectedYear(year)}
+                                onClick={() => {
+                                    setSelectedYear(year);
+                                    setSelectedCountry(yearToCountries[year]?.[0] || null);
+                                }}
                                 className="h-10 px-3"
                             >
                                 {year}
@@ -112,26 +103,27 @@ export default function OfficialHolidays() {
                 <div className="mb-4">
                     <h3 className="text-lg font-medium mb-2">Select Country</h3>
                     <div className="flex flex-wrap gap-2">
-                        {countryOptions.map(({label, value}) => (
-                            <Button
-                                key={value}
-                                type="button"
-                                variant={selectedCountry === value ? "secondary" : "outline"}
-                                onClick={() => setSelectedCountry(value)}
-                                className="h-10 px-3"
-                            >
-                                {label}
-                            </Button>
-                        ))}
+                        {selectedYear && yearToCountries[selectedYear]?.length > 0 ? (
+                            yearToCountries[selectedYear].map((code) => {
+                                const countryData = country.find((c) => c.code === code);
+                                return (
+                                    <Button
+                                        key={code}
+                                        variant={selectedCountry === code ? "secondary" : "outline"}
+                                        onClick={() => setSelectedCountry(code)}
+                                        className="h-10 px-3"
+                                    >
+                                        {countryData?.name || code}
+                                    </Button>
+                                );
+                            })
+                        ) : (
+                            <p className="text-gray-500">No countries available for {selectedYear}.</p>
+                        )}
                     </div>
                 </div>
 
-                <PageSection
-                    title="Holidays"
-                    description="Here are your Selected Holidays"
-                >
-                </PageSection>
-                <Card className='px-3'>
+                <Card>
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -158,7 +150,7 @@ export default function OfficialHolidays() {
                         )}
                     </Table>
                 </Card>
-            </main>
+            </PageContent>
         </>
     );
 }

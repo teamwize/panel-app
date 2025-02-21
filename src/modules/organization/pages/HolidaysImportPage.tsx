@@ -1,17 +1,18 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Card, CardContent, CardDescription, CardHeader, CardTitle} from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {toast} from "@/components/ui/use-toast";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
-import {CalendarDays, Check, CloudDownload, X} from "lucide-react";
+import {Check, CloudDownload, X} from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import {createHolidays, fetchHolidays} from "@/core/services/holidayService.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {country} from "@/core/types/country.ts";
 import {PageSection} from "@/components/layout/PageSection.tsx";
+import PageContent from "@/components/layout/PageContent.tsx";
 
 export default function HolidaysImportPage() {
     const [holidays, setHolidays] = useState([]);
@@ -100,46 +101,36 @@ export default function HolidaysImportPage() {
         <div className="min-h-screen">
             <PageHeader backButton='/settings/official-holidays' title='Import Holidays'></PageHeader>
 
-            <main className="max-w-7xl mx-auto p-4">
-                <Card>
-                    <CardHeader>
-                        <CardTitle className="flex items-center gap-2">
-                            <CalendarDays className="w-5 h-5 text-primary"/>
-                            Holiday Import
-                        </CardTitle>
-                        <CardDescription>Select a year and country to import official holidays</CardDescription>
-                    </CardHeader>
-
-                    <CardContent>
-                        <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
-                            <div className="flex flex-col sm:flex-row gap-4">
-                                <SelectField
-                                    label="Year"
-                                    value={String(selectedYear)}
-                                    options={[
-                                        {label: String(selectedYear - 1), value: String(selectedYear - 1)},
-                                        {label: String(selectedYear), value: String(selectedYear)},
-                                        {label: String(selectedYear + 1), value: String(selectedYear + 1)},
-                                    ]}
-                                    onChange={value => setSelectedYear(Number(value))}
-                                />
-                                <SelectField
-                                    label="Country"
-                                    value={selectedCountry}
-                                    options={country.map(c => ({label: c.name, value: c.code}))}
-                                    onChange={setSelectedCountry}
-                                />
-                            </div>
-                            <Button
-                                onClick={fetchHolidaysList}
-                                disabled={isLoading || !selectedCountry}
-                                className="w-full sm:w-auto"
-                            >
-                                <CloudDownload className="w-4 h-4 mr-2"/>
-                                {isLoading ? 'Fetching...' : 'Fetch Holidays'}
-                            </Button>
+            <PageContent>
+                <Card className={"p-5"}>
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                        <div className="flex flex-col sm:flex-row gap-4">
+                            <SelectField
+                                label="Year"
+                                value={String(selectedYear)}
+                                options={[
+                                    {label: String(selectedYear - 1), value: String(selectedYear - 1)},
+                                    {label: String(selectedYear), value: String(selectedYear)},
+                                    {label: String(selectedYear + 1), value: String(selectedYear + 1)},
+                                ]}
+                                onChange={value => setSelectedYear(Number(value))}
+                            />
+                            <SelectField
+                                label="Country"
+                                value={selectedCountry}
+                                options={country.map(c => ({label: c.name, value: c.code}))}
+                                onChange={setSelectedCountry}
+                            />
                         </div>
-                    </CardContent>
+                        <Button
+                            onClick={fetchHolidaysList}
+                            disabled={isLoading || !selectedCountry}
+                            className="w-full sm:w-auto"
+                        >
+                            <CloudDownload className="w-4 h-4 mr-2"/>
+                            {isLoading ? 'Fetching...' : 'Fetch'}
+                        </Button>
+                    </div>
                 </Card>
 
                 {holidays.length > 0 && (
@@ -148,7 +139,7 @@ export default function HolidaysImportPage() {
                             title="Available Holidays"
                             description={`${selectedHolidays.length} of ${holidays.length} holidays selected`}
                         />
-                        <Card className='px-4'>
+                        <Card>
                             <Table>
                                 <TableHeader>
                                     <TableRow>
@@ -198,7 +189,7 @@ export default function HolidaysImportPage() {
                         </div>
                     </>
                 )}
-            </main>
+            </PageContent>
         </div>
     );
 }
