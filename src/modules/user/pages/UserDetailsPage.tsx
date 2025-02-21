@@ -57,40 +57,37 @@ export default function UserDetailsPage() {
         }
     }, [id, currentPage]);
 
-    const backButtonPath = location.state?.from || "/requests";
+    const backButtonPath = location.state?.from || "/leaves";
 
     const handleEmployeeUpdateClick = () => {
-        navigate(`/user/${id}/update`, {state: {from: `/user/${id}/`}})
+        navigate(`/users/${id}/update`, {state: {from: `/users/${id}/`}})
     };
 
     return (
         <>
-            <PageHeader backButton={backButtonPath} title="Employee Details">
+            <PageHeader backButton={backButtonPath} title="User Details">
                 <Button
                     className="px-4 h-9"
                     onClick={handleEmployeeUpdateClick}
                 >
                     <PencilIcon className="w-4 h-4 mr-2"/>
-                    Update Employee
+                    Update User
                 </Button>
             </PageHeader>
             <PageContent>
-                <main className="flex flex-1 flex-col gap-4 p-4">
-                    <div className="flex flex-1 flex-col  p-4 gap-6">
                         <UserDetailsCard employeeDetails={employeeDetails} leavePolicy={leavePolicy}/>
 
-
                         <section>
-                            <h2 className="text-xl font-semibold mb-4">Leave Balance</h2>
-                            {balanceData.length > 0 ? (
-                                <div className="grid grid-cols-3 text-center gap-2 mx-auto">
-                                    {balanceData.map((item) => (
-                                        <UserLeaveBalanceItem key={item?.activatedType?.typeId} item={item}/>
-                                    ))}
-                                </div>
-                            ) : (
-                                <p className="text-center text-muted-foreground">No balance data available.</p>
-                            )}
+                            <PageSection title="Leave Balance" description="User’s Current Leave Balance"></PageSection>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                                {balanceData.map((item) => (
+                                    <UserLeaveBalanceItem
+                                        key={item?.activatedType.typeId}
+                                        item={item}
+                                    />
+                                ))}
+                            </div>
                         </section>
 
 
@@ -99,7 +96,7 @@ export default function UserDetailsPage() {
                                 <>
                                     <PageSection
                                         title="Leaves"
-                                        description="Here are the leaves of the employee"
+                                        description="Here are the leaves of the user"
                                     >
                                     </PageSection>
                                     <Card>
@@ -111,8 +108,6 @@ export default function UserDetailsPage() {
                                 </>
                             )}
                         </div>
-                    </div>
-                </main>
             </PageContent>
         </>
     );

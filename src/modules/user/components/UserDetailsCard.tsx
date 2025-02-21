@@ -16,7 +16,7 @@ export default function UserDetailsCard({employeeDetails, leavePolicy}: Employee
     return (
         <section>
             {employeeDetails ? (
-                <Card className="p-6 space-y-6">
+                <Card className="p-4 space-y-6">
                     <div className="flex items-center gap-6">
                         <UserAvatar avatar={employeeDetails.avatar} avatarSize={64}/>
                         <div className="space-y-2">

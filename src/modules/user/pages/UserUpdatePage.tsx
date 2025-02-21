@@ -18,7 +18,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import PageContent from "@/components/layout/PageContent.tsx";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
-import {ArrowLeft, Loader2, UserCog} from "lucide-react";
+import {UserCog, X} from "lucide-react";
 
 const FormSchema = z.object({
     firstName: z.string().min(1, {message: "First Name is required"}),
@@ -135,14 +135,10 @@ export default function UserUpdatePage() {
 
     return (
         <>
-            <PageHeader title="Update Employee" backButton={backButtonPath}>
-                <p className="text-sm text-muted-foreground">
-                    Modify employee information and settings
-                </p>
-            </PageHeader>
+            <PageHeader title="Update User" backButton={backButtonPath}></PageHeader>
             <PageContent>
                 <Card className="mx-auto">
-                    <div className="p-6 space-y-6">
+                    <div className="p-4 space-y-6">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                 {/* Personal Information Section */}
@@ -160,38 +156,22 @@ export default function UserUpdatePage() {
 
                                 {/* Work Settings Section */}
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-medium">Work Settings</h3>
+                                    <h3 className="text-lg font-medium">Organization Configuration</h3>
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <TeamField form={form} teams={teams}/>
                                         <LeavePolicyField form={form} leavePolicies={leavePolicies}/>
                                     </div>
                                 </div>
 
-                                <div className="flex items-center justify-end space-x-4 pt-4">
-                                    <Button
-                                        type="button"
-                                        variant="outline"
-                                        onClick={() => navigate(backButtonPath)}
-                                    >
-                                        <ArrowLeft className="mr-2 h-4 w-4"/>
+                                <div className="flex justify-end">
+                                    <Button onClick={() => navigate(backButtonPath)} type="button" variant="outline"
+                                            className="mr-2">
+                                        <X className="w-4 h-4 mr-2"/>
                                         Cancel
                                     </Button>
-                                    <Button
-                                        type="submit"
-                                        className="min-w-[140px]"
-                                        disabled={isProcessing}
-                                    >
-                                        {isProcessing ? (
-                                            <>
-                                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
-                                                Processing...
-                                            </>
-                                        ) : (
-                                            <>
-                                                <UserCog className="mr-2 h-4 w-4"/>
-                                                Update Employee
-                                            </>
-                                        )}
+                                    <Button type="submit" disabled={isProcessing}>
+                                        <UserCog className="w-4 h-4 mr-2"/>
+                                        {isProcessing ? 'Processing...' : 'Update'}
                                     </Button>
                                 </div>
                             </form>

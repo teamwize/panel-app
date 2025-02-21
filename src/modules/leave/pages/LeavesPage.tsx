@@ -126,7 +126,7 @@ export default function LeavesPage() {
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead>Employee</TableHead>
+                                <TableHead>User</TableHead>
                                 <TableHead>Team</TableHead>
                                 <TableHead>Type</TableHead>
                                 <TableHead>Date</TableHead>
@@ -189,7 +189,7 @@ function LeaveRow({leave, handleRowClick}: LeaveRowProps) {
     const durationText = formatDurationRange(leave.duration, leave.startAt, leave.endAt);
 
     const viewEmployeeProfile = (id: number) => {
-        navigate(`/users/${id}/`, {state: {from: "/requests"}});
+        navigate(`/users/${id}/`, {state: {from: "/leaves"}});
     };
 
     return (
