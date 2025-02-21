@@ -122,7 +122,7 @@ export default function LeavesPage() {
             <PageHeader title='Leaves'/>
             <PageContent>
                 <LeaveFilterForm users={users} teams={teams} onFilter={handleLeavesFilter}/>
-                <Card className="flex flex-1 flex-col rounded-lg border shadow-sm p-4 gap-4">
+                <Card className="flex flex-1 flex-col rounded-lg border shadow-sm mt-4 gap-4">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -132,7 +132,7 @@ export default function LeavesPage() {
                                 <TableHead>Date</TableHead>
                                 <TableHead>Duration</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead>Actions</TableHead>
+                                <TableHead>Action</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -155,11 +155,13 @@ export default function LeavesPage() {
                     </Table>
 
                     {leaves && leaves.totalPages > 1 && (
-                        <PaginationComponent
-                            pageNumber={leaves.pageNumber + 1}
-                            setPageNumber={setCurrentPage}
-                            totalPages={leaves.totalPages}
-                        />
+                        <div className='mx-6 bordet-t'>
+                            <PaginationComponent
+                                pageNumber={leaves.pageNumber + 1}
+                                setPageNumber={setCurrentPage}
+                                totalPages={leaves.totalPages}
+                            />
+                        </div>
                     )}
                 </Card>
 
@@ -195,7 +197,7 @@ function LeaveRow({leave, handleRowClick}: LeaveRowProps) {
             <TableCell className="flex items-center gap-2 font-medium">
                 <UserAvatar avatar={leave.user?.avatar} avatarSize={32}/>
                 <span
-                    className="cursor-pointer text-sm font-medium text-blue-600 hover:text-blue-800"
+                    className="cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-800"
                     onClick={() => viewEmployeeProfile(leave.user.id)}
                 >
                     {leave.user.firstName} {leave.user.lastName}
@@ -211,8 +213,8 @@ function LeaveRow({leave, handleRowClick}: LeaveRowProps) {
                 <LeaveStatusBadge status={leave.status}/>
             </TableCell>
             <TableCell>
-                <Button className="px-1" variant="outline" size="sm" onClick={handleRowClick}>
-                    <Eye className="h-4 text-[#3b87f7]"/>
+                <Button className="px-1" variant="ghost" size="sm" onClick={handleRowClick}>
+                    <Eye className="h-4 "/>
                 </Button>
             </TableCell>
         </TableRow>

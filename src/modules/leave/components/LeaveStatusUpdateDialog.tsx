@@ -12,7 +12,7 @@ import {LeaveStatus} from '@/core/types/enum.ts';
 import {Button} from '@/components/ui/button';
 import {formatDurationRange} from '@/core/utils/date.ts';
 import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
-import {Calendar, CalendarRange, Check, Clock, MessageSquare, X} from 'lucide-react';
+import {Calendar, CalendarRange, Check, Clock, MessageSquare, Users, X} from 'lucide-react';
 
 type LeaveDialogProps = {
     selectedRequest: LeaveResponse | null;
@@ -92,6 +92,14 @@ export default function LeaveStatusUpdateDialog({
                                         <span className="text-sm text-muted-foreground">Date Range</span>
                                     </div>
                                     <span className="text-sm font-medium">{durationText}</span>
+                                </div>
+
+                                <div className="flex items-center justify-between">
+                                    <div className="flex items-center gap-2">
+                                        <Users className="w-4 h-4 text-muted-foreground"/>
+                                        <span className="text-sm text-muted-foreground">Team</span>
+                                    </div>
+                                    <span className="text-sm font-medium">{user.team.name}</span>
                                 </div>
 
                                 {reason && (
