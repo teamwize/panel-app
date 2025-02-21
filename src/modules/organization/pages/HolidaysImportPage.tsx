@@ -6,7 +6,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {toast} from "@/components/ui/use-toast";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
-import {Check, CloudDownload, X} from "lucide-react";
+import {CloudDownload, Save, X} from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import {createHolidays, fetchHolidays} from "@/core/services/holidayService.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
@@ -183,7 +183,7 @@ export default function HolidaysImportPage() {
                                 onClick={saveSelectedHolidays}
                                 disabled={isLoading || selectedHolidays.length === 0}
                             >
-                                <Check className="w-4 h-4 mr-2"/>
+                                <Save className="w-4 h-4 mr-2"/>
                                 {isLoading ? 'Saving...' : 'Save'}
                             </Button>
                         </div>

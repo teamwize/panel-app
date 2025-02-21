@@ -14,7 +14,7 @@ import {ChangePasswordRequest} from "@/core/types/user.ts";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
-import {Check, X} from "lucide-react";
+import {Save, X} from "lucide-react";
 
 const FormSchema = z
     .object({
@@ -99,7 +99,7 @@ export default function ChangePasswordPage() {
                                     Cancel
                                 </Button>
                                 <Button type="submit" disabled={isProcessing}>
-                                    <Check className="w-4 h-4 mr-2"/>
+                                    <Save className="w-4 h-4 mr-2"/>
                                     {isProcessing ? 'Processing...' : 'Save'}
                                 </Button>
                             </div>

@@ -17,6 +17,7 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {UserContext} from "@/contexts/UserContext";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
+import {Save, X} from "lucide-react";
 
 const FormSchema = z.object({
     name: z.string().min(2, {message: "organization name must be over 2 characters"}).max(20, {message: "organization name must be under 20 characters"}),
@@ -104,11 +105,7 @@ export default function OrganizationPage() {
 
     return (
         <>
-            <PageHeader title='Organization'>
-                <p className="text-sm text-muted-foreground">
-                    Manage your organization settings and preferences
-                </p>
-            </PageHeader>
+            <PageHeader title='Organization'></PageHeader>
             <PageContent>
                 <Card className=" mx-auto">
                     <div className="p-6 space-y-6">
@@ -143,12 +140,14 @@ export default function OrganizationPage() {
                                 </div>
 
                                 <div className="flex justify-end pt-4">
-                                    <Button
-                                        type="submit"
-                                        className="min-w-[120px]"
-                                        disabled={isProcessing}
-                                    >
-                                        {isProcessing ? "Processing..." : "Save"}
+                                    <Button onClick={() => form.reset()} type="button" variant="outline"
+                                            className="mr-2">
+                                        <X className="w-4 h-4 mr-2"/>
+                                        Reset
+                                    </Button>
+                                    <Button type="submit" disabled={isProcessing}>
+                                        <Save className="w-4 h-4 mr-2"/>
+                                        {isProcessing ? 'Processing...' : 'Save'}
                                     </Button>
                                 </div>
                             </form>
