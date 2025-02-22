@@ -69,7 +69,8 @@ export default function HomePage() {
             <PageContent>
                 <div>
                     <div className="w-full">
-                        <PageSection title="Leave Balance" description="Your current leave allocation">
+                        <PageSection title="Leave Balance"
+                                     description="An overview of your leave balance, categorized by different leave types, showing the total allocation, used days, and remaining balance for each type.">
                         </PageSection>
 
                         <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
@@ -88,7 +89,7 @@ export default function HomePage() {
                             <>
                                 <PageSection
                                     title="My Leaves"
-                                    description="Here are your leave requests"
+                                    description="A detailed list of your leave requests"
                                 >
                                 </PageSection>
                                 <Card>

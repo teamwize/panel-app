@@ -78,7 +78,8 @@ export default function UserDetailsPage() {
                         <UserDetailsCard employeeDetails={employeeDetails} leavePolicy={leavePolicy}/>
 
                         <section>
-                            <PageSection title="Leave Balance" description="User’s Current Leave Balance"></PageSection>
+                            <PageSection title="Leave Balance"
+                                         description="An overview of user's leave balance, categorized by different leave types, showing the total allocation, used days, and remaining balance for each type."></PageSection>
 
                             <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {balanceData.map((item) => (
@@ -96,7 +97,7 @@ export default function UserDetailsPage() {
                                 <>
                                     <PageSection
                                         title="Leaves"
-                                        description="Here are the leaves of the user"
+                                        description="A detailed list of user leave requests"
                                     >
                                     </PageSection>
                                     <Card>

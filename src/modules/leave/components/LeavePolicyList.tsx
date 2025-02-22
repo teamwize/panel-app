@@ -107,7 +107,8 @@ export default function LeavePolicyList() {
 
     return (
         <>
-            <PageSection title='Leave Policies' description={"Create and manage leave policies"}>
+            <PageSection title='Leave Policies'
+                         description={"Manage leave policies for your organization. Set up policy details, including leave types and approval requirements. Create, update, or delete policies as needed."}>
                 <Button onClick={() => setIsCreateDialogOpen(true)} className='px-2 h-9'>
                     <Plus className="h-4 w-4 mr-1"/>
                     Create</Button>

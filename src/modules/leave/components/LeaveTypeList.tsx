@@ -81,7 +81,8 @@ export default function LeaveTypeList() {
 
     return (
         <>
-            <PageSection title="Leave Types" description={"Create and manage leave types"}>
+            <PageSection title="Leave Types"
+                         description={"Manage leave types by details. Create, update, or archive leave types as needed."}>
                 <Button
                     onClick={() => {
                         setIsUpdateMode(false);
