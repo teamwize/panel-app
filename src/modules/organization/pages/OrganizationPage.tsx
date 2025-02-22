@@ -107,7 +107,7 @@ export default function OrganizationPage() {
         <>
             <PageHeader title='Organization'></PageHeader>
             <PageContent>
-                <Card className=" mx-auto">
+                <Card className="mx-auto">
                     <div className="p-6 space-y-6">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">

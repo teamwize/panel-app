@@ -23,7 +23,7 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
                     <TableHead>Type</TableHead>
                     <TableHead>Amount</TableHead>
                     <TableHead>Requires Approval</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead>Actions</TableHead>
                 </TableRow>
             </TableHeader>
 
@@ -32,26 +32,26 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
                     const leaveType = leaveTypes.find(type => type.id === activatedType.typeId);
 
                     return (
-                        <TableRow key={index}>
+                        <TableRow key={activatedType.typeId}>
                             <TableCell>{leaveType?.name || "Unknown"} {leaveType.symbol}</TableCell>
                             <TableCell>{activatedType.amount}</TableCell>
                             <TableCell>{activatedType.requiresApproval ? "Yes" : "No"}</TableCell>
-                            <TableCell className="text-right">
-                                <div className="flex gap-2 justify-end">
+                            <TableCell>
+                                <div className="flex gap-2">
                                     <Button
-                                        type="button"
-                                        variant="outline"
+                                        className="px-1 hover:bg-muted/80 transition-colors"
+                                        variant="ghost"
                                         size="sm"
                                         onClick={() => {
                                             setEditingIndex(index);
                                             setIsDialogOpen(true);
                                         }}
                                     >
-                                        <Pencil className="h-4 w-4" />
+                                        <Pencil className="h-4 text-muted-foreground"/>
                                     </Button>
                                     <Button
-                                        type="button"
-                                        variant="outline"
+                                        className="px-1 hover:bg-red-50 transition-colors"
+                                        variant="ghost"
                                         size="sm"
                                         onClick={() => {
                                             const types = form.getValues("activatedTypes");
@@ -59,7 +59,7 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
                                             form.setValue("activatedTypes", [...types]);
                                         }}
                                     >
-                                        <Trash className="h-4 w-4 text-destructive" />
+                                        <Trash className="h-4 text-red-500"/>
                                     </Button>
                                 </div>
                             </TableCell>
@@ -71,7 +71,8 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
             {activatedTypes.length === 0 && (
                 <TableFooter>
                     <TableRow>
-                        <TableCell colSpan={4} className="text-center">This leave policy doesn't have any details yet. Please click the{" "}<strong>+</strong> button above to add new details.</TableCell>
+                        <TableCell colSpan={4} className="text-center">This leave policy doesn't have any leave types
+                            yet. Please click the button above to add a leave type.</TableCell>
                     </TableRow>
                 </TableFooter>
             )}

@@ -10,6 +10,7 @@ import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {FormInputs, LeaveTypeSchema} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
 import {LeaveTypeResponse} from "@/core/types/leave.ts";
+import {Save, X} from "lucide-react";
 
 type ActivateLeaveTypeDialogProps = {
     isOpen: boolean;
@@ -61,7 +62,7 @@ export default function LeavePolicyActivatedTypeCreateDialog({
         <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit Leave Type</DialogTitle>
+                    <DialogTitle>Create Leave Type</DialogTitle>
                 </DialogHeader>
                 <Form {...dialogForm}>
                     <form onSubmit={dialogForm.handleSubmit(handleSave)} className="space-y-4">
@@ -69,8 +70,14 @@ export default function LeavePolicyActivatedTypeCreateDialog({
                         <AmountField dialogForm={dialogForm}/>
                         <RequiresApprovalField dialogForm={dialogForm}/>
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-                            <Button type="submit">Save</Button>
+                            <Button onClick={onClose} type="button" variant="secondary" className="mr-2">
+                                <X className="w-4 h-4 mr-2"/>
+                                Cancel
+                            </Button>
+                            <Button type="submit">
+                                <Save className="w-4 h-4 mr-2"/>
+                                Save
+                            </Button>
                         </DialogFooter>
                     </form>
                 </Form>

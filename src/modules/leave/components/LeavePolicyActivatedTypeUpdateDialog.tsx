@@ -7,48 +7,46 @@ import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/
 import {Input} from "@/components/ui/input.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {FormInputs, LeaveTypeSchema} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
+
+const FormSchema = z.object({
+    typeId: z.number({required_error: "Leave type is required."}),
+    amount: z.number().min(1, {message: "Amount must be at least 1."}),
+    requiresApproval: z.boolean(),
+});
+
+type LeavePolicyActivatedTypeInputs = z.infer<typeof FormSchema>;
 
 type ActivateLeaveTypeDialogProps = {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (data: z.infer<typeof LeaveTypeSchema>) => void;
-    schema: typeof LeaveTypeSchema;
-    defaultValues?: z.infer<typeof LeaveTypeSchema>;
-    form: UseFormReturn<FormInputs>;
+    onSave: (data: LeavePolicyActivatedTypeInputs) => void;
+    defaultValues?: LeavePolicyActivatedTypeInputs;
 };
 
 export default function LeavePolicyActivatedTypeUpdateDialog({
                                                                  isOpen,
                                                                  onClose,
                                                                  onSave,
-                                                                 schema,
                                                                  defaultValues,
-                                                                 form,
                                                              }: ActivateLeaveTypeDialogProps) {
-    const dialogForm = useForm<z.infer<typeof schema>>({
-        resolver: zodResolver(schema),
+    const dialogForm = useForm<LeavePolicyActivatedTypeInputs>({
+        resolver: zodResolver(FormSchema),
         defaultValues: {
-            typeId: undefined,
-            amount: 1,
-            requiresApproval: false,
+            typeId: defaultValues?.typeId ?? 0, // Ensure a valid default
+            amount: defaultValues?.amount ?? 1,
+            requiresApproval: defaultValues?.requiresApproval ?? false,
         },
     });
 
-    // Update form values when `defaultValues` changes
+    // Reset form values when the dialog opens
     useEffect(() => {
         if (defaultValues) {
             dialogForm.reset(defaultValues);
         }
-    }, [defaultValues]);
+    }, [isOpen, defaultValues, dialogForm]);
 
-    const handleSave = (data: z.infer<typeof schema>) => {
+    const handleSave = (data: LeavePolicyActivatedTypeInputs) => {
         onSave(data);
-        dialogForm.reset({
-            typeId: undefined,
-            amount: 1,
-            requiresApproval: false,
-        });
         onClose();
     };
 
@@ -74,8 +72,7 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
 }
 
 type FieldProps = {
-    dialogForm: UseFormReturn<z.infer<typeof LeaveTypeSchema>>;
-    form?: UseFormReturn<FormInputs>;
+    dialogForm: UseFormReturn<LeavePolicyActivatedTypeInputs>;
 };
 
 function AmountField({ dialogForm }: FieldProps) {
