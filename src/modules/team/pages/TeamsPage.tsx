@@ -2,8 +2,8 @@ import React, {useEffect, useState} from 'react';
 import {toast} from "@/components/ui/use-toast.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {TeamResponse} from "@/core/types/team.ts";
-import {deleteTeam, getTeams, updateTeam} from "@/core/services/teamService.ts";
-import {Pencil, Trash} from "lucide-react";
+import {createTeam, deleteTeam, getTeams, updateTeam} from "@/core/services/teamService.ts";
+import {Pencil, Plus, Trash} from "lucide-react";
 import {Button} from "@/components/ui/button.tsx";
 import {Card} from "@/components/ui/card.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
@@ -18,6 +18,7 @@ export default function TeamsPage() {
     const [selectedTeamForUpdate, setSelectedTeamForUpdate] = useState<TeamResponse | null>(null);
     const [selectedTeamForDelete, setSelectedTeamForDelete] = useState<TeamResponse | null>(null);
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
+    const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -75,24 +76,63 @@ export default function TeamsPage() {
         }
     };
 
+    const createOrganizationTeam = async (name: string) => {
+        try {
+            setIsProcessing(true);
+            setIsCreateDialogOpen(false);
+
+            // Check if the team name already exists
+            const exists = teamList.some((t) => t.name === name);
+            if (exists) {
+                toast({
+                    title: "Error",
+                    description: "A team with this name already exists.",
+                    variant: "destructive",
+                });
+                return;
+            }
+
+            await createTeam({
+                name: name,
+                metadata: {},
+            });
+
+            toast({
+                title: "Success",
+                description: "Team created successfully!",
+                variant: "default",
+            });
+
+            // Refresh team list after creation
+            const updatedTeams = await getTeams();
+            setTeamList(updatedTeams);
+
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: getErrorMessage(error as Error),
+                variant: "destructive",
+            });
+        } finally {
+            setIsProcessing(false);
+        }
+    };
+
     return (
         <>
             <PageHeader title='Teams'>
-                <TeamCreateDialog
-                    teamList={teamList}
-                    onTeamCreated={() => {
-                        handleUpdateSuccess();
-                    }}
-                />
+                <Button className="px-2 h-9" onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus className="h-4 w-4 mr-1"/>
+                    Create
+                </Button>
             </PageHeader>
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border bg-white shadow-sm p-6">
+                <Card>
                     <Table>
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
-                                <TableHead className="text-sm font-semibold text-gray-700">Name</TableHead>
-                                <TableHead
-                                    className="text-right pr-8 text-sm font-semibold text-gray-700">Actions</TableHead>
+                                <TableHead>Name</TableHead>
+                                <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
@@ -107,6 +147,13 @@ export default function TeamsPage() {
                             ))}
                         </TableBody>
                     </Table>
+
+                    <TeamCreateDialog
+                        isOpen={isCreateDialogOpen}
+                        onClose={() => setIsCreateDialogOpen(false)}
+                        teamList={teamList}
+                        onSubmit={(name) => createOrganizationTeam(name)}
+                    />
 
                     {selectedTeamForUpdate && (
                         <TeamUpdateDialog
@@ -141,11 +188,11 @@ type TeamItemProps = {
 function TeamRowItem({ t, isProcessing, setSelectedTeamForUpdate, setSelectedTeamForDelete }: TeamItemProps) {
     return (
         <TableRow className="hover:bg-gray-50 transition-colors">
-            <TableCell className="font-medium text-gray-900">{t.name}</TableCell>
-            <TableCell className="text-right">
-                <div className="flex justify-end gap-2">
+            <TableCell>{t.name}</TableCell>
+            <TableCell>
+                <div className="flex items-center space-x-2">
                     <Button
-                        className="px-2 hover:bg-gray-100 transition-colors"
+                        className="h-8 w-8 p-0"
                         variant="ghost"
                         size="sm"
                         disabled={isProcessing}
@@ -155,7 +202,7 @@ function TeamRowItem({ t, isProcessing, setSelectedTeamForUpdate, setSelectedTea
                     </Button>
 
                     <Button
-                        className="px-2 hover:bg-red-50 transition-colors"
+                        className="h-8 w-8 p-0"
                         variant="ghost"
                         size="sm"
                         disabled={isProcessing}

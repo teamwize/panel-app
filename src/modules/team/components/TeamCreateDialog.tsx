@@ -1,16 +1,13 @@
-import React, {useState} from "react";
+import React from "react";
 import {useForm} from "react-hook-form";
-import {toast} from "@/components/ui/use-toast.ts";
-import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {TeamResponse} from "@/core/types/team.ts";
-import {createTeam} from "@/core/services/teamService.ts";
 import {Button} from "@/components/ui/button.tsx";
-import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form.tsx";
 import {Input} from "@/components/ui/input.tsx";
-import {Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger,} from "@/components/ui/dialog"
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle,} from "@/components/ui/dialog"
+import {Save, X} from "lucide-react";
 
 const FormSchema = z.object({
     name: z.string().min(2, {
@@ -23,15 +20,13 @@ const FormSchema = z.object({
 type CreateTeamInputs = z.infer<typeof FormSchema>;
 
 interface TeamCreateDialogProps {
+    onClose: () => void;
+    isOpen: boolean;
     teamList: TeamResponse[];
-    onTeamCreated: () => void;
+    onSubmit: (name: string) => void;
 }
 
-export default function TeamCreateDialog({teamList, onTeamCreated}: TeamCreateDialogProps) {
-    const [open, setOpen] = useState(false);
-    const [errorMessage, setErrorMessage] = useState<string>("");
-    const [isProcessing, setIsProcessing] = useState<boolean>(false);
-
+export default function TeamCreateDialog({isOpen, onClose, onSubmit, teamList}: TeamCreateDialogProps) {
     const form = useForm<CreateTeamInputs>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
@@ -39,60 +34,20 @@ export default function TeamCreateDialog({teamList, onTeamCreated}: TeamCreateDi
         },
     });
 
-    const onSubmit = (data: CreateTeamInputs) => {
-        createOrganizationTeam(data);
-    };
-
-    const createOrganizationTeam = (data: CreateTeamInputs) => {
-        const exists = teamList.some(t => t.name === data.name);
-
-        if (exists) {
-            setErrorMessage('A team already exists with this name.');
-            return;
-        }
-
-        const payload = {
-            name: data.name,
-            metadata: {},
-        };
-        setIsProcessing(true);
-
-        createTeam(payload)
-            .then(() => {
-                setIsProcessing(false);
-                setOpen(false);
-                form.reset();
-                onTeamCreated();
-            })
-            .catch((error) => {
-                setIsProcessing(false);
-                const errorMessage = getErrorMessage(error?.message);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
-            });
+    const handleSubmit = (data: CreateTeamInputs) => {
+        onSubmit(data.name);
+        onClose();
     };
 
     return (
-        <Dialog open={open} onOpenChange={setOpen}>
-            <DialogTrigger asChild>
-                <Button>Create Team</Button>
-            </DialogTrigger>
+        <Dialog open={isOpen} onOpenChange={onClose}>
             <DialogContent>
                 <DialogHeader>
                     <DialogTitle>Create Team</DialogTitle>
                 </DialogHeader>
 
-                {errorMessage && (
-                    <Alert>
-                        <AlertDescription>{errorMessage}</AlertDescription>
-                    </Alert>
-                )}
-
                 <Form {...form}>
-                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                         <FormField
                             control={form.control}
                             name="name"
@@ -106,9 +61,17 @@ export default function TeamCreateDialog({teamList, onTeamCreated}: TeamCreateDi
                                 </FormItem>
                             )}
                         />
-                        <Button type="submit" className="w-fit" disabled={isProcessing}>
-                            {isProcessing ? 'Creating...' : 'Create'}
-                        </Button>
+
+                        <DialogFooter>
+                            <Button onClick={onClose} type="button" variant="secondary" className="mr-2">
+                                <X className="w-4 h-4 mr-2"/>
+                                Cancel
+                            </Button>
+                            <Button type="submit">
+                                <Save className="w-4 h-4 mr-2"/>
+                                Create
+                            </Button>
+                        </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>

@@ -6,6 +6,7 @@ import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/
 import {Input} from "@/components/ui/input.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {TeamCreateRequest, TeamResponse} from "@/core/types/team.ts";
+import {Save, X} from "lucide-react";
 
 type UpdateTeamDialogProps = {
     teamId: number;
@@ -26,13 +27,13 @@ export default function TeamUpdateDialog({teamId, teamName, onClose, onSuccess, 
 
     const form = useForm<z.infer<typeof FormSchema>>({
         resolver: zodResolver(FormSchema),
-        defaultValues: { name: teamName },
+        defaultValues: {name: teamName},
     });
 
     const handleSubmit = async (data: z.infer<typeof FormSchema>) => {
         try {
             setIsProcessing(true);
-            await updateTeam({ name: data.name, metadata: {} }, teamId);
+            await updateTeam({name: data.name, metadata: {}}, teamId);
             onSuccess();
             onClose();
         } catch (error) {
@@ -48,13 +49,18 @@ export default function TeamUpdateDialog({teamId, teamName, onClose, onSuccess, 
                 </DialogHeader>
                 <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
                     <div>
-                        <label className="block text-sm font-medium mb-2">Team Name</label>
+                        <label className="block text-sm font-medium mb-2">Name</label>
                         <Input {...form.register("name")} />
                     </div>
                     <DialogFooter>
-                        <Button variant="outline" onClick={onClose}>Cancel
+                        <Button onClick={onClose} type="button" variant="outline"
+                                className="mr-2">
+                            <X className="w-4 h-4 mr-2"/>
+                            Cancel
                         </Button>
-                        <Button type="submit" disabled={isProcessing}>{isProcessing ? "Saving..." : "Update"}
+                        <Button type="submit" disabled={isProcessing}>
+                            <Save className="w-4 h-4 mr-2"/>
+                            {isProcessing ? "Updating..." : "Update"}
                         </Button>
                     </DialogFooter>
                 </form>
