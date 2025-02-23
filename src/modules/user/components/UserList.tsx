@@ -1,4 +1,4 @@
-import {Eye, Globe, Pencil, Trash2} from "lucide-react";
+import {Eye, Globe, Pencil, Trash} from "lucide-react";
 import {UserResponse} from "@/core/types/user.ts";
 import React from "react";
 import {TableBody, TableCell, TableRow} from "@/components/ui/table.tsx";
@@ -32,7 +32,7 @@ export function UserList({
                     <TableCell className="py-4">
                         <div
                             onClick={() => onUserView(employee.id)}
-                            className="flex items-center space-x-4 cursor-pointer hover:text-primary transition-colors"
+                            className="flex items-center space-x-2 cursor-pointer hover:text-primary transition-colors"
                         >
                             <UserAvatar
                                 avatar={employee?.avatar}
@@ -40,7 +40,8 @@ export function UserList({
                                 className="border-2 border-muted"
                             />
                             <div className="flex flex-col">
-                                <span className="font-medium">
+                                <span
+                                    className="cursor-pointer text-sm font-semibold text-blue-600 hover:text-blue-800">
                                     {employee.firstName} {employee.lastName}
                                 </span>
                                 <span className="text-sm text-muted-foreground">
@@ -67,8 +68,8 @@ export function UserList({
                         <UserStatusBadge status={employee.status}/>
 
                     </TableCell>
-                    <TableCell className="text-right">
-                        <div className="flex items-center justify-end space-x-2">
+                    <TableCell>
+                        <div className="flex items-center space-x-2">
                             <Button
                                 variant="ghost"
                                 size="sm"
@@ -94,7 +95,7 @@ export function UserList({
                                 onClick={() => setSelectedEmployee(employee)}
                                 title="Delete employee"
                             >
-                                <Trash2 className="h-4 w-4"/>
+                                <Trash className="h-4 w-4"/>
                             </Button>
                         </div>
                     </TableCell>

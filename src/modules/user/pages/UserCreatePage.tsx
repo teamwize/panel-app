@@ -21,7 +21,7 @@ import {getLeavesPolicies} from "@/core/services/leaveService.ts";
 import {LeavePolicyResponse} from "@/core/types/leave.ts";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
-import {ArrowLeft, Loader2, UserPlus} from "lucide-react";
+import {Loader2, UserPlus, X} from "lucide-react";
 
 
 const FormSchema = z.object({
@@ -114,7 +114,7 @@ export default function UserCreatePage() {
             </PageHeader>
             <PageContent>
                 <Card className="mx-auto">
-                    <div className="p-6 space-y-6">
+                    <div className="p-4 space-y-6">
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
                                 {/* Personal Information Section */}
@@ -143,7 +143,7 @@ export default function UserCreatePage() {
 
                                 {/* Work Settings Section */}
                                 <div className="space-y-4">
-                                    <h3 className="text-lg font-medium">Work Settings</h3>
+                                    <h3 className="text-lg font-medium">Organization Configuration</h3>
                                     <div className="grid gap-4 md:grid-cols-2">
                                         <TeamField form={form} teams={teams}/>
                                         <LeavePolicyField form={form} leavePolicies={leavePolicies}/>
@@ -156,7 +156,7 @@ export default function UserCreatePage() {
                                         variant="outline"
                                         onClick={() => navigate("/users")}
                                     >
-                                        <ArrowLeft className="mr-2 h-4 w-4"/>
+                                        <X className="mr-2 h-4 w-4"/>
                                         Cancel
                                     </Button>
                                     <Button

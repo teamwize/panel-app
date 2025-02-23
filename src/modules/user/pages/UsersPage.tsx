@@ -14,6 +14,7 @@ import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import PaginationComponent from "@/components/Pagination.tsx";
 import {UserList} from "@/modules/user/components/UserList.tsx";
+import {Plus} from "lucide-react";
 
 export default function UsersPage() {
     const [employeesList, setEmployeesList] = useState<PagedResponse<UserResponse> | null>(null);
@@ -92,12 +93,15 @@ export default function UsersPage() {
     return (
         <>
             <PageHeader title={`Users (${employeesList?.totalContents ?? 0})`}>
-                <Button className="px-2 h-9" onClick={() => navigate("/users/create")}>Create</Button>
+                <Button className="px-2 h-9" onClick={() => navigate("/users/create")}>
+                    <Plus className="h-4 w-4 mr-1"/>
+                    Create
+                </Button>
             </PageHeader>
 
             <PageContent>
                 <UserFilterForm onFilter={handleUsersFilter}/>
-                <Card className="mt-5 flex flex-1 flex-col rounded-lg border  shadow-sm p-4 gap-4">
+                <Card className="mt-5 flex flex-1 flex-col rounded-lg border  shadow-sm gap-4">
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -106,7 +110,7 @@ export default function UsersPage() {
                                 <TableHead>Team</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead className="text-right">Actions</TableHead>
+                                <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
 
