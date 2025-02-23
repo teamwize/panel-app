@@ -6,7 +6,7 @@ import {
     DropdownMenuTrigger
 } from "@/components/ui/dropdown-menu.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {Ellipsis} from "lucide-react";
+import {Check, Ellipsis, X} from "lucide-react";
 import React, {useContext, useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {UserContext} from "@/contexts/UserContext.tsx";
@@ -96,9 +96,14 @@ function SignOut({setSignOut, signOut}: SignOutProps) {
                 </DialogHeader>
                 <DialogDescription>Are you sure you want to sign out?</DialogDescription>
                 <DialogFooter>
-                    <Button variant="outline" className="w-full" onClick={() => handleRequest(false)}>No</Button>
-                    <Button variant="destructive" className="w-full ml-4"
-                            onClick={() => handleRequest(true)}>Yes</Button>
+                    <Button onClick={() => handleRequest(false)} type="button" variant="outline" className="mr-2">
+                        <X className="w-4 h-4 mr-2"/>
+                        No
+                    </Button>
+                    <Button variant="destructive" onClick={() => handleRequest(true)}>
+                        <Check className="w-4 h-4 mr-2"/>
+                        Yes
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

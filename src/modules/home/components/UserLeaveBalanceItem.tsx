@@ -10,7 +10,7 @@ export default function UserLeaveBalanceItem({item}: BalanceItemProps) {
     return (
         <div
             key={item.activatedType?.typeId}
-            className="border rounded-lg p-4 bg-[hsl(var(--muted)/0.4)] hover:bg-[hsl(var(--muted)/0.5)] transition-colors"
+            className="border rounded-lg p-4 bg-white"
         >
             <div className="flex flex-col items-center space-y-2">
                 <h3 className="font-medium text-sm ">

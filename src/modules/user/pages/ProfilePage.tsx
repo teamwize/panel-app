@@ -5,7 +5,7 @@ import {z} from "zod"
 import {getUser, updateUser} from "@/core/services/userService";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts"
 import {AssetResponse, UserUpdateRequest} from '@/core/types/user.ts'
-import {Camera} from "lucide-react"
+import {Camera, Save, X} from "lucide-react"
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage,} from "@/components/ui/form"
 import {Input} from "@/components/ui/input"
 import {toast} from "@/components/ui/use-toast"
@@ -115,7 +115,7 @@ export default function ProfilePage() {
         <>
             <PageHeader title='Profile'/>
             <PageContent>
-                <Card className="mx-auto p-8 ">
+                <Card className="mx-auto p-6 ">
                     <div className="space-y-8">
                         {/* Avatar Section */}
                         <div className="flex flex-col items-center">
@@ -203,12 +203,18 @@ function FullNameField({form, onSubmit, isProcessing}: FieldProps) {
                         )}
                     />
                 </div>
-                <Button
-                    type="submit"
-                    className="w-full sm:w-auto px-6 py-2 bg-indigo-600 hover:bg-indigo-700 text-white font-medium rounded-md shadow-sm transition-colors"
-                >
-                    {isProcessing ? "Updating..." : "Update Profile"}
-                </Button>
+
+                <div className="flex justify-end pt-4">
+                    <Button onClick={() => form.reset()} type="button" variant="outline"
+                            className="mr-2">
+                        <X className="w-4 h-4 mr-2"/>
+                        Reset
+                    </Button>
+                    <Button type="submit" disabled={isProcessing}>
+                        <Save className="w-4 h-4 mr-2"/>
+                        {isProcessing ? 'Processing...' : 'Update'}
+                    </Button>
+                </div>
             </form>
         </Form>
     )

@@ -9,7 +9,7 @@ interface CalendarHeaderProps {
 
 export function CalendarHeader({currentMonth, onMonthChange}: CalendarHeaderProps) {
     return (
-        <div className="flex items-center justify-between px-6 py-4 border-b bg-card shadow-sm">
+        <div className="flex items-center justify-between px-6 py-4 border-b bg-white shadow-sm">
             <div className="flex items-center gap-3 group">
                 <CalendarDays className="h-5 w-5 text-primary group-hover:scale-110 transition-transform"/>
                 <h2 className="text-xl font-semibold tracking-tight">

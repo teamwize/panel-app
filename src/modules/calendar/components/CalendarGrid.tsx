@@ -32,7 +32,7 @@ export function CalendarGrid({currentMonth, leaves, holidays = [], weekends = []
             {WEEKDAYS.map((weekday) => (
                 <div
                     key={weekday}
-                    className="text-center py-3 text-sm font-medium text-muted-foreground border-b bg-muted/30 first:rounded-tl-lg last:rounded-tr-lg"
+                    className="text-center py-3 text-sm font-medium text-muted-foreground border-b first:rounded-tl-lg last:rounded-tr-lg"
                 >
                     {weekday.slice(0, 3)}
                 </div>

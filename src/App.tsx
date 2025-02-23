@@ -21,7 +21,7 @@ function AppLayout() {
         isAuthenticated() ? (
             <div className='grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[276px_1fr]'>
                 <Sidebar/>
-                <div className="flex flex-col">
+                <div className="flex flex-col bg-[#f9f9f9f9]">
                     <Root/>
                 </div>
             </div>
