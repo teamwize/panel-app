@@ -11,9 +11,10 @@ import {Input} from "@/components/ui/input";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Eye, EyeOff} from 'lucide-react';
+import {Eye, EyeOff, LogIn} from 'lucide-react';
 import Logo from "@/components/icon/Logo.tsx";
-import {Card, CardContent} from "@/components/ui/card";
+import {Card} from "@/components/ui/card";
+import PageContent from "@/components/layout/PageContent";
 
 const FormSchema = z.object({
     email: z.string().email({message: "Email format is not correct"}),
@@ -62,31 +63,24 @@ export default function SignInPage() {
 
     return (
         <div
-            className="min-h-[100dvh] w-full bg-gradient-to-br from-primary/5 via-primary/10 to-secondary/20 overflow-auto">
+            className="min-h-[100dvh] w-full bg-[#f9f9f9f9] from-primary/5 via-primary/10 to-secondary/20 overflow-auto">
             <div className="container flex items-center justify-center min-h-[100dvh] lg:max-w-none lg:px-0">
-                {/* Decorative Elements */}
-                <div className="fixed -left-4 top-0 h-72 w-72 bg-primary/10 rounded-full blur-3xl"/>
-                <div className="fixed -right-4 bottom-0 h-72 w-72 bg-secondary/10 rounded-full blur-3xl"/>
-
-                {/* Main Content */}
                 <div className="relative w-full py-6 lg:py-8">
-                    <div className="mx-auto flex w-full flex-col justify-center space-y-6 sm:w-[420px]">
-                        {/* Logo and Header */}
+                    <div className="mx-auto flex w-full flex-col justify-center space-y-2 sm:w-[420px]">
                         <div className="flex flex-col space-y-2 text-center">
                             <Logo className="h-12 w-12 mx-auto"/>
                             <h1 className="text-2xl font-semibold tracking-tight">
                                 Welcome back
                             </h1>
                             <p className="text-sm text-muted-foreground">
-                                Enter your credentials to access your account
+                                Sign in with your email and password to access your account.
                             </p>
                         </div>
 
-                        {/* Main Card */}
-                        <Card className="sm:border bg-card/50 backdrop-blur-sm">
-                            <CardContent className="p-6">
+                        <PageContent>
+                            <Card className="mx-auto p-6">
                                 <Form {...form}>
-                                    <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+                                    <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-2">
                                         <EmailField form={form}/>
                                         <PasswordField form={form}/>
 
@@ -104,22 +98,14 @@ export default function SignInPage() {
                                             className="w-full"
                                             disabled={isProcessing}
                                         >
-                                            {isProcessing ? (
-                                                <>
-                                                    <div
-                                                        className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-background border-t-foreground"/>
-                                                    Signing in...
-                                                </>
-                                            ) : (
-                                                "Sign in"
-                                            )}
+                                            <LogIn className="w-4 h-4 mr-2"/>
+                                            {isProcessing ? 'Signing In...' : 'Sign In'}
                                         </Button>
                                     </form>
                                 </Form>
-                            </CardContent>
-                        </Card>
+                            </Card>
+                        </PageContent>
 
-                        {/* Footer */}
                         <p className="px-8 text-center text-sm text-muted-foreground">
                             Don't have an account?{' '}
                             <Link
