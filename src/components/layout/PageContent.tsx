@@ -6,7 +6,7 @@ type PageContentProps = {
 
 export default function PageContent({children}: PageContentProps) {
     return (
-        <div className="container mx-auto py-8">
+        <div className="container mx-auto p-4">
             {children}
         </div>
     )

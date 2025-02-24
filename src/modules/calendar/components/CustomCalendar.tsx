@@ -1,7 +1,7 @@
 import {useState} from 'react';
 import {Card} from '@/components/ui/card.tsx';
-import {CalendarHeader} from "@/components/calendar/CalendarHeader.tsx";
-import {CalendarGrid} from "@/components/calendar/CalendarGrid.tsx";
+import {CalendarHeader} from "@/modules/calendar/components/CalendarHeader.tsx";
+import {CalendarGrid} from "@/modules/calendar/components/CalendarGrid.tsx";
 import {LeaveResponse} from "@/core/types/leave.ts";
 
 interface CalendarProps {
@@ -21,7 +21,7 @@ export function CustomCalendar({leaves, holidays, weekends, onDateSelect}: Calen
     };
 
     return (
-        <Card className="w-full my-4 flex flex-col overflow-hidden h-fit">
+        <Card className="w-full flex flex-col overflow-hidden h-fit">
             <CalendarHeader
                 currentMonth={currentMonth}
                 onMonthChange={setCurrentMonth}

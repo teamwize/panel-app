@@ -1,83 +1,129 @@
-import React, {useContext, useEffect, useState} from 'react';
-import {useNavigate} from 'react-router-dom';
-import {ChevronLeft} from "lucide-react";
-import {Card} from "@/components/ui/card";
-import {HolidayResponse} from "@/core/types/holiday.ts";
-import {getHolidays} from "@/core/services/holidayService";
-import {toast} from "@/components/ui/use-toast";
-import {UserContext} from "@/contexts/UserContext";
-import {getErrorMessage} from "@/core/utils/errorHandler.ts";
+import React, {useEffect, useState} from "react";
+import {useNavigate} from "react-router-dom";
 import {Button} from "@/components/ui/button";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Card} from "@/components/ui/card";
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table";
+import {toast} from "@/components/ui/use-toast";
+import {HolidayResponse} from "@/core/types/holiday.ts";
 import {country} from "@/core/types/country.ts";
+import {getHolidays, getHolidaysOverview} from "@/core/services/holidayService.ts";
+import PageHeader from "@/components/layout/PageHeader.tsx";
+import PageContent from "@/components/layout/PageContent.tsx";
+import {getErrorMessage} from "@/core/utils/errorHandler.ts";
+import {CloudDownload} from "lucide-react";
 
-export default function HolidaysPage() {
-    const { user } = useContext(UserContext);
-    const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
-    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-    const [selectedCountry, setSelectedCountry] = useState<string>(user?.country || "AT");
+export default function OfficialHolidays() {
     const navigate = useNavigate();
-    const goBack = () => navigate('/settings');
+    const [holidays, setHolidays] = useState<HolidayResponse[]>([]);
+    const [selectedYear, setSelectedYear] = useState<number | null>(null);
+    const [selectedCountry, setSelectedCountry] = useState<string | null>(null);
+    const [yearOptions, setYearOptions] = useState<number[]>([]);
+    const [yearToCountries, setYearToCountries] = useState<Record<number, string[]>>({});
 
+    // Fetch holiday overview to populate year and country filters
     useEffect(() => {
-        if (selectedCountry) {
-            getHolidays(selectedYear, selectedCountry)
-                .then((data: HolidayResponse[]) => setHolidays(data))
-                .catch((error) => {
-                    const errorMessage = getErrorMessage(error);
-                    toast({
-                        title: "Error",
-                        description: errorMessage,
-                        variant: "destructive",
-                    });
+        const fetchHolidaysOverview = async () => {
+            try {
+                const overview = await getHolidaysOverview();
+
+                // Create mapping of available years to countries
+                const yearMap: Record<number, string[]> = {};
+                overview.forEach(({year, countryCode}) => {
+                    if (!yearMap[year]) yearMap[year] = [];
+                    yearMap[year].push(countryCode);
                 });
-        }
+
+                const sortedYears = Object.keys(yearMap).map(Number).sort((a, b) => b - a);
+
+                setYearToCountries(yearMap);
+                setYearOptions(sortedYears);
+
+                // Set default values
+                if (sortedYears.length > 0) {
+                    const defaultYear = sortedYears[0];
+                    setSelectedYear(defaultYear);
+                    setSelectedCountry(yearMap[defaultYear]?.[0] || null);
+                }
+            } catch (error) {
+                toast({title: "Error", description: getErrorMessage(error as Error), variant: "destructive"});
+            }
+        };
+
+        fetchHolidaysOverview();
+    }, []);
+
+    // Fetch holidays when year or country changes
+    useEffect(() => {
+        if (!selectedYear || !selectedCountry) return;
+
+        const fetchHolidays = async () => {
+            try {
+                setHolidays([]);
+                const fetchedHolidays = await getHolidays(selectedYear, selectedCountry);
+                setHolidays(fetchedHolidays);
+            } catch (error) {
+                toast({title: "Error", description: getErrorMessage(error as Error), variant: "destructive"});
+            }
+        };
+
+        fetchHolidays();
     }, [selectedYear, selectedCountry]);
 
-    const importHolidays = () => {
-        navigate('/settings/official-holidays/import');
-    };
+    const navigateToImportHolidays = () => navigate("/settings/official-holidays/import");
 
     return (
         <>
-            <div className="flex flex-wrap justify-between text-lg font-medium px-4 pt-4">
-                <div className="flex flex-wrap items-center gap-2">
-                    <button onClick={goBack}>
-                        <ChevronLeft className="h-6 w-6"/>
-                    </button>
-                    <h1 className="text-lg font-semibold md:text-2xl">Official Holidays</h1>
-                </div>
-                <Button onClick={importHolidays}>Import</Button>
-            </div>
+            <PageHeader backButton="/settings" title="Official Holidays">
+                <Button className="px-2 h-9" onClick={navigateToImportHolidays}>
+                    <CloudDownload className="h-4 w-4 mr-1"/>
+                    Import
+                </Button>
+            </PageHeader>
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
-                    <div className="flex items-center gap-4 mb-4">
-                        <SelectField
-                            label="Year"
-                            value={String(selectedYear)}
-                            options={[
-                                {
-                                    label: String(new Date().getFullYear() - 1),
-                                    value: String(new Date().getFullYear() - 1)
-                                },
-                                {label: String(new Date().getFullYear()), value: String(new Date().getFullYear())},
-                                {
-                                    label: String(new Date().getFullYear() + 1),
-                                    value: String(new Date().getFullYear() + 1)
-                                },
-                            ]}
-                            onChange={(value) => setSelectedYear(Number(value))}
-                        />
-                        <SelectField
-                            label="Country"
-                            value={selectedCountry}
-                            options={country.map((country) => ({label: country.name, value: country.code,}))}
-                            onChange={(value) => setSelectedCountry(value)}
-                        />
+            <PageContent>
+                <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Select Year</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {yearOptions.map((year) => (
+                            <Button
+                                key={year}
+                                variant={selectedYear === year ? "secondary" : "outline"}
+                                onClick={() => {
+                                    setSelectedYear(year);
+                                    setSelectedCountry(yearToCountries[year]?.[0] || null);
+                                }}
+                                className="h-10 px-3"
+                            >
+                                {year}
+                            </Button>
+                        ))}
                     </div>
+                </div>
 
+                <div className="mb-4">
+                    <h3 className="text-lg font-medium mb-2">Select Country</h3>
+                    <div className="flex flex-wrap gap-2">
+                        {selectedYear && yearToCountries[selectedYear]?.length > 0 ? (
+                            yearToCountries[selectedYear].map((code) => {
+                                const countryData = country.find((c) => c.code === code);
+                                return (
+                                    <Button
+                                        key={code}
+                                        variant={selectedCountry === code ? "secondary" : "outline"}
+                                        onClick={() => setSelectedCountry(code)}
+                                        className="h-10 px-3"
+                                    >
+                                        {countryData?.name || code}
+                                    </Button>
+                                );
+                            })
+                        ) : (
+                            <p className="text-gray-500">No countries available for {selectedYear}.</p>
+                        )}
+                    </div>
+                </div>
+
+                <Card>
                     <Table>
                         <TableHeader>
                             <TableRow>
@@ -97,38 +143,14 @@ export default function HolidaysPage() {
                             <TableFooter>
                                 <TableRow>
                                     <TableCell colSpan={2} className="text-center">
-                                        No holidays found for the selected year and country.
+                                        No holidays found. Click the "Import" button above to fetch official holidays.
                                     </TableCell>
                                 </TableRow>
                             </TableFooter>
                         )}
                     </Table>
                 </Card>
-            </main>
+            </PageContent>
         </>
-    );
-}
-
-type SelectFieldProps = {
-    label: string;
-    value: string;
-    options: { label: string; value: string }[];
-    onChange: (value: string) => void;
-};
-
-function SelectField({ label, value, options, onChange }: SelectFieldProps) {
-    return (
-        <Select onValueChange={onChange} value={value}>
-            <SelectTrigger className="w-fit">
-                <SelectValue placeholder={`Select ${label}`} />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectGroup>
-                    {options.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                    ))}
-                </SelectGroup>
-            </SelectContent>
-        </Select>
     );
 }

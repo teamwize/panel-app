@@ -8,6 +8,7 @@ import {
 } from "@/components/ui/dialog.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import React from "react";
+import {Check, X} from "lucide-react";
 
 type DeleteDialogProps = {
     name: string;
@@ -16,7 +17,7 @@ type DeleteDialogProps = {
     handleReject: () => void;
 };
 
-export function DeleteDialog({ name, label, handleAccept, handleReject }: DeleteDialogProps) {
+export function DeleteDialog({name, label, handleAccept, handleReject}: DeleteDialogProps) {
     return (
         <Dialog open={true} onOpenChange={handleReject}>
             <DialogContent>
@@ -25,8 +26,14 @@ export function DeleteDialog({ name, label, handleAccept, handleReject }: Delete
                 </DialogHeader>
                 <DialogDescription>Are you sure you want to remove {label}?</DialogDescription>
                 <DialogFooter>
-                    <Button variant="outline" onClick={handleReject}>No</Button>
-                    <Button variant="destructive" onClick={handleAccept}>Yes</Button>
+                    <Button onClick={handleReject} type="button" variant="outline" className="mr-2">
+                        <X className="w-4 h-4 mr-2"/>
+                        No
+                    </Button>
+                    <Button variant="destructive" onClick={handleAccept}>
+                        <Check className="w-4 h-4 mr-2"/>
+                        Yes
+                    </Button>
                 </DialogFooter>
             </DialogContent>
         </Dialog>

@@ -21,6 +21,7 @@ import {getLeavesPolicies} from "@/core/services/leaveService.ts";
 import {LeavePolicyResponse} from "@/core/types/leave.ts";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
+import {Loader2, UserPlus, X} from "lucide-react";
 
 
 const FormSchema = z.object({
@@ -106,24 +107,79 @@ export default function UserCreatePage() {
 
     return (
         <>
-            <PageHeader title={"Create Employee"} backButton={"/users"}></PageHeader>
+            <PageHeader title="Create Employee" backButton="/users">
+                <p className="text-sm text-muted-foreground">
+                    Add a new employee to your organization
+                </p>
+            </PageHeader>
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-4"
-                      x-chunk="dashboard-02-chunk-1">
-                    <Form {...form}>
-                        <form onSubmit={form.handleSubmit(onSubmit)} className="grid gap-4">
-                            <FirstnameField form={form}/>
-                            <LastNameField form={form}/>
-                            <EmailField form={form}/>
-                            <PasswordField form={form}/>
-                            <PhoneField form={form}/>
-                            <TeamField form={form} teams={teams}/>
-                            <LeavePolicyField form={form} leavePolicies={leavePolicies}/>
-                            <CountryField form={form}/>
-                            <Button type="submit" className="w-fit"
-                                    disabled={isProcessing}>{isProcessing ? "Processing..." : "Create"}</Button>
-                        </form>
-                    </Form>
+                <Card className="mx-auto">
+                    <div className="p-4 space-y-6">
+                        <Form {...form}>
+                            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
+                                {/* Personal Information Section */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium">Personal Information</h3>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <FirstnameField form={form}/>
+                                        <LastNameField form={form}/>
+                                    </div>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <EmailField form={form}/>
+                                        <PhoneField form={form}/>
+                                    </div>
+                                    <div className="max-w-sm">
+                                        <CountryField form={form}/>
+                                    </div>
+                                </div>
+
+                                {/* Account Settings Section */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium">Account Settings</h3>
+                                    <div className="max-w-sm">
+                                        <PasswordField form={form}/>
+                                    </div>
+                                </div>
+
+                                {/* Work Settings Section */}
+                                <div className="space-y-4">
+                                    <h3 className="text-lg font-medium">Organization Configuration</h3>
+                                    <div className="grid gap-4 md:grid-cols-2">
+                                        <TeamField form={form} teams={teams}/>
+                                        <LeavePolicyField form={form} leavePolicies={leavePolicies}/>
+                                    </div>
+                                </div>
+
+                                <div className="flex items-center justify-end space-x-4 pt-4">
+                                    <Button
+                                        type="button"
+                                        variant="outline"
+                                        onClick={() => navigate("/users")}
+                                    >
+                                        <X className="mr-2 h-4 w-4"/>
+                                        Cancel
+                                    </Button>
+                                    <Button
+                                        type="submit"
+                                        className="min-w-[140px]"
+                                        disabled={isProcessing}
+                                    >
+                                        {isProcessing ? (
+                                            <>
+                                                <Loader2 className="mr-2 h-4 w-4 animate-spin"/>
+                                                Processing...
+                                            </>
+                                        ) : (
+                                            <>
+                                                <UserPlus className="mr-2 h-4 w-4"/>
+                                                Create Employee
+                                            </>
+                                        )}
+                                    </Button>
+                                </div>
+                            </form>
+                        </Form>
+                    </div>
                 </Card>
             </PageContent>
         </>
@@ -145,7 +201,7 @@ function FirstnameField({form}: FieldProps) {
                 <FormItem>
                     <FormLabel>First Name</FormLabel>
                     <FormControl>
-                        <Input placeholder="First Name" {...field} />
+                        <Input placeholder="Enter first name" {...field} />
                     </FormControl>
                     <FormMessage />
                 </FormItem>

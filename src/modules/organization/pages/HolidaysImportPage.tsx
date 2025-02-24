@@ -1,48 +1,52 @@
-import React, {useContext, useState} from "react";
+import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
 import {Card} from "@/components/ui/card";
 import {Button} from "@/components/ui/button";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table";
 import {toast} from "@/components/ui/use-toast";
-import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue,} from "@/components/ui/select";
-import {UserContext} from "@/contexts/UserContext.tsx";
-import {FetchedPublicHoliday} from "@/core/types/holiday.ts";
+import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
+import {Checkbox} from "@/components/ui/checkbox";
+import {CloudDownload, Save, X} from "lucide-react";
+import PageHeader from "@/components/layout/PageHeader";
 import {createHolidays, fetchHolidays} from "@/core/services/holidayService.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
-import PageHeader from "@/components/layout/PageHeader.tsx";
 import {country} from "@/core/types/country.ts";
+import {PageSection} from "@/components/layout/PageSection.tsx";
+import PageContent from "@/components/layout/PageContent.tsx";
 
 export default function HolidaysImportPage() {
-    const { user } = useContext(UserContext);
-    const [holidays, setHolidays] = useState<FetchedPublicHoliday[]>([]);
-    const [selectedYear, setSelectedYear] = useState<number>(new Date().getFullYear());
-    const [selectedCountry, setSelectedCountry] = useState<string>("");
-    const [selectedHolidays, setSelectedHolidays] = useState<string[]>([]);
+    const [holidays, setHolidays] = useState([]);
+    const [selectedYear, setSelectedYear] = useState(new Date().getFullYear());
+    const [selectedCountry, setSelectedCountry] = useState("");
+    const [selectedHolidays, setSelectedHolidays] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
+    const [isLoading, setIsLoading] = useState(false);
     const navigate = useNavigate();
 
     const fetchHolidaysList = async () => {
         if (!selectedCountry) {
             toast({
-                title: "Error",
-                description: "Please select a country.",
+                title: "Please select a country",
+                description: "A country selection is required to fetch holidays.",
                 variant: "destructive",
             });
             return;
         }
 
+        setIsLoading(true);
         try {
             const data = await fetchHolidays(selectedYear, selectedCountry);
             setHolidays(data);
             setSelectedHolidays([]);
             setSelectAll(false);
         } catch (error) {
-            const errorMessage = getErrorMessage(error as Error);
             toast({
-                title: "Error",
-                description: errorMessage,
+                title: "Failed to fetch holidays",
+                description: getErrorMessage(error as Error),
                 variant: "destructive",
             });
+        } finally {
+            setIsLoading(false);
         }
     };
 
@@ -58,77 +62,137 @@ export default function HolidaysImportPage() {
     };
 
     const saveSelectedHolidays = async () => {
-        const payload = holidays
-            .filter((holiday) => selectedHolidays.includes(holiday.date))
-            .map((holiday) => ({
-                description: holiday.name,
-                date: holiday.date,
-                country: selectedCountry,
-            }));
-
-        try {
-            await createHolidays(payload);
-            navigate('/settings/official-holidays');
-        } catch (error) {
-            const errorMessage = getErrorMessage(error as Error);
+        if (selectedHolidays.length === 0) {
             toast({
-                title: "Error",
-                description: errorMessage,
+                title: "No holidays selected",
+                description: "Please select at least one holiday to import.",
                 variant: "destructive",
             });
+            return;
+        }
+
+        setIsLoading(true);
+        try {
+            const payload = holidays
+                .filter(holiday => selectedHolidays.includes(holiday.date))
+                .map(holiday => ({
+                    description: holiday.name,
+                    date: holiday.date,
+                    country: selectedCountry,
+                }));
+            await createHolidays(payload);
+            toast({
+                title: "Success",
+                description: "Holidays have been imported successfully.",
+            });
+            navigate('/settings/official-holidays');
+        } catch (error) {
+            toast({
+                title: "Failed to import holidays",
+                description: getErrorMessage(error as Error),
+                variant: "destructive",
+            });
+        } finally {
+            setIsLoading(false);
         }
     };
 
     return (
-        <>
+        <div className="min-h-screen">
             <PageHeader backButton='/settings/official-holidays' title='Import Holidays'></PageHeader>
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
-                    <div className="flex justify-between items-center">
-                        <div className="flex items-center gap-4">
+            <PageContent>
+                <Card className={"p-5"}>
+                    <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
+                        <div className="flex flex-col sm:flex-row gap-4">
                             <SelectField
                                 label="Year"
                                 value={String(selectedYear)}
                                 options={[
-                                    { label: String(new Date().getFullYear() - 1), value: String(new Date().getFullYear() - 1) },
-                                    { label: String(new Date().getFullYear()), value: String(new Date().getFullYear()) },
-                                    { label: String(new Date().getFullYear() + 1), value: String(new Date().getFullYear() + 1) },
+                                    {label: String(selectedYear - 1), value: String(selectedYear - 1)},
+                                    {label: String(selectedYear), value: String(selectedYear)},
+                                    {label: String(selectedYear + 1), value: String(selectedYear + 1)},
                                 ]}
-                                onChange={(value) => setSelectedYear(Number(value))}
+                                onChange={value => setSelectedYear(Number(value))}
                             />
                             <SelectField
                                 label="Country"
                                 value={selectedCountry}
-                                options={country.map((country) => ({label: country.name, value: country.code,}))}
+                                options={country.map(c => ({label: c.name, value: c.code}))}
                                 onChange={setSelectedCountry}
                             />
                         </div>
-
-                        <Button className="w-fit" onClick={fetchHolidaysList}>Fetch</Button>
+                        <Button
+                            onClick={fetchHolidaysList}
+                            disabled={isLoading || !selectedCountry}
+                            className="w-full sm:w-auto"
+                        >
+                            <CloudDownload className="w-4 h-4 mr-2"/>
+                            {isLoading ? 'Fetching...' : 'Fetch'}
+                        </Button>
                     </div>
-
-                    {holidays.length > 0 && (
-                        <>
-                            <HolidayTable
-                                holidays={holidays}
-                                selectedHolidays={selectedHolidays}
-                                toggleHolidaySelection={toggleHolidaySelection}
-                                selectAll={selectAll}
-                                toggleSelectAll={toggleSelectAll}
-                            />
-
-                            <div className="flex justify-end mt-4">
-                                <Button onClick={saveSelectedHolidays}>Save</Button>
-                            </div>
-                        </>
-                    )}
                 </Card>
-            </main>
-        </>
+
+                {holidays.length > 0 && (
+                    <>
+                        <PageSection
+                            title="Available Holidays"
+                            description={`${selectedHolidays.length} of ${holidays.length} holidays selected`}
+                        />
+                        <Card>
+                            <Table>
+                                <TableHeader>
+                                    <TableRow>
+                                        <TableHead className="w-12">
+                                            <Checkbox
+                                                checked={selectAll}
+                                                onCheckedChange={toggleSelectAll}
+                                            />
+                                        </TableHead>
+                                        <TableHead>Date</TableHead>
+                                        <TableHead>Holiday Name</TableHead>
+                                    </TableRow>
+                                </TableHeader>
+                                <TableBody>
+                                    {holidays.map(holiday => (
+                                        <TableRow key={holiday.date}>
+                                            <TableCell className="w-12">
+                                                <Checkbox
+                                                    checked={selectedHolidays.includes(holiday.date)}
+                                                    onCheckedChange={() => toggleHolidaySelection(holiday.date)}
+                                                />
+                                            </TableCell>
+                                            <TableCell className="font-medium">{holiday.date}</TableCell>
+                                            <TableCell>{holiday.name}</TableCell>
+                                        </TableRow>
+                                    ))}
+                                </TableBody>
+                            </Table>
+                        </Card>
+
+                        <div className="flex justify-end gap-3 mt-6">
+                            <Button
+                                variant="outline"
+                                onClick={() => navigate('/settings/official-holidays')}
+                                disabled={isLoading}
+                            >
+                                <X className="w-4 h-4 mr-2"/>
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={saveSelectedHolidays}
+                                disabled={isLoading || selectedHolidays.length === 0}
+                            >
+                                <Save className="w-4 h-4 mr-2"/>
+                                {isLoading ? 'Saving...' : 'Save'}
+                            </Button>
+                        </div>
+                    </>
+                )}
+            </PageContent>
+        </div>
     );
 }
-
 
 type SelectFieldProps = {
     label: string;
@@ -137,58 +201,21 @@ type SelectFieldProps = {
     onChange: (value: string) => void;
 };
 
-export function SelectField({ label, value, options, onChange }: SelectFieldProps) {
+function SelectField({label, value, options, onChange}: SelectFieldProps) {
     return (
-        <Select onValueChange={onChange} value={value}>
-            <SelectTrigger className="w-fit">
-                <SelectValue placeholder={`Select ${label}`} />
-            </SelectTrigger>
-            <SelectContent>
-                <SelectGroup>
-                    {options.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
-                    ))}
-                </SelectGroup>
-            </SelectContent>
-        </Select>
-    );
-}
-
-type HolidayTableProps = {
-    holidays: FetchedPublicHoliday[];
-    selectedHolidays: string[];
-    toggleHolidaySelection: (date: string) => void;
-    selectAll: boolean;
-    toggleSelectAll: () => void;
-};
-
-export function HolidayTable({holidays, selectedHolidays, toggleHolidaySelection, selectAll, toggleSelectAll,}: HolidayTableProps) {
-    return (
-        <Table className="mt-4">
-            <TableHeader>
-                <TableRow>
-                    <TableHead className="w-8">
-                        <input type="checkbox" checked={selectAll} onChange={toggleSelectAll}/>
-                    </TableHead>
-                    <TableHead>Date</TableHead>
-                    <TableHead>Description</TableHead>
-                </TableRow>
-            </TableHeader>
-            <TableBody>
-                {holidays.map((holiday) => (
-                    <TableRow key={holiday.date}>
-                        <TableCell className="w-8">
-                            <input
-                                type="checkbox"
-                                checked={selectedHolidays.includes(holiday.date)}
-                                onChange={() => toggleHolidaySelection(holiday.date)}
-                            />
-                        </TableCell>
-                        <TableCell>{holiday.date}</TableCell>
-                        <TableCell>{holiday.name}</TableCell>
-                    </TableRow>
-                ))}
-            </TableBody>
-        </Table>
+        <div className="w-full sm:w-48">
+            <Select value={value} onValueChange={onChange}>
+                <SelectTrigger className="w-full">
+                    <SelectValue placeholder={`Select ${label}`}/>
+                </SelectTrigger>
+                <SelectContent>
+                    <SelectGroup>
+                        {options.map(option => (
+                            <SelectItem key={option.value} value={option.value}>{option.label}</SelectItem>
+                        ))}
+                    </SelectGroup>
+                </SelectContent>
+            </Select>
+        </div>
     );
 }

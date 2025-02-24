@@ -15,7 +15,7 @@ interface EmojiPickerProps {
     defaultEmoji?: Emoji | null;
 }
 
-const emojis: Emoji[] = [
+export const emojis: Emoji[] = [
     // Vacation & Travel
     {symbol: "🏖️", name: "Beach", keywords: ["vacation", "summer", "holiday", "beach"]},
     {symbol: "🌴", name: "Palm Tree", keywords: ["vacation", "tropical", "beach"]},

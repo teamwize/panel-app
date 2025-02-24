@@ -13,6 +13,9 @@ import UserDetailsCard from "@/modules/user/components/UserDetailsCard.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import PageHeader from "@/components/layout/PageHeader";
 import {PagedResponse} from "@/core/types/common.ts";
+import PageContent from "@/components/layout/PageContent.tsx";
+import {PageSection} from "@/components/layout/PageSection.tsx";
+import {PencilIcon} from "@heroicons/react/24/outline";
 
 export default function UserDetailsPage() {
     const {id} = useParams();
@@ -54,45 +57,59 @@ export default function UserDetailsPage() {
         }
     }, [id, currentPage]);
 
-    const backButtonPath = location.state?.from || "/requests";
+    const backButtonPath = location.state?.from || "/leaves";
 
     const handleEmployeeUpdateClick = () => {
-        navigate(`/user/${id}/update`, {state: {from: `/user/${id}/`}})
+        navigate(`/users/${id}/update`, {state: {from: `/users/${id}/`}})
     };
 
     return (
         <>
-            <PageHeader backButton={backButtonPath} title="Employee Details">
-                <Button className="px-2 h-9"
-                        onClick={handleEmployeeUpdateClick}>Update</Button>
+            <PageHeader backButton={backButtonPath} title="User Details">
+                <Button
+                    className="px-4 h-9"
+                    onClick={handleEmployeeUpdateClick}
+                >
+                    <PencilIcon className="w-4 h-4 mr-2"/>
+                    Update User
+                </Button>
             </PageHeader>
+            <PageContent>
+                        <UserDetailsCard employeeDetails={employeeDetails} leavePolicy={leavePolicy}/>
 
-            <main className="flex flex-1 flex-col gap-4 p-4">
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4 gap-6">
-                    <UserDetailsCard employeeDetails={employeeDetails} leavePolicy={leavePolicy}/>
+                        <section>
+                            <PageSection title="Leave Balance"
+                                         description="An overview of user's leave balance, categorized by different leave types, showing the total allocation, used days, and remaining balance for each type."></PageSection>
 
-                    <section>
-                        <h2 className="text-xl font-semibold mb-4">Leave Balance</h2>
-                        {balanceData.length > 0 ? (
-                            <div className="grid grid-cols-3 text-center gap-2 mx-auto">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
                                 {balanceData.map((item) => (
-                                    <UserLeaveBalanceItem key={item?.activatedType?.typeId} item={item}/>
+                                    <UserLeaveBalanceItem
+                                        key={item?.activatedType.typeId}
+                                        item={item}
+                                    />
                                 ))}
                             </div>
-                        ) : (
-                            <p className="text-center text-muted-foreground">No balance data available.</p>
-                        )}
-                    </section>
+                        </section>
 
-                    <section>
-                        {leaveRequests ? (
-                            <LeaveList leaveRequests={leaveRequests} setCurrentPage={setCurrentPage}/>
-                        ) : (
-                            <p className="text-center text-muted-foreground">No leave requests available.</p>
-                        )}
-                    </section>
-                </Card>
-            </main>
+
+                        <div className="w-full">
+                            {leaveRequests && (
+                                <>
+                                    <PageSection
+                                        title="Leaves"
+                                        description="A detailed list of user leave requests"
+                                    >
+                                    </PageSection>
+                                    <Card>
+                                        <LeaveList
+                                            leaveRequests={leaveRequests}
+                                            setCurrentPage={setCurrentPage}
+                                        />
+                                    </Card>
+                                </>
+                            )}
+                        </div>
+            </PageContent>
         </>
     );
 }

@@ -10,7 +10,8 @@ import {Button} from "@/components/ui/button";
 import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
 import {LeaveTypeCycle} from "@/core/types/enum.ts";
 import {LeaveTypeCreateRequest, LeaveTypeResponse, LeaveTypeUpdateRequest} from "@/core/types/leave.ts";
-import EmojiPicker from "@/components/EmojiPicker.tsx";
+import EmojiPicker, {emojis} from "@/components/EmojiPicker.tsx";
+import {Save, X} from "lucide-react";
 
 const FormSchema = z.object({
     name: z.string().min(2, {message: "Leave type name must be over 2 characters"}).max(50, {message: "Leave type name must be under 50 characters"}),
@@ -80,8 +81,14 @@ export function LeaveTypeDialog({isOpen, onClose, onSubmit, initialData, isUpdat
                         <RequiresApprovalField form={form} />
 
                         <DialogFooter>
-                            <Button variant="secondary" onClick={onClose}>Cancel</Button>
-                            <Button type="submit">{initialData ? 'Update' : 'Create'}</Button>
+                            <Button onClick={onClose} type="button" variant="secondary" className="mr-2">
+                                <X className="w-4 h-4 mr-2"/>
+                                Cancel
+                            </Button>
+                            <Button type="submit">
+                                <Save className="w-4 h-4 mr-2"/>
+                                {initialData ? 'Update' : 'Create'}
+                            </Button>
                         </DialogFooter>
                     </form>
                 </Form>
@@ -122,8 +129,8 @@ function SymbolField({form}: FieldProps) {
                     <FormLabel>Symbol</FormLabel>
                     <FormControl>
                         <EmojiPicker
-                            onEmojiSelect={(emoji) => field.onChange(emoji)}
-                            defaultEmoji={field.value}
+                            onEmojiSelect={(emoji) => field.onChange(emoji.symbol)}
+                            defaultEmoji={emojis.find(e => e.symbol === field.value) || null}
                         />
                     </FormControl>
                     <FormMessage/>

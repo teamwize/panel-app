@@ -107,18 +107,19 @@ export default function LeavePolicyList() {
 
     return (
         <>
-            <PageSection title='Leave Policies' description={"Create and manage leave policies"}>
+            <PageSection title='Leave Policies'
+                         description={"Manage leave policies for your organization. Set up policy details, including leave types and approval requirements. Create, update, or delete policies as needed."}>
                 <Button onClick={() => setIsCreateDialogOpen(true)} className='px-2 h-9'>
                     <Plus className="h-4 w-4 mr-1"/>
                     Create</Button>
             </PageSection>
-            <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
+            <Card>
                 <Table>
                     <TableHeader>
                         <TableRow>
                             <TableHead>Name</TableHead>
                             <TableHead>Types</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -135,12 +136,11 @@ export default function LeavePolicyList() {
                     </TableBody>
                 </Table>
 
-                {isCreateDialogOpen && (
-                    <CreatePolicyDialog
-                        onClose={() => setIsCreateDialogOpen(false)}
-                        onSubmit={(name) => createLeavePolicy(name)}
-                    />
-                )}
+                <CreatePolicyDialog
+                    isOpen={isCreateDialogOpen}
+                    onClose={() => setIsCreateDialogOpen(false)}
+                    onSubmit={(name) => createLeavePolicy(name)}
+                />
 
                 {isDeleteDialogOpen && selectedLeavePolicy && (
                     <DeleteDialog
@@ -184,10 +184,10 @@ function LeavePolicyRowItem({
                 </div>
             </TableCell>
             <TableCell className="text-right">
-                <div className="flex gap-4 justify-end">
+                <div className="flex gap-2">
                     <Button
                         className="px-1"
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         disabled={isProcessing}
                         onClick={() => navigate(`/leaves/policies/${leavePolicy.id}`, {state: {leavePolicy}})}
@@ -195,7 +195,7 @@ function LeavePolicyRowItem({
                         <Pencil className="h-4"/>
                     </Button>
                     <Button
-                        variant="outline"
+                        variant="ghost"
                         size="sm"
                         className="px-1"
                         disabled={isProcessing}

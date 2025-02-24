@@ -10,20 +10,22 @@ import {LeaveTypeCreateRequest, LeaveTypeResponse, LeaveTypeUpdateRequest} from 
 import {getErrorMessage} from "@/core/utils/errorHandler";
 import {LeaveTypeCycleJson} from "@/core/types/enum";
 import {LeaveTypeDialog} from "@/modules/leave/components/LeaveTypeDialog.tsx";
+import {DeleteDialog} from "@/modules/leave/components/DeleteDialog.tsx";
 
 export default function LeaveTypeList() {
     const [leaveTypeList, setLeaveTypeList] = useState<LeaveTypeResponse[]>([]);
     const [selectedLeaveType, setSelectedLeaveType] = useState<LeaveTypeResponse | null>(null);
     const [isDialogOpen, setIsDialogOpen] = useState(false);
     const [isUpdateMode, setIsUpdateMode] = useState(false);
+    const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
+    const [isProcessing, setIsProcessing] = useState(false);
 
     // Fetch leave types
     useEffect(() => {
         getLeavesTypes()
             .then((response: LeaveTypeResponse[]) => setLeaveTypeList(response))
             .catch((error) => {
-                const errorMessage = getErrorMessage(error);
-                toast({title: "Error", description: errorMessage, variant: "destructive",});
+                toast({title: "Error", description: getErrorMessage(error), variant: "destructive"});
             });
     }, []);
 
@@ -57,42 +59,44 @@ export default function LeaveTypeList() {
             });
     };
 
-    const handleRemoveLeaveType = () => {
-        if (selectedLeaveType) {
-            deleteLeaveType(selectedLeaveType.id)
-                .then(() => {
-                    setLeaveTypeList((prev) => prev.filter((type) => type.id !== selectedLeaveType.id));
-                    toast({title: "Success", description: "Leave type removed successfully!", variant: "default",});
-                })
-                .catch((error) => {
-                    const errorMessage = getErrorMessage(error);
-                    toast({title: "Error", description: errorMessage, variant: "destructive",});
-                })
-                .finally(() => {
-                    setSelectedLeaveType(null);
-                    setIsDialogOpen(false);
-                });
+    const handleRemoveLeaveType = async () => {
+        if (!selectedLeaveType) return;
+
+        try {
+            setIsProcessing(true);
+            await deleteLeaveType(selectedLeaveType.id);
+
+            setLeaveTypeList((prev) => prev.filter((type) => type.id !== selectedLeaveType.id));
+            toast({title: "Success", description: "Leave type removed successfully!", variant: "default"});
+        } catch (error) {
+            toast({title: "Error", description: getErrorMessage(error as Error), variant: "destructive"});
+        } finally {
+            setIsProcessing(false);
+            setSelectedLeaveType(null);
+            setIsDeleteDialogOpen(false);
         }
     };
 
-    const sortedLeaveTypes = leaveTypeList.sort((a) => a.status === 'ARCHIVED' ? 1 : -1);
+    const sortedLeaveTypes = leaveTypeList.sort((a) => (a.status === "ARCHIVED" ? 1 : -1));
 
     return (
         <>
-            <PageSection title='Leave Types' description={'Create and manage leave types'}>
-                <Button onClick={() => {
-                    setIsUpdateMode(false);
-                    setSelectedLeaveType(null);
-                    setIsDialogOpen(true);
-                }}
-                        className='px-2 h-9'
+            <PageSection title="Leave Types"
+                         description={"Manage leave types by details. Create, update, or archive leave types as needed."}>
+                <Button
+                    onClick={() => {
+                        setIsUpdateMode(false);
+                        setSelectedLeaveType(null);
+                        setIsDialogOpen(true);
+                    }}
+                    className="px-2 h-9"
                 >
                     <Plus className="h-4 w-4 mr-1"/>
                     Create
                 </Button>
             </PageSection>
 
-            <Card className="flex flex-1 flex-col p-4">
+            <Card>
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -100,7 +104,7 @@ export default function LeaveTypeList() {
                             <TableHead>Amount</TableHead>
                             <TableHead>Cycle</TableHead>
                             <TableHead>Requires Approval</TableHead>
-                            <TableHead className="text-right">Actions</TableHead>
+                            <TableHead>Actions</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -113,9 +117,9 @@ export default function LeaveTypeList() {
                                     setIsUpdateMode(true);
                                     setIsDialogOpen(true);
                                 }}
-                                handleDelete={() => {
+                                openDeleteDialog={() => {
                                     setSelectedLeaveType(leaveType);
-                                    handleRemoveLeaveType();
+                                    setIsDeleteDialogOpen(true);
                                 }}
                             />
                         ))}
@@ -140,6 +144,15 @@ export default function LeaveTypeList() {
                         }}
                     />
                 )}
+
+                {isDeleteDialogOpen && selectedLeaveType && (
+                    <DeleteDialog
+                        name="Leave Type"
+                        label={selectedLeaveType.name}
+                        handleReject={() => setIsDeleteDialogOpen(false)}
+                        handleAccept={handleRemoveLeaveType}
+                    />
+                )}
             </Card>
         </>
     );
@@ -148,40 +161,53 @@ export default function LeaveTypeList() {
 type LeaveTypeRowItemProps = {
     leaveType: LeaveTypeResponse;
     openDialog: () => void;
-    handleDelete: () => void;
+    openDeleteDialog: () => void;
 };
 
-function LeaveTypeRowItem({leaveType, openDialog, handleDelete}: LeaveTypeRowItemProps) {
-    const isArchived = leaveType.status === 'ARCHIVED';
+function LeaveTypeRowItem({leaveType, openDialog, openDeleteDialog}: LeaveTypeRowItemProps) {
+    const isArchived = leaveType.status === "ARCHIVED";
 
     return (
-        <TableRow className={isArchived ? 'opacity-50' : ''}>
-            <TableCell>{leaveType.name} {leaveType.symbol}</TableCell>
+        <TableRow className={`${isArchived ? "opacity-50" : ""} hover:bg-muted/50 transition-colors`}>
+            <TableCell className="font-medium">
+                {leaveType.name}
+                <span className="ml-1 text-muted-foreground">{leaveType.symbol}</span>
+            </TableCell>
             <TableCell>{leaveType.amount}</TableCell>
             <TableCell>{LeaveTypeCycleJson[leaveType.cycle]}</TableCell>
-            <TableCell>{leaveType.requiresApproval ? "Yes" : "No"}</TableCell>
-            <TableCell className="text-right">
+            <TableCell>
+                <span
+                    className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                        leaveType.requiresApproval
+                            ? "bg-green-50 text-green-700 ring-green-600/20"
+                            : "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
+                    }`}
+                >
+                    {leaveType.requiresApproval ? "Yes" : "No"}
+                </span>
+            </TableCell>
+            <TableCell>
                 {!isArchived ? (
-                    <div className="flex gap-4 justify-end">
+                    <div className="flex gap-2">
                         <Button
-                            className="px-1"
-                            variant="outline"
+                            className="px-1 hover:bg-muted/80 transition-colors"
+                            variant="ghost"
                             size="sm"
                             onClick={openDialog}
                         >
-                            <Pencil className="h-4"/>
+                            <Pencil className="h-4 text-muted-foreground"/>
                         </Button>
                         <Button
-                            className="px-1"
-                            variant="outline"
+                            className="px-1 hover:bg-red-50 transition-colors"
+                            variant="ghost"
                             size="sm"
-                            onClick={handleDelete}
+                            onClick={openDeleteDialog}
                         >
-                            <Trash className="h-4 text-[#ef4444]"/>
+                            <Trash className="h-4 text-red-500"/>
                         </Button>
                     </div>
                 ) : (
-                    <span className="text-sm text-gray-500">Archived</span>
+                    <span className="text-sm text-muted-foreground italic">Archived</span>
                 )}
             </TableCell>
         </TableRow>

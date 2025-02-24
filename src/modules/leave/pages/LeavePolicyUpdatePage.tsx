@@ -7,7 +7,7 @@ import {Button} from "@/components/ui/button";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
 import {Form} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
-import {Check, Pencil, PlusIcon} from "lucide-react";
+import {Pencil, Plus, Save, X} from "lucide-react";
 import {toast} from "@/components/ui/use-toast";
 import {getLeavesPolicy, getLeavesTypes, updateLeavePolicy,} from "@/core/services/leaveService";
 import LeavePolicyActivatedTypeUpdateDialog from "@/modules/leave/components/LeavePolicyActivatedTypeUpdateDialog.tsx";
@@ -164,63 +164,75 @@ export default function LeavePolicyUpdatePage() {
     return (
         <>
             <PageHeader title={`Update Leave Policy`} backButton="/leaves/policies">
-                <Button className="flex items-center space-x-1" onClick={() => setIsCreateDialogOpen(true)}>
-                    <PlusIcon className="h-5 w-5"/>
+                <Button className='px-2 h-9'
+                        onClick={() => setIsCreateDialogOpen(true)}>
+                    <Plus className="h-4 w-4 mr-1"/>
+                    Leave Type
                 </Button>
             </PageHeader>
 
             <PageContent>
-                <Card className="flex flex-1 flex-col rounded-lg border border-dashed shadow-sm p-4">
+                {isEditingName ? (
+                    <CardHeader className="p-0 pb-6 flex flex-row items-center space-y-0">
+                        <Input
+                            defaultValue={watch("policyName")}
+                            onChange={(e) => setValue("policyName", e.target.value)}
+                            placeholder="Enter policy name"
+                            className="flex-1"
+                        />
+                        <Button
+                            className="w-full sm:w-auto ml-2"
+                            onClick={savePolicyName}
+                            variant='outline'
+                        >
+                            <Save className="h-4 w-4 mr-2"/>
+                            Save
+                        </Button>
+                    </CardHeader>
+                ) : (
+                    <CardHeader className="p-0 pb-6">
+                        <CardTitle className="text-xl">
+                            {watch("policyName")}
+                            <Button
+                                className="w-full sm:w-auto ml-2"
+                                variant="outline"
+                                onClick={() => setIsEditingName(true)}
+                            >
+                                <Pencil className="h-4 w-4 mr-2"/>
+                                Update
+                            </Button>
+                        </CardTitle>
+                    </CardHeader>
+                )}
+
+                <Card>
                     <Form {...form}>
                         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                            {isEditingName ? (
-                                <CardHeader className="px-4 py-0 flex flex-row items-center space-y-0">
-                                    <Input
-                                        defaultValue={watch("policyName")}
-                                        onChange={(e) => setValue("policyName", e.target.value)}
-                                        placeholder="Enter policy name"
-                                        className="flex-1"
-                                    />
-                                    <Button
-                                        className="ml-2 py-0 px-2 mt-0"
-                                        variant="outline"
-                                        size="sm"
-                                        onClick={savePolicyName}
-                                    >
-                                        <Check className="h-4 w-4"/>
-                                    </Button>
-                                </CardHeader>
-                            ) : (
-                                <CardHeader className="px-4 py-0">
-                                    <CardTitle className="text-xl">
-                                        {watch("policyName")}
-                                        <Button
-                                            className="ml-2 py-0 px-2"
-                                            variant="outline"
-                                            size="sm"
-                                            onClick={() => setIsEditingName(true)}
-                                        >
-                                            <Pencil className="h-4 w-4"/>
-                                        </Button>
-                                    </CardTitle>
-                                </CardHeader>
-                            )}
-
                             <LeavePolicyTable
                                 form={form}
                                 leaveTypes={leaveTypes}
                                 setEditingIndex={setEditingIndex}
                                 setIsDialogOpen={setIsUpdateDialogOpen}
                             />
-
-                            {watch("activatedTypes").length > 0 && (
-                                <Button type="submit" className="w-fit mt-4">
-                                    Save
-                                </Button>
-                            )}
                         </form>
                     </Form>
                 </Card>
+
+                {watch("activatedTypes").length > 0 && (
+                    <div className="flex justify-end gap-3 mt-6">
+                        <Button
+                            variant="outline"
+                            onClick={() => navigate('/leaves/policies')}
+                        >
+                            <X className="w-4 h-4 mr-2"/>
+                            Cancel
+                        </Button>
+                        <Button type="submit">
+                            <Save className="w-4 h-4 mr-2"/>
+                            Save
+                        </Button>
+                    </div>
+                )}
             </PageContent>
 
             <LeavePolicyActivatedTypeCreateDialog
@@ -244,8 +256,6 @@ export default function LeavePolicyUpdatePage() {
                 }}
                 onSave={(newType) => saveActivatedTypes(newType, editingIndex)}
                 defaultValues={editingIndex !== null ? watch("activatedTypes")[editingIndex] : undefined}
-                schema={LeaveTypeSchema}
-                form={form}
             />
         </>
     );

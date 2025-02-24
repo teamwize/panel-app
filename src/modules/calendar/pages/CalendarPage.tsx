@@ -15,7 +15,7 @@ import {HolidayResponse} from "@/core/types/holiday.ts";
 import {LeaveResponse} from "@/core/types/leave.ts";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import {Week} from "@/core/types/enum.ts";
-import {CustomCalendar} from "@/components/calendar/CustomCalendar.tsx";
+import {CustomCalendar} from "@/modules/calendar/components/CustomCalendar.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import {capitalizeFirstLetter} from "@/core/utils/string.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
@@ -90,7 +90,8 @@ export default function CalendarPage() {
     return (
         <>
             <PageHeader title='Calendar'>
-                <Button className='px-2 h-9' onClick={() => navigate("/leaves/create")}>
+                <Button className='px-2 h-9'
+                        onClick={() => navigate("/leaves/create", {state: {from: location.pathname}})}>
                     <Plus className="h-4 w-4 mr-1"/>
                     Request Leave
                 </Button>

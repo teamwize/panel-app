@@ -1,7 +1,6 @@
 import React, {useContext, useState} from 'react';
-import clsx from 'clsx';
 import {Link, useLocation} from 'react-router-dom';
-import {Bell, Building, Calendar, Clock, Home, Settings, TreePalm, User, Users} from 'lucide-react';
+import {Bell, Building, Calendar, CalendarCheck, Home, Settings, TreePalm, User, Users} from 'lucide-react';
 import {Button} from "@/components/ui/button.tsx";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import SidebarAccountDropdown from "@/components/sidebar/SidebarAccountDropdown.tsx";
@@ -14,7 +13,7 @@ const mainNavigation = [
 ];
 
 const managementNavigation = [
-    {name: 'Leaves', href: '/leaves', icon: Clock},
+    {name: 'Leaves', href: '/leaves', icon: CalendarCheck},
     {name: 'Organization', href: '/organization', icon: Building},
     {name: 'Leave Policy', href: '/leaves/policies', icon: TreePalm},
     {name: 'Users', href: '/users', icon: User},
@@ -37,45 +36,45 @@ export default function Sidebar() {
     const isUserAdmin = user?.role === 'ORGANIZATION_ADMIN';
 
     return (
-        <div className="grid min-h-screen w-full md:grid-cols-[220px_1fr] lg:grid-cols-[280px_1fr]">
-            <div className="hidden border-r bg-muted/40 md:block">
-                <div className="flex h-full max-h-screen flex-col gap-4">
-                    <div className="flex h-16 items-center border-b px-4 lg:h-[60px] lg:px-6">
-                        <Link to="/" className="flex items-center gap-2 font-semibold">
+        <div className=" inset-y-0 left-0 hidden md:block md:w-[240px] lg:w-[280px]">
+            <div className="border-r border-gray-200 bg-white shadow-sm h-full fixed">
+                <div className="flex h-full flex-col">
+                    <div className="flex h-16 items-center border-b border-gray-200 px-6">
+                        <Link to="/" className="flex items-center gap-3">
                             <Logo/>
-                            <span>Teamwize</span>
+                            <span className="text-lg font-semibold text-gray-900">Teamwize</span>
                         </Link>
-                        <Button variant="outline" size="icon" className="ml-auto h-8 w-8">
-                            <Bell className="h-4 w-4"/>
-                            <span className="sr-only">Toggle notifications</span>
+                        <Button variant="ghost" size="icon"
+                                className="ml-auto h-8 w-8 text-gray-500 hover:text-gray-600">
+                            <Bell className="h-5 w-5"/>
                         </Button>
                     </div>
 
-                    <div className="flex-1">
-                        <nav className="grid items-start px-2 text-sm font-medium lg:px-4">
-                            {mainNavigation.map((item) =>
+                    <div className="flex-1 overflow-y-auto py-4">
+                        <nav className="space-y-1 px-4">
+                            {mainNavigation.map((item) => (
                                 <NavigationLink
                                     key={item.name}
-                                    href={item.href}
-                                    title={item.name}
+                                    {...item}
                                     isActive={isNavigationActive(item.href)}
                                     onClick={handleNavigation}
-                                    Icon={item.icon}/>
-                            )}
+                                />
+                            ))}
 
                             {isUserAdmin && (
-                                <>
-                                    <h1 className="px-3 text-[10px] text-muted-foreground uppercase tracking-wide mt-4 mb-2">Management</h1>
-                                    {managementNavigation.map((item) =>
+                                <div className="mt-8">
+                                    <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider my-3">
+                                        Management
+                                    </h2>
+                                    {managementNavigation.map((item) => (
                                         <NavigationLink
                                             key={item.name}
-                                            href={item.href}
-                                            title={item.name}
+                                            {...item}
                                             isActive={isNavigationActive(item.href)}
                                             onClick={handleNavigation}
-                                            Icon={item.icon}/>
-                                    )}
-                                </>
+                                        />
+                                    ))}
+                                </div>
                             )}
                         </nav>
                     </div>
@@ -93,28 +92,25 @@ export default function Sidebar() {
 
 type NavigationLinkProps = {
     href: string;
-    title: string;
+    name: string;
     isActive: boolean;
     onClick: (page: string) => void;
-    Icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
+    icon: React.ComponentType<React.SVGProps<SVGSVGElement>>;
 }
 
-function NavigationLink({href, title, isActive, onClick, Icon}: NavigationLinkProps) {
-    const classes = {
-        base: 'flex items-center gap-3 rounded-lg px-3 py-2 transition-all',
-        active: 'bg-indigo-100 bg-opacity-75',
-        inactive: 'text-muted-foreground hover:text-primary',
-    };
-
+function NavigationLink({href, name, icon: Icon, isActive, onClick}: NavigationLinkProps) {
     return (
-        <div key={title} className="mb-1">
-            <Link
-                to={href}
-                onClick={() => onClick(href)}
-                className={clsx(classes.base, isActive ? classes.active : classes.inactive)}>
-                <Icon className="h-4 w-4" aria-hidden="true"/>
-                {title}
-            </Link>
-        </div>
+        <Link
+            to={href}
+            onClick={() => onClick(href)}
+            className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
+                isActive
+                    ? 'bg-indigo-50 text-indigo-600'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+            }`}
+        >
+            <Icon className={`h-5 w-5 ${isActive ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500'}`}/>
+            {name}
+        </Link>
     );
 }

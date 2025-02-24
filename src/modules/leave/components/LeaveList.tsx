@@ -1,4 +1,4 @@
-import {Card, CardContent, CardHeader, CardTitle} from "@/components/ui/card.tsx";
+import {Card} from "@/components/ui/card.tsx";
 import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import React from "react";
 import {LeaveResponse} from "@/core/types/leave.ts";
@@ -16,12 +16,7 @@ type LeaveRequestListProps = {
 
 export default function LeaveList({leaveRequests, setCurrentPage}: LeaveRequestListProps) {
     return (
-        <Card x-chunk="dashboard-05-chunk-3" className="border-0 shadow-amber-50">
-            <CardHeader className="py-4 px-0">
-                <CardTitle className="text-xl">Leaves History ({leaveRequests.totalContents})</CardTitle>
-            </CardHeader>
-
-            <CardContent className='p-0'>
+        <Card className="border-0 shadow-amber-50">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -43,10 +38,9 @@ export default function LeaveList({leaveRequests, setCurrentPage}: LeaveRequestL
                         )}
                     </TableBody>
                 </Table>
-            </CardContent>
 
             {leaveRequests && leaveRequests.totalPages > 1 && (
-                <div className='mx-6'>
+                <div className='mx-6 bordet-t'>
                     <PaginationComponent
                         pageNumber={leaveRequests.pageNumber + 1}
                         setPageNumber={setCurrentPage}
