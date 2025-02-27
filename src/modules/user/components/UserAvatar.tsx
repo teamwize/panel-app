@@ -39,6 +39,10 @@ export default function UserAvatar({avatar, avatarSize, className}: AvatarProps)
                 className={`rounded-full hover:opacity-90 ${className ?? ''}`}
                 style={commonStyles}
                 loading="lazy"
+                onError={(e) => {
+                    e.currentTarget.onerror = null;
+                    e.currentTarget.src = 'fallback-avatar-url.jpg'; // Add your fallback image URL
+                }}
             />
         </div>
     );

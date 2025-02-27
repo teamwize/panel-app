@@ -4,10 +4,10 @@ name: Build and Push Docker Image
 on:
   push:
     branches:
-      - master  # Only run on push to the main branch
+      - main  # Only run on push to the main branch
   pull_request:
     branches:
-      - master  # Run on pull requests to the main branch
+      - main  # Run on pull requests to the main branch
 jobs:
   build:
     runs-on: ubuntu-latest

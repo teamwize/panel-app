@@ -1,26 +1,27 @@
 import React, {useEffect} from "react";
+import {useForm} from "react-hook-form";
 import {z} from "zod";
-import {useForm, UseFormReturn} from "react-hook-form";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog.tsx";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
-import {Input} from "@/components/ui/input.tsx";
-import {Checkbox} from "@/components/ui/checkbox.tsx";
-import {Button} from "@/components/ui/button.tsx";
+import {Dialog, DialogContent, DialogFooter, DialogHeader, DialogTitle} from "@/components/ui/dialog";
+import {Input} from "@/components/ui/input";
+import {Checkbox} from "@/components/ui/checkbox";
+import {Button} from "@/components/ui/button";
+import {Save, X} from "lucide-react";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
+import {LeavePolicyActivatedTypeResponse} from "@/core/types/leave";
 
 const FormSchema = z.object({
-    typeId: z.number({required_error: "Leave type is required."}),
     amount: z.number().min(1, {message: "Amount must be at least 1."}),
     requiresApproval: z.boolean(),
 });
 
-type LeavePolicyActivatedTypeInputs = z.infer<typeof FormSchema>;
+type FormInputs = z.infer<typeof FormSchema>;
 
-type ActivateLeaveTypeDialogProps = {
+type UpdateDialogProps = {
     isOpen: boolean;
     onClose: () => void;
-    onSave: (data: LeavePolicyActivatedTypeInputs) => void;
-    defaultValues?: LeavePolicyActivatedTypeInputs;
+    onSave: (updatedType: LeavePolicyActivatedTypeResponse) => void;
+    defaultValues?: LeavePolicyActivatedTypeResponse;
 };
 
 export default function LeavePolicyActivatedTypeUpdateDialog({
@@ -28,25 +29,34 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
                                                                  onClose,
                                                                  onSave,
                                                                  defaultValues,
-                                                             }: ActivateLeaveTypeDialogProps) {
-    const dialogForm = useForm<LeavePolicyActivatedTypeInputs>({
+                                                             }: UpdateDialogProps) {
+    const form = useForm<FormInputs>({
         resolver: zodResolver(FormSchema),
         defaultValues: {
-            typeId: defaultValues?.typeId ?? 0, // Ensure a valid default
             amount: defaultValues?.amount ?? 1,
             requiresApproval: defaultValues?.requiresApproval ?? false,
         },
     });
-
-    // Reset form values when the dialog opens
+  
+    // Reset form values when the dialog opens with new data
     useEffect(() => {
         if (defaultValues) {
-            dialogForm.reset(defaultValues);
+            form.reset({
+                amount: defaultValues.amount,
+                requiresApproval: defaultValues.requiresApproval,
+            });
         }
-    }, [isOpen, defaultValues, dialogForm]);
+    }, [defaultValues, form]);
 
-    const handleSave = (data: LeavePolicyActivatedTypeInputs) => {
-        onSave(data);
+    const handleSubmit = (data: FormInputs) => {
+        if (!defaultValues) return;
+
+        onSave({
+            ...defaultValues,
+            amount: data.amount,
+            requiresApproval: data.requiresApproval,
+        });
+
         onClose();
     };
 
@@ -56,62 +66,55 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
                 <DialogHeader>
                     <DialogTitle>Edit Leave Type</DialogTitle>
                 </DialogHeader>
-                <Form {...dialogForm}>
-                    <form onSubmit={dialogForm.handleSubmit(handleSave)} className="space-y-4">
-                        <AmountField dialogForm={dialogForm} />
-                        <RequiresApprovalField dialogForm={dialogForm} />
+
+                <Form {...form}>
+                    <form onSubmit={form.handleSubmit(handleSubmit)} className="space-y-4">
+                        <FormField
+                            control={form.control}
+                            name="amount"
+                            render={({field}) => (
+                                <FormItem>
+                                    <FormLabel>Amount</FormLabel>
+                                    <FormControl>
+                                        <Input
+                                            type="number"
+                                            min={1}
+                                            placeholder="Enter amount"
+                                            {...field}
+                                            onChange={(e) => field.onChange(Number(e.target.value))}
+                                        />
+                                    </FormControl>
+                                    <FormMessage/>
+                                </FormItem>
+                            )}
+                        />
+
+                        <FormField
+                            control={form.control}
+                            name="requiresApproval"
+                            render={({field}) => (
+                                <FormItem>
+                                    <div className="flex items-center gap-2">
+                                        <Checkbox checked={field.value} onCheckedChange={field.onChange}/>
+                                        <FormLabel>Requires Approval</FormLabel>
+                                    </div>
+                                </FormItem>
+                            )}
+                        />
+
                         <DialogFooter>
-                            <Button type="button" variant="outline" onClick={onClose}>Cancel</Button>
-                            <Button type="submit">Save</Button>
+                            <Button type="button" variant="secondary" onClick={onClose}>
+                                <X className="w-4 h-4 mr-2"/>
+                                Cancel
+                            </Button>
+                            <Button type="submit">
+                                <Save className="w-4 h-4 mr-2"/>
+                                Save
+                            </Button>
                         </DialogFooter>
                     </form>
                 </Form>
             </DialogContent>
         </Dialog>
-    );
-}
-
-type FieldProps = {
-    dialogForm: UseFormReturn<LeavePolicyActivatedTypeInputs>;
-};
-
-function AmountField({ dialogForm }: FieldProps) {
-    return (
-        <FormField
-            control={dialogForm.control}
-            name="amount"
-            render={({field, fieldState}) => (
-                <FormItem>
-                    <FormLabel>Amount</FormLabel>
-                    <FormControl>
-                        <Input
-                            type="number"
-                            min={1}
-                            placeholder="Enter amount"
-                            {...field}
-                            onChange={(e) => field.onChange(Number(e.target.value))}
-                        />
-                    </FormControl>
-                    <FormMessage>{fieldState.error?.message}</FormMessage>
-                </FormItem>
-            )}
-        />
-    );
-}
-
-function RequiresApprovalField({dialogForm}: FieldProps) {
-    return (
-        <FormField
-            control={dialogForm.control}
-            name="requiresApproval"
-            render={({field}) => (
-                <FormItem>
-                    <div className="flex items-center gap-2">
-                        <Checkbox checked={field.value || false} onCheckedChange={field.onChange}/>
-                        <FormLabel>Requires Approval</FormLabel>
-                    </div>
-                </FormItem>
-            )}
-        />
     );
 }
