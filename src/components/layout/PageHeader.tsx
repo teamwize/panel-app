@@ -14,7 +14,7 @@ export default function PageHeader({title, children, backButton}: PageHeaderProp
 
     return (
         <header
-            className="sticky top-0 z-10 border-b border-gray-200 bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+            className="sticky top-0 z-10 border-b bg-white">
             <div className="container mx-auto px-4 h-16 lg:h-[63px]">
                 <div className="flex items-center justify-between h-full">
                     <div className="flex items-center gap-3">

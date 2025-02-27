@@ -37,7 +37,7 @@ export default function LeavePolicyActivatedTypeUpdateDialog({
             requiresApproval: defaultValues?.requiresApproval ?? false,
         },
     });
-
+  
     // Reset form values when the dialog opens with new data
     useEffect(() => {
         if (defaultValues) {

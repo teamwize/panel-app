@@ -34,7 +34,7 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
     };
 
     return (
-        <Card className="p-5">
+        <Card className="p-5 mb-4">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="w-full sm:w-96">

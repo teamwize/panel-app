@@ -73,7 +73,7 @@ export default function HomePage() {
                                      description="An overview of your leave balance, categorized by different leave types, showing the total allocation, used days, and remaining balance for each type.">
                         </PageSection>
 
-                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+                        <div className="flex flex-wrap justify-center gap-6">
                             {balanceData.map((item) => (
                                 <UserLeaveBalanceItem
                                     key={item.activatedType.typeId}
