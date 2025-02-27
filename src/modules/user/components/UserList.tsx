@@ -27,7 +27,6 @@ export function UserList({
             {employeesList.map((employee) => (
                 <TableRow
                     key={employee.id}
-                    className="hover:bg-muted/50 transition-colors"
                 >
                     <TableCell className="py-4">
                         <div

@@ -36,8 +36,8 @@ export default function Sidebar() {
     const isUserAdmin = user?.role === 'ORGANIZATION_ADMIN';
 
     return (
-        <div className=" inset-y-0 left-0 hidden md:block md:w-[240px] lg:w-[280px]">
-            <div className="border-r border-gray-200 bg-white shadow-sm h-full fixed">
+        <div className="left-0 hidden md:block md:w-[240px] lg:w-[280px]">
+            <div className="bg-white shadow-sm h-full">
                 <div className="flex h-full flex-col">
                     <div className="flex h-16 items-center border-b border-gray-200 px-6">
                         <Link to="/" className="flex items-center gap-3">

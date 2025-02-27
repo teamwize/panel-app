@@ -101,7 +101,7 @@ export default function UsersPage() {
 
             <PageContent>
                 <UserFilterForm onFilter={handleUsersFilter}/>
-                <Card className="mt-5 flex flex-1 flex-col rounded-lg border  shadow-sm gap-4">
+                <Card>
                     <Table>
                         <TableHeader>
                             <TableRow>
