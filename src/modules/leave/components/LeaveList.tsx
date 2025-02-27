@@ -67,7 +67,7 @@ function LeaveListItem({request}: LeaveRequestTableProps) {
                 <LeaveStatusBadge status={request.status}/>
             </TableCell>
             <TableCell>
-                <Badge variant="outline">{request.activatedType.name} {request.activatedType.symbol}</Badge>
+                <Badge variant="outline">{request.activatedType.symbol} {request.activatedType.name}</Badge>
             </TableCell>
         </TableRow>
     );

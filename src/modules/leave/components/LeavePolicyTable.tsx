@@ -28,7 +28,17 @@ export function LeavePolicyTable({onEdit, activatedTypes, onRemove}: LeavePolicy
                         <TableRow key={activatedType.typeId}>
                             <TableCell>{activatedType?.name || "Unknown"} {activatedType.symbol}</TableCell>
                             <TableCell>{activatedType.amount}</TableCell>
-                            <TableCell>{activatedType.requiresApproval ? "Yes" : "No"}</TableCell>
+                            <TableCell>
+                                <span
+                                    className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                                        activatedType.requiresApproval
+                                            ? "bg-green-50 text-green-700 ring-green-600/20"
+                                            : "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
+                                    }`}
+                                >
+                                    {activatedType.requiresApproval ? "Yes" : "No"}
+                                </span>
+                            </TableCell>
                             <TableCell>
                                 <div className="flex gap-2">
                                     <Button

@@ -330,7 +330,7 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
                                     type="button"
                                     variant={field.value === type.typeId.toString() ? "secondary" : "outline"}
                                     className={`
-                                        h-10 px-3 flex flex-col items-center gap-1
+                                        px-3 h-10 flex items-center gap-3
                                         ${field.value === type.typeId.toString()
                                         ? ''
                                         : 'hover:bg-background hover:border-input'
@@ -339,7 +339,7 @@ function LeaveTypeField({form, leaveTypes}: FieldProps) {
                                     onClick={() => field.onChange(type.typeId.toString())}
                                 >
                                     {type.symbol && (
-                                        <span className="text-xs text-muted-foreground">
+                                        <span className="text-base text-muted-foreground">
                                             {type.symbol}
                                         </span>
                                     )}

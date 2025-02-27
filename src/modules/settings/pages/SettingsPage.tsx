@@ -1,6 +1,6 @@
 import React from 'react';
 import {useNavigate} from 'react-router-dom';
-import {Globe, Lock} from 'lucide-react';
+import {BookOpen, Globe, Lock} from 'lucide-react';
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 
@@ -8,25 +8,75 @@ export default function SettingsPage() {
     const navigate = useNavigate();
     const navigateTo = (path: string) => () => navigate(path);
 
+    const settingsItems = [
+        {
+            title: 'Change Password',
+            description: 'Update your password',
+            icon: Lock,
+            path: '/settings/change-password',
+            color: 'text-red-600'
+        },
+        {
+            title: 'Official Holidays',
+            description: 'Manage official holidays',
+            icon: Globe,
+            path: '/settings/official-holidays',
+            color: 'text-blue-600'
+        },
+        {
+            title: 'Guide',
+            description: 'Documentation and help',
+            icon: BookOpen,
+            path: 'https://github.com/teamwize',
+            color: 'text-teal-600',
+            external: true
+        }
+    ];
+
     return (
         <>
             <PageHeader title='Settings'></PageHeader>
             <PageContent>
-                <div className="flex flex-1 flex-col gap-4">
-                    <button onClick={navigateTo('/settings/change-password')}
-                            className="flex items-center text-md font-semibold gap-2">
-                        <Lock className="w-5 h-5 text-gray-600"/>
-                        Change Password
-                    </button>
-
-                    <button onClick={navigateTo('/settings/official-holidays')}
-                            className="flex items-center text-md font-semibold gap-2">
-                        <Globe className="w-5 h-5 text-gray-600"/>
-                        Official Holidays
-                    </button>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                    {settingsItems.map((item) => (
+                        item.external ? (
+                            <a
+                                key={item.path}
+                                href={item.path}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 
+                                         hover:shadow-md transition-all duration-200 
+                                         flex items-center gap-4 text-left w-full"
+                            >
+                                <div className={`${item.color} bg-opacity-10 rounded-lg`}>
+                                    <item.icon className="w-5 h-5"/>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-900">{item.title}</h3>
+                                    <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                                </div>
+                            </a>
+                        ) : (
+                            <button
+                                key={item.path}
+                                onClick={navigateTo(item.path)}
+                                className="bg-white p-4 rounded-lg shadow-sm border border-gray-100 
+                                         hover:shadow-md transition-all duration-200 
+                                         flex items-center gap-4 text-left w-full"
+                            >
+                                <div className={`${item.color} bg-opacity-10 rounded-lg`}>
+                                    <item.icon className="w-5 h-5"/>
+                                </div>
+                                <div>
+                                    <h3 className="font-medium text-gray-900">{item.title}</h3>
+                                    <p className="text-sm text-gray-500 mt-1">{item.description}</p>
+                                </div>
+                            </button>
+                        )
+                    ))}
                 </div>
             </PageContent>
         </>
-
     );
 }

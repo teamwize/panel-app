@@ -170,8 +170,8 @@ function LeaveTypeRowItem({leaveType, openDialog, openDeleteDialog}: LeaveTypeRo
     return (
         <TableRow className={`${isArchived ? "opacity-50" : ""} hover:bg-muted/50 transition-colors`}>
             <TableCell className="font-medium">
+                <span className="mr-1 text-muted-foreground">{leaveType.symbol}</span>
                 {leaveType.name}
-                <span className="ml-1 text-muted-foreground">{leaveType.symbol}</span>
             </TableCell>
             <TableCell>{leaveType.amount}</TableCell>
             <TableCell>{LeaveTypeCycleJson[leaveType.cycle]}</TableCell>
