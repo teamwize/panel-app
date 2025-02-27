@@ -1,21 +1,16 @@
-import {LeaveTypeResponse} from "@/core/types/leave.ts";
-import {UseFormReturn} from "react-hook-form";
+import {LeavePolicyActivatedTypeResponse} from "@/core/types/leave.ts";
 import {Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import {Button} from "@/components/ui/button.tsx";
 import {Pencil, Trash} from "lucide-react";
 import React from "react";
-import {FormInputs} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
 
 type LeavePolicyTableProps = {
-    leaveTypes: LeaveTypeResponse[];
-    form: UseFormReturn<FormInputs>;
-    setEditingIndex: (index: number) => void;
-    setIsDialogOpen: (isOpen: boolean) => void;
+    activatedTypes: LeavePolicyActivatedTypeResponse[];
+    onEdit: (type: LeavePolicyActivatedTypeResponse) => void;
+    onRemove: (id: number) => void;
 };
 
-export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialogOpen }: LeavePolicyTableProps) {
-    const activatedTypes = form.watch("activatedTypes");
-
+export function LeavePolicyTable({onEdit, activatedTypes, onRemove}: LeavePolicyTableProps) {
     return (
         <Table>
             <TableHeader>
@@ -28,12 +23,10 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
             </TableHeader>
 
             <TableBody>
-                {activatedTypes.map((activatedType, index) => {
-                    const leaveType = leaveTypes.find(type => type.id === activatedType.typeId);
-
+                {activatedTypes?.map((activatedType) => {
                     return (
                         <TableRow key={activatedType.typeId}>
-                            <TableCell>{leaveType?.name || "Unknown"} {leaveType.symbol}</TableCell>
+                            <TableCell>{activatedType?.name || "Unknown"} {activatedType.symbol}</TableCell>
                             <TableCell>{activatedType.amount}</TableCell>
                             <TableCell>{activatedType.requiresApproval ? "Yes" : "No"}</TableCell>
                             <TableCell>
@@ -43,8 +36,7 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => {
-                                            setEditingIndex(index);
-                                            setIsDialogOpen(true);
+                                            onEdit(activatedType);
                                         }}
                                     >
                                         <Pencil className="h-4 text-muted-foreground"/>
@@ -54,9 +46,7 @@ export function LeavePolicyTable({ form, leaveTypes, setEditingIndex, setIsDialo
                                         variant="ghost"
                                         size="sm"
                                         onClick={() => {
-                                            const types = form.getValues("activatedTypes");
-                                            types.splice(index, 1);
-                                            form.setValue("activatedTypes", [...types]);
+                                            onRemove(activatedType.typeId);
                                         }}
                                     >
                                         <Trash className="h-4 text-red-500"/>

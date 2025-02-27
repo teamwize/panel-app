@@ -1,76 +1,40 @@
 import React, {useEffect, useState} from "react";
 import {useNavigate, useParams} from "react-router-dom";
-import {z} from "zod";
-import {useForm} from "react-hook-form";
-import {zodResolver} from "@hookform/resolvers/zod";
 import {Button} from "@/components/ui/button";
 import {Card, CardHeader, CardTitle} from "@/components/ui/card";
-import {Form} from "@/components/ui/form";
 import {Input} from "@/components/ui/input";
 import {Pencil, Plus, Save, X} from "lucide-react";
 import {toast} from "@/components/ui/use-toast";
 import {getLeavesPolicy, getLeavesTypes, updateLeavePolicy,} from "@/core/services/leaveService";
 import LeavePolicyActivatedTypeUpdateDialog from "@/modules/leave/components/LeavePolicyActivatedTypeUpdateDialog.tsx";
-import {LeavePolicyResponse, LeavePolicyStatus, LeaveTypeResponse} from "@/core/types/leave.ts";
+import {
+    LeavePolicyActivatedTypeResponse,
+    LeavePolicyResponse,
+    LeavePolicyStatus,
+    LeaveTypeResponse
+} from "@/core/types/leave.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler";
 import {LeavePolicyTable} from "@/modules/leave/components/LeavePolicyTable.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import LeavePolicyActivatedTypeCreateDialog from "@/modules/leave/components/LeavePolicyActivatedTypeCreateDialog.tsx";
 
-export const LeaveTypeSchema = z.object({
-    typeId: z.number({required_error: "leave type is required."}),
-    amount: z.number().min(1, {message: "Amount must be at least 1."}),
-    requiresApproval: z.boolean(),
-});
-
-const FormSchema = z.object({
-    policyName: z.string().min(1, {message: "Policy name is required"}),
-    activatedTypes: z.array(
-        z.object({
-            typeId: z.number(),
-            amount: z.number().min(1),
-            requiresApproval: z.boolean(),
-        })
-    ),
-});
-
-export type FormInputs = z.infer<typeof FormSchema>;
-
 export default function LeavePolicyUpdatePage() {
     const {id} = useParams();
     const [leavePolicy, setLeavePolicy] = useState<LeavePolicyResponse | null>(null);
     const [leaveTypes, setLeaveTypes] = useState<LeaveTypeResponse[]>([]);
+    const [selectedLeaveType, setSelectedLeaveType] = useState<LeavePolicyActivatedTypeResponse | null>(null);
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
     const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
-    const [editingIndex, setEditingIndex] = useState<number | null>(null);
     const [isEditingName, setIsEditingName] = useState(false);
     const navigate = useNavigate();
 
-    const form = useForm<FormInputs>({
-        resolver: zodResolver(FormSchema),
-        defaultValues: {
-            policyName: "",
-            activatedTypes: [],
-        },
-    });
-
-    const {reset, watch, setValue, handleSubmit} = form;
-
-    // Fetch Existing leave Policy and Update Form
+    // Fetch Leave Policy
     useEffect(() => {
         const fetchLeavePolicy = async () => {
             try {
-                const existingLeavePolicy = await getLeavesPolicy(Number(id));
-                setLeavePolicy(existingLeavePolicy);
-                reset({
-                    policyName: existingLeavePolicy.name,
-                    activatedTypes: existingLeavePolicy.activatedTypes.map((type) => ({
-                        typeId: type.typeId,
-                        amount: type.amount,
-                        requiresApproval: type.requiresApproval,
-                    })),
-                });
+                const policy = await getLeavesPolicy(Number(id));
+                setLeavePolicy(policy);
             } catch (error) {
                 toast({
                     title: "Error",
@@ -81,7 +45,7 @@ export default function LeavePolicyUpdatePage() {
         };
 
         fetchLeavePolicy();
-    }, [id, reset]);
+    }, [id]);
 
     // Fetch leave Types
     useEffect(() => {
@@ -101,9 +65,13 @@ export default function LeavePolicyUpdatePage() {
         fetchLeaveTypes();
     }, []);
 
-    const savePolicyName = () => {
-        const policyName = watch("policyName");
-        if (!policyName) {
+    // Handle Policy Name Change
+    const savePolicyName = async () => {
+        if (!leavePolicy) return;
+
+        const updatedName = leavePolicy.name;
+
+        if (!updatedName) {
             toast({
                 title: "Error",
                 description: "Policy name cannot be empty",
@@ -111,35 +79,57 @@ export default function LeavePolicyUpdatePage() {
             });
             return;
         }
+
+        setLeavePolicy({...leavePolicy, name: updatedName});
         setIsEditingName(false);
     };
 
-    const saveActivatedTypes = (newType: z.infer<typeof LeaveTypeSchema>, index: number | null) => {
-        const types = watch("activatedTypes");
-        if (index !== null) {
-            types[index] = newType;
-        } else {
-            types.push(newType);
-        }
-        setValue("activatedTypes", types);
-        setIsUpdateDialogOpen(false);
-        setEditingIndex(null);
+    // Handle Add Leave Type
+    const addLeaveType = (newType: LeavePolicyActivatedTypeResponse) => {
+        if (!leavePolicy) return;
+
+        setLeavePolicy({
+            ...leavePolicy,
+            activatedTypes: [...leavePolicy.activatedTypes, newType],
+        });
+
+        setIsCreateDialogOpen(false);
     };
 
-    const onSubmit = async (data: FormInputs) => {
+    // Handle Update Leave Type
+    const updateLeaveType = (updatedType: LeavePolicyActivatedTypeResponse) => {
+        if (!leavePolicy) return;
+
+        setLeavePolicy({
+            ...leavePolicy,
+            activatedTypes: leavePolicy.activatedTypes.map((type) =>
+                type.typeId === updatedType.typeId ? updatedType : type
+            ),
+        });
+
+        setIsUpdateDialogOpen(false);
+        setSelectedLeaveType(null);
+    };
+
+    // Handle Remove Leave Type
+    const removeLeaveType = (typeId: number) => {
+        if (!leavePolicy) return;
+
+        setLeavePolicy({
+            ...leavePolicy,
+            activatedTypes: leavePolicy.activatedTypes.filter((type) => type.typeId !== typeId),
+        });
+    };
+
+    // Save Final Changes
+    const savePolicy = async () => {
         if (!leavePolicy) return;
 
         try {
-            const formattedActivatedTypes = data.activatedTypes.map((type) => ({
-                typeId: type.typeId,
-                amount: type.amount,
-                requiresApproval: type.requiresApproval,
-            }));
-
             await updateLeavePolicy(
                 {
-                    name: data.policyName,
-                    activatedTypes: formattedActivatedTypes,
+                    name: leavePolicy.name,
+                    activatedTypes: leavePolicy.activatedTypes,
                     status: LeavePolicyStatus.ACTIVE,
                 },
                 leavePolicy.id
@@ -147,7 +137,7 @@ export default function LeavePolicyUpdatePage() {
 
             toast({
                 title: "Success",
-                description: "leave policy updated successfully",
+                description: "Leave policy updated successfully",
                 variant: "default",
             });
 
@@ -155,7 +145,7 @@ export default function LeavePolicyUpdatePage() {
         } catch (error) {
             toast({
                 title: "Error",
-                description: getErrorMessage(error as Error | string),
+                description: getErrorMessage(error as Error),
                 variant: "destructive",
             });
         }
@@ -164,8 +154,7 @@ export default function LeavePolicyUpdatePage() {
     return (
         <>
             <PageHeader title={`Update Leave Policy`} backButton="/leaves/policies">
-                <Button className='px-2 h-9'
-                        onClick={() => setIsCreateDialogOpen(true)}>
+                <Button className='px-2 h-9' onClick={() => setIsCreateDialogOpen(true)}>
                     <Plus className="h-4 w-4 mr-1"/>
                     Leave Type
                 </Button>
@@ -175,8 +164,8 @@ export default function LeavePolicyUpdatePage() {
                 {isEditingName ? (
                     <CardHeader className="p-0 pb-6 flex flex-row items-center space-y-0">
                         <Input
-                            defaultValue={watch("policyName")}
-                            onChange={(e) => setValue("policyName", e.target.value)}
+                            value={leavePolicy.name}
+                            onChange={(e) => setLeavePolicy({...leavePolicy!, name: e.target.value})}
                             placeholder="Enter policy name"
                             className="flex-1"
                         />
@@ -192,7 +181,7 @@ export default function LeavePolicyUpdatePage() {
                 ) : (
                     <CardHeader className="p-0 pb-6">
                         <CardTitle className="text-xl">
-                            {watch("policyName")}
+                            {leavePolicy?.name}
                             <Button
                                 className="w-full sm:w-auto ml-2"
                                 variant="outline"
@@ -206,19 +195,17 @@ export default function LeavePolicyUpdatePage() {
                 )}
 
                 <Card>
-                    <Form {...form}>
-                        <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-                            <LeavePolicyTable
-                                form={form}
-                                leaveTypes={leaveTypes}
-                                setEditingIndex={setEditingIndex}
-                                setIsDialogOpen={setIsUpdateDialogOpen}
-                            />
-                        </form>
-                    </Form>
+                    <LeavePolicyTable
+                        activatedTypes={leavePolicy?.activatedTypes ?? []}
+                        onEdit={(type) => {
+                            setSelectedLeaveType(type);
+                            setIsUpdateDialogOpen(true);
+                        }}
+                        onRemove={removeLeaveType}
+                    />
                 </Card>
 
-                {watch("activatedTypes").length > 0 && (
+                {leavePolicy?.activatedTypes && (
                     <div className="flex justify-end gap-3 mt-6">
                         <Button
                             variant="outline"
@@ -227,7 +214,7 @@ export default function LeavePolicyUpdatePage() {
                             <X className="w-4 h-4 mr-2"/>
                             Cancel
                         </Button>
-                        <Button type="submit">
+                        <Button onClick={savePolicy}>
                             <Save className="w-4 h-4 mr-2"/>
                             Save
                         </Button>
@@ -237,25 +224,17 @@ export default function LeavePolicyUpdatePage() {
 
             <LeavePolicyActivatedTypeCreateDialog
                 isOpen={isCreateDialogOpen}
-                onClose={() => {
-                    setIsCreateDialogOpen(false);
-                    setEditingIndex(null);
-                }}
-                onSave={(newType) => saveActivatedTypes(newType, editingIndex)}
-                defaultValues={editingIndex !== null ? watch("activatedTypes")[editingIndex] : undefined}
-                schema={LeaveTypeSchema}
-                form={form}
+                onClose={() => setIsCreateDialogOpen(false)}
                 leaveTypes={leaveTypes}
+                onSave={addLeaveType}
+                activatedLeaveTypes={leavePolicy?.activatedTypes}
             />
 
             <LeavePolicyActivatedTypeUpdateDialog
                 isOpen={isUpdateDialogOpen}
-                onClose={() => {
-                    setIsUpdateDialogOpen(false);
-                    setEditingIndex(null);
-                }}
-                onSave={(newType) => saveActivatedTypes(newType, editingIndex)}
-                defaultValues={editingIndex !== null ? watch("activatedTypes")[editingIndex] : undefined}
+                onClose={() => setIsUpdateDialogOpen(false)}
+                onSave={updateLeaveType}
+                defaultValues={selectedLeaveType || undefined}
             />
         </>
     );
