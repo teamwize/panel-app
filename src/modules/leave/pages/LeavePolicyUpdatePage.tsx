@@ -154,8 +154,6 @@ export default function LeavePolicyUpdatePage() {
     return (
         <>
             <PageHeader title={`Update Leave Policy`} backButton="/leaves/policies">
-                <Button className='px-2 h-9'
-                        onClick={() => setIsCreateDialogOpen(true)}>
                 <Button className='px-2 h-9' onClick={() => setIsCreateDialogOpen(true)}>
                     <Plus className="h-4 w-4 mr-1"/>
                     Leave Type

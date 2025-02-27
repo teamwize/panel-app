@@ -8,7 +8,6 @@ import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/c
 import {Input} from "@/components/ui/input.tsx";
 import {Checkbox} from "@/components/ui/checkbox.tsx";
 import {Button} from "@/components/ui/button.tsx";
-import {FormInputs, LeaveTypeSchema} from "@/modules/leave/pages/LeavePolicyUpdatePage.tsx";
 import {Save, X} from "lucide-react";
 import {LeavePolicyActivatedTypeResponse, LeaveTypeResponse} from "@/core/types/leave";
 import {useParams} from "react-router-dom";
