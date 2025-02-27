@@ -209,7 +209,7 @@ function LeaveRow({leave, handleRowClick}: LeaveRowProps) {
                 </Badge>
             </TableCell>
             <TableCell>
-                <Badge variant="outline">{leave.activatedType.name} {leave.activatedType.symbol}</Badge>
+                <Badge variant="outline">{leave.activatedType.symbol} {leave.activatedType.name}</Badge>
             </TableCell>
             <TableCell>{durationText}</TableCell>
             <LeaveDuration duration={leave.duration}/>

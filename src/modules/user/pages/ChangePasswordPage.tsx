@@ -93,15 +93,20 @@ export default function ChangePasswordPage() {
                                                 placeholder="Enter new password"/>
                             <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password"
                                                 placeholder="Re-enter new password"/>
-                            <div className="flex justify-end pt-4">
-                                <Button onClick={goBack} type="button" variant="outline" className="mr-2">
-                                    <X className="w-4 h-4 mr-2"/>
-                                    Cancel
+                            <div className='flex justify-between pt-4'>
+                                <Button variant="link" className="text-sm p-0">
+                                    Forgot your password?
                                 </Button>
-                                <Button type="submit" disabled={isProcessing}>
-                                    <Save className="w-4 h-4 mr-2"/>
-                                    {isProcessing ? 'Processing...' : 'Save'}
-                                </Button>
+                                <div className="flex">
+                                    <Button onClick={goBack} type="button" variant="outline" className="mr-2">
+                                        <X className="w-4 h-4 mr-2"/>
+                                        Cancel
+                                    </Button>
+                                    <Button type="submit" disabled={isProcessing}>
+                                        <Save className="w-4 h-4 mr-2"/>
+                                        {isProcessing ? 'Processing...' : 'Save'}
+                                    </Button>
+                                </div>
                             </div>
                         </form>
                     </Form>
