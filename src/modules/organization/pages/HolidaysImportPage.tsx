@@ -6,7 +6,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {toast} from "@/components/ui/use-toast";
 import {Select, SelectContent, SelectGroup, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Checkbox} from "@/components/ui/checkbox";
-import {CloudDownload, Save, X} from "lucide-react";
+import {CalendarX, CloudDownload, Save, X} from "lucide-react";
 import PageHeader from "@/components/layout/PageHeader";
 import {createHolidays, fetchHolidays} from "@/core/services/holidayService.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
@@ -21,6 +21,7 @@ export default function HolidaysImportPage() {
     const [selectedHolidays, setSelectedHolidays] = useState([]);
     const [selectAll, setSelectAll] = useState(false);
     const [isLoading, setIsLoading] = useState(false);
+    const [hasSearched, setHasSearched] = useState(false);
     const navigate = useNavigate();
 
     const fetchHolidaysList = async () => {
@@ -34,6 +35,7 @@ export default function HolidaysImportPage() {
         }
 
         setIsLoading(true);
+        setHasSearched(true);
         try {
             const data = await fetchHolidays(selectedYear, selectedCountry);
             setHolidays(data);
@@ -133,7 +135,7 @@ export default function HolidaysImportPage() {
                     </div>
                 </Card>
 
-                {holidays.length > 0 && (
+                {holidays.length > 0 ? (
                     <>
                         <PageSection
                             title="Available Holidays"
@@ -188,6 +190,27 @@ export default function HolidaysImportPage() {
                             </Button>
                         </div>
                     </>
+                ) : hasSearched ? (
+                    <Card className="mt-6 p-8">
+                        <div className="flex flex-col items-center justify-center text-center">
+                            <CalendarX className="h-16 w-16 text-gray-400 mb-4"/>
+                            <h3 className="font-semibold text-xl mb-2">No holidays found</h3>
+                            <p className="text-gray-500 mb-6">
+                                No data available
+                                for {selectedCountry ? country.find(c => c.code === selectedCountry)?.name || selectedCountry : "the selected country"} in {selectedYear}.
+                            </p>
+                        </div>
+                    </Card>
+                ) : (
+                    <Card className="mt-6 p-8">
+                        <div className="flex flex-col items-center justify-center text-center">
+                            <CloudDownload className="h-16 w-16 text-gray-400 mb-4"/>
+                            <h3 className="font-semibold text-xl mb-2">Ready to fetch holidays</h3>
+                            <p className="text-gray-500">
+                                Select a country and year, then click the Fetch button to load holidays.
+                            </p>
+                        </div>
+                    </Card>
                 )}
             </PageContent>
         </div>
