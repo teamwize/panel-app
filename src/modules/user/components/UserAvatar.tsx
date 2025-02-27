@@ -22,10 +22,13 @@ export default function UserAvatar({avatar, avatarSize, className}: AvatarProps)
 
     if (!avatarSrc) {
         return (
-            <div className="relative inline-block border-2 border-gray-200 bg-white rounded-full">
+            <div
+                className={`relative inline-flex items-center justify-center border-2 border-gray-300 rounded-full ${className ?? ''}`}
+                style={commonStyles}
+            >
                 <User
-                    className="text-gray-400 hover:text-blue-500 transition-colors duration-200"
-                    size={24}
+                    className="text-gray-300"
+                    size={Math.max(avatarSize)}
                 />
             </div>
         );

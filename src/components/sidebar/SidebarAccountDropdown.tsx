@@ -45,7 +45,7 @@ export default function SidebarAccountDropdown({isActive, onClick}: AccountDropd
                 <DropdownMenuTrigger className="w-full">
                     <div
                         className={clsx("flex items-center gap-3 rounded-lg p-2 hover:bg-gray-50 transition-colors", isActive ? "bg-indigo-100 bg-opacity-75 rounded-lg p-2" : '')}>
-                        <div className="h-8 w-8 rounded-full bg-indigo-100 flex items-center justify-center">
+                        <div className="h-8 w-8 rounded-full  flex items-center justify-center">
                             <UserAvatar avatar={user?.avatar} avatarSize={32}/>
                         </div>
                         <div className={clsx("flex-1 text-left", isActive ? "text-gray-700" : '')}>
