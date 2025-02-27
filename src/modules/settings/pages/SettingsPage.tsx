@@ -11,21 +11,18 @@ export default function SettingsPage() {
     const settingsItems = [
         {
             title: 'Change Password',
-            description: 'Update your password',
             icon: Lock,
             path: '/settings/change-password',
             color: 'text-red-600'
         },
         {
             title: 'Official Holidays',
-            description: 'Manage official holidays',
             icon: Globe,
             path: '/settings/official-holidays',
             color: 'text-blue-600'
         },
         {
             title: 'Guide',
-            description: 'Documentation and help',
             icon: BookOpen,
             path: 'https://github.com/teamwize',
             color: 'text-teal-600',
@@ -52,10 +49,7 @@ export default function SettingsPage() {
                                 <div className={`${item.color} bg-opacity-10 rounded-lg`}>
                                     <item.icon className="w-5 h-5"/>
                                 </div>
-                                <div>
-                                    <h3 className="font-medium text-gray-900">{item.title}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-                                </div>
+                                <h3 className="font-medium text-gray-900">{item.title}</h3>
                             </a>
                         ) : (
                             <button
@@ -68,10 +62,7 @@ export default function SettingsPage() {
                                 <div className={`${item.color} bg-opacity-10 rounded-lg`}>
                                     <item.icon className="w-5 h-5"/>
                                 </div>
-                                <div>
-                                    <h3 className="font-medium text-gray-900">{item.title}</h3>
-                                    <p className="text-sm text-gray-500 mt-1">{item.description}</p>
-                                </div>
+                                <h3 className="font-medium text-gray-900">{item.title}</h3>
                             </button>
                         )
                     ))}
