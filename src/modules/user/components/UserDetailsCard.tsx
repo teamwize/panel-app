@@ -65,7 +65,7 @@ export default function UserDetailsCard({employeeDetails, leavePolicy}: Employee
                             <p className="text-sm font-medium text-muted-foreground">Leave Policy</p>
                             <div className="flex items-center gap-2">
                                 <CalendarIcon className="w-4 h-4 text-muted-foreground"/>
-                                <p>{leavePolicy.name}</p>
+                                <p>{leavePolicy?.name}</p>
                             </div>
                         </div>
                     </div>
