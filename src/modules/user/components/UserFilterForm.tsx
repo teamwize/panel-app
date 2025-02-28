@@ -13,12 +13,12 @@ type FilterEmployeesFormProps = {
 };
 
 export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
-    const [searchQuery, setSearchQuery] = useState("");
-    const [selectedTeam, setSelectedTeam] = useState("");
-    const [teams, setTeams] = useState<TeamResponse[]>([]);
     const {user} = useContext(UserContext);
     const isTeamAdmin = user?.role === "TEAM_ADMIN";
     const assignedTeamId = user?.team?.id;
+    const [searchQuery, setSearchQuery] = useState("");
+    const [selectedTeam, setSelectedTeam] = useState<string>(isTeamAdmin && assignedTeamId ? assignedTeamId.toString() : "");
+    const [teams, setTeams] = useState<TeamResponse[]>([]);
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -36,8 +36,9 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
     useEffect(() => {
         if (isTeamAdmin && assignedTeamId) {
             setSelectedTeam(assignedTeamId.toString());
+            onFilter(searchQuery, assignedTeamId.toString());
         }
-    }, [isTeamAdmin, assignedTeamId]);
+    }, [isTeamAdmin, assignedTeamId, searchQuery, onFilter]);
 
     const handleSearch = () => {
         onFilter(searchQuery, selectedTeam);

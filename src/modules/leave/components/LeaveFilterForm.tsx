@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Search} from "lucide-react";
@@ -19,18 +19,25 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
     const {user} = useContext(UserContext);
     const isTeamAdmin = user?.role === "TEAM_ADMIN";
     const assignedTeamId = user?.team?.id;
+
     const [filters, setFilters] = useState<GetLeavesFilter>({
-        teamId: undefined,
+        teamId: isTeamAdmin ? assignedTeamId : undefined,
         userId: undefined,
         status: LeaveStatus.PENDING
     });
+
+    useEffect(() => {
+        if (isTeamAdmin && assignedTeamId) {
+            setFilters(prev => ({...prev, teamId: assignedTeamId}));
+        }
+    }, [isTeamAdmin, assignedTeamId]);
 
     const handleSearch = () => {
         onFilter(filters);
     };
 
     const onStatusChange = (value: string) => {
-        setFilters((prev) => ({
+        setFilters(prev => ({
             ...prev,
             status: value === "ALL" ? undefined : value as LeaveStatus
         }));
@@ -38,34 +45,31 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
 
     const onTeamChange = (value: string) => {
         if (isTeamAdmin) return;
-        setFilters((prev) => ({
+        setFilters(prev => ({
             ...prev,
             teamId: value === "ALL" ? undefined : Number(value)
         }));
-    }
+    };
 
     const onUserChange = (value: string) => {
-        setFilters((prev) => ({
+        setFilters(prev => ({
             ...prev,
             userId: value === "ALL" ? undefined : Number(value)
         }));
-    }
+    };
 
     return (
         <Card className="p-5">
             <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
                 <div className="flex flex-col sm:flex-row gap-4">
                     <div className="w-full sm:w-48">
-                        <Select
-                            value={filters.status}
-                            onValueChange={onStatusChange}
-                        >
+                        <Select value={filters.status} onValueChange={onStatusChange}>
                             <SelectTrigger>
-                                <SelectValue placeholder='All'/>
+                                <SelectValue placeholder="All"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem key='all' value="ALL">All</SelectItem>
-                                {Object.values(LeaveStatus).map((status) => (
+                                <SelectItem key="all" value="ALL">All</SelectItem>
+                                {Object.values(LeaveStatus).map(status => (
                                     <SelectItem key={status} value={status}>
                                         {status.charAt(0) + status.slice(1).toLowerCase()}
                                     </SelectItem>
@@ -78,15 +82,16 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
                         <Select
                             value={filters.teamId?.toString() || ""}
                             onValueChange={onTeamChange}
+                            disabled={isTeamAdmin}
                         >
-                            <SelectTrigger className="">
+                            <SelectTrigger>
                                 <SelectValue placeholder="All Teams"/>
                             </SelectTrigger>
                             <SelectContent>
                                 {user?.role === "ORGANIZATION_ADMIN" ? (
                                     <>
                                         <SelectItem key="all" value="ALL">All Teams</SelectItem>
-                                        {teams.map((team) => (
+                                        {teams.map(team => (
                                             <SelectItem key={team.id} value={team.id.toString()}>
                                                 {team.name}
                                             </SelectItem>
@@ -94,7 +99,7 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
                                     </>
                                 ) : isTeamAdmin && assignedTeamId ? (
                                     <SelectItem key={assignedTeamId} value={assignedTeamId.toString()}>
-                                        {teams.find((team) => team.id === assignedTeamId)?.name || "Your Team"}
+                                        {teams.find(team => team.id === assignedTeamId)?.name || "Your Team"}
                                     </SelectItem>
                                 ) : null}
                             </SelectContent>
@@ -102,16 +107,13 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
                     </div>
 
                     <div className="w-full sm:w-48">
-                        <Select
-                            value={filters.userId?.toString() || ""}
-                            onValueChange={onUserChange}
-                        >
-                            <SelectTrigger className="">
+                        <Select value={filters.userId?.toString() || ""} onValueChange={onUserChange}>
+                            <SelectTrigger>
                                 <SelectValue placeholder="All Users"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem key='all' value="ALL">All Users</SelectItem>
-                                {users?.map((user) => (
+                                <SelectItem key="all" value="ALL">All Users</SelectItem>
+                                {users?.map(user => (
                                     <SelectItem key={user.id} value={user.id.toString()}>
                                         {user.firstName} {user.lastName}
                                     </SelectItem>
