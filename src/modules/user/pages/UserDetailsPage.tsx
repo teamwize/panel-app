@@ -30,16 +30,18 @@ export default function UserDetailsPage() {
     // Unified data fetching
     const fetchEmployeeData = async (page = 0) => {
         try {
-            const [userDetails, userLeaves, userBalance, userPolicy] = await Promise.all([
+            const [userDetails, userLeaves, userBalance] = await Promise.all([
                 getUser(id!),
                 getLeaves({userId: Number(id)}, page),
                 getLeavesBalance(Number(id)),
-                getLeavesPolicy(Number(id)),
+
             ]);
 
             setEmployeeDetails(userDetails);
             setLeaveRequests(userLeaves);
             setBalanceData(userBalance);
+
+            const userPolicy = await getLeavesPolicy(userDetails.leavePolicy.id);
             setLeavePolicy(userPolicy || null);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error | string);
