@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useContext, useState} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Search} from "lucide-react";
@@ -7,6 +7,7 @@ import {UserResponse} from "@/core/types/user.ts";
 import {TeamResponse} from "@/core/types/team.ts";
 import {GetLeavesFilter} from "@/core/types/leave.ts";
 import {Card} from "@/components/ui/card.tsx";
+import {UserContext} from "@/contexts/UserContext.tsx";
 
 type FilterEmployeesFormProps = {
     onFilter: (filters: GetLeavesFilter) => void;
@@ -15,6 +16,9 @@ type FilterEmployeesFormProps = {
 };
 
 export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployeesFormProps) {
+    const {user} = useContext(UserContext);
+    const isTeamAdmin = user?.role === "TEAM_ADMIN";
+    const assignedTeamId = user?.team?.id;
     const [filters, setFilters] = useState<GetLeavesFilter>({
         teamId: undefined,
         userId: undefined,
@@ -33,6 +37,7 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
     };
 
     const onTeamChange = (value: string) => {
+        if (isTeamAdmin) return;
         setFilters((prev) => ({
             ...prev,
             teamId: value === "ALL" ? undefined : Number(value)
@@ -78,12 +83,20 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
                                 <SelectValue placeholder="All Teams"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem key='all' value="ALL">All Teams</SelectItem>
-                                {teams.map((team) => (
-                                    <SelectItem key={team.id} value={team.id.toString()}>
-                                        {team.name}
+                                {user?.role === "ORGANIZATION_ADMIN" ? (
+                                    <>
+                                        <SelectItem key="all" value="ALL">All Teams</SelectItem>
+                                        {teams.map((team) => (
+                                            <SelectItem key={team.id} value={team.id.toString()}>
+                                                {team.name}
+                                            </SelectItem>
+                                        ))}
+                                    </>
+                                ) : isTeamAdmin && assignedTeamId ? (
+                                    <SelectItem key={assignedTeamId} value={assignedTeamId.toString()}>
+                                        {teams.find((team) => team.id === assignedTeamId)?.name || "Your Team"}
                                     </SelectItem>
-                                ))}
+                                ) : null}
                             </SelectContent>
                         </Select>
                     </div>

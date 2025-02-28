@@ -24,6 +24,7 @@ export type UserUpdateRequest = {
     avatarAssetId?: number;
     leavePolicyId?: number;
     teamId?: number;
+    role?: UserRole;
 }
 
 export type ChangePasswordRequest = {

@@ -12,6 +12,12 @@ export enum UserRole {
     TeamAdmin = "TEAM_ADMIN"
 }
 
+export const userRoles = [
+    {value: UserRole.Admin, label: "Admin"},
+    {value: UserRole.Employee, label: "Employee"},
+    {value: UserRole.TeamAdmin, label: "Team Admin"}
+];
+
 //leave enum and const
 
 export enum LeaveType {

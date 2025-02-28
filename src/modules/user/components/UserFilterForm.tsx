@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -6,6 +6,7 @@ import {TeamResponse} from "@/core/types/team.ts";
 import {getTeams} from "@/core/services/teamService";
 import {Search} from "lucide-react";
 import {Card} from "@/components/ui/card";
+import {UserContext} from "@/contexts/UserContext.tsx";
 
 type FilterEmployeesFormProps = {
     onFilter: (query: string, teamId: string) => void;
@@ -15,6 +16,9 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTeam, setSelectedTeam] = useState("");
     const [teams, setTeams] = useState<TeamResponse[]>([]);
+    const {user} = useContext(UserContext);
+    const isTeamAdmin = user?.role === "TEAM_ADMIN";
+    const assignedTeamId = user?.team?.id;
 
     useEffect(() => {
         const fetchTeams = async () => {
@@ -28,6 +32,12 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
 
         fetchTeams();
     }, []);
+
+    useEffect(() => {
+        if (isTeamAdmin && assignedTeamId) {
+            setSelectedTeam(assignedTeamId.toString());
+        }
+    }, [isTeamAdmin, assignedTeamId]);
 
     const handleSearch = () => {
         onFilter(searchQuery, selectedTeam);
@@ -50,21 +60,27 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
                     </div>
 
                     <div className="w-full sm:w-48">
-                        <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value)}>
+                        <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value)}
+                                disabled={isTeamAdmin}>
                             <SelectTrigger className="w-full sm:w-[200px] border-muted-foreground/20">
                                 <SelectValue placeholder="Select a team"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="ALL">All Teams</SelectItem>
-                                {teams.map((team) => (
-                                    <SelectItem
-                                        key={team.id}
-                                        value={team.id.toString()}
-                                        className="cursor-pointer"
-                                    >
-                                        {team.name}
+                                {user?.role === "ORGANIZATION_ADMIN" ? (
+                                    <>
+                                        <SelectItem key="all" value="ALL">All Teams</SelectItem>
+                                        {teams.map((team) => (
+                                            <SelectItem key={team.id} value={team.id.toString()}
+                                                        className="cursor-pointer">
+                                                {team.name}
+                                            </SelectItem>
+                                        ))}
+                                    </>
+                                ) : isTeamAdmin && assignedTeamId ? (
+                                    <SelectItem key={assignedTeamId} value={assignedTeamId.toString()}>
+                                        {teams.find((team) => team.id === assignedTeamId)?.name || "Your Team"}
                                     </SelectItem>
-                                ))}
+                                ) : null}
                             </SelectContent>
                         </Select>
                     </div>
