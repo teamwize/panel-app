@@ -18,22 +18,16 @@ import {Save, X} from "lucide-react";
 
 const FormSchema = z
     .object({
-        password: z.string().min(8, {
-            message: "Current Password is must be over 8 characters, please try again",
-        }),
-        newPassword: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
-        }),
-        confirmNewPassword: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
-        })
+        password: z.string().min(8, {message: "Current Password is must be over 8 characters, please try again",}),
+        newPassword: z.string().min(8, {message: "Password must be at least 8 characters.",}),
+        confirmNewPassword: z.string().min(8, {message: "Password must be at least 8 characters.",})
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
         message: "Passwords do not match.",
         path: ["confirmNewPassword"],
     });
 
-export default function ChangePasswordPage() {
+export default function PasswordChangePage() {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const {user} = useContext(UserContext);
@@ -94,7 +88,8 @@ export default function ChangePasswordPage() {
                             <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password"
                                                 placeholder="Re-enter new password"/>
                             <div className='flex justify-between pt-4'>
-                                <Button variant="link" className="text-sm p-0">
+                                <Button onClick={() => navigate('/forget-password')} variant="link"
+                                        className="text-sm p-0">
                                     Forgot your password?
                                 </Button>
                                 <div className="flex">

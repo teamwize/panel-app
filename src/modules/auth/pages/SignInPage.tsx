@@ -138,7 +138,8 @@ export default function SignInPage() {
                                 />
 
                                 <div className="flex justify-end">
-                                    <Button variant="link" className="text-sm p-0">
+                                    <Button onClick={() => navigate('/forget-password')} variant="link"
+                                            className="text-sm p-0">
                                         Forgot your password?
                                     </Button>
                                 </div>
