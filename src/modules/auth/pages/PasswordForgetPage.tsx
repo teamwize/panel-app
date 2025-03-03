@@ -3,15 +3,15 @@ import {useNavigate} from "react-router-dom";
 import {useForm} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
-import {Button} from "@/components/ui/button";
-import {Input} from "@/components/ui/input";
-import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form";
-import {Card, CardContent, CardFooter} from "@/components/ui/card";
-import {Separator} from "@/components/ui/separator";
+import {Button} from "@/components/ui/button.tsx";
+import {Input} from "@/components/ui/input.tsx";
+import {Form, FormControl, FormField, FormItem, FormLabel, FormMessage} from "@/components/ui/form.tsx";
+import {Card, CardContent, CardFooter} from "@/components/ui/card.tsx";
+import {Separator} from "@/components/ui/separator.tsx";
 import {Send} from "lucide-react";
 import Logo from "@/components/icon/Logo.tsx";
-import {sendPasswordResetEmail} from "@/core/services/authService";
-import {toast} from "@/components/ui/use-toast";
+import {sendGeneratedPasswordEmail} from "@/core/services/authService.ts";
+import {toast} from "@/components/ui/use-toast.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {PageSection} from "@/components/layout/PageSection.tsx";
 
@@ -31,24 +31,23 @@ export default function PasswordForgetPage() {
     const onSubmit = async (data: z.infer<typeof FormSchema>) => {
         try {
             setIsProcessing(true);
-            await sendPasswordResetEmail(data.email);
-            toast({title: "Success", description: "Check your email for a reset link.", variant: "default"});
-            navigate("/signin");
+            await sendGeneratedPasswordEmail(data.email);
+            toast({title: "Success", description: "A new password has been sent to your email.", variant: "default"});
+            navigate("/password-reset-success");
         } catch (error) {
             toast({title: "Error", description: getErrorMessage(error as Error), variant: "destructive"});
         } finally {
             setIsProcessing(false);
-            navigate("/check-email");
         }
     };
 
     return (
         <div className="min-h-screen bg-[#f9f9f9] flex items-center justify-center p-4">
             <div className="w-full max-w-md">
-                <div className="flex flex-col items-center">
-                    <Logo className="h-12 w-12 text-primary"/>
+                <div className="flex flex-col">
+                    <Logo className="h-12 w-12 text-primary right-0 left-0 mx-auto"/>
                     <PageSection title="Forget Password"
-                                 description="Enter your email, and we'll send you instructions to reset your password."></PageSection>
+                                 description="Enter your email, and we'll send you a new password."/>
                 </div>
 
                 <Card className="shadow-lg">

@@ -6,10 +6,6 @@ import PasswordChangePage from "@/modules/user/pages/PasswordChangePage.tsx";
 import ProfilePage from "@/modules/user/pages/ProfilePage.tsx";
 import UserCreatePage from "@/modules/user/pages/UserCreatePage.tsx";
 import UserUpdatePage from "@/modules/user/pages/UserUpdatePage.tsx";
-import PasswordForgetPage from "@/modules/user/pages/PasswordForgetPage.tsx";
-import PasswordResetPage from "@/modules/user/pages/PasswordResetPage.tsx";
-import PasswordCheckEmailPage from "@/modules/user/pages/PasswordCheckEmailPage.tsx";
-import PasswordResetSuccessPage from "@/modules/user/pages/PasswordResetSuccessPage.tsx";
 
 export default function UserRoutes() {
     return (
@@ -22,10 +18,6 @@ export default function UserRoutes() {
             <Route path='/users/create' element={<AuthenticatedRoute><UserCreatePage/></AuthenticatedRoute>}></Route>
             <Route path='/users/:id/update'
                    element={<AuthenticatedRoute><UserUpdatePage/></AuthenticatedRoute>}></Route>
-            <Route path='/forget-password' element={<PasswordForgetPage/>}></Route>
-            <Route path='/reset-password' element={<PasswordResetPage/>}></Route>
-            <Route path='/check-email' element={<PasswordCheckEmailPage/>}></Route>
-            <Route path='/password-reset-success' element={<PasswordResetSuccessPage/>}></Route>
         </>
     );
 }

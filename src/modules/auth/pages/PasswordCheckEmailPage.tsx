@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import {useNavigate} from "react-router-dom";
-import {Button} from "@/components/ui/button";
-import {CardContent, CardFooter} from "@/components/ui/card";
+import {Button} from "@/components/ui/button.tsx";
+import {CardContent, CardFooter} from "@/components/ui/card.tsx";
 import Logo from "@/components/icon/Logo.tsx";
 import {PageSection} from "@/components/layout/PageSection.tsx";
 
@@ -14,7 +14,7 @@ export default function PasswordCheckEmailPage() {
         // Simulate API call delay
         setTimeout(() => {
             setIsResending(false);
-            alert("A new reset link has been sent to your email.");
+            alert("A new password has been sent to your email.");
         }, 1500);
     };
 
@@ -24,7 +24,7 @@ export default function PasswordCheckEmailPage() {
                 <div className="flex flex-col items-center">
                     <Logo className="h-12 w-12 text-primary"/>
                     <PageSection title="Check Your Email"
-                                 description="We've sent a password reset link to your email. Please check your inbox and follow the instructions."></PageSection>
+                                 description="We've sent you a new password. Please check your inbox and use it to sign in."></PageSection>
                 </div>
 
                 <CardContent className="pt-6 flex flex-col items-center text-center">
