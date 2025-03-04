@@ -13,7 +13,6 @@ import Logo from "@/components/icon/Logo.tsx";
 import {sendGeneratedPasswordEmail} from "@/core/services/authService.ts";
 import {toast} from "@/components/ui/use-toast.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
-import {PageSection} from "@/components/layout/PageSection.tsx";
 
 const FormSchema = z.object({
     email: z.string().email({message: "Please enter a valid email address"}),
@@ -33,7 +32,7 @@ export default function PasswordForgetPage() {
             setIsProcessing(true);
             await sendGeneratedPasswordEmail(data.email);
             toast({title: "Success", description: "A new password has been sent to your email.", variant: "default"});
-            navigate("/password-reset-success");
+            navigate("/signin");
         } catch (error) {
             toast({title: "Error", description: getErrorMessage(error as Error), variant: "destructive"});
         } finally {
@@ -43,11 +42,17 @@ export default function PasswordForgetPage() {
 
     return (
         <div className="min-h-screen bg-[#f9f9f9] flex items-center justify-center p-4">
-            <div className="w-full max-w-md">
-                <div className="flex flex-col">
-                    <Logo className="h-12 w-12 text-primary right-0 left-0 mx-auto"/>
-                    <PageSection title="Forget Password"
-                                 description="Enter your email, and we'll send you a new password."/>
+            <div className="w-full max-w-md space-y-8">
+                <div className="flex flex-col items-center space-y-4">
+                    <div className="">
+                        <Logo className="h-12 w-12 text-primary"/>
+                    </div>
+                    <h1 className="text-3xl font-bold tracking-tight text-gray-900">
+                        Forget Password
+                    </h1>
+                    <p className="text-gray-500 text-center max-w-sm">
+                        Enter your email, and we'll send you a new password.
+                    </p>
                 </div>
 
                 <Card className="shadow-lg">
@@ -69,7 +74,7 @@ export default function PasswordForgetPage() {
                                 />
                                 <Button type="submit" className="w-full" disabled={isProcessing}>
                                     <Send className="mr-2 h-4 w-4"/>
-                                    {isProcessing ? "Sending..." : "Send Reset Link"}
+                                    {isProcessing ? "Sending..." : "Send New Password"}
                                 </Button>
                             </form>
                         </Form>
