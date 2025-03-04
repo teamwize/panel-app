@@ -39,7 +39,7 @@ jobs:
 
       - name: Build and tag the Docker image
         run: |
-          docker build -t ghcr.io/eampilot-hq/dashboard-app:latest -f docker/Dockerfile .
+          docker build -t ghcr.io/teampilot-hq/dashboard-app:latest -f docker/Dockerfile .
 
       - name: Push the Docker image
         run: |
