@@ -7,6 +7,7 @@ import {getTeams} from "@/core/services/teamService";
 import {Search} from "lucide-react";
 import {Card} from "@/components/ui/card";
 import {UserContext} from "@/contexts/UserContext.tsx";
+import {UserRole} from "@/core/types/enum.ts";
 
 type FilterEmployeesFormProps = {
     onFilter: (query: string, teamId: string) => void;
@@ -14,7 +15,7 @@ type FilterEmployeesFormProps = {
 
 export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
     const {user} = useContext(UserContext);
-    const isTeamAdmin = user?.role === "TEAM_ADMIN";
+    const isTeamAdmin = user?.role === UserRole.TEAM_ADMIN;
     const assignedTeamId = user?.team?.id;
     const [searchQuery, setSearchQuery] = useState("");
     const [selectedTeam, setSelectedTeam] = useState<string>(isTeamAdmin && assignedTeamId ? assignedTeamId.toString() : "");
@@ -67,7 +68,7 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
                                 <SelectValue placeholder="Select a team"/>
                             </SelectTrigger>
                             <SelectContent>
-                                {user?.role === "ORGANIZATION_ADMIN" ? (
+                                {user?.role === UserRole.ADMIN ? (
                                     <>
                                         <SelectItem key="all" value="ALL">All Teams</SelectItem>
                                         {teams.map((team) => (

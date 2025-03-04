@@ -19,7 +19,7 @@ import PageContent from "@/components/layout/PageContent.tsx";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import {UserCog, X} from "lucide-react";
-import {UserRole, userRoles} from "@/core/types/enum.ts";
+import {UserRole, UserRoleJson} from "@/core/types/enum.ts";
 
 const FormSchema = z.object({
     firstName: z.string().min(1, {message: "First Name is required"}),
@@ -342,8 +342,9 @@ function RoleField({form}: { form: UseFormReturn }) {
                                 <SelectValue placeholder="Select a role"/>
                             </SelectTrigger>
                             <SelectContent>
-                                {userRoles.map((role) => (
-                                    <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
+                                {Object.entries(UserRole).map(([key, value]) => (
+                                    <SelectItem key={key}
+                                                value={value}>{UserRoleJson[key as keyof typeof UserRoleJson]}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

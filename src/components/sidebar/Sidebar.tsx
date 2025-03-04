@@ -5,6 +5,7 @@ import {Button} from "@/components/ui/button.tsx";
 import {UserContext} from "@/contexts/UserContext.tsx";
 import SidebarAccountDropdown from "@/components/sidebar/SidebarAccountDropdown.tsx";
 import Logo from "@/components/icon/Logo.tsx";
+import {UserRole} from "@/core/types/enum.ts";
 
 const navigationItems = {
     main: [
@@ -57,11 +58,11 @@ export default function Sidebar() {
                     <div className="flex-1 overflow-y-auto px-4">
                         <NavigationSection items={navigationItems.main} isNavigationActive={isNavigationActive}
                                            onClick={handleNavigation}/>
-                        {user?.role === "ORGANIZATION_ADMIN" && (
+                        {user?.role === UserRole.ADMIN && (
                             <NavigationSection title="Management" items={navigationItems.admin}
                                                isNavigationActive={isNavigationActive} onClick={handleNavigation}/>
                         )}
-                        {user?.role === "TEAM_ADMIN" && (
+                        {user?.role === UserRole.TEAM_ADMIN && (
                             <NavigationSection title="Management" items={navigationItems.teamAdmin}
                                                isNavigationActive={isNavigationActive} onClick={handleNavigation}/>
                         )}

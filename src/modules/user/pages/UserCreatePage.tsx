@@ -21,7 +21,7 @@ import {LeavePolicyResponse} from "@/core/types/leave.ts";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import {Loader2, UserPlus, X} from "lucide-react";
-import {UserRole, userRoles} from "@/core/types/enum.ts";
+import {UserRole, UserRoleJson} from "@/core/types/enum.ts";
 
 const FormSchema = z.object({
     firstName: z.string().min(2, { message: "First Name must be over 2 characters" }).max(20, { message: "First Name must be under 20 characters" }),
@@ -377,8 +377,9 @@ function RoleField({form}: FieldProps) {
                                 <SelectValue placeholder="Select a role"/>
                             </SelectTrigger>
                             <SelectContent>
-                                {userRoles.map((role) => (
-                                    <SelectItem key={role.value} value={role.value}>{role.label}</SelectItem>
+                                {Object.entries(UserRole).map(([key, value]) => (
+                                    <SelectItem key={key}
+                                                value={value}>{UserRoleJson[key as keyof typeof UserRoleJson]}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

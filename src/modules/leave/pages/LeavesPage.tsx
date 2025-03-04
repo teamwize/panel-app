@@ -5,7 +5,7 @@ import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/c
 import {getLeaves, updateLeavesStatus} from "@/core/services/leaveService.ts";
 import {toast} from "@/components/ui/use-toast";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
-import {LeaveStatus} from '@/core/types/enum.ts';
+import {LeaveStatus, UserRole} from '@/core/types/enum.ts';
 import {GetLeavesFilter, LeaveResponse} from '@/core/types/leave.ts';
 import {PagedResponse} from '@/core/types/common.ts';
 import {Eye} from "lucide-react";
@@ -34,7 +34,7 @@ export default function LeavesPage() {
     const [teams, setTeams] = useState<TeamResponse[]>([]);
     const [leaves, setLeaves] = useState<PagedResponse<LeaveResponse> | null>(null);
     const {user} = useContext(UserContext);
-    const isTeamAdmin = user?.role === "TEAM_ADMIN";
+    const isTeamAdmin = user?.role === UserRole.TEAM_ADMIN;
     const assignedTeamId = user?.team?.id;
     const [filters, setFilters] = useState<GetLeavesFilter>({
         status: LeaveStatus.PENDING,
@@ -94,7 +94,6 @@ export default function LeavesPage() {
 
     // Fetch pending leave requests
     useEffect(() => {
-        if (!user) return;
         fetchUsers();
         fetchLeaves();
         fetchTeams();

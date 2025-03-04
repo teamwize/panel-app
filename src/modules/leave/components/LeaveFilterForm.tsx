@@ -1,8 +1,8 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, {useContext, useState} from "react";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
 import {Search} from "lucide-react";
-import {LeaveStatus} from "@/core/types/enum.ts";
+import {LeaveStatus, UserRole} from "@/core/types/enum.ts";
 import {UserResponse} from "@/core/types/user.ts";
 import {TeamResponse} from "@/core/types/team.ts";
 import {GetLeavesFilter} from "@/core/types/leave.ts";
@@ -17,7 +17,7 @@ type FilterEmployeesFormProps = {
 
 export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployeesFormProps) {
     const {user} = useContext(UserContext);
-    const isTeamAdmin = user?.role === "TEAM_ADMIN";
+    const isTeamAdmin = user?.role === UserRole.TEAM_ADMIN;
     const assignedTeamId = user?.team?.id;
 
     const [filters, setFilters] = useState<GetLeavesFilter>({
@@ -25,12 +25,6 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
         userId: undefined,
         status: LeaveStatus.PENDING
     });
-
-    useEffect(() => {
-        if (isTeamAdmin && assignedTeamId) {
-            setFilters(prev => ({...prev, teamId: assignedTeamId}));
-        }
-    }, [isTeamAdmin, assignedTeamId]);
 
     const handleSearch = () => {
         onFilter(filters);
@@ -88,7 +82,7 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
                                 <SelectValue placeholder="All Teams"/>
                             </SelectTrigger>
                             <SelectContent>
-                                {user?.role === "ORGANIZATION_ADMIN" ? (
+                                {user?.role === UserRole.ADMIN ? (
                                     <>
                                         <SelectItem key="all" value="ALL">All Teams</SelectItem>
                                         {teams.map(team => (
