@@ -82,7 +82,7 @@ export default function LeaveFilterForm({onFilter, teams, users}: FilterEmployee
                                 <SelectValue placeholder="All Teams"/>
                             </SelectTrigger>
                             <SelectContent>
-                                {user?.role === UserRole.ADMIN ? (
+                                {user?.role === UserRole.ORGANIZATION_ADMIN ? (
                                     <>
                                         <SelectItem key="all" value="ALL">All Teams</SelectItem>
                                         {teams.map(team => (

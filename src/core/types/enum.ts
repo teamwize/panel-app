@@ -7,13 +7,13 @@ export enum UserStatus {
 }
 
 export enum UserRole {
-    ADMIN = "ORGANIZATION_ADMIN",
+    ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN",
     EMPLOYEE = "EMPLOYEE",
     TEAM_ADMIN = "TEAM_ADMIN"
 }
 
 export enum UserRoleJson {
-    ADMIN = "Admin",
+    ORGANIZATION_ADMIN = "Admin",
     EMPLOYEE = "Employee",
     TEAM_ADMIN = "Team Admin"
 }

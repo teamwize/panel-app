@@ -68,7 +68,7 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
                                 <SelectValue placeholder="Select a team"/>
                             </SelectTrigger>
                             <SelectContent>
-                                {user?.role === UserRole.ADMIN ? (
+                                {user?.role === UserRole.ORGANIZATION_ADMIN ? (
                                     <>
                                         <SelectItem key="all" value="ALL">All Teams</SelectItem>
                                         {teams.map((team) => (
