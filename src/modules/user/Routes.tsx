@@ -6,10 +6,11 @@ import PasswordChangePage from "@/modules/user/pages/PasswordChangePage.tsx";
 import ProfilePage from "@/modules/user/pages/ProfilePage.tsx";
 import UserCreatePage from "@/modules/user/pages/UserCreatePage.tsx";
 import UserUpdatePage from "@/modules/user/pages/UserUpdatePage.tsx";
+import DashboardLayout from "@/components/layout/DashboardLayout.tsx";
 
 export default function UserRoutes() {
     return (
-        <>
+        <Route element={<DashboardLayout/>}>
             <Route path='/users' element={<AuthenticatedRoute><UsersPage/></AuthenticatedRoute>}></Route>
             <Route path='/users/:id/' element={<AuthenticatedRoute><UserDetailsPage/></AuthenticatedRoute>}></Route>
             <Route path='/settings/change-password'
@@ -18,6 +19,6 @@ export default function UserRoutes() {
             <Route path='/users/create' element={<AuthenticatedRoute><UserCreatePage/></AuthenticatedRoute>}></Route>
             <Route path='/users/:id/update'
                    element={<AuthenticatedRoute><UserUpdatePage/></AuthenticatedRoute>}></Route>
-        </>
+        </Route>
     );
 }

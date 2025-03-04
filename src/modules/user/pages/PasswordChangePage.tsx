@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {useForm, UseFormReturn} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -88,10 +88,10 @@ export default function PasswordChangePage() {
                             <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password"
                                                 placeholder="Re-enter new password"/>
                             <div className='flex justify-between pt-4'>
-                                <Button onClick={() => navigate('/forget-password')} variant="link"
-                                        className="text-sm p-0">
+                                <Link to={"/forget-password"} target={"_blank"}
+                                        className="text-sm font-semibold p-0 text-primary hover:underline">
                                     Forgot your password?
-                                </Button>
+                                </Link>
                                 <div className="flex">
                                     <Button onClick={goBack} type="button" variant="outline" className="mr-2">
                                         <X className="w-4 h-4 mr-2"/>
