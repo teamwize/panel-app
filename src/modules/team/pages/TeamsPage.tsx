@@ -13,6 +13,23 @@ import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import TeamCreateDialog from "@/modules/team/components/TeamCreateDialog.tsx";
 import {Badge} from "@/components/ui/badge.tsx";
+import {z} from "zod";
+
+const FormSchema = z.object({
+    name: z.string().min(2, {
+        message: "Team name must be at least 2 characters long",
+    }).max(20, {
+        message: "Team name must be under 20 characters",
+    }),
+    teamApprovers: z.array(z.string()).min(1, {
+        message: "Please select at least one team approver.",
+    }),
+    approvalMode: z.enum(["ALL", "ANY"], {
+        required_error: "Please select an approval mode.",
+    }),
+});
+
+type UpdateTeamInputs = z.infer<typeof FormSchema>;
 
 export default function TeamsPage() {
     const [teamList, setTeamList] = useState<TeamResponse[]>([]);
@@ -62,14 +79,28 @@ export default function TeamsPage() {
         }
     };
 
-    const handleUpdateSuccess = async () => {
+    const handleUpdateTeam = async (data: UpdateTeamInputs, teamId: number) => {
         try {
-            const response = await getTeams();
-            setTeamList(response);
+            await updateTeam(
+                {
+                    name: data.name,
+                    metadata: {},
+                    teamApprovers: data.teamApprovers,
+                    approvalMode: data.approvalMode,
+                },
+                teamId
+            );
+            await fetchTeams();
+            toast({
+                title: "Success",
+                description: "Team updated successfully!",
+                variant: "default",
+            });
+            setSelectedTeamForUpdate(null);
         } catch (error) {
             toast({
                 title: "Error",
-                description: "Failed to refresh team list",
+                description: getErrorMessage(error as Error),
                 variant: "destructive",
             });
         }
@@ -79,7 +110,6 @@ export default function TeamsPage() {
         try {
             setIsProcessing(true);
 
-            // Check if the team name already exists
             if (teamList.some((t) => t.name === name)) {
                 toast({
                     title: "Error",
@@ -93,7 +123,7 @@ export default function TeamsPage() {
                 name,
                 metadata: {},
                 teamApprovers,
-                approvalMode
+                approvalMode,
             });
 
             toast({
@@ -102,7 +132,6 @@ export default function TeamsPage() {
                 variant: "default",
             });
 
-            // Refresh team list after creation
             await fetchTeams();
         } catch (error) {
             toast({
@@ -118,9 +147,9 @@ export default function TeamsPage() {
 
     return (
         <>
-            <PageHeader title='Teams'>
+            <PageHeader title="Teams">
                 <Button className="px-2 h-9" onClick={() => setIsCreateDialogOpen(true)}>
-                    <Plus className="h-4 w-4 mr-1"/>
+                    <Plus className="h-4 w-4 mr-1" />
                     Create
                 </Button>
             </PageHeader>
@@ -156,11 +185,9 @@ export default function TeamsPage() {
 
                     {selectedTeamForUpdate && (
                         <TeamUpdateDialog
-                            teamId={selectedTeamForUpdate.id}
-                            teamName={selectedTeamForUpdate.name}
+                            team={selectedTeamForUpdate}
                             onClose={() => setSelectedTeamForUpdate(null)}
-                            onSuccess={handleUpdateSuccess}
-                            updateTeam={updateTeam}
+                            onSubmit={handleUpdateTeam}
                         />
                     )}
 
@@ -177,6 +204,8 @@ export default function TeamsPage() {
     );
 }
 
+// Rest of the code remains the same...
+
 type TeamItemProps = {
     t: TeamResponse;
     isProcessing: boolean;
@@ -186,8 +215,8 @@ type TeamItemProps = {
 
 function TeamRowItem({t, isProcessing, setSelectedTeamForUpdate, setSelectedTeamForDelete}: TeamItemProps) {
     const exampleData = [
-        {teamApprover: ['Rozita Hasani', 'Team Admin'], approvalMode: 'Any'},
-        {teamApprover: ['John Doe', 'Team Admin'], approvalMode: 'All'},
+        {teamApprover: ['Rozita Hasani', 'Team Admin'], approvalMode: 'ALL'},
+        {teamApprover: ['Team Admin'], approvalMode: 'ANY'},
     ];
     const mockData = exampleData[Math.floor(Math.random() * exampleData.length)];
 
@@ -197,12 +226,12 @@ function TeamRowItem({t, isProcessing, setSelectedTeamForUpdate, setSelectedTeam
             <TableCell>
                 <span
                     className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
-                        mockData.approvalMode === "All"
+                        mockData.approvalMode === "ALL"
                             ? "bg-green-50 text-green-700 ring-green-600/20"
                             : "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
                     }`}
                 >
-                    {mockData.approvalMode === "All" ? "All" : "Any"}
+                    {mockData.approvalMode === "ALL" ? "All" : "Any"}
                 </span>
             </TableCell>
             <TableCell className="space-x-1">

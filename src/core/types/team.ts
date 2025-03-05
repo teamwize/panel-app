@@ -13,5 +13,7 @@ export type TeamCreateRequest = {
 export type TeamResponse = {
     id: number;
     name: string;
+    teamApprovers?: string[];
+    approvalMode?: "ALL" | "ANY";
     metadata: Record<string, object>;
 }
