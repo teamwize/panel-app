@@ -1,17 +1,18 @@
-import React, { useEffect, useState } from 'react';
-import { toast } from "@/components/ui/use-toast.ts";
-import { getErrorMessage } from "@/core/utils/errorHandler.ts";
-import { TeamResponse } from "@/core/types/team.ts";
-import { createTeam, deleteTeam, getTeams, updateTeam } from "@/core/services/teamService.ts";
-import { Pencil, Plus, Trash } from "lucide-react";
-import { Button } from "@/components/ui/button.tsx";
-import { Card } from "@/components/ui/card.tsx";
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx";
+import React, {useEffect, useState} from 'react';
+import {toast} from "@/components/ui/use-toast.ts";
+import {getErrorMessage} from "@/core/utils/errorHandler.ts";
+import {TeamResponse} from "@/core/types/team.ts";
+import {createTeam, deleteTeam, getTeams, updateTeam} from "@/core/services/teamService.ts";
+import {Pencil, Plus, Trash} from "lucide-react";
+import {Button} from "@/components/ui/button.tsx";
+import {Card} from "@/components/ui/card.tsx";
+import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
 import TeamUpdateDialog from "@/modules/team/components/TeamUpdateDialog.tsx";
-import { DeleteModal } from "@/modules/team/components/TeamDeleteDialog.tsx";
+import {DeleteModal} from "@/modules/team/components/TeamDeleteDialog.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import TeamCreateDialog from "@/modules/team/components/TeamCreateDialog.tsx";
+import {Badge} from "@/components/ui/badge.tsx";
 
 export default function TeamsPage() {
     const [teamList, setTeamList] = useState<TeamResponse[]>([]);
@@ -129,6 +130,8 @@ export default function TeamsPage() {
                         <TableHeader>
                             <TableRow className="hover:bg-transparent">
                                 <TableHead>Name</TableHead>
+                                <TableHead>Approval Mode</TableHead>
+                                <TableHead>Approver</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>
@@ -181,10 +184,30 @@ type TeamItemProps = {
     setSelectedTeamForDelete: (team: TeamResponse | null) => void;
 };
 
-function TeamRowItem({ t, isProcessing, setSelectedTeamForUpdate, setSelectedTeamForDelete }: TeamItemProps) {
+function TeamRowItem({t, isProcessing, setSelectedTeamForUpdate, setSelectedTeamForDelete}: TeamItemProps) {
+    const exampleData = [
+        {teamApprover: ['Rozita Hasani', 'Team Admin'], approvalMode: 'Any'},
+        {teamApprover: ['John Doe', 'Team Admin'], approvalMode: 'All'},
+    ];
+    const mockData = exampleData[Math.floor(Math.random() * exampleData.length)];
+
     return (
         <TableRow className="hover:bg-gray-50 transition-colors">
             <TableCell>{t.name}</TableCell>
+            <TableCell>
+                <span
+                    className={`inline-flex items-center rounded-md px-2 py-1 text-xs font-medium ring-1 ring-inset ${
+                        mockData.approvalMode === "All"
+                            ? "bg-green-50 text-green-700 ring-green-600/20"
+                            : "bg-yellow-50 text-yellow-700 ring-yellow-600/20"
+                    }`}
+                >
+                    {mockData.approvalMode === "All" ? "All" : "Any"}
+                </span>
+            </TableCell>
+            <TableCell className="space-x-1">
+                {mockData.teamApprover.map((approver) => (<Badge variant='outline'>{approver}</Badge>))}
+            </TableCell>
             <TableCell>
                 <div className="flex items-center space-x-2">
                     <Button
