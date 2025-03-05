@@ -7,23 +7,18 @@ export enum UserStatus {
 }
 
 export enum UserRole {
-    Admin = "ORGANIZATION_ADMIN",
-    Employee = "EMPLOYEE",
-    TeamAdmin = "TEAM_ADMIN"
+    ORGANIZATION_ADMIN = "ORGANIZATION_ADMIN",
+    EMPLOYEE = "EMPLOYEE",
+    TEAM_ADMIN = "TEAM_ADMIN"
+}
+
+export enum UserRoleJson {
+    ORGANIZATION_ADMIN = "Admin",
+    EMPLOYEE = "Employee",
+    TEAM_ADMIN = "Team Admin"
 }
 
 //leave enum and const
-
-export enum LeaveType {
-    PAID_TIME = 'PAID_TIME',
-    VACATION = 'VACATION',
-    SICK_LEAVE = 'SICK_LEAVE'
-}
-export enum LeaveTypeJson {
-    VACATION = "Vacation",
-    SICK_LEAVE = "Sick leave",
-    PAID_TIME = "Paid time"
-}
 
 export enum LeaveStatus {
     ACCEPTED = 'ACCEPTED',
