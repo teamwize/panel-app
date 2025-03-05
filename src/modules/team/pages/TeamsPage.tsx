@@ -1,14 +1,14 @@
-import React, {useEffect, useState} from 'react';
-import {toast} from "@/components/ui/use-toast.ts";
-import {getErrorMessage} from "@/core/utils/errorHandler.ts";
-import {TeamResponse} from "@/core/types/team.ts";
-import {createTeam, deleteTeam, getTeams, updateTeam} from "@/core/services/teamService.ts";
-import {Pencil, Plus, Trash} from "lucide-react";
-import {Button} from "@/components/ui/button.tsx";
-import {Card} from "@/components/ui/card.tsx";
-import {Table, TableBody, TableCell, TableHead, TableHeader, TableRow} from "@/components/ui/table.tsx";
+import React, { useEffect, useState } from 'react';
+import { toast } from "@/components/ui/use-toast.ts";
+import { getErrorMessage } from "@/core/utils/errorHandler.ts";
+import { TeamResponse } from "@/core/types/team.ts";
+import { createTeam, deleteTeam, getTeams, updateTeam } from "@/core/services/teamService.ts";
+import { Pencil, Plus, Trash } from "lucide-react";
+import { Button } from "@/components/ui/button.tsx";
+import { Card } from "@/components/ui/card.tsx";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table.tsx";
 import TeamUpdateDialog from "@/modules/team/components/TeamUpdateDialog.tsx";
-import {DeleteModal} from "@/modules/team/components/TeamDeleteDialog.tsx";
+import { DeleteModal } from "@/modules/team/components/TeamDeleteDialog.tsx";
 import PageContent from "@/components/layout/PageContent.tsx";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import TeamCreateDialog from "@/modules/team/components/TeamCreateDialog.tsx";
@@ -21,22 +21,21 @@ export default function TeamsPage() {
     const [isCreateDialogOpen, setIsCreateDialogOpen] = useState(false);
 
     useEffect(() => {
-        const fetchTeams = async () => {
-            try {
-                const response = await getTeams();
-                setTeamList(response);
-            } catch (error) {
-                const errorMessage = getErrorMessage(error as Error);
-                toast({
-                    title: "Error",
-                    description: errorMessage,
-                    variant: "destructive",
-                });
-            }
-        };
-
         fetchTeams();
     }, []);
+
+    const fetchTeams = async () => {
+        try {
+            const response = await getTeams();
+            setTeamList(response);
+        } catch (error) {
+            toast({
+                title: "Error",
+                description: getErrorMessage(error as Error),
+                variant: "destructive",
+            });
+        }
+    };
 
     const handleRemoveTeam = async () => {
         if (!selectedTeamForDelete) return;
@@ -44,17 +43,16 @@ export default function TeamsPage() {
         setIsProcessing(true);
         try {
             await deleteTeam(selectedTeamForDelete.id);
-            setTeamList(teamList.filter((team) => team.id !== selectedTeamForDelete.id));
+            setTeamList((prev) => prev.filter((team) => team.id !== selectedTeamForDelete.id));
             toast({
                 title: "Success",
-                description: "team removed successfully!",
+                description: "Team removed successfully!",
                 variant: "default",
             });
         } catch (error) {
-            const errorMessage = getErrorMessage(error as Error);
             toast({
                 title: "Error",
-                description: errorMessage,
+                description: getErrorMessage(error as Error),
                 variant: "destructive",
             });
         } finally {
@@ -76,14 +74,12 @@ export default function TeamsPage() {
         }
     };
 
-    const createOrganizationTeam = async (name: string) => {
+    const handleCreateTeam = async (name: string, teamApprovers: string[], approvalMode: "ALL" | "ANY") => {
         try {
             setIsProcessing(true);
-            setIsCreateDialogOpen(false);
 
             // Check if the team name already exists
-            const exists = teamList.some((t) => t.name === name);
-            if (exists) {
+            if (teamList.some((t) => t.name === name)) {
                 toast({
                     title: "Error",
                     description: "A team with this name already exists.",
@@ -93,8 +89,10 @@ export default function TeamsPage() {
             }
 
             await createTeam({
-                name: name,
+                name,
                 metadata: {},
+                teamApprovers,
+                approvalMode
             });
 
             toast({
@@ -104,9 +102,7 @@ export default function TeamsPage() {
             });
 
             // Refresh team list after creation
-            const updatedTeams = await getTeams();
-            setTeamList(updatedTeams);
-
+            await fetchTeams();
         } catch (error) {
             toast({
                 title: "Error",
@@ -115,6 +111,7 @@ export default function TeamsPage() {
             });
         } finally {
             setIsProcessing(false);
+            setIsCreateDialogOpen(false);
         }
     };
 
@@ -151,8 +148,7 @@ export default function TeamsPage() {
                     <TeamCreateDialog
                         isOpen={isCreateDialogOpen}
                         onClose={() => setIsCreateDialogOpen(false)}
-                        teamList={teamList}
-                        onSubmit={(name) => createOrganizationTeam(name)}
+                        onSubmit={handleCreateTeam}
                     />
 
                     {selectedTeamForUpdate && (
