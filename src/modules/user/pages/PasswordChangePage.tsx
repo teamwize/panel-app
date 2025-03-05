@@ -1,5 +1,5 @@
 import React, {useContext, useState} from "react";
-import {useNavigate} from 'react-router-dom';
+import {Link, useNavigate} from 'react-router-dom';
 import {useForm, UseFormReturn} from "react-hook-form";
 import {z} from "zod";
 import {zodResolver} from "@hookform/resolvers/zod";
@@ -18,22 +18,16 @@ import {Save, X} from "lucide-react";
 
 const FormSchema = z
     .object({
-        password: z.string().min(8, {
-            message: "Current Password is must be over 8 characters, please try again",
-        }),
-        newPassword: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
-        }),
-        confirmNewPassword: z.string().min(8, {
-            message: "Password must be at least 8 characters.",
-        })
+        password: z.string().min(8, {message: "Current Password is must be over 8 characters, please try again",}),
+        newPassword: z.string().min(8, {message: "Password must be at least 8 characters.",}),
+        confirmNewPassword: z.string().min(8, {message: "Password must be at least 8 characters.",})
     })
     .refine((data) => data.newPassword === data.confirmNewPassword, {
         message: "Passwords do not match.",
         path: ["confirmNewPassword"],
     });
 
-export default function ChangePasswordPage() {
+export default function PasswordChangePage() {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState<boolean>(false);
     const {user} = useContext(UserContext);
@@ -94,9 +88,10 @@ export default function ChangePasswordPage() {
                             <PasswordInputField form={form} name="confirmNewPassword" label="Confirm New Password"
                                                 placeholder="Re-enter new password"/>
                             <div className='flex justify-between pt-4'>
-                                <Button variant="link" className="text-sm p-0">
+                                <Link to={"/forget-password"} target={"_blank"}
+                                        className="text-sm font-semibold p-0 text-primary hover:underline">
                                     Forgot your password?
-                                </Button>
+                                </Link>
                                 <div className="flex">
                                     <Button onClick={goBack} type="button" variant="outline" className="mr-2">
                                         <X className="w-4 h-4 mr-2"/>

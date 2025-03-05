@@ -13,4 +13,9 @@ async function signin(data: LoginRequest): Promise<AuthenticationResponse> {
     return response.data;
 }
 
-export {signin, signup}
+async function sendGeneratedPasswordEmail(email: string): Promise<void> {
+    const response = await axiosInstance.post(`${baseURL}/forget-password`, {email});
+    return response.data;
+}
+
+export {signin, signup, sendGeneratedPasswordEmail}
