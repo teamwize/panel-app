@@ -29,7 +29,7 @@ export default function CalendarLeaveItem({leave}: CalendarLeaveItemProps) {
                 <UserAvatar
                     avatar={leave.user?.avatar}
                     avatarSize={28}
-                    className="ring-1 ring-white"
+                    className="ring-1 ring-white bg-white"
                 />
                 <span className="text-xs font-medium">
                     {leave.user.firstName}

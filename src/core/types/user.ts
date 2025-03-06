@@ -46,6 +46,9 @@ export type UserResponse = {
     organization: OrganizationCompactResponse;
     avatar: AssetResponse;
     leavePolicy: LeavePolicyCompactResponse;
+    joinedAt: string;
+    createdAt: string;
+    updatedAt: string
 }
 
 export type AssetResponse = {
