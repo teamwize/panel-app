@@ -6,19 +6,25 @@ import SidebarAccountDropdown from "@/components/sidebar/SidebarAccountDropdown.
 import Logo from "@/components/icon/Logo.tsx";
 import {NotificationBell} from "@/components/notification/NotificationBell.tsx";
 
-const mainNavigation = [
-    {name: 'Home', href: '/', icon: Home},
-    {name: 'Calendar', href: '/calendar', icon: Calendar},
-    {name: 'Settings', href: '/settings', icon: Settings},
-];
+const navigationItems = {
+    main: [
+        {name: "Home", href: "/", icon: Home},
+        {name: "Calendar", href: "/calendar", icon: Calendar},
+        {name: "Settings", href: "/settings", icon: Settings},
+    ],
+    admin: [
+        {name: "Leaves", href: "/leaves", icon: CalendarCheck},
+        {name: "Organization", href: "/organization", icon: Building},
+        {name: "Leave Policy", href: "/leaves/policies", icon: TreePalm},
+        {name: "Users", href: "/users", icon: User},
+        {name: "Teams", href: "/teams", icon: Users},
+    ],
+    teamAdmin: [
+        {name: "Leaves", href: "/leaves", icon: CalendarCheck},
+        {name: "Users", href: "/users", icon: User},
+    ],
+};
 
-const managementNavigation = [
-    {name: 'Leaves', href: '/leaves', icon: CalendarCheck},
-    {name: 'Organization', href: '/organization', icon: Building},
-    {name: 'Leave Policy', href: '/leaves/policies', icon: TreePalm},
-    {name: 'Users', href: '/users', icon: User},
-    {name: 'Teams', href: '/teams', icon: Users},
-];
 
 export default function Sidebar() {
     const [selectedOption, setSelectedOption] = useState<string>('');
@@ -33,8 +39,6 @@ export default function Sidebar() {
         return location.pathname === href || selectedOption === href;
     };
 
-    const isUserAdmin = user?.role === 'ORGANIZATION_ADMIN';
-
     return (
         <div className="left-0 hidden md:block md:w-[240px] lg:w-[280px]">
             <div className="bg-white shadow-sm h-full">
@@ -47,35 +51,18 @@ export default function Sidebar() {
                         <NotificationBell/>
                     </div>
 
-                    <div className="flex-1 overflow-y-auto py-4">
-                        <nav className="space-y-1 px-4">
-                            {mainNavigation.map((item) => (
-                                <NavigationLink
-                                    key={item.name}
-                                    {...item}
-                                    isActive={isNavigationActive(item.href)}
-                                    onClick={handleNavigation}
-                                />
-                            ))}
-
-                            {isUserAdmin && (
-                                <div className="mt-8">
-                                    <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider my-3">
-                                        Management
-                                    </h2>
-                                    {managementNavigation.map((item) => (
-                                        <NavigationLink
-                                            key={item.name}
-                                            {...item}
-                                            isActive={isNavigationActive(item.href)}
-                                            onClick={handleNavigation}
-                                        />
-                                    ))}
-                                </div>
-                            )}
-                        </nav>
+                    <div className="flex-1 overflow-y-auto px-4">
+                        <NavigationSection items={navigationItems.main} isNavigationActive={isNavigationActive}
+                                           onClick={handleNavigation}/>
+                        {user?.role === UserRole.ORGANIZATION_ADMIN && (
+                            <NavigationSection title="Management" items={navigationItems.admin}
+                                               isNavigationActive={isNavigationActive} onClick={handleNavigation}/>
+                        )}
+                        {user?.role === UserRole.TEAM_ADMIN && (
+                            <NavigationSection title="Management" items={navigationItems.teamAdmin}
+                                               isNavigationActive={isNavigationActive} onClick={handleNavigation}/>
+                        )}
                     </div>
-
 
                     <SidebarAccountDropdown
                         isActive={isNavigationActive('/profile')}
@@ -83,6 +70,24 @@ export default function Sidebar() {
                     />
                 </div>
             </div>
+        </div>
+    );
+}
+
+type NavigationSectionProps = {
+    title?: string;
+    items: { name: string, href: string, icon: React.ComponentType<React.SVGProps<SVGSVGElement>> }[];
+    isNavigationActive: (href: string) => boolean;
+    onClick: (page: string) => void;
+}
+
+function NavigationSection({title, items, isNavigationActive, onClick}: NavigationSectionProps) {
+    return (
+        <div className="">
+            <h2 className="px-3 text-xs font-semibold text-gray-500 uppercase tracking-wider my-3">{title}</h2>
+            {items.map((item) => (
+                <NavigationLink key={item.name} {...item} isActive={isNavigationActive(item.href)} onClick={onClick}/>
+            ))}
         </div>
     );
 }
@@ -101,12 +106,10 @@ function NavigationLink({href, name, icon: Icon, isActive, onClick}: NavigationL
             to={href}
             onClick={() => onClick(href)}
             className={`group flex items-center gap-3 rounded-lg px-3 py-2 text-sm font-medium transition-colors ${
-                isActive
-                    ? 'bg-indigo-50 text-indigo-600'
-                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
+                isActive ? "bg-indigo-50 text-indigo-600" : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
             }`}
         >
-            <Icon className={`h-5 w-5 ${isActive ? 'text-indigo-600' : 'text-gray-400 group-hover:text-gray-500'}`}/>
+            <Icon className={`h-5 w-5 ${isActive ? "text-indigo-600" : "text-gray-400 group-hover:text-gray-500"}`}/>
             {name}
         </Link>
     );

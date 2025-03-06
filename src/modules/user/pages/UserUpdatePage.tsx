@@ -19,6 +19,7 @@ import PageContent from "@/components/layout/PageContent.tsx";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import PageHeader from "@/components/layout/PageHeader.tsx";
 import {UserCog, X} from "lucide-react";
+import {UserRole, UserRoleJson} from "@/core/types/enum.ts";
 
 const FormSchema = z.object({
     firstName: z.string().min(1, {message: "First Name is required"}),
@@ -27,6 +28,7 @@ const FormSchema = z.object({
     phone: z.string().optional(),
     teamId: z.number().positive({message: "Team selection is required"}),
     leavePolicyId: z.number().positive({message: "Leave Policy selection is required"}),
+    role: z.nativeEnum(UserRole, {errorMap: () => ({message: "Role is required"})}),
 });
 
 export default function UserUpdatePage() {
@@ -47,6 +49,7 @@ export default function UserUpdatePage() {
             phone: "",
             teamId: 0,
             leavePolicyId: 0,
+            role: undefined
         },
     });
 
@@ -65,6 +68,7 @@ export default function UserUpdatePage() {
                     phone: employeeData.phone || "",
                     teamId: employeeData.team.id,
                     leavePolicyId: employeeData.leavePolicy.id,
+                    role: employeeData.role
                 });
             } catch (error) {
                 toast({
@@ -105,6 +109,7 @@ export default function UserUpdatePage() {
             phone: data.phone || null,
             teamId: data.teamId,
             leavePolicyId: data.leavePolicyId,
+            role: data.role
         };
 
         try {
@@ -158,6 +163,7 @@ export default function UserUpdatePage() {
                                 <div className="space-y-4">
                                     <h3 className="text-lg font-medium">Organization Configuration</h3>
                                     <div className="grid gap-4 md:grid-cols-2">
+                                        <RoleField form={form}/>
                                         <TeamField form={form} teams={teams}/>
                                         <LeavePolicyField form={form} leavePolicies={leavePolicies}/>
                                     </div>
@@ -308,6 +314,37 @@ function LeavePolicyField({form, leavePolicies}: { form: UseFormReturn, leavePol
                                     <SelectItem key={policy.id} value={policy.id.toString()}>
                                         {policy.name}
                                     </SelectItem>
+                                ))}
+                            </SelectContent>
+                        </Select>
+                    </FormControl>
+                    <FormMessage/>
+                </FormItem>
+            )}
+        />
+    );
+}
+
+function RoleField({form}: { form: UseFormReturn }) {
+    return (
+        <FormField
+            control={form.control}
+            name="role"
+            render={({field}) => (
+                <FormItem>
+                    <FormLabel>Role</FormLabel>
+                    <FormControl>
+                        <Select
+                            onValueChange={(value) => field.onChange(value as UserRole)}
+                            value={field.value}
+                        >
+                            <SelectTrigger>
+                                <SelectValue placeholder="Select a role"/>
+                            </SelectTrigger>
+                            <SelectContent>
+                                {Object.entries(UserRole).map(([key, value]) => (
+                                    <SelectItem key={key}
+                                                value={value}>{UserRoleJson[key as keyof typeof UserRoleJson]}</SelectItem>
                                 ))}
                             </SelectContent>
                         </Select>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useContext, useEffect, useState} from "react";
 import {Input} from "@/components/ui/input";
 import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from "@/components/ui/select";
 import {Button} from "@/components/ui/button";
@@ -6,14 +6,19 @@ import {TeamResponse} from "@/core/types/team.ts";
 import {getTeams} from "@/core/services/teamService";
 import {Search} from "lucide-react";
 import {Card} from "@/components/ui/card";
+import {UserContext} from "@/contexts/UserContext.tsx";
+import {UserRole} from "@/core/types/enum.ts";
 
 type FilterEmployeesFormProps = {
     onFilter: (query: string, teamId: string) => void;
 };
 
 export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
+    const {user} = useContext(UserContext);
+    const isTeamAdmin = user?.role === UserRole.TEAM_ADMIN;
+    const assignedTeamId = user?.team?.id;
     const [searchQuery, setSearchQuery] = useState("");
-    const [selectedTeam, setSelectedTeam] = useState("");
+    const [selectedTeam, setSelectedTeam] = useState<string>(isTeamAdmin && assignedTeamId ? assignedTeamId.toString() : "");
     const [teams, setTeams] = useState<TeamResponse[]>([]);
 
     useEffect(() => {
@@ -28,6 +33,13 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
 
         fetchTeams();
     }, []);
+
+    useEffect(() => {
+        if (isTeamAdmin && assignedTeamId) {
+            setSelectedTeam(assignedTeamId.toString());
+            onFilter(searchQuery, assignedTeamId.toString());
+        }
+    }, [isTeamAdmin, assignedTeamId, searchQuery, onFilter]);
 
     const handleSearch = () => {
         onFilter(searchQuery, selectedTeam);
@@ -50,21 +62,27 @@ export default function UserFilterForm({onFilter}: FilterEmployeesFormProps) {
                     </div>
 
                     <div className="w-full sm:w-48">
-                        <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value)}>
+                        <Select value={selectedTeam} onValueChange={(value) => setSelectedTeam(value)}
+                                disabled={isTeamAdmin}>
                             <SelectTrigger className="w-full sm:w-[200px] border-muted-foreground/20">
                                 <SelectValue placeholder="Select a team"/>
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem value="ALL">All Teams</SelectItem>
-                                {teams.map((team) => (
-                                    <SelectItem
-                                        key={team.id}
-                                        value={team.id.toString()}
-                                        className="cursor-pointer"
-                                    >
-                                        {team.name}
+                                {user?.role === UserRole.ORGANIZATION_ADMIN ? (
+                                    <>
+                                        <SelectItem key="all" value="ALL">All Teams</SelectItem>
+                                        {teams.map((team) => (
+                                            <SelectItem key={team.id} value={team.id.toString()}
+                                                        className="cursor-pointer">
+                                                {team.name}
+                                            </SelectItem>
+                                        ))}
+                                    </>
+                                ) : isTeamAdmin && assignedTeamId ? (
+                                    <SelectItem key={assignedTeamId} value={assignedTeamId.toString()}>
+                                        {teams.find((team) => team.id === assignedTeamId)?.name || "Your Team"}
                                     </SelectItem>
-                                ))}
+                                ) : null}
                             </SelectContent>
                         </Select>
                     </div>
