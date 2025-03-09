@@ -14,6 +14,7 @@ export type UserCreateRequest = {
     country: string;
     teamId: number;
     leavePolicyId: number;
+    joinedAt: string
 }
 
 export type UserUpdateRequest = {
@@ -25,6 +26,7 @@ export type UserUpdateRequest = {
     leavePolicyId?: number;
     teamId?: number;
     role?: UserRole;
+    joinedAt?: string
 }
 
 export type ChangePasswordRequest = {

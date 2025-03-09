@@ -65,7 +65,6 @@ export function UserList({
                     </TableCell>
                     <TableCell>
                         <UserStatusBadge status={employee.status}/>
-
                     </TableCell>
                     <TableCell>
                         <div className="flex items-center space-x-2">
