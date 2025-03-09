@@ -33,8 +33,8 @@ const FormSchema = z.object({
     password: z.string().min(8, { message: "Password must be over 8 characters" }),
     phone: z.string().min(10, { message: "Phone number must be at least 10 digits" }),
     country: z.string().min(1, { message: "Country is required" }),
-    teamId: z.preprocess((val) => (val === "" || val === undefined ? NaN : Number(val)), z.number({ invalid_type_error: "Team selection is required" }).positive("Please select a team")),
-    leavePolicyId: z.preprocess((val) => (val === "" || val === undefined ? NaN : Number(val)), z.number({ invalid_type_error: "Leave policy selection is required" }).positive("Please select a leave policy")),
+    teamId: z.number({message: "team selection is required"}),
+    leavePolicyId: z.number({ message: "Leave policy selection is required" }),
     role: z.nativeEnum(UserRole, {errorMap: () => ({message: "Role is required"})}),
     joinedAt: z.preprocess((val) => (val instanceof Date ? val : undefined), z.date({ invalid_type_error: "Start Date is required" })),
 });
@@ -55,8 +55,8 @@ export default function UserCreatePage() {
             password: "",
             phone: "",
             country: "",
-            teamId: 0,
-            leavePolicyId: 0,
+            teamId: null,
+            leavePolicyId: null,
             role: undefined,
             joinedAt: new Date()
         },

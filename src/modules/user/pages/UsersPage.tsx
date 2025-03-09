@@ -110,7 +110,6 @@ export default function UsersPage() {
                                 <TableHead>Team</TableHead>
                                 <TableHead>Role</TableHead>
                                 <TableHead>Status</TableHead>
-                                <TableHead>Start Date</TableHead>
                                 <TableHead>Actions</TableHead>
                             </TableRow>
                         </TableHeader>

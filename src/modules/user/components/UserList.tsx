@@ -7,7 +7,6 @@ import {Badge} from "@/components/ui/badge.tsx";
 import UserAvatar from "@/modules/user/components/UserAvatar.tsx";
 import {UserRoleBadge} from "@/modules/user/components/UserRoleBadge.tsx";
 import {UserStatusBadge} from "@/modules/user/components/UserStatusBadge.tsx";
-import dayjs from "dayjs";
 
 type EmployeeTableProps = {
     employeesList: UserResponse[];
@@ -66,9 +65,6 @@ export function UserList({
                     </TableCell>
                     <TableCell>
                         <UserStatusBadge status={employee.status}/>
-                    </TableCell>
-                    <TableCell>
-                        {dayjs(employee.joinedAt).format('D MMM YYYY')}
                     </TableCell>
                     <TableCell>
                         <div className="flex items-center space-x-2">
