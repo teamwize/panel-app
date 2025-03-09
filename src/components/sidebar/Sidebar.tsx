@@ -47,7 +47,7 @@ export default function Sidebar() {
                     <div className="flex h-16 items-center border-b border-gray-200 px-6">
                         <Link to="/" className="flex items-center gap-3">
                             <Logo/>
-                            <span className="text-lg font-semibold text-gray-900">Teamwize</span>
+                            <span className="text-lg font-semibold text-gray-900">Teampilot</span>
                         </Link>
                         <Button variant="ghost" size="icon"
                                 className="ml-auto h-8 w-8 text-gray-500 hover:text-gray-600">

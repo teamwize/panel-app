@@ -24,7 +24,7 @@ export default function SettingsPage() {
         {
             title: 'Guide',
             icon: BookOpen,
-            path: 'https://github.com/teamwize',
+            path: 'https://github.com/teampilot-hq',
             color: 'text-teal-600',
             external: true
         }
