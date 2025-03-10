@@ -5,6 +5,7 @@ import {UserContext} from "@/contexts/UserContext.tsx";
 import SidebarAccountDropdown from "@/components/sidebar/SidebarAccountDropdown.tsx";
 import Logo from "@/components/icon/Logo.tsx";
 import {NotificationBell} from "@/components/notification/NotificationBell.tsx";
+import {UserRole} from "@/core/types/enum.ts";
 
 const navigationItems = {
     main: [
