@@ -46,7 +46,7 @@ export default function Sidebar() {
                     <div className="flex justify-between h-16 items-center border-b border-gray-200 px-6">
                         <Link to="/" className="flex items-center gap-3">
                             <Logo/>
-                            <span className="text-lg font-semibold text-gray-900">Teamwize</span>
+                            <span className="text-lg font-semibold text-gray-900">Teampilot</span>
                         </Link>
                         <NotificationBell/>
                     </div>
