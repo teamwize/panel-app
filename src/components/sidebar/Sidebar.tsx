@@ -4,7 +4,7 @@ import {Building, Calendar, CalendarCheck, Home, Settings, TreePalm, User, Users
 import {UserContext} from "@/contexts/UserContext.tsx";
 import SidebarAccountDropdown from "@/components/sidebar/SidebarAccountDropdown.tsx";
 import Logo from "@/components/icon/Logo.tsx";
-import {NotificationBell} from "@/components/notification/NotificationBell.tsx";
+import {NotificationBell} from "@/modules/notification/components/NotificationBell.tsx";
 import {UserRole} from "@/core/types/enum.ts";
 
 const navigationItems = {

@@ -1,10 +1,11 @@
-import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/components/ui/form';
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
-import { Separator } from '@/components/ui/separator';
-import { ChannelButton } from '@/modules/notification/components/ChannelButton.tsx';
+import {FormField, FormItem, FormLabel, FormControl, FormMessage} from '@/components/ui/form';
+import {Select, SelectContent, SelectItem, SelectTrigger, SelectValue} from '@/components/ui/select';
+import {Separator} from '@/components/ui/separator';
 import {EventSchema, NotificationChannel} from '@/core/types/notifications';
 import {UseFormReturn} from "react-hook-form";
-import {TriggerCreateInputs} from "@/modules/notification/pages/TriggerCreatePage.tsx";
+import {TriggerCreateInputs} from "@/modules/notification/pages/NotificationTriggerCreatePage.tsx";
+import {Button} from "@/components/ui/button.tsx";
+import React from "react";
 
 interface DeliveryConfigurationProps {
     form: UseFormReturn<TriggerCreateInputs>;
@@ -13,35 +14,43 @@ interface DeliveryConfigurationProps {
     selectedEventSchema: EventSchema | null;
 }
 
-export default function DeliveryConfigurationSection({ form, selectedChannels, setSelectedChannels, selectedEventSchema }: DeliveryConfigurationProps) {
+export default function NotificationTriggerCreateDeliverySettings({
+                                                         form,
+                                                         selectedChannels,
+                                                         setSelectedChannels,
+                                                         selectedEventSchema
+                                                     }: DeliveryConfigurationProps) {
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-medium">Delivery Settings</h3>
-            <Separator />
+            <Separator/>
             <div className="space-y-6">
                 <FormField
                     control={form.control}
                     name="channels"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem className="space-y-4">
                             <FormLabel>Notification Channels</FormLabel>
                             <div className="flex flex-wrap flex-row gap-3">
                                 {Object.values(NotificationChannel).map((channel) => (
-                                    <ChannelButton
+                                    <Button
                                         key={channel}
-                                        channel={channel}
-                                        isSelected={selectedChannels.includes(channel)}
-                                        onToggle={(channel) => {
+                                        type="button"
+                                        variant={"outline"}
+                                        className={`gap-2 ${selectedChannels.includes(channel) ? "bg-gray-100" : ""}`}
+                                        onClick={() => {
                                             const newChannels = selectedChannels.includes(channel)
                                                 ? selectedChannels.filter((c) => c !== channel)
                                                 : [...selectedChannels, channel];
                                             setSelectedChannels(newChannels);
                                             field.onChange(newChannels);
                                         }}
-                                    />
+                                    >
+                                        {channel}
+                                    </Button>
                                 ))}
                             </div>
-                            <FormMessage />
+                            <FormMessage/>
                         </FormItem>
                     )}
                 />
@@ -49,7 +58,7 @@ export default function DeliveryConfigurationSection({ form, selectedChannels, s
                 <FormField
                     control={form.control}
                     name="receptors"
-                    render={({ field }) => (
+                    render={({field}) => (
                         <FormItem>
                             <FormLabel>Receptors</FormLabel>
                             <Select
@@ -59,7 +68,7 @@ export default function DeliveryConfigurationSection({ form, selectedChannels, s
                             >
                                 <FormControl>
                                     <SelectTrigger>
-                                        <SelectValue placeholder="Select receptor type" />
+                                        <SelectValue placeholder="Select receptor type"/>
                                     </SelectTrigger>
                                 </FormControl>
                                 <SelectContent>
@@ -68,8 +77,9 @@ export default function DeliveryConfigurationSection({ form, selectedChannels, s
                                     ))}
                                 </SelectContent>
                             </Select>
-                            <FormMessage />
-                            <p className="text-sm text-muted-foreground">Choose who should receive this notification based on the selected event type.</p>
+                            <FormMessage/>
+                            <p className="text-sm text-muted-foreground">Choose who should receive this notification
+                                based on the selected event type.</p>
                         </FormItem>
                     )}
                 />

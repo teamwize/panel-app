@@ -58,23 +58,3 @@ export enum Week {
     SATURDAY = "SATURDAY",
     SUNDAY = "SUNDAY"
 }
-
-export enum NotificationStatus {
-    UNREAD = "UNREAD",
-    READ = "READ"
-}
-
-export enum NotificationChannel {
-    EMAIL = "EMAIL",
-    SLACK = "SLACK"
-}
-
-export enum EventType {
-    ORGANIZATION_CREATED = "ORGANIZATION_CREATED",
-    USER_CREATED = "USER_CREATED",
-    LEAVE_CREATED = "LEAVE_CREATED",
-    LEAVE_STATUS_UPDATED = "LEAVE_STATUS_UPDATED",
-    TEAM_CREATED = "TEAM_CREATED",
-    NOTIFICATION_CREATED = "NOTIFICATION_CREATED"
-}
-

@@ -15,10 +15,10 @@ import { getErrorMessage } from '@/core/utils/errorHandler';
 import { Loader2 } from 'lucide-react';
 import { PageSection } from '@/components/layout/PageSection.tsx';
 import {Form} from '@/components/ui/form'
-import BasicInformationSection from "@/modules/notification/components/ BasicInformationSection.tsx";
-import EventConfigurationSection from "@/modules/notification/components/EventConfigurationSection.tsx";
-import TemplateContentSection from "@/modules/notification/components/TemplateContentSection.tsx";
-import DeliveryConfigurationSection from "@/modules/notification/components/DeliveryConfigurationSection.tsx";
+import NotificationTriggerCreateBasicInformation from "@/modules/notification/components/NotificationTriggerCreateBasicInformation.tsx";
+import NotificationTriggerCreateEventDetails from "@/modules/notification/components/NotificationTriggerCreateEventDetails.tsx";
+import NotificationTriggerCreateTemplateContent from "@/modules/notification/components/NotificationTriggerCreateTemplateContent.tsx";
+import NotificationTriggerCreateDeliverySettings from "@/modules/notification/components/NotificationTriggerCreateDeliverySettings.tsx";
 
 const FormSchema = z.object({
     title: z.string().min(1, 'Title is required'),
@@ -33,7 +33,7 @@ const FormSchema = z.object({
 
 export type TriggerCreateInputs = z.infer<typeof FormSchema>;
 
-export default function TriggerCreatePage() {
+export default function NotificationTriggerCreatePage() {
     const navigate = useNavigate();
     const [isProcessing, setIsProcessing] = useState(false);
     const [selectedChannels, setSelectedChannels] = useState<NotificationChannel[]>([]);
@@ -111,10 +111,10 @@ export default function TriggerCreatePage() {
                     <CardContent className='p-6'>
                         <Form {...form}>
                             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-8">
-                                <BasicInformationSection form={form} />
-                                <EventConfigurationSection form={form} eventSchemas={eventSchemas} setSelectedEventSchema={setSelectedEventSchema} />
-                                <TemplateContentSection form={form} activeTab={activeTab} setActiveTab={setActiveTab} />
-                                <DeliveryConfigurationSection form={form} selectedChannels={selectedChannels} setSelectedChannels={setSelectedChannels} selectedEventSchema={selectedEventSchema} />
+                                <NotificationTriggerCreateBasicInformation form={form} />
+                                <NotificationTriggerCreateEventDetails form={form} eventSchemas={eventSchemas} setSelectedEventSchema={setSelectedEventSchema} />
+                                <NotificationTriggerCreateTemplateContent form={form} activeTab={activeTab} setActiveTab={setActiveTab} selectedSchema={selectedEventSchema} />
+                                <NotificationTriggerCreateDeliverySettings form={form} selectedChannels={selectedChannels} setSelectedChannels={setSelectedChannels} selectedEventSchema={selectedEventSchema} />
                                 <div className="flex justify-end pt-4 border-t">
                                     <Button variant="outline" onClick={() => navigate('/notifications/triggers')} disabled={isProcessing}>
                                         <X className="w-4 h-4 mr-2" />

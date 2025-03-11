@@ -5,7 +5,8 @@ import {
     NotificationFilterRequest,
     NotificationTemplate,
     NotificationTrigger,
-    NotificationTriggerCreateRequest
+    NotificationTriggerCreateRequest,
+    Notification, NotificationsCountResponse
 } from '@/core/types/notifications.ts';
 
 const baseURL = '/v1/notifications';
@@ -48,4 +49,14 @@ async function deleteNotificationTrigger(id:number) : Promise<void> {
     await axiosInstance.get(`${baseURL}/notifications/triggers/${id}`)
 }
 
-export {getTemplate, getTemplates, deleteTemplate, getNotificationTriggers, createNotificationTrigger, getNotifications, getNotificationEventSchemas, deleteNotificationTrigger,};
+async function getNotificationsCount() : Promise<NotificationsCountResponse> {
+    const response = await axiosInstance.get(`${baseURL}/count`);
+    return response.data;
+}
+
+async function createNotificationRead(payload: number[]): Promise<NotificationsCountResponse> {
+    const response = await axiosInstance.post(`${baseURL}/read`, payload);
+    return response.data;
+}
+
+export {getTemplate, getTemplates, deleteTemplate, getNotificationTriggers, createNotificationTrigger, getNotifications, getNotificationEventSchemas, deleteNotificationTrigger,getNotificationsCount, createNotificationRead};

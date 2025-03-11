@@ -13,7 +13,7 @@ import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {toast} from "@/components/ui/use-toast.ts";
 import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
 
-export function TriggersPage() {
+export function NotificationTriggersPage() {
     const navigate = useNavigate();
     const [triggers, setTriggers] = useState<NotificationTrigger[]>([]);
     const [loading, setLoading] = useState(true);
@@ -81,17 +81,10 @@ export function TriggersPage() {
                             </TableHeader>
                             <TableBody>
                                 {triggers.length ? (
-                                    triggers.map((trigger) => (
-                                        <TriggerRow
-                                            key={trigger.id}
-                                            trigger={trigger}
-                                        />
-                                    ))
+                                    triggers.map((trigger) => (<TriggerRow key={trigger.id} trigger={trigger}/>))
                                 ) : (
                                     <TableRow>
-                                        <TableCell colSpan={6} className="text-center text-gray-500">
-                                            No notification trigger found.
-                                        </TableCell>
+                                        <TableCell colSpan={6} className="text-center text-gray-500">No notification trigger found.</TableCell>
                                     </TableRow>
                                 )}
                             </TableBody>
@@ -128,8 +121,7 @@ function TriggerRow({trigger}: TriggerRowProps) {
             <TableCell>{trigger.receptors}</TableCell>
             <TableCell>
                 <div className="flex gap-1 flex-wrap">
-                    {trigger.channels.map((channel) => (
-                        <Badge key={channel} variant="outline" className="mr-1">{channel}</Badge>))}
+                    {trigger.channels.map((channel) => (<Badge key={channel} variant="outline" className="mr-1">{channel}</Badge>))}
                 </div>
             </TableCell>
             <TableCell>

@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useContext, useEffect, useState} from 'react';
 import {Card} from '@/components/ui/card';
 import {Badge} from '@/components/ui/badge';
 import {getNotifications} from '@/core/services/notificationService';
@@ -13,16 +13,25 @@ import {Notification, NotificationStatus} from "@/core/types/notifications.ts";
 import {getErrorMessage} from "@/core/utils/errorHandler.ts";
 import {toast} from "@/components/ui/use-toast.ts";
 import {Alert, AlertDescription} from "@/components/ui/alert.tsx";
+import {NotificationContext} from "@/contexts/NotificationContext.tsx";
+import {Dialog, DialogContent, DialogHeader, DialogTitle,} from "@/components/ui/dialog.tsx";
+import {formatTimeAgo} from "@/core/utils/timeAgo.ts";
 
 export default function NotificationsPage() {
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
+    const {selectedNotificationId, setSelectedNotificationId} = useContext(NotificationContext);
+    const [dialogOpen, setDialogOpen] = useState(false);
     const navigate = useNavigate();
 
     useEffect(() => {
         fetchNotifications();
     }, []);
+
+    useEffect(() => {
+        setDialogOpen(!!selectedNotificationId);
+    }, [selectedNotificationId]);
 
     const fetchNotifications = async () => {
         try {
@@ -41,6 +50,8 @@ export default function NotificationsPage() {
             setLoading(false);
         }
     };
+
+    const selectedNotification = notifications.find(n => n.id === selectedNotificationId);
 
     const getStatusIcon = (status: NotificationStatus) => {
         switch (status) {
@@ -99,7 +110,9 @@ export default function NotificationsPage() {
                         <ScrollArea>
                             <div className="divide-y">
                                 {notifications.map((notification) => (
-                                    <div key={notification.id} className="p-4 hover:bg-muted/50 transition-colors">
+                                    <div key={notification.id}
+                                         className="p-4 hover:bg-muted/50 transition-colors cursor-pointer"
+                                         onClick={() => setSelectedNotificationId(notification.id)}>
                                         <div className="flex items-start gap-4">
                                             <div className="shrink-0">{getStatusIcon(notification.status)}</div>
                                             <div className="flex-1 min-w-0">
@@ -122,8 +135,8 @@ export default function NotificationsPage() {
                                 {notifications.length === 0 && (
                                     <div className="flex flex-col items-center justify-center py-12 text-center">
                                         <Bell className="h-12 w-12 text-primary mb-4"/>
-                                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No notifications yet</h3>
-                                        <p className="text-gray-500">When notifications are sent, they will appear here.</p>
+                                        <h3 className="text-xl font-semibold text-gray-900 mb-2">No notifications</h3>
+                                        <p className="text-gray-500">You have no notifications. Once a notification is sent, it will appear here.</p>
                                     </div>
                                 )}
                             </div>
@@ -131,6 +144,30 @@ export default function NotificationsPage() {
                     </Card>
                 )}
             </PageContent>
+
+            <Dialog open={dialogOpen} onOpenChange={(open) => {
+                setDialogOpen(open);
+                if (!open) setSelectedNotificationId(null);
+            }}>
+                {selectedNotification && (
+                    <DialogContent className=''>
+                        <DialogHeader>
+                            <DialogTitle className="text-xl">{selectedNotification.trigger.name}</DialogTitle>
+                        </DialogHeader>
+
+                        <div className="space-y-4 max-h-[500px] overflow-auto">
+                            <div className="bg-muted/50 p-3 rounded-md">
+                                <p className="text-sm leading-relaxed"
+                                    dangerouslySetInnerHTML={{__html: selectedNotification.textContent.replace(/\n/g, '<br />')}}></p>
+                            </div>
+
+                            <div className="flex flex-col gap-1 text-xs text-muted-foreground">
+                                <p className="italic">{formatTimeAgo(selectedNotification.sentAt)}</p>
+                            </div>
+                        </div>
+                    </DialogContent>
+                )}
+            </Dialog>
         </>
     );
 }

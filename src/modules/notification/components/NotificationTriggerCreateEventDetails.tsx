@@ -5,7 +5,7 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 import { Info } from 'lucide-react';
 import {UseFormReturn} from "react-hook-form";
 import {EventSchema} from "@/core/types/notifications.ts";
-import {TriggerCreateInputs} from "@/modules/notification/pages/TriggerCreatePage.tsx";
+import {TriggerCreateInputs} from "@/modules/notification/pages/NotificationTriggerCreatePage.tsx";
 
 interface EventConfigurationProps {
     form: UseFormReturn<TriggerCreateInputs>;
@@ -13,7 +13,7 @@ interface EventConfigurationProps {
     setSelectedEventSchema: (schema: EventSchema | null) => void;
 }
 
-export default function EventConfigurationSection({ form, eventSchemas, setSelectedEventSchema }: EventConfigurationProps) {
+export default function NotificationTriggerCreateEventDetails({ form, eventSchemas, setSelectedEventSchema }: EventConfigurationProps) {
     return (
         <div className="space-y-4">
             <div className="flex items-center gap-2">

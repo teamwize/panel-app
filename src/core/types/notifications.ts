@@ -61,6 +61,7 @@ export interface NotificationFilterRequest {
 
 export interface Notification {
     id: number;
+    title: string,
     user: UserResponse;
     template: NotificationTemplate;
     trigger: NotificationTrigger;
@@ -70,14 +71,19 @@ export interface Notification {
     params: Record<string, any>;
     channel: NotificationChannel;
     sentAt: string;
-    createdAt: string;
     status: NotificationStatus;
 }
 
 export enum NotificationStatus {
     PENDING = 'PENDING',
     SENT = 'SENT',
-    FAILED = 'FAILED'
+    FAILED = 'FAILED',
+    READ = "READ"
+}
+
+export interface NotificationsCountResponse {
+    unreadCount: number;
+    totalCount: number
 }
 
 export interface EventSchema {

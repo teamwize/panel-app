@@ -2,13 +2,13 @@ import { FormField, FormItem, FormLabel, FormControl, FormMessage } from '@/comp
 import { Input } from '@/components/ui/input';
 import { Separator } from '@/components/ui/separator';
 import {UseFormReturn} from "react-hook-form";
-import {TriggerCreateInputs} from "@/modules/notification/pages/TriggerCreatePage.tsx";
+import {TriggerCreateInputs} from "@/modules/notification/pages/NotificationTriggerCreatePage.tsx";
 
 interface BasicInformationSectionProps {
     form: UseFormReturn<TriggerCreateInputs>;
 }
 
-export default function BasicInformationSection({ form }: BasicInformationSectionProps) {
+export default function NotificationTriggerCreateBasicInformation({ form }: BasicInformationSectionProps) {
     return (
         <div className="space-y-4">
             <h3 className="text-lg font-medium">Basic Information</h3>
