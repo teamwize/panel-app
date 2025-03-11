@@ -11,7 +11,6 @@ export const NotificationBell: React.FC = () => {
     const [isOpen, setIsOpen] = useState<boolean>(false);
     const [notifications, setNotifications] = useState<Notification[]>([]);
     const [unreadCount, setUnreadCount] = useState<number>(0);
-    const [totalCount, setTotalCount] = useState<number>(0);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
     useEffect(() => {
@@ -33,7 +32,6 @@ export const NotificationBell: React.FC = () => {
         try {
             const response = await getNotificationsCount();
             setUnreadCount(response.unreadCount);
-            setTotalCount(response.totalCount);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error);
             setErrorMessage(errorMessage);
@@ -48,7 +46,7 @@ export const NotificationBell: React.FC = () => {
             setNotifications((prevNotifications) =>
                 prevNotifications.map((n) => n.id === id ? {...n, status: NotificationStatus.READ} : n)
             );
-            setUnreadCount((prev) => Math.max(0, prev - 1));
+            setUnreadCount((prev) => prev - 1);
         } catch (error) {
             const errorMessage = getErrorMessage(error as Error);
             setErrorMessage(errorMessage);
@@ -65,7 +63,6 @@ export const NotificationBell: React.FC = () => {
             if (unreadIds.length === 0) return;
 
             await createNotificationRead(unreadIds);
-
             setNotifications((prevNotifications) =>
                 prevNotifications.map((n) => ({...n, status: NotificationStatus.READ}))
             );
